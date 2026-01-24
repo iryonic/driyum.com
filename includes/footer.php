@@ -116,7 +116,7 @@
             display: none;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             #mobile-bottom-nav-container {
                 display: block !important;
                 position: fixed !important;
