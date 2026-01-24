@@ -1,6 +1,6 @@
 
 <!-- MASTER FOOTER -->
-<footer class="bg-black text-white pt-24 pb-24 relative overflow-hidden mt-20 rounded-t-[50px]">
+<footer class="bg-black text-white pt-24 pb-40 relative overflow-hidden mt-20 rounded-t-[50px]">
     <!-- Background Gradients -->
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[500px] bg-[#19DC7E] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
@@ -24,7 +24,6 @@
                     </a>
                     <?php endif; ?>
 
-                    <!-- add whatsapp -->
                     <?php if($wa = get_setting('whatsapp_number')): ?>
                     <a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', $wa); ?>" target="_blank" class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-[#25D366] hover:border-[#25D366] hover:text-white transition-all duration-300 group shadow-lg">
                         <i class="fab fa-whatsapp text-xl group-hover:scale-110 transition p-1"></i>
@@ -54,8 +53,6 @@
                         <i class="fab fa-pinterest-p text-xl group-hover:scale-110 transition"></i>
                     </a>
                     <?php endif; ?>
-
-                 
                 </div>
             </div>
 
@@ -106,64 +103,136 @@
     </div>
 </footer>
 
-<!-- MOBILE FLOATING NAVIGATION (Modern Dock) -->
-
-
-<div id="mobile-bottom-nav-container">
+<!-- MOBILE NAV - GUARANTEED VISIBILITY -->
+<!-- This structure purposely avoids framework classes to prevent conflicts -->
+<div id="driyum-mobile-dock">
     <style>
-        /* Default hidden on desktop */
-        #mobile-bottom-nav-container {
-            display: none;
+        /* Force Reset for Dock */
+        #driyum-mobile-dock {
+            display: none; /* Hidden by default on desktop */
         }
 
-        @media (max-width: 1024px) {
-            #mobile-bottom-nav-container {
+        @media screen and (max-width: 768px) {
+            #driyum-mobile-dock {
                 display: block !important;
                 position: fixed !important;
                 bottom: 20px !important;
                 left: 16px !important;
                 right: 16px !important;
+                height: 70px !important;
                 z-index: 2147483647 !important;
+                background: #111827 !important; /* Dark Gray/Black */
+                border-radius: 35px !important;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+                padding: 0 20px !important;
+                isolation: isolate !important;
             }
-            /* Add padding to body to prevent content cutoff */
+
+            #driyum-mobile-dock-inner {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            .dock-item {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                color: #9CA3AF !important; /* Gray-400 */
+                text-decoration: none !important;
+                transition: color 0.3s ease !important;
+                background: none !important;
+                border: none !important;
+                padding: 0 !important;
+                width: 48px !important;
+            }
+
+            .dock-item.active {
+                color: #19DC7E !important; /* Brand Green */
+            }
+
+            .dock-item i {
+                font-size: 20px !important;
+                margin-bottom: 2px !important;
+            }
+
+            /* Floating Call to Action (Cart) */
+            .dock-fab {
+                position: relative !important;
+                top: -30px !important;
+                width: 64px !important;
+                height: 64px !important;
+                background: #19DC7E !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: 4px solid #FFFBEB !important; /* Matches Body BG */
+                color: #000 !important;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+                transition: transform 0.2s ease !important;
+            }
+            
+            .dock-fab:active {
+                transform: scale(0.95) !important;
+            }
+
+            .dock-fab-badge {
+                position: absolute !important;
+                top: -4px !important;
+                right: -4px !important;
+                background: #EF4444 !important; /* Red */
+                color: white !important;
+                font-size: 10px !important;
+                font-weight: bold !important;
+                width: 20px !important;
+                height: 20px !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                border: 2px solid white !important;
+            }
+
+            /* Ensure Page content is not hidden behind dock */
             body {
-                padding-bottom: 100px !important;
+                padding-bottom: 120px !important;
             }
         }
     </style>
-    
-    <div class="bg-[#111827] text-white rounded-[35px] shadow-[0_10px_40px_rgba(0,0,0,0.4)] border border-white/10 h-[70px] flex items-center justify-between px-6 backdrop-blur-md">
-        
+
+    <div id="driyum-mobile-dock-inner">
         <!-- Home -->
-        <a href="<?php echo get_url(''); ?>" class="flex flex-col items-center justify-center gap-1 w-12 text-gray-400 hover:text-[#19DC7E] transition-colors <?php echo in_array(basename($_SERVER['PHP_SELF']), ['index.php', '']) ? 'text-[#19DC7E]' : ''; ?>">
-            <i class="fas fa-home text-xl"></i>
+        <a href="<?php echo get_url(''); ?>" class="dock-item <?php echo in_array(basename($_SERVER['PHP_SELF']), ['index.php', '']) ? 'active' : ''; ?>">
+            <i class="fas fa-home"></i>
         </a>
 
         <!-- Shop -->
-        <a href="<?php echo get_url('shop'); ?>" class="flex flex-col items-center justify-center gap-1 w-12 text-gray-400 hover:text-[#19DC7E] transition-colors <?php echo basename($_SERVER['PHP_SELF'])=='shop.php' ? 'text-[#19DC7E]' : ''; ?>">
-            <i class="fas fa-store text-xl"></i>
+        <a href="<?php echo get_url('shop'); ?>" class="dock-item <?php echo basename($_SERVER['PHP_SELF'])=='shop.php' ? 'active' : ''; ?>">
+            <i class="fas fa-store"></i>
         </a>
 
-        <!-- Cart (Floating Action Button) -->
-        <a href="#" onclick="openCartSidebar(); return false;" class="relative -top-6 w-16 h-16 bg-[#19DC7E] rounded-full flex items-center justify-center text-black border-4 border-[#fffbeb] shadow-lg transform hover:scale-110 transition-transform">
-            <i class="fas fa-shopping-bag text-2xl"></i>
+        <!-- Cart FAB -->
+        <a href="#" onclick="openCartSidebar(); return false;" class="dock-fab">
+            <i class="fas fa-shopping-bag" style="font-size: 24px;"></i>
             <?php if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
-            <span id="mobile-cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white">
-                <?php echo count($_SESSION['cart']); ?>
-            </span>
+                <span class="dock-fab-badge" id="mobile-cart-count"><?php echo count($_SESSION['cart']); ?></span>
             <?php endif; ?>
         </a>
 
         <!-- Track -->
-        <a href="<?php echo get_url('track'); ?>" class="flex flex-col items-center justify-center gap-1 w-12 text-gray-400 hover:text-[#19DC7E] transition-colors <?php echo basename($_SERVER['PHP_SELF'])=='track.php' ? 'text-[#19DC7E]' : ''; ?>">
-            <i class="fas fa-box text-xl"></i>
+        <a href="<?php echo get_url('track'); ?>" class="dock-item <?php echo basename($_SERVER['PHP_SELF'])=='track.php' ? 'active' : ''; ?>">
+            <i class="fas fa-box"></i>
         </a>
 
-        <!-- Menu/Account -->
-        <button onclick="toggleMobileMenuDrawer()" class="flex flex-col items-center justify-center gap-1 w-12 text-gray-400 hover:text-[#19DC7E] transition-colors">
-            <i class="fas fa-bars text-xl"></i>
+        <!-- Menu -->
+        <button onclick="toggleMobileMenuDrawer()" class="dock-item">
+            <i class="fas fa-bars"></i>
         </button>
-
     </div>
 </div>
 
@@ -205,5 +274,30 @@ function subscribeNewsletter(e) {
         icon.className = 'fas fa-arrow-right';
     });
 }
-</script>
 
+// FORCE MOBILE NAV VISIBILITY SCRIPT
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 768) {
+        const dock = document.getElementById('driyum-mobile-dock');
+        if (dock && dock.parentElement !== document.body) {
+            // Move dock to direct body child to escape any overflow:hidden parents
+            document.body.appendChild(dock);
+            console.log('Mobile Dock moved to body for visibility.');
+        }
+        
+        // Debug indicator (Optional, self-removing)
+        /*
+        const debug = document.createElement('div');
+        debug.style.position = 'fixed';
+        debug.style.top = '0';
+        debug.style.left = '0';
+        debug.style.background = 'red';
+        debug.style.color = 'white';
+        debug.style.zIndex = '9999999';
+        debug.textContent = 'Footer Loaded';
+        document.body.appendChild(debug);
+        setTimeout(() => debug.remove(), 2000);
+        */
+    }
+});
+</script>
