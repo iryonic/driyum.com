@@ -113,7 +113,7 @@
         left: 0;
         right: 0;
         justify-content: center;
-        z-index: 50; /* Below Header (100) and Modals */
+        z-index: 999; /* Higher than page content, below modals (1000+) */
         pointer-events: none; /* Container is passthrough */
     }
 

@@ -409,3 +409,82 @@ input#header-search-input.search-input-premium:focus {
         transform: translateX(0) scale(1);
     }
 }
+
+/* Fluid Typography & Responsive Scaling */
+:root {
+    --heading-clamp: clamp(2.5rem, 8vw, 6rem);
+    --subheading-clamp: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+@media (max-width: 768px) {
+    :root {
+        --radius-xl: 32px;
+        --radius-l: 20px;
+    }
+
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    /* Global Heading Scaling */
+    h1 {
+        font-size: clamp(2.2rem, 10vw, 4rem) !important;
+        line-height: 1 !important;
+        letter-spacing: -0.02em !important;
+    }
+
+    h2 {
+        font-size: clamp(1.8rem, 8vw, 3.2rem) !important;
+        line-height: 1.1 !important;
+    }
+
+    h3 {
+        font-size: clamp(1.4rem, 6vw, 2.4rem) !important;
+    }
+
+    /* Buttons Scaling - Touch Friendly */
+    .btn-chunky {
+        width: 100%;
+        justify-content: center;
+        padding: 1rem 1.5rem !important;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Hide scrollbars but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Grid Fixes for ultra-small screens (iPhone SE etc) */
+@media (max-width: 400px) {
+    .grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    }
+}
+
+/* Z-Index Layering for Mobile Bars */
+.sticky-mobile-bar {
+    z-index: 1000 !important;
+}
+
+#driyum-mobile-dock-v2 {
+    z-index: 1001 !important;
+    pointer-events: auto !important;
+}
+
+/* Ensure the product page mobile bar is above the dock if they exist together */
+.sticky-mobile-bar {
+    bottom: calc(76px + 30px + 10px) !important;
+    border-radius: 24px !important;
+    margin: 0 1rem 1rem 1rem !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+}
