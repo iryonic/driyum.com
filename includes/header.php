@@ -208,36 +208,37 @@ run_crons();
 
 <!-- SEARCH MODAL -->
 <!-- SEARCH MODAL (PREMIUM) -->
-<div id="search-modal-overlay" onclick="toggleSearch()" class="fixed inset-0 bg-black/90 z-[120] hidden opacity-0 transition-opacity duration-300 flex flex-col items-center justify-center p-6 backdrop-blur-md">
-    <div id="search-modal" onclick="event.stopPropagation()" class="w-full max-w-5xl relative transform -translate-y-12 transition-transform duration-500">
+<!-- SEARCH MODAL (PREMIUM) -->
+<div id="search-modal-overlay" onclick="toggleSearch()" class="fixed inset-0 bg-black/90 z-[120] hidden opacity-0 transition-opacity duration-300 flex flex-col items-center justify-center p-4 md:p-6 backdrop-blur-md">
+    <div id="search-modal" onclick="event.stopPropagation()" class="w-full max-w-5xl relative transform -translate-y-12 transition-transform duration-500 flex flex-col max-h-full">
         
-        <button onclick="toggleSearch()" class="absolute -top-20 right-0 w-14 h-14 flex items-center justify-center rounded-full bg-white/10 text-white text-xl hover:bg-white hover:text-black hover:rotate-90 transition-all duration-300"><i class="fas fa-times"></i></button>
+        <button onclick="toggleSearch()" class="absolute -top-16 right-0 md:-top-20 md:right-0 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/10 text-white text-lg md:text-xl hover:bg-white hover:text-black hover:rotate-90 transition-all duration-300 z-50"><i class="fas fa-times"></i></button>
         
-        <div class="text-center mb-8">
-            <span class="inline-block px-4 py-1 rounded-full border border-[#19DC7E]/30 text-[#19DC7E] text-[10px] font-black uppercase tracking-[0.3em] bg-[#19DC7E]/5 mb-4">Search The Store</span>
+        <div class="text-center mb-4 md:mb-8 shrink-0">
+            <span class="inline-block px-3 py-1 md:px-4 md:py-1 rounded-full border border-[#19DC7E]/30 text-[#19DC7E] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] bg-[#19DC7E]/5 mb-2 md:mb-4">Search The Store</span>
         </div>
 
-        <form action="<?php echo get_url('shop'); ?>" method="GET" class="relative group mb-12">
-            <input type="text" name="q" id="header-search-input" placeholder="What are you craving?" class="search-input-premium w-full text-center placeholder-white/10 focus:placeholder-white/5">
-            <button type="submit" class="absolute right-0 top-1/2 -translate-y-1/2 text-4xl text-white/30 group-focus-within:text-[#19DC7E] transition-all hover:scale-110"><i class="fas fa-arrow-right"></i></button>
+        <form action="<?php echo get_url('shop'); ?>" method="GET" class="relative group mb-8 md:mb-12 shrink-0">
+            <input type="text" name="q" id="header-search-input" placeholder="Craving?" class="search-input-premium w-full text-center placeholder-white/10 focus:placeholder-white/5 text-4xl md:text-7xl h-auto leading-tight">
+            <button type="submit" class="absolute right-0 top-1/2 -translate-y-1/2 text-2xl md:text-4xl text-white/30 group-focus-within:text-[#19DC7E] transition-all hover:scale-110"><i class="fas fa-arrow-right"></i></button>
         </form>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start overflow-hidden flex-1 min-h-0">
             <!-- Quick Links -->
-            <div>
+            <div class="hidden md:block">
                  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-6 block">Trending Now</span>
                  <div class="flex flex-wrap gap-3">
                     <a href="<?php echo get_url('shop?q=apple'); ?>" class="px-6 py-2.5 rounded-[16px] bg-white/5 border border-white/10 text-white font-bold hover:bg-[#19DC7E] hover:text-black hover:border-transparent transition-all hover:-translate-y-1">🍎 Apple Chips</a>
                     <a href="<?php echo get_url('shop?q=walnut'); ?>" class="px-6 py-2.5 rounded-[16px] bg-white/5 border border-white/10 text-white font-bold hover:bg-[#19DC7E] hover:text-black hover:border-transparent transition-all hover:-translate-y-1">🌰 Walnuts</a>
-                    <a href="<?php echo get_url('shop?q=apricot'); ?>" class="px-6 py-2.5 rounded-[16px] bg-white/5 border border-white/10 text-white font-bold hover:bg-[#19DC7E] hover:text-black hover:border-transparent transition-all hover:-translate-y-1">� Apricots</a>
+                    <a href="<?php echo get_url('shop?q=apricot'); ?>" class="px-6 py-2.5 rounded-[16px] bg-white/5 border border-white/10 text-white font-bold hover:bg-[#19DC7E] hover:text-black hover:border-transparent transition-all hover:-translate-y-1">🍑 Apricots</a>
                     <a href="<?php echo get_url('shop?q=gift'); ?>" class="px-6 py-2.5 rounded-[16px] bg-white/5 border border-white/10 text-white font-bold hover:bg-[#19DC7E] hover:text-black hover:border-transparent transition-all hover:-translate-y-1">🎁 Gifts</a>
                 </div>
             </div>
 
             <!-- Dynamic Results -->
-            <div>
-                 <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-6 block">Results</span>
-                 <div id="search-results" class="max-h-[400px] overflow-y-auto hide-scrollbar space-y-4 pr-2">
+            <div class="h-full flex flex-col">
+                 <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4 md:mb-6 block shrink-0">Results</span>
+                 <div id="search-results" class="overflow-y-auto hide-scrollbar space-y-3 pr-2 flex-1 pb-10">
                      <!-- Populated by JS -->
                  </div>
             </div>
@@ -246,35 +247,34 @@ run_crons();
 </div>
 
 <!-- SIDEBAR CART -->
-<!-- SIDEBAR CART -->
 <div id="cart-sidebar-overlay" onclick="closeCartSidebar()" class="fixed inset-0 bg-black/60 z-[100] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
-<div id="cart-sidebar" class="cart-drawer-enhanced fixed top-0 right-0 h-full w-[550px] max-w-full bg-[#f8fafc] z-[101] transform translate-x-full transition-transform duration-500 flex flex-col">
-    <div class="px-8 pt-12 pb-8 flex justify-between items-center bg-white border-b border-gray-100">
+<div id="cart-sidebar" class="cart-drawer-enhanced fixed top-0 right-0 h-full w-[90%] md:w-[550px] max-w-[550px] bg-[#f8fafc] z-[101] transform translate-x-full transition-transform duration-500 flex flex-col shadow-2xl">
+    <div class="px-6 md:px-8 pt-safe-top pt-8 md:pt-12 pb-6 md:pb-8 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
         <div>
             <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#19DC7E] mb-1 block">Your Stash</span>
-            <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Shopping Bag.</h2>
+            <h2 class="text-2xl md:text-3xl font-['Fredoka'] font-black text-gray-900">Shopping Bag.</h2>
         </div>
-        <button onclick="closeCartSidebar()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all">
-            <i class="fas fa-times text-xl"></i>
+        <button onclick="closeCartSidebar()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all">
+            <i class="fas fa-times text-lg md:text-xl"></i>
         </button>
     </div>
     
-    <div id="cart-items-container" class="flex-1 overflow-y-auto px-8 py-10 space-y-6">
+    <div id="cart-items-container" class="flex-1 overflow-y-auto px-4 md:px-8 py-6 md:py-10 space-y-4 md:space-y-6">
         <!-- populated by chunky.js -->
     </div>
     
-    <div class="p-8 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] relative z-20">
-        <div class="flex justify-between items-end mb-6">
+    <div class="p-6 md:p-8 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] relative z-20 shrink-0 pb-safe-bottom">
+        <div class="flex justify-between items-end mb-4 md:mb-6">
             <div>
                 <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Subtotal</span>
-                <span class="text-xs text-gray-300 font-bold">Tax & shipping calculated at checkout</span>
+                <span class="text-[10px] md:text-xs text-gray-300 font-bold hidden md:block">Tax & shipping calculated at checkout</span>
             </div>
-            <span id="cart-total" class="text-4xl font-['Fredoka'] font-black tracking-tighter text-gray-900">₹0</span>
+            <span id="cart-total" class="text-3xl md:text-4xl font-['Fredoka'] font-black tracking-tighter text-gray-900">₹0</span>
         </div>
-        <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-[#111827] text-white p-6 rounded-[28px] hover:bg-[#19DC7E] hover:text-black transition-all group shadow-2xl hover:shadow-[#19DC7E]/20 hover:-translate-y-1">
-            <span class="text-xl font-black">Secure Checkout</span>
-            <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-black/10 group-hover:text-black transition-colors">
-                <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
+        <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-[#111827] text-white p-5 md:p-6 rounded-[24px] hover:bg-[#19DC7E] hover:text-black transition-all group shadow-2xl hover:shadow-[#19DC7E]/20 hover:-translate-y-1">
+            <span class="text-lg md:text-xl font-black">Secure Checkout</span>
+            <div class="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-black/10 group-hover:text-black transition-colors">
+                <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform text-sm md:text-base"></i>
             </div>
         </a>
     </div>
