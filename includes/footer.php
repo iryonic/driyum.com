@@ -108,7 +108,7 @@
 
 <!-- MOBILE FLOATING NAVIGATION (Modern Dock) -->
 
-<!-- MOBILE BOTTOM NAVIGATION (Redesigned for guaranteed visibility) -->
+
 <div id="mobile-bottom-nav-container">
     <style>
         /* Default hidden on desktop */
