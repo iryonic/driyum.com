@@ -17,6 +17,13 @@ try {
     echo "<p>User: " . DB_USER . "</p>";
     
     // Check tables
+    echo "<h4>Existing Tables in Database:</h4><ul>";
+    $show_tables = mysqli_query($conn, "SHOW TABLES");
+    while($row = mysqli_fetch_row($show_tables)) {
+        echo "<li>" . $row[0] . "</li>";
+    }
+    echo "</ul>";
+
     $tables = ['products', 'orders', 'users', 'abandoned_carts'];
     foreach($tables as $t) {
         $res = mysqli_query($conn, "SELECT 1 FROM $t LIMIT 1");

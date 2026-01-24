@@ -69,12 +69,11 @@ if (isset($_SESSION['user_id'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php render_seo_tags('Shop Snacks', "Browse our collection of premium, sun-dried healthy snacks. Fresh from the valley, 100% organic."); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>">
+    <?php 
+    $page_title = 'Shop Snacks';
+    $page_description = "Browse our collection of premium, sun-dried healthy snacks. Fresh from the valley, 100% organic.";
+    include 'includes/head.php'; 
+    ?>
 
     <style>
         ::-webkit-scrollbar { width: 10px; }

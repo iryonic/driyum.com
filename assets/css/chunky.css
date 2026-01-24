@@ -353,24 +353,33 @@ h6 {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-.search-input-premium {
+input#header-search-input.search-input-premium {
     background-color: transparent !important;
+    background: transparent !important;
     background-image: none !important;
     border: none !important;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4) !important;
     border-radius: 0 !important;
     color: white !important;
     font-weight: 700;
     font-family: var(--font-heading);
-    padding: 0.5rem 0;
+    padding: 1rem 0 !important;
     transition: all 0.3s ease;
     box-shadow: none !important;
+    width: 100%;
+    outline: none !important;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
-.search-input-premium:focus {
+input#header-search-input.search-input-premium::placeholder {
+    color: rgba(255, 255, 255, 0.2) !important;
+}
+
+input#header-search-input.search-input-premium:focus {
     outline: none !important;
     border-color: var(--color-primary) !important;
-    box-shadow: 0 10px 20px -10px rgba(25, 220, 126, 0.1) !important;
+    box-shadow: 0 10px 30px -10px rgba(25, 220, 126, 0.3) !important;
 }
 
 /* Cart Specifics */

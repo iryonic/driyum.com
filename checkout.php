@@ -224,14 +224,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Checkout - DRIYUM</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>">
-
-    <script>const BASE_URL = '<?php echo BASE_URL; ?>';</script>
+    <?php 
+    $page_title = 'Secure Checkout';
+    include 'includes/head.php'; 
+    ?>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         .step-active { color: #19DC7E; }

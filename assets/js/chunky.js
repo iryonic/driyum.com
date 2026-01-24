@@ -202,7 +202,12 @@ window.addToCart = async function (productId, btnElement, quantity = 1) {
             // Check if sidebar is technically "active" or just reload it silently if user opens it later
             // But if it IS open, reload it now
             const sidebar = document.getElementById('cart-sidebar');
-            if (sidebar && !sidebar.classList.contains('translate-x-full')) {
+            const isSidebarOpen = sidebar && (
+                sidebar.style.transform === 'translateX(0px)' ||
+                sidebar.style.transform === 'translateX(0)' ||
+                !sidebar.classList.contains('translate-x-full')
+            );
+            if (isSidebarOpen) {
                 loadCartItems();
             }
 
@@ -270,10 +275,13 @@ window.updateCartQty = async function (productId, quantity) {
 
         // If sidebar is open, reload it
         const sidebar = document.getElementById('cart-sidebar');
-        if (sidebar && sidebar.classList.contains('translate-x-0')) {
-            loadCartItems();
-        } else if (sidebar && !sidebar.classList.contains('translate-x-full')) {
-            // Backup check for older class usage
+        const isSidebarOpen = sidebar && (
+            sidebar.style.transform === 'translateX(0px)' ||
+            sidebar.style.transform === 'translateX(0)' ||
+            !sidebar.classList.contains('translate-x-full')
+        );
+
+        if (isSidebarOpen) {
             loadCartItems();
         }
 

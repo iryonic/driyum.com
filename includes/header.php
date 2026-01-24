@@ -18,11 +18,10 @@ $announcement_parts = explode('•', $announcement_raw);
 run_crons();
 ?>
 
-<!-- Global JS Config -->
-<script>
-    const BASE_URL = "<?php echo get_url(''); ?>";
-</script>
-<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=<?php echo time(); ?>" defer></script>
+<!-- Global SEO tags are handled in head.php -->
+<?php
+// Header specific logic if needed
+?>
 
 <!-- INFINITE MARQUEE -->
 <div class="bg-black text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30">
@@ -215,11 +214,11 @@ run_crons();
         <button onclick="toggleSearch()" class="absolute -top-16 right-0 md:-top-20 md:right-0 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/10 text-white text-lg md:text-xl hover:bg-white hover:text-black hover:rotate-90 transition-all duration-300 z-50"><i class="fas fa-times"></i></button>
         
         <div class="text-center mb-4 md:mb-8 shrink-0">
-            <span class="inline-block px-3 py-1 md:px-4 md:py-1 rounded-full border border-[#19DC7E]/30 text-[#19DC7E] text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] bg-[#19DC7E]/5 mb-2 md:mb-4">Search The Store</span>
+            <span class="inline-block px-3 py-1 md:px-4 md:py-1 rounded-full border border-[#19DC7E]/30 text-[#19DC7E] text-xs md:text-[10px] font-black uppercase tracking-[0.3em] bg-[#19DC7E]/5 mb-2 md:mb-4">Search The Store</span>
         </div>
 
         <form action="<?php echo get_url('shop'); ?>" method="GET" class="relative group mb-8 md:mb-12 shrink-0">
-            <input type="text" name="q" id="header-search-input" placeholder="Craving?" class="search-input-premium w-full text-center placeholder-white/10 focus:placeholder-white/5 text-4xl md:text-7xl h-auto leading-tight">
+            <input type="text" name="q" id="header-search-input" placeholder="Craving?" class="search-input-premium w-full text-center placeholder-white/20 focus:placeholder-white/5 text-4xl md:text-7xl h-auto leading-tight">
             <button type="submit" class="absolute right-0 top-1/2 -translate-y-1/2 text-2xl md:text-4xl text-white/30 group-focus-within:text-[#19DC7E] transition-all hover:scale-110"><i class="fas fa-arrow-right"></i></button>
         </form>
 
@@ -237,7 +236,7 @@ run_crons();
 
             <!-- Dynamic Results -->
             <div class="h-full flex flex-col">
-                 <span class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4 md:mb-6 block shrink-0">Results</span>
+                 <span class="text-xs md:text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-4 md:mb-6 block shrink-0">Results</span>
                  <div id="search-results" class="overflow-y-auto hide-scrollbar space-y-3 pr-2 flex-1 pb-10">
                      <!-- Populated by JS -->
                  </div>

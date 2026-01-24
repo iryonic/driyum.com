@@ -65,12 +65,12 @@ if (isset($_SESSION['user_id'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php render_seo_tags($product['name'], $product['description'], $product['image']); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>">
+    <?php 
+    $page_title = $product['name'];
+    $page_description = $product['description'];
+    $page_image = $product['image'];
+    include 'includes/head.php'; 
+    ?>
 
     <style>
         ::-webkit-scrollbar { width: 8px; }
