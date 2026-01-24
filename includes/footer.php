@@ -109,9 +109,13 @@
 <!-- MOBILE FLOATING NAVIGATION (Modern Dock) -->
 
 <!-- MOBILE BOTTOM NAVIGATION (Redesigned for guaranteed visibility) -->
-<!-- MOBILE BOTTOM NAVIGATION (Redesigned for guaranteed visibility) -->
-<div id="mobile-bottom-nav-container" class="md:hidden">
+<div id="mobile-bottom-nav-container">
     <style>
+        /* Default hidden on desktop */
+        #mobile-bottom-nav-container {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             #mobile-bottom-nav-container {
                 display: block !important;
@@ -119,16 +123,11 @@
                 bottom: 20px !important;
                 left: 16px !important;
                 right: 16px !important;
-                z-index: 99999 !important;
+                z-index: 2147483647 !important;
             }
             /* Add padding to body to prevent content cutoff */
             body {
                 padding-bottom: 100px !important;
-            }
-        }
-        @media (min-width: 769px) {
-            #mobile-bottom-nav-container {
-                display: none !important;
             }
         }
     </style>
