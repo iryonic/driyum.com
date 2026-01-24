@@ -130,17 +130,17 @@
 
         #driyum-mobile-dock-inner-v2 {
             pointer-events: auto;
-            background: rgba(15, 23, 42, 0.85); /* Slate 900 Glass */
+            background: rgba(12, 12, 12, 0.85); /* Slate 900 Glass */
             backdrop-filter: blur(24px) saturate(140%);
             -webkit-backdrop-filter: blur(24px) saturate(140%);
             
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(27, 26, 26, 0.04);
             box-shadow: 
                 0 20px 40px -5px rgba(0, 0, 0, 0.4),
                 0 10px 10px -5px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.15); /* Top highlight */
             
-            border-radius: 40px;
+            border-radius: 20px;
             padding: 0 28px;
             height: 76px;
             width: auto;
