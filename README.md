@@ -38,7 +38,7 @@
 ## 📁 Project Structure
 
 ```
-newdry/
+driyum.com/
 ├── api/                          # AJAX API Endpoints
 │   ├── cart.php                  # Cart operations
 │   ├── search.php                # Product search
@@ -94,7 +94,7 @@ newdry/
 ### Step 1: Clone/Extract Project
 ```bash
 # Place project in XAMPP htdocs
-C:\xampp\htdocs\newdry\
+C:\xampp\htdocs\driyum.com\
 ```
 
 ### Step 2: Database Setup
@@ -119,8 +119,8 @@ define('DB_NAME', 'driyum_db');
 
 ### Step 4: Access Application
 ```
-Frontend: http://localhost/newdry/
-Admin Panel: http://localhost/newdry/admin/
+Frontend: http://localhost/driyum.com/
+Admin Panel: http://localhost/driyum.com/admin/
 ```
 
 ### Default Admin Credentials
