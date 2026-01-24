@@ -284,7 +284,7 @@ window.updateCartQty = async function (productId, quantity) {
             );
 
             if (isSidebarOpen) {
-                loadCartItems();
+                loadCartItems(true);
             }
         } else {
             // ROLLBACK if failed
@@ -326,7 +326,8 @@ window.updateCartIcon = async function () {
 }
 
 /* --- SIDEBAR CART --- */
-window.loadCartItems = async function () {
+/* --- SIDEBAR CART --- */
+window.loadCartItems = async function (isUpdate = false) {
     const container = document.getElementById('cart-items-container');
     if (!container) return;
 
@@ -347,10 +348,12 @@ window.loadCartItems = async function () {
                         <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop'" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#19DC7E] hover:text-black transition-all shadow-xl active:scale-95">Explore Snacks</button>
                     </div>`;
             } else {
-                container.innerHTML = data.items.map((item, index) => `
+                container.innerHTML = data.items.map((item, index) => {
+                    const animationStyle = isUpdate ? '' : `animation: cartItemSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: ${index * 50}ms; opacity: 0; transform: translateX(20px);`;
+                    return `
                     <div id="cart-item-${item.id}" 
                          class="cart-item-card group relative flex gap-5 items-center bg-white p-4 rounded-[28px] border-2 border-transparent hover:border-gray-50 transition-all duration-300"
-                         style="animation: cartItemSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: ${index * 50}ms; opacity: 0; transform: translateX(20px);">
+                         style="${animationStyle}">
                         <!-- Image Container with Float Animation -->
                         <div class="relative w-24 h-24 flex-shrink-0 bg-[#F3F4F6] rounded-[22px] overflow-hidden group-hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)] transition-shadow">
                              <a href="${BASE_URL}product/${item.id}"><img src="${BASE_URL}${item.image}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'"></a>
@@ -376,8 +379,8 @@ window.loadCartItems = async function () {
                         <button onclick="updateCartQty(${item.id}, 0)" class="absolute top-2 right-2 w-7 h-7 bg-red-50 text-red-300 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all shadow-lg scale-75 hover:scale-100">
                             <i class="fas fa-times text-[10px]"></i>
                         </button>
-                    </div>
-                `).join('');
+                    </div>`;
+                }).join('');
             }
         }
     } catch (e) {
