@@ -255,48 +255,111 @@ run_crons();
 </div>
 
 <script>
-    // Robust Search Trigger
+    // CRITICAL UI FUNCTIONS - INLINED FOR RELIABILITY
+    // These run immediately, ensuring buttons work even if chunky.js is slow/blocked
+
+    // 1. Search Toggle
+    if (!window.toggleSearch) {
+        window.toggleSearch = function() {
+            const overlay = document.getElementById('search-modal-overlay');
+            const modal = document.getElementById('search-modal');
+            const input = document.getElementById('header-search-input');
+            
+            if (!overlay || !modal) return;
+            
+            const isHidden = overlay.classList.contains('hidden');
+            if (isHidden) {
+                overlay.classList.remove('hidden');
+                // Force reflow
+                void overlay.offsetWidth; 
+                overlay.style.opacity = '1';
+                modal.style.transform = 'translateY(0)';
+                document.body.style.overflow = 'hidden';
+                if(input) setTimeout(() => input.focus(), 100);
+            } else {
+                overlay.style.opacity = '0';
+                modal.style.transform = 'translateY(-3rem)';
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+                document.body.style.overflow = '';
+            }
+        };
+    }
+
+    // 2. Mobile Menu Toggle
+    if (!window.toggleMobileMenuDrawer) {
+        window.toggleMobileMenuDrawer = function() {
+            const overlay = document.getElementById('mobile-menu-overlay');
+            const drawer = document.getElementById('mobile-menu-drawer');
+            if (!overlay || !drawer) return;
+
+            const isHidden = overlay.classList.contains('hidden');
+            if (isHidden) {
+                overlay.classList.remove('hidden');
+                void overlay.offsetWidth;
+                overlay.style.opacity = '1';
+                drawer.style.transform = 'translateX(0)';
+                document.body.style.overflow = 'hidden';
+            } else {
+                overlay.style.opacity = '0';
+                drawer.style.transform = 'translateX(-100%)';
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+                document.body.style.overflow = '';
+            }
+        };
+    }
+
+    // 3. Cart Sidebar Toggle
+    if (!window.openCartSidebar) {
+        window.openCartSidebar = function() {
+            const overlay = document.getElementById('cart-sidebar-overlay');
+            const sidebar = document.getElementById('cart-sidebar');
+            if (!overlay || !sidebar) return;
+
+            overlay.classList.remove('hidden');
+            void overlay.offsetWidth;
+            overlay.style.opacity = '1';
+            sidebar.style.transform = 'translateX(0)';
+            document.body.style.overflow = 'hidden';
+            
+            // Try to load items if function exists, or dispatch event
+            if (typeof loadCartItems === 'function') {
+                loadCartItems();
+            } else {
+                // Dispatch event for chunky.js to catch later
+                document.dispatchEvent(new CustomEvent('cart:open'));
+            }
+        };
+    }
+
+    if (!window.closeCartSidebar) {
+        window.closeCartSidebar = function() {
+            const overlay = document.getElementById('cart-sidebar-overlay');
+            const sidebar = document.getElementById('cart-sidebar');
+            if (!overlay || !sidebar) return;
+
+            overlay.style.opacity = '0';
+            sidebar.style.transform = 'translateX(100%)';
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+            document.body.style.overflow = '';
+        };
+    }
+
+    // BIND EVENTS MANUALLY JUST IN CASE
     document.addEventListener('DOMContentLoaded', function() {
-        const trigger = document.getElementById('mobile-search-trigger');
-        if (trigger) {
-            trigger.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                if (typeof toggleSearch === 'function') {
-                    toggleSearch();
-                } else {
-                    const overlay = document.getElementById('search-modal-overlay');
-                    const modal = document.getElementById('search-modal');
-                    const input = document.getElementById('header-search-input');
-                    
-                    if (overlay && modal) {
-                        const isHidden = overlay.classList.contains('hidden');
-                         if(isHidden) {
-                             overlay.classList.remove('hidden');
-                             setTimeout(() => {
-                                overlay.style.opacity = '1';
-                                modal.style.transform = 'translateY(0)';
-                                if(input) input.focus();
-                             }, 10);
-                             document.body.style.overflow = 'hidden';
-                         } else {
-                             overlay.style.opacity = '0';
-                             modal.style.transform = 'translateY(-3rem)';
-                             setTimeout(() => overlay.classList.add('hidden'), 300);
-                             document.body.style.overflow = '';
-                         }
-                    }
-                }
-            });
-        }
+        const searchBtn = document.getElementById('mobile-search-trigger');
+        if(searchBtn) searchBtn.onclick = function(e) { e.preventDefault(); window.toggleSearch(); };
+        
+        const menuBtn = document.getElementById('mobile-menu-trigger-btn');
+        if(menuBtn) menuBtn.onclick = function(e) { e.preventDefault(); window.toggleMobileMenuDrawer(); };
     });
 
     <?php 
     $flash = get_flash_message();
     if ($flash): ?>
-        if (typeof showToast === 'function') {
-            showToast("<?php echo addslashes($flash['message']); ?>", "<?php echo $flash['type']; ?>");
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof showToast === 'function') {
+                showToast("<?php echo addslashes($flash['message']); ?>", "<?php echo $flash['type']; ?>");
+            }
+        });
     <?php endif; ?>
 </script>
