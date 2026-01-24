@@ -111,10 +111,10 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </header>
 
-    <div class="container mx-auto px-4 pb-20 flex flex-col md:flex-row gap-8">
+    <div class="container mx-auto px-4 pb-20 flex flex-col lg:flex-row gap-8 lg:gap-12">
         
         <!-- SIDEBAR FILTERS (Desktop) -->
-        <aside class="w-full md:w-64 flex-shrink-0 hidden md:block">
+        <aside class="w-full lg:w-72 flex-shrink-0 hidden lg:block">
             <div class="sticky top-24 space-y-8">
                 <div class="card-chunky p-6 bg-white/50 backdrop-blur-xl border-white/40">
                     <h3 class="font-bold text-xl mb-5 font-['Fredoka'] flex items-center gap-2 text-gray-900">
@@ -153,7 +153,7 @@ if (isset($_SESSION['user_id'])) {
         </aside>
 
         <!-- MOBILE FILTER DROPDOWN -->
-        <div class="md:hidden w-full">
+        <div class="lg:hidden w-full">
             <select onchange="window.location.href=this.value" class="input-chunky mb-6">
                 <option value="<?php echo get_url('shop'); ?>">All Categories</option>
                 <?php foreach ($categories as $c): ?>
