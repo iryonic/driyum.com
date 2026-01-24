@@ -22,7 +22,7 @@ run_crons();
 <script>
     const BASE_URL = "<?php echo get_url(''); ?>";
 </script>
-<script src="<?php echo get_url('assets/js/chunky.js'); ?>" defer></script>
+<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=<?php echo time(); ?>" defer></script>
 
 <!-- INFINITE MARQUEE -->
 <div class="bg-black text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30">

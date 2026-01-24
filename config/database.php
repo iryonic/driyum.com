@@ -42,10 +42,12 @@ function get_db_connection() {
     static $conn = null;
     
     if ($conn === null) {
-        $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+        // Suppress warnings for connection to allowing catching
+        $conn = @mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
         
         if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
+            // Throw exception instead of die() so API can return JSON error
+            throw new Exception("Database Connection Error: " . mysqli_connect_error());
         }
         
         // Set charset to UTF-8
