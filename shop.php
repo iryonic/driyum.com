@@ -165,7 +165,7 @@ if (isset($_SESSION['user_id'])) {
         <!-- PRODUCT GRID -->
         <div class="flex-1 scroll-reveal">
             <?php if (count($products) > 0): ?>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     <?php 
                     $color_count = 1;
                     $default_colors = ['#E0F2FE', '#DCFCE7', '#FEF9C3', '#FFEDD5', '#F3E8FF', '#FFE4E6'];
@@ -225,7 +225,7 @@ if (isset($_SESSION['user_id'])) {
                                             <span class="w-2 h-2 rounded-full bg-[#19DC7E] opacity-50"></span>
                                             <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Outfit']"><?php echo htmlspecialchars($p['category_name'] ?: 'Kashmir Special'); ?></p>
                                         </div>
-                                        <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900 group-hover:text-black transition leading-none py-1"><?php echo $p['name']; ?></h3>
+                                        <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
                                         <p class="text-gray-400 text-xs mb-4 font-['Outfit'] line-clamp-2 min-h-[32px] font-medium"><?php echo $p['description']; ?></p>
                                         <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
                                             <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
@@ -237,7 +237,7 @@ if (isset($_SESSION['user_id'])) {
                             
                             <!-- Glass Action Bar (Floating at bottom) -->
                             <div class="px-3 pb-4 md:px-5 md:pb-5 pt-2 md:pt-3 mt-auto z-20 relative">
-                                <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 flex items-center justify-between border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
+                                <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 action-bar-chunky border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
                                      
                                      <!-- Price -->
                                      <div class="pl-2 md:pl-4 flex flex-col leading-none">

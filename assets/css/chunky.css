@@ -410,6 +410,31 @@ input#header-search-input.search-input-premium:focus {
     }
 }
 
+.card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2.4em;
+    /* Ensures consistency across cards */
+}
+
+.action-bar-chunky {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+    .action-bar-chunky {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+}
+
 /* Fluid Typography & Responsive Scaling */
 :root {
     --heading-clamp: clamp(2.5rem, 8vw, 6rem);

@@ -274,8 +274,8 @@ if (isset($_SESSION['user_id'])) {
                     $s = $styles[$i % count($styles)];
                     $i++;
                 ?>
-                <div class="flex-none w-[80vw] sm:w-[calc(50%-1.5rem)] md:w-[calc(33.333%-2rem)] lg:w-[calc(25%-2.5rem)] h-full">
-                    <a href="<?php echo category_url($c['slug']); ?>" class="block h-[450px] <?php echo $s['bg']; ?> rounded-[50px] p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:-translate-y-2">
+                <div class="flex-none w-[85vw] sm:w-[calc(50%-1.5rem)] md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2rem)] xl:w-[calc(25%-2.5rem)] snap-start h-full">
+                    <a href="<?php echo category_url($c['slug']); ?>" class="block h-[400px] md:h-[450px] <?php echo $s['bg']; ?> rounded-[50px] p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:-translate-y-2">
                 
                 <!-- Inner Glow/Border for 3D Feel -->
                 <div class="absolute inset-0 border border-white/40 rounded-[50px] z-20 pointer-events-none"></div>
@@ -292,7 +292,7 @@ if (isset($_SESSION['user_id'])) {
                              <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-xs md:text-base"></i>
                         </div>
                     </div>
-                    <h3 class="text-xl md:text-4xl font-['Fredoka'] font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm truncate"><?php echo $c['name']; ?></h3>
+                    <h3 class="text-xl md:text-4xl font-['Fredoka'] font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
                     <p class="<?php echo $s['text']; ?>/80 font-['Outfit'] font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
                         <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current animate-pulse"></span>
                         <?php echo $c['product_count']; ?> Varieties
@@ -362,7 +362,7 @@ if (isset($_SESSION['user_id'])) {
                     $delay += 100;
                 ?>
                 <!-- Premium Product Card Wrapper -->
-                <div class="flex-none flex-shrink-0 w-[80vw] sm:w-[calc(50%-1.5rem)] md:w-[calc(33.333%-2rem)] lg:w-[calc(25%-2.5rem)] snap-start h-full">
+                <div class="flex-none flex-shrink-0 w-[85vw] sm:w-[calc(50%-1.5rem)] md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2rem)] xl:w-[calc(25%-2.5rem)] snap-start h-full">
                     <div class="group relative rounded-[50px] hover:shadow-[0_45px_90px_rgba(0,0,0,0.15)] transition-all duration-700 overflow-hidden border-4 border-white/50 hover:border-white h-full flex flex-col anim-up" style="background-color: <?php echo $card_bg; ?>; animation-delay: <?php echo $delay; ?>ms">
                         
                         <!-- White Overlay (Fades out on hover for fuller color) -->
@@ -412,7 +412,7 @@ if (isset($_SESSION['user_id'])) {
                                         <span class="w-2 h-2 rounded-full bg-[#19DC7E] opacity-50"></span>
                                         <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Outfit']">Premium Select</p>
                                     </div>
-                                    <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900 group-hover:text-black transition leading-none py-1 truncate"><?php echo $p['name']; ?></h3>
+                                    <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
                                     <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
                                         <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
                                         <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest ml-1">(4.9)</span>
@@ -423,7 +423,7 @@ if (isset($_SESSION['user_id'])) {
                         
                         <!-- Glass Action Bar (Floating at bottom) -->
                         <div class="px-3 pb-4 md:px-5 md:pb-5 pt-2 md:pt-3 mt-auto z-20 relative">
-                            <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 flex items-center justify-between border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
+                            <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 action-bar-chunky border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
                                  
                                  <!-- Price -->
                                  <div class="pl-2 md:pl-4 flex flex-col leading-none">
