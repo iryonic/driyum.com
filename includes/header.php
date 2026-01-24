@@ -208,7 +208,7 @@ run_crons();
 <!-- SEARCH MODAL -->
 <!-- SEARCH MODAL (PREMIUM) -->
 <!-- SEARCH MODAL (PREMIUM) -->
-<div id="search-modal-overlay" onclick="toggleSearch()" class="fixed inset-0 bg-black/90 z-[120] hidden opacity-0 transition-opacity duration-300 flex flex-col items-center justify-start p-4 pt-20 md:p-6 backdrop-blur-md">
+<div id="search-modal-overlay" onclick="toggleSearch()" class="fixed inset-0 bg-black/90 z-[2000] hidden opacity-0 transition-opacity duration-300 flex flex-col items-center justify-start p-4 pt-20 md:p-6 backdrop-blur-md">
     <div id="search-modal" onclick="event.stopPropagation()" class="w-full max-w-5xl relative transform -translate-y-12 transition-transform duration-500 flex flex-col max-h-full">
         
         <button onclick="toggleSearch()" class="absolute -top-16 right-0 md:-top-20 md:right-0 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/10 text-white text-lg md:text-xl hover:bg-white hover:text-black hover:rotate-90 transition-all duration-300 z-50"><i class="fas fa-times"></i></button>
@@ -246,8 +246,8 @@ run_crons();
 </div>
 
 <!-- SIDEBAR CART -->
-<div id="cart-sidebar-overlay" onclick="closeCartSidebar()" class="fixed inset-0 bg-black/60 z-[100] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
-<div id="cart-sidebar" class="cart-drawer-enhanced fixed top-0 right-0 h-full w-[90%] md:w-[550px] max-w-[550px] bg-[#f8fafc] z-[101] transform translate-x-full transition-transform duration-500 flex flex-col shadow-2xl">
+<div id="cart-sidebar-overlay" onclick="closeCartSidebar()" class="fixed inset-0 bg-black/60 z-[2000] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+<div id="cart-sidebar" class="cart-drawer-enhanced fixed top-0 right-0 h-full w-[90%] md:w-[550px] max-w-[550px] bg-[#f8fafc] z-[2001] transform translate-x-full transition-transform duration-500 flex flex-col shadow-2xl">
     <div class="px-6 md:px-8 pt-safe-top pt-8 md:pt-12 pb-6 md:pb-8 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
         <div>
             <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#19DC7E] mb-1 block">Your Stash</span>
@@ -262,7 +262,7 @@ run_crons();
         <!-- populated by chunky.js -->
     </div>
     
-    <div class="p-6 md:p-8 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] relative z-20 shrink-0 pb-safe-bottom">
+    <div class="px-6 md:px-8 py-8 md:py-10 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] relative z-20 shrink-0 pb-12 md:pb-8">
         <div class="flex justify-between items-end mb-4 md:mb-6">
             <div>
                 <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Subtotal</span>
