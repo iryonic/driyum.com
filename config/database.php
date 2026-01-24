@@ -30,7 +30,11 @@ if (!defined('BASE_URL')) {
 
 // Full Absolute URL (for SEO, sharing, and canonical tags)
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http");
+$protocol = 'http';
+if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || 
+    (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+    $protocol = 'https';
+}
 define('FULL_BASE_URL', $protocol . "://" . $host . BASE_URL);
 
 // Create connection
