@@ -1,0 +1,272 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+require_once '../config/database.php';
+require_once '../includes/functions.php';
+
+// Strict Admin Check
+if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+    header("Location: ../login.php");
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driyum Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/chunky.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+        
+        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .fredoka { font-family: 'Fredoka', sans-serif; }
+        
+        .admin-sidebar { 
+            height: 100vh; 
+            position: fixed; 
+            left: 0; 
+            top: 0; 
+            width: 280px; 
+            overflow-y: auto; 
+            background: #0f172a;
+            z-index: 100;
+        }
+        
+        .admin-sidebar::-webkit-scrollbar { width: 4px; }
+        .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        
+        .admin-content { margin-left: 280px; padding: 2.5rem; }
+        
+        .nav-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-link-active {
+            background: #19DC7E !important;
+            color: #000 !important;
+            font-weight: 800;
+            box-shadow: 0 10px 15px -3px rgba(25, 220, 126, 0.4);
+        }
+        
+        .btn-chunky {
+            border-bottom: 4px solid rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .btn-chunky:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        /* Image Preview Overlay */
+        .preview-container img {
+            transition: transform 0.3s ease;
+        }
+        .preview-container:hover img {
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 1024px) {
+            .admin-sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-content { margin-left: 0; padding: 1.5rem; }
+        }
+    </style>
+    <script>
+        function previewImage(input, targetId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    const target = document.getElementById(targetId);
+                    if (target.tagName === 'IMG') {
+                        target.src = e.target.result;
+                    } else {
+                        target.style.backgroundImage = `url(${e.target.result})`;
+                        target.innerHTML = ''; // Clear icon/text
+                    }
+                    target.classList.add('preview-active');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function previewMultipleImages(input, targetContainerId) {
+            if (input.files) {
+                const container = document.getElementById(targetContainerId);
+                // Don't clear existing, just append new previews for clarity or maybe clear selected?
+                // Let's clear the specific "new previews" area
+                let previewArea = container.querySelector('.new-previews-area');
+                if(!previewArea) {
+                    previewArea = document.createElement('div');
+                    previewArea.className = 'new-previews-area grid grid-cols-4 gap-4 mt-4 w-full';
+                    container.appendChild(previewArea);
+                }
+                previewArea.innerHTML = ''; 
+
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'relative group aspect-square';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border-2 border-[#19DC7E]">
+                            <span class="absolute top-1 left-1 bg-[#19DC7E] text-black text-[8px] font-black px-1.5 py-0.5 rounded-full">NEW</span>
+                        `;
+                        previewArea.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+
+    <!-- MOBILE TOGGLE -->
+    <button onclick="document.querySelector('.admin-sidebar').classList.toggle('open')" class="lg:hidden fixed bottom-4 right-4 z-50 w-14 h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center text-xl">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar bg-[#111827] text-white p-6 flex flex-col">
+        <div class="mb-10 flex items-center gap-3 px-2">
+            <div class="w-10 h-10 bg-[#19DC7E] rounded-full flex items-center justify-center text-black text-xl font-bold">
+                <i class="fas fa-crown"></i>
+            </div>
+            <span class="font-['Fredoka'] font-bold text-2xl tracking-wide">Admin</span>
+        </div>
+
+        <nav class="space-y-2 flex-1 font-['Outfit']">
+            <a href="index.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='index.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-chart-pie w-6"></i> Dashboard
+            </a>
+            <a href="products.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo (basename($_SERVER['PHP_SELF'])=='products.php' || basename($_SERVER['PHP_SELF'])=='product_form.php')?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-box w-6"></i> Products
+            </a>
+            <a href="categories.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo (basename($_SERVER['PHP_SELF'])=='categories.php' || basename($_SERVER['PHP_SELF'])=='category_form.php')?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-tags w-6"></i> Categories
+            </a>
+            <a href="orders.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='orders.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-shipping-fast w-6"></i> Orders
+            </a>
+            <a href="users.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='users.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-users w-6"></i> Customers
+            </a>
+            <a href="coupons.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='coupons.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-ticket-alt w-6"></i> Coupons
+            </a>
+            <a href="affiliates.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='affiliates.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-handshake w-6"></i> Creators & Affiliates
+            </a>
+            <a href="subscribers.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='subscribers.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-envelope-open-text w-6"></i> Subscribers
+            </a>
+            <a href="shipping.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='shipping.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-truck-moving w-6"></i> Shipping & Delivery
+            </a>
+            
+            <div class="h-px bg-gray-800 my-4 mx-2"></div>
+            <h4 class="px-4 text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Content</h4>
+            
+            <a href="manage_home.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_home.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-home w-6"></i> Homepage
+            </a>
+            <a href="manage_contact.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_contact.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-headset w-6"></i> Contact & Inbox
+            </a>
+            <a href="reviews.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='reviews.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-star w-6"></i> Product Reviews
+            </a>
+            <a href="manage_testimonials.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_testimonials.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-quote-left w-6"></i> Testimonials
+            </a>
+            <a href="settings.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='settings.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-cog w-6"></i> Store Settings
+            </a>
+        </nav>
+
+        <div class="pt-6 border-t border-gray-800">
+            <a href="../index.php" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 text-gray-400 transition mb-2">
+                <i class="fas fa-external-link-alt w-6"></i> View Store
+            </a>
+            <a href="../logout.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition">
+                <i class="fas fa-sign-out-alt w-6"></i> Logout
+            </a>
+        </div>
+    </aside>
+
+    <main class="admin-content min-h-screen">
+        <!-- Top Bar with Notifications -->
+        <div class="flex justify-end mb-8 relative z-50">
+           <?php 
+           $unread_notifs = get_unread_notifications(); 
+           $unread_count = count($unread_notifs);
+           ?>
+           <div class="relative group" id="notif-dropdown">
+               <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all relative">
+                   <i class="fas fa-bell text-gray-400 text-lg group-hover:text-black transition-colors"></i>
+                   <?php if ($unread_count > 0): ?>
+                       <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white animate-pulse">
+                           <?php echo $unread_count; ?>
+                       </span>
+                   <?php endif; ?>
+               </button>
+               
+               <!-- Dropdown -->
+               <div class="absolute right-0 top-full mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 hidden group-hover:block transition-all opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
+                   <div class="px-4 py-3 border-b border-gray-50 flex justify-between items-center">
+                       <h4 class="font-bold text-gray-900">Notifications</h4>
+                       <span class="text-xs text-gray-400"><?php echo $unread_count; ?> new</span>
+                   </div>
+                   <div class="max-h-[70vh] overflow-y-auto">
+                       <?php if (empty($unread_notifs)): ?>
+                           <div class="p-8 text-center text-gray-400 text-sm">
+                               <i class="far fa-bell-slash text-2xl mb-2 block opacity-50"></i>
+                               All caught up!
+                           </div>
+                       <?php else: ?>
+                           <?php foreach($unread_notifs as $notif): ?>
+                               <a href="<?php echo !empty($notif['link']) ? $notif['link'] : '#'; ?>" onclick="markRead(<?php echo $notif['id']; ?>)" class="block px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-50 last:border-0 relative group/item">
+                                   <div class="flex gap-4">
+                                       <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                                            <?php if($notif['type'] == 'order'): ?>
+                                                <i class="fas fa-shopping-bag"></i>
+                                            <?php elseif($notif['type'] == 'alert'): ?>
+                                                <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                                            <?php else: ?>
+                                                <i class="fas fa-info-circle"></i>
+                                            <?php endif; ?>
+                                       </div>
+                                       <div>
+                                           <p class="text-sm font-medium text-gray-800 leading-tight mb-1 group-hover/item:text-blue-600 transition-colors">
+                                               <?php echo htmlspecialchars($notif['message']); ?>
+                                           </p>
+                                           <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                               <?php echo date('M d, H:i', strtotime($notif['created_at'])); ?>
+                                           </p>
+                                       </div>
+                                        <?php if(!$notif['is_read']): ?>
+                                           <div class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <?php endif; ?>
+                                   </div>
+                               </a>
+                           <?php endforeach; ?>
+                       <?php endif; ?>
+                   </div>
+               </div>
+           </div>
+        </div>
+        
+        <script>
+        async function markRead(id) {
+             // In a real app we would use fetch to mark as read without reload
+             // For this simple version, we'll let the click navigate and maybe assume read
+             // Or better, creating a quick endpoint
+             try {
+                // We'll create a simple ajax endpoint for this next
+                await fetch('mark_notification_read.php?id=' + id);
+             } catch(e) {}
+        }
+        </script>

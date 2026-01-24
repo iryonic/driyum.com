@@ -1,0 +1,22 @@
+id | int(11) | NO | PRI |  | auto_increment
+order_number | varchar(50) | NO | UNI |  | 
+user_id | int(11) | YES | MUL |  | 
+affiliate_id | int(11) | YES | MUL |  | 
+subtotal | decimal(10,2) | NO |  |  | 
+discount | decimal(10,2) | YES |  | 0.00 | 
+shipping_cost | decimal(10,2) | YES |  | 0.00 | 
+total | decimal(10,2) | NO |  |  | 
+affiliate_commission | decimal(10,2) | YES |  | 0.00 | 
+payment_method | varchar(50) | NO |  |  | 
+payment_status | varchar(50) | YES |  | pending | 
+razorpay_payment_id | varchar(255) | YES |  |  | 
+order_status | varchar(50) | YES | MUL | pending | 
+shipping_address | text | NO |  |  | 
+tracking_number | varchar(100) | YES |  |  | 
+tracking_note | text | YES |  |  | 
+dispatch_date | datetime | YES |  |  | 
+shipping_method_id | int(11) | YES |  |  | 
+shipping_zone_id | int(11) | YES |  |  | 
+notes | text | YES |  |  | 
+created_at | timestamp | NO | MUL | current_timestamp() | 
+updated_at | timestamp | NO |  | current_timestamp() | on update current_timestamp()

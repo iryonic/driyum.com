@@ -1,0 +1,579 @@
+/* ==================== ELEGANT REFINEMENTS ==================== */
+/* Sophisticated design enhancements for timeless elegance */
+
+/* ==================== REFINED TYPOGRAPHY ==================== */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.01em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 800;
+}
+
+h2 {
+    font-size: clamp(1.75rem, 4vw, 3rem);
+}
+
+p {
+    line-height: 1.7;
+    color: #4a5568;
+}
+
+/* ==================== ELEGANT SPACING SYSTEM ==================== */
+.section-padding {
+    padding: clamp(3rem, 8vw, 6rem) 0;
+}
+
+.container-elegant {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+}
+
+/* ==================== REFINED SHADOWS ==================== */
+.shadow-elegant {
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 4px 16px rgba(0, 0, 0, 0.06),
+        0 16px 48px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-elegant-hover {
+    transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shadow-elegant-hover:hover {
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.05),
+        0 12px 24px rgba(0, 0, 0, 0.08),
+        0 24px 64px rgba(0, 0, 0, 0.06);
+}
+
+/* ==================== SOPHISTICATED BUTTONS ==================== */
+.btn-elegant {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 2rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: 0.01em;
+    border-radius: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-elegant:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.btn-elegant:hover:before {
+    opacity: 1;
+}
+
+.btn-elegant-primary {
+    background: linear-gradient(135deg, #2BB35C 0%, #229447 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(43, 179, 92, 0.25);
+}
+
+.btn-elegant-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(43, 179, 92, 0.35);
+}
+
+.btn-elegant-secondary {
+    background: white;
+    color: #2BB35C;
+    border: 1.5px solid rgba(43, 179, 92, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.btn-elegant-secondary:hover {
+    border-color: #2BB35C;
+    box-shadow: 0 4px 16px rgba(43, 179, 92, 0.15);
+    transform: translateY(-1px);
+}
+
+/* ==================== REFINED CARDS ==================== */
+.card-elegant {
+    background: white;
+    border-radius: 1.25rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-elegant:hover {
+    border-color: rgba(43, 179, 92, 0.15);
+    transform: translateY(-4px);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.05),
+        0 16px 48px rgba(0, 0, 0, 0.08);
+}
+
+/* ==================== ELEGANT INPUTS ==================== */
+.input-elegant {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: #2d3748;
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.input-elegant:focus {
+    border-color: #2BB35C;
+    box-shadow: 0 0 0 3px rgba(43, 179, 92, 0.1);
+}
+
+.input-elegant::placeholder {
+    color: #a0aec0;
+}
+
+/* ==================== SOPHISTICATED ANIMATIONS ==================== */
+@keyframes elegant-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes elegant-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes elegant-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-elegant-fade-in {
+    animation: elegant-fade-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-elegant-scale-in {
+    animation: elegant-scale-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-elegant-slide-in {
+    animation: elegant-slide-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ==================== STAGGER DELAYS ==================== */
+.stagger-1 {
+    animation-delay: 0.1s;
+}
+
+.stagger-2 {
+    animation-delay: 0.2s;
+}
+
+.stagger-3 {
+    animation-delay: 0.3s;
+}
+
+.stagger-4 {
+    animation-delay: 0.4s;
+}
+
+.stagger-5 {
+    animation-delay: 0.5s;
+}
+
+/* ==================== ELEGANT DIVIDERS ==================== */
+.divider-elegant {
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(0, 0, 0, 0.08),
+            transparent);
+    margin: 3rem 0;
+}
+
+.divider-elegant-vertical {
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg,
+            transparent,
+            rgba(0, 0, 0, 0.08),
+            transparent);
+}
+
+/* ==================== REFINED BADGES ==================== */
+.badge-elegant {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 9999px;
+    border: 1px solid;
+}
+
+.badge-elegant-primary {
+    background: rgba(43, 179, 92, 0.1);
+    border-color: rgba(43, 179, 92, 0.2);
+    color: #229447;
+}
+
+.badge-elegant-secondary {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+    color: #5a5fcf;
+}
+
+.badge-elegant-accent {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.2);
+    color: #d97706;
+}
+
+/* ==================== ELEGANT LINKS ==================== */
+.link-elegant {
+    color: #2BB35C;
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.link-elegant:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.link-elegant:hover {
+    color: #229447;
+}
+
+.link-elegant:hover:after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* ==================== REFINED TOOLTIPS ==================== */
+.tooltip-elegant {
+    position: relative;
+}
+
+.tooltip-elegant:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    padding: 0.5rem 0.875rem;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+}
+
+.tooltip-elegant:hover:before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-12px);
+}
+
+/* ==================== ELEGANT IMAGES ==================== */
+.image-elegant {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.image-elegant img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.image-elegant:hover img {
+    transform: scale(1.05);
+}
+
+/* ==================== SOPHISTICATED GRADIENTS ==================== */
+.gradient-elegant-primary {
+    background: linear-gradient(135deg, #2BB35C 0%, #229447 100%);
+}
+
+.gradient-elegant-secondary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-elegant-accent {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.gradient-elegant-muted {
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+}
+
+/* ==================== REFINED HOVER STATES ==================== */
+.hover-elegant {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-elegant:hover {
+    transform: translateY(-2px);
+}
+
+.hover-elegant-scale:hover {
+    transform: scale(1.02);
+}
+
+/* ==================== ELEGANT FOCUS STATES ==================== */
+*:focus-visible {
+    outline: 2px solid #2BB35C;
+    outline-offset: 3px;
+    border-radius: 0.25rem;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline-offset: 4px;
+}
+
+/* ==================== REFINED SCROLLBAR ==================== */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f7fafc;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #2BB35C, #229447);
+    border-radius: 10px;
+    border: 2px solid #f7fafc;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #229447, #1a7035);
+}
+
+/* ==================== ELEGANT SELECTION ==================== */
+::selection {
+    background: rgba(43, 179, 92, 0.2);
+    color: #1a202c;
+}
+
+::-moz-selection {
+    background: rgba(43, 179, 92, 0.2);
+    color: #1a202c;
+}
+
+/* ==================== REFINED LOADING STATES ==================== */
+.skeleton-elegant {
+    background: linear-gradient(90deg,
+            #f0f0f0 0%,
+            #f8f8f8 20%,
+            #f0f0f0 40%,
+            #f0f0f0 100%);
+    background-size: 200% 100%;
+    animation: elegant-skeleton 1.8s ease-in-out infinite;
+    border-radius: 0.5rem;
+}
+
+@keyframes elegant-skeleton {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ==================== SOPHISTICATED GRID ==================== */
+.grid-elegant {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.grid-elegant-2 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.grid-elegant-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.grid-elegant-4 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* ==================== ELEGANT TRANSITIONS ==================== */
+.transition-elegant {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-elegant-slow {
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-elegant-fast {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== REFINED BORDERS ==================== */
+.border-elegant {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.border-elegant-hover {
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.border-elegant-hover:hover {
+    border-color: rgba(43, 179, 92, 0.3);
+}
+
+/* ==================== ELEGANT BACKDROP ==================== */
+.backdrop-elegant {
+    backdrop-filter: blur(24px) saturate(180%);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.backdrop-elegant-dark {
+    backdrop-filter: blur(24px) saturate(180%);
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ==================== REFINED OVERLAYS ==================== */
+.overlay-elegant {
+    position: relative;
+}
+
+.overlay-elegant:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+            rgba(43, 179, 92, 0.05),
+            transparent,
+            rgba(43, 179, 92, 0.05));
+    opacity: 0;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.overlay-elegant:hover:before {
+    opacity: 1;
+}
+
+/* ==================== ELEGANT UTILITY CLASSES ==================== */
+.text-elegant-primary {
+    color: #2BB35C;
+}
+
+.text-elegant-muted {
+    color: #718096;
+}
+
+.text-elegant-secondary {
+    color: #4a5568;
+}
+
+.bg-elegant-light {
+    background: #fafbfc;
+}
+
+.bg-elegant-white {
+    background: #ffffff;
+}
+
+/* ==================== RESPONSIVE REFINEMENTS ==================== */
+@media (max-width: 768px) {
+    .section-padding {
+        padding: clamp(2rem, 6vw, 4rem) 0;
+    }
+
+    h1 {
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+    }
+
+    h2 {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+
+    .shadow-elegant,
+    .shadow-elegant-hover {
+        box-shadow: none !important;
+    }
+
+    .card-elegant {
+        border: 1px solid #e2e8f0 !important;
+    }
+}

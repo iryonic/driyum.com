@@ -1,0 +1,231 @@
+/* ==========================================================================
+   DRIYUM HIPPIE GREEN - Retro Fresh Aesthetic
+   ========================================================================== */
+
+/* --- FONTS --- */
+@import url('https://fonts.googleapis.com/css2?family=ChunkFive&family=DM+Sans:wght@400;500;700&display=swap');
+
+@font-face {
+    font-family: 'RetroChunk';
+    src: url('https://fonts.gstatic.com/s/chunkfive/v17/AuK_pd2nyp-V58y0Xz8d.woff2') format('woff2');
+}
+
+:root {
+    /* Brand Palette - Green Centric */
+    --color-brand: #2BB35C;
+    /* Driyum Green */
+    --color-brand-dark: #1e8743;
+    --color-text: #0e3f22;
+    /* Deep Forest Text */
+    --color-accent: #FFD43B;
+    /* Sunny Yellow (accents) */
+    --color-cream: #F0FDF4;
+    /* Light Mint Background */
+    --color-white: #ffffff;
+
+    /* Secondary Cards */
+    --color-card-1: #2BB35C;
+    --color-card-2: #4ade80;
+    --color-card-3: #86efac;
+
+    /* Typography */
+    --font-heading: 'RetroChunk', serif;
+    --font-body: 'DM Sans', sans-serif;
+
+    /* Spacing & Radius */
+    --radius-btn: 50px;
+    --radius-card: 32px;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-cream);
+    color: var(--color-text);
+    overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+/* --- UTILITIES --- */
+.container-fluid {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 5%;
+}
+
+.text-brand {
+    color: var(--color-brand);
+}
+
+.bg-brand {
+    background-color: var(--color-brand);
+}
+
+.text-accent {
+    color: var(--color-accent);
+}
+
+/* --- BUTTONS --- */
+.btn-hippie {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 3rem;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    border-radius: var(--radius-btn);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--color-text);
+    color: var(--color-accent);
+    border: 3px solid var(--color-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-accent);
+    color: var(--color-text);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 0 rgba(14, 63, 34, 0.2);
+}
+
+/* --- HEADER --- */
+.header-hippie {
+    background: var(--color-brand);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 4px solid var(--color-text);
+}
+
+.nav-link {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: white;
+    text-transform: uppercase;
+    transition: 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--color-accent);
+    transform: rotate(-2deg);
+}
+
+/* --- HERO --- */
+.hero-sunburst {
+    background: repeating-conic-gradient(#2BB35C 0deg 15deg,
+            #35C66B 15deg 30deg);
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    background: var(--color-cream);
+    padding: 4rem;
+    border-radius: 60px;
+    border: 5px solid var(--color-text);
+    box-shadow: 15px 15px 0 var(--color-text);
+    max-width: 800px;
+    z-index: 10;
+    position: relative;
+}
+
+/* --- CATEGORY SLIDER (Swiper Override) --- */
+.category-slide {
+    background: white;
+    border-radius: var(--radius-card);
+    border: 3px solid var(--color-text);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.category-slide:hover {
+    background: var(--color-accent);
+    transform: translateY(-10px) rotate(2deg);
+}
+
+/* --- PRODUCT CARD --- */
+.card-hippie {
+    background: white;
+    border-radius: var(--radius-card);
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s;
+    border: 3px solid var(--color-text);
+    box-shadow: 8px 8px 0 rgba(14, 63, 34, 0.1);
+}
+
+.card-hippie:hover {
+    transform: translateY(-10px);
+    box-shadow: 12px 12px 0 var(--color-text);
+}
+
+.card-img-container {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-img-container img {
+    max-height: 100%;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-hippie:hover img {
+    transform: scale(1.15) rotate(5deg);
+}
+
+/* --- TESTIMONIALS --- */
+.testimonial-card {
+    background: var(--color-brand);
+    color: white;
+    padding: 2.5rem;
+    border-radius: var(--radius-card);
+    border: 3px solid var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+/* --- FOOTER --- */
+.footer-hippie {
+    background: var(--color-text);
+    color: var(--color-cream);
+    padding: 5rem 0;
+    border-top: 10px solid var(--color-accent);
+}
+
+/* --- DECORATIONS --- */
+.wave-top {
+    height: 60px;
+    background: var(--color-cream);
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%23ffffff'/%3E%3C/svg%3E");
+    mask-size: cover;
+    margin-top: -60px;
+    position: relative;
+    z-index: 20;
+}

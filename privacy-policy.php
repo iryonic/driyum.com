@@ -1,0 +1,134 @@
+<?php
+session_start();
+require_once 'config/database.php';
+require_once 'includes/functions.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php render_seo_tags('Privacy Policy & Terms', 'Read about how DRIYUM protects your data and our terms of service and refund policies.'); ?>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/chunky.css">
+</head>
+<body class="bg-[#FFFBEB] font-['Outfit']">
+
+    <?php include 'includes/header.php'; ?>
+
+    <!-- HERO SECTION -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="container mx-auto max-w-4xl text-center">
+            <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up">Trust & Transparency</span>
+            <h1 class="text-5xl md:text-7xl font-['Fredoka'] font-black text-gray-900 mb-6 anim-up delay-100">Legal Bits <span class="text-[#19DC7E]">.</span></h1>
+            <p class="text-xl text-gray-400 font-medium max-w-2xl mx-auto anim-up delay-200">Everything you need to know about our relationship, your data, and how we handle your crunchy boxes.</p>
+        </div>
+    </section>
+
+    <!-- CONTENT SECTION -->
+    <section class="pb-32 px-6">
+        <div class="container mx-auto max-w-4xl">
+            
+            <div class="bg-white rounded-[50px] p-8 md:p-16 shadow-sm border border-gray-100 space-y-16 anim-up delay-300">
+                
+                <!-- PRIVACY POLICY -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-[#19DC7E]/10 rounded-2xl flex items-center justify-center text-[#19DC7E] text-xl">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Privacy Policy</h2>
+                    </div>
+                    <div class="text-gray-500 leading-relaxed space-y-4 font-medium">
+                        <p>At Driyum, we value your privacy and are committed to protecting your personal information. When you visit our website or place an order, we may collect basic details such as your name, phone number, email address, delivery address, and payment-related information.</p>
+                        <p>This information is collected solely for the purpose of processing orders, providing customer support, and improving our services. We do not sell, rent, or share your personal data with third parties, except where required to complete your order (such as payment gateways and delivery partners) or when required by law.</p>
+                        <p>All online payments are processed through secure third-party payment gateways. Driyum does not store your card, UPI, or banking details.</p>
+                        <p>By using our website, you consent to the collection and use of information as described in this Privacy Policy. Driyum reserves the right to update this policy at any time. Any changes will be reflected on this page.</p>
+                    </div>
+                </div>
+
+                <div class="h-px bg-gray-50"></div>
+
+                <!-- TERMS & CONDITIONS -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 text-xl">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Terms & Conditions</h2>
+                    </div>
+                    <div class="text-gray-500 leading-relaxed space-y-4 font-medium">
+                        <p>By accessing and using the Driyum website, you agree to comply with these terms and conditions.</p>
+                        <p>All products sold by Driyum are food products. Dehydrated fruits are intended for direct consumption, while dehydrated vegetables are intended for cooking purposes only. Product images shown on the website are for representation purposes only. Actual product colour, size, and texture may vary due to natural variations in fruits and vegetables.</p>
+                        <p>Prices, product availability, and offers are subject to change without prior notice. Driyum reserves the right to cancel or refuse any order due to unforeseen circumstances, including stock unavailability, pricing errors, or quality concerns. By placing an order, you confirm that the information provided by you is accurate and complete.</p>
+                    </div>
+                </div>
+
+                <div class="h-px bg-gray-50"></div>
+
+                <!-- RETURNS & REFUND POLICY -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500 text-xl">
+                            <i class="fas fa-rotate-left"></i>
+                        </div>
+                        <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Returns & Refund Policy</h2>
+                    </div>
+                    <div class="text-gray-500 leading-relaxed space-y-6 font-medium">
+                        <p>Due to the nature of food products, returns are not accepted once an order has been delivered. Refunds may be considered only in special cases, including:</p>
+                        <ul class="grid gap-3">
+                            <li class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                <i class="fas fa-circle-check text-[#19DC7E]"></i> Damaged or broken packaging
+                            </li>
+                            <li class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                <i class="fas fa-circle-check text-[#19DC7E]"></i> Opened or unsealed pouches
+                            </li>
+                            <li class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                <i class="fas fa-circle-check text-[#19DC7E]"></i> Product received in a compromised or unfit condition
+                            </li>
+                        </ul>
+                        <div class="bg-yellow-50 p-6 rounded-3xl border border-yellow-100">
+                            <p class="text-yellow-800 font-bold mb-2 flex items-center gap-2">
+                                <i class="fas fa-video"></i> Unboxing Video Required
+                            </p>
+                            <p class="text-yellow-700 text-sm">To request a refund, customers are required to share a clear unboxing video of the package. The video must show the parcel being opened from start to finish and clearly display the condition of the outer packaging, inner pouch, and product seal at the time of opening. Refund requests without a valid unboxing video may not be considered.</p>
+                        </div>
+                        <p>If the issue is verified, a refund will be initiated. Refunds will include only the product cost. Shipping charges and any additional charges are non-refundable. Approved refunds will be credited to the original payment method within 3–5 working days. Driyum reserves the right to approve or reject refund requests based on verification.</p>
+                    </div>
+                </div>
+
+                <div class="h-px bg-gray-50"></div>
+
+                <!-- DISCLAIMER -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 text-xl">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </div>
+                        <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Disclaimer</h2>
+                    </div>
+                    <div class="text-gray-500 leading-relaxed space-y-4 font-medium">
+                        <p>Driyum products are made using natural fruits and vegetables. As these are agricultural products, variations in colour, taste, texture, and appearance may occur.</p>
+                        <p>Nutritional values mentioned on the website or packaging are approximate values based on standard food composition data. Actual values may vary.</p>
+                        <p>Driyum products are not intended to diagnose, treat, cure, or prevent any disease. Customers with specific medical conditions or dietary requirements are advised to consult a professional before consumption.</p>
+                        <p>Dehydrated vegetables sold by Driyum are intended for cooking purposes only and are not meant for direct consumption.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FAQ CTA -->
+            <div class="mt-16 text-center anim-up delay-500">
+                <p class="text-gray-400 mb-6 font-bold uppercase tracking-widest text-xs">Still have questions?</p>
+                <a href="<?php echo get_url('contact'); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-5 shadow-2xl hover:bg-[#19DC7E] hover:text-black inline-flex items-center gap-3">
+                    Chat with Us <i class="fas fa-comments"></i>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <?php include 'includes/footer.php'; ?>
+</body>
+</html>

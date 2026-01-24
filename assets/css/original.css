@@ -1,0 +1,144 @@
+/* ==========================================================================
+   DRIYUM ORIGINAL - Replicating Driyum.com live site
+   ========================================================================== */
+
+/* Importing Fredoka for that signature playful look */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Exact Palette from Analysis */
+    --color-bg: #FFFBEB;
+    /* Warm Cream */
+    --color-green: #19DC7E;
+    /* Bright Mint Green */
+    --color-green-dark: #10b968;
+    --color-text: #111827;
+    /* Deep Navy Black */
+    --color-text-light: #4b5563;
+
+    --font-heading: 'Fredoka', cursive;
+    --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --radius-pill: 9999px;
+    --radius-card: 24px;
+    --radius-input: 12px;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+}
+
+/* --- BACKGROUND BLOBS (The Organic Feel) --- */
+.blob-bg {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.6;
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: #dcfce7;
+}
+
+/* Soft Green */
+.blob-2 {
+    bottom: -10%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: #feQSf2;
+}
+
+/* Soft Pinkish */
+
+/* --- BUTTONS --- */
+.btn-original {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: var(--font-heading);
+    /* Fredoka on buttons too */
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary {
+    background-color: var(--color-green);
+    color: var(--color-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* --- NAV (Minimalist) --- */
+.nav-original {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem 0;
+    z-index: 50;
+}
+
+.logo-text {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+}
+
+/* --- CARDS & GRIDS --- */
+.card-original {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-card);
+    padding: 2rem;
+    transition: 0.3s;
+}
+
+.card-original:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.02);
+}
+
+/* --- BADGE --- */
+.badge-pill {
+    background-color: var(--color-text);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}

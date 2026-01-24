@@ -1,0 +1,51 @@
+# Error Pages - Update path if in subdirectory
+# For Live (Root): /404.php
+# For Local: /newdry/404.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
+ErrorDocument 505 /505.php
+
+RewriteEngine On
+# Set RewriteBase to / for live domain, or /folder/ for subdirectory
+# RewriteBase /
+
+# 1. Clean Core Pages
+RewriteRule ^about$ about.php [L,QSA]
+RewriteRule ^contact$ contact.php [L,QSA]
+RewriteRule ^cart$ cart.php [L,QSA]
+RewriteRule ^checkout$ checkout.php [L,QSA]
+RewriteRule ^shop$ shop.php [L,QSA]
+RewriteRule ^account$ account.php [L,QSA]
+RewriteRule ^login$ login.php [L,QSA]
+RewriteRule ^register$ register.php [L,QSA]
+RewriteRule ^wishlist$ wishlist.php [L,QSA]
+RewriteRule ^track$ track.php [L,QSA]
+RewriteRule ^logout$ logout.php [L,QSA]
+RewriteRule ^settings$ settings.php [L,QSA]
+RewriteRule ^privacy-policy$ privacy-policy.php [L,QSA]
+RewriteRule ^terms-conditions$ terms-conditions.php [L,QSA]
+RewriteRule ^affiliate-dashboard$ affiliate-dashboard.php [L,QSA]
+RewriteRule ^order-success$ order-success.php [L,QSA]
+RewriteRule ^forgot-password$ forgot-password.php [L,QSA]
+RewriteRule ^reset-password$ reset-password.php [L,QSA]
+RewriteRule ^sitemap.xml$ sitemap.php [L,QSA]
+RewriteRule ^robots.txt$ robots.txt.php [L,QSA]
+RewriteRule ^features$ features.php [L,QSA]
+
+# 2. Product SEO URL (/product/slug)
+RewriteRule ^product/([a-zA-Z0-9_-]+)$ product.php?slug=$1 [L,QSA]
+
+# 3. Category SEO URL (/category/slug)
+RewriteRule ^category/([a-zA-Z0-9_-]+)$ shop.php?cat=$1 [L,QSA]
+
+# 4. Search Results Clean URL (/search/query)
+RewriteRule ^search/([a-zA-Z0-9_-]+)$ shop.php?q=$1 [L,QSA]
+
+# 5. Affiliate Links (domain.com/ref/username)
+RewriteRule ^ref/([a-zA-Z0-9_-]+)$ shop.php?ref=$1 [L,QSA]
+
+# 6. Fallback Catch-all for Affiliate Links (domain.com/username)
+# This stays last, ensuring it doesn't collide with physical files or our custom rules above.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)$ shop.php?ref=$1 [L,QSA]

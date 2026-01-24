@@ -1,0 +1,94 @@
+[2026-01-20 18:08:57] To: drop.mail.iry@gmail.com | Subject: Reset Your Driyum Password
+
+            <div style='font-family: sans-serif; padding: 20px; color: #333;'>
+                <h2 style='color: #19DC7E;'>Hello, irfan manzoor!</h2>
+                <p>You requested to reset your password for your Driyum account.</p>
+                <p>Click the button below to set a new password. This link will expire in 1 hour.</p>
+                <a href='http://localhost/newdry/reset-password.php?token=b6dcb929dca33b17a6ec11c1e85cb06eae6de9f0fb43b309416417b8042c574a' style='display: inline-block; padding: 12px 24px; background-color: #000; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold;'>Reset Password</a>
+                <p style='margin-top: 20px; font-size: 12px; color: #999;'>If you didn't request this, you can safely ignore this email.</p>
+            </div>
+        
+----------------------------------------
+[2026-01-20 18:09:01] To: drop.mail.iry@gmail.com | Subject: Reset Your Driyum Password
+
+            <div style='font-family: sans-serif; padding: 20px; color: #333;'>
+                <h2 style='color: #19DC7E;'>Hello, irfan manzoor!</h2>
+                <p>You requested to reset your password for your Driyum account.</p>
+                <p>Click the button below to set a new password. This link will expire in 1 hour.</p>
+                <a href='http://localhost/newdry/reset-password.php?token=32898d851fe92ba5c6d5693ac0af67cb209929327bb5e3927089e154f339fe50' style='display: inline-block; padding: 12px 24px; background-color: #000; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold;'>Reset Password</a>
+                <p style='margin-top: 20px; font-size: 12px; color: #999;'>If you didn't request this, you can safely ignore this email.</p>
+            </div>
+        
+----------------------------------------
+[2026-01-23 12:41:28] To: drop.mail.iry@gmail.com | Subject: Driyum Order Confirmed! #ORD-69735E6875CBB
+
+        <div style='font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);'>
+            <div style='background-color: #000; padding: 40px; text-align: center;'>
+                <h1 style='color: #19DC7E; margin: 0; font-size: 32px;'>YOU'RE AWESOME!</h1>
+                <p style='color: #fff; opacity: 0.7; margin-top: 10px;'>Your snack drop is secured.</p>
+            </div>
+            <div style='padding: 40px; color: #333;'>
+                <h2 style='margin-top: 0;'>Order #ORD-69735E6875CBB</h2>
+                <p>Hello irfan manzoor,</p>
+                <p>Thanks for choosing Driyum! We've received your order and our team is getting your snacks ready for dispatch.</p>
+                
+                <table style='width: 100%; border-collapse: collapse; margin-top: 20px;'>
+                    <thead>
+                        <tr style='background-color: #f9f9f9;'>
+                            <th style='padding: 10px; text-align: left; font-size: 12px; text-transform: uppercase;'>Item</th>
+                            <th style='padding: 10px; text-align: right; font-size: 12px; text-transform: uppercase;'>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+            <td style='padding: 10px; border-bottom: 1px solid #eee;'>Premium Kiwi Slices x 1</td>
+            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>₹349.00</td>
+        </tr><tr>
+            <td style='padding: 10px; border-bottom: 1px solid #eee;'>Dried Banana Coins x 1</td>
+            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>₹199.00</td>
+        </tr><tr>
+            <td style='padding: 10px; border-bottom: 1px solid #eee;'>3 Pack Kiwi x 1</td>
+            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>₹899.00</td>
+        </tr><tr>
+            <td style='padding: 10px; border-bottom: 1px solid #eee;'>3 Pack Mix (1 each) x 1</td>
+            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>₹749.00</td>
+        </tr><tr>
+            <td style='padding: 10px; border-bottom: 1px solid #eee;'>Kashmiri Apple Rings x 1</td>
+            <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>₹299.00</td>
+        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td style='padding: 10px; font-weight: bold;'>Subtotal</td>
+                            <td style='padding: 10px; text-align: right;'>₹2,495.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style='padding: 10px; font-weight: bold;'>Shipping</td>
+                            <td style='padding: 10px; text-align: right;'>₹35.00</td>
+                        </tr>
+                        <tr style='font-size: 18px; font-weight: bold;'>
+                            <td style='padding: 10px; border-top: 2px solid #000;'>Total</td>
+                            <td style='padding: 10px; text-align: right; border-top: 2px solid #000; color: #19DC7E;'>₹2,783.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div style='margin-top: 40px; padding: 20px; background-color: #f5f5f5; border-radius: 12px;'>
+                    <h4 style='margin-top: 0;'>Shipping Address</h4>
+                    <p style='margin-bottom: 0; font-size: 14px; line-height: 1.6;'>
+                        sector 7 gulberg colony hyderpora<br>
+                        Srinagar (M Corp. + OG) (Part), 190014
+                    </p>
+                </div>
+
+                <div style='text-align: center; margin-top: 40px;'>
+                    <a href='http://localhost/newdry/track.php?id=ORD-69735E6875CBB&contact=drop.mail.iry@gmail.com' style='display: inline-block; padding: 15px 30px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 50px; font-weight: bold; font-family: sans-serif;'>Track Your Order</a>
+                </div>
+            </div>
+            <div style='padding: 20px; background-color: #eee; text-align: center; font-size: 12px; color: #999;'>
+                &copy; 2026 Driyum. Redefining Snacking.
+            </div>
+        </div>
+    
+----------------------------------------
