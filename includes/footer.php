@@ -129,7 +129,7 @@
 
         #driyum-mobile-dock-inner-v2 {
             pointer-events: auto;
-            background: rgba(12, 12, 12, 0.85); /* Slate 900 Glass */
+            background: rgba(5, 5, 5, 0.98); /* Slate 900 Glass */  
             backdrop-filter: blur(24px) saturate(140%);
             -webkit-backdrop-filter: blur(24px) saturate(140%);
             
@@ -139,12 +139,12 @@
                 0 10px 10px -5px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.15); /* Top highlight */
             
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 0 28px;
             height: 76px;
-            width: auto;
-            min-width: 350px;
-            max-width: 98%;
+            width: 650px;
+            min-width: 320px;
+            max-width: 95%;
             
             display: flex;
             align-items: center;
@@ -162,7 +162,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #94A3B8; /* Slate 400 */
+            color: #fafbfbff; /* Slate 400 */
             text-decoration: none;
             background: transparent;
             border: none;
