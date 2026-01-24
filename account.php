@@ -30,12 +30,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php render_seo_tags('My Account', 'Manage your DRIYUM profile, view order history, and track your active snack shipments.'); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>">
+    <?php 
+    $page_title = 'My Account';
+    $page_description = 'Manage your DRIYUM profile, view order history, and track your active snack shipments.';
+    include 'includes/head.php'; 
+    ?>
     <style>
         .nav-link-active {
             background: #19DC7E !important;

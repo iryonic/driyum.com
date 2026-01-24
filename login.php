@@ -61,12 +61,11 @@ $error = $flash ? $flash['message'] : '';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php render_seo_tags('Login', 'Sign in to your DRIYUM account to access your wishlist, saved addresses, and order history.'); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>">
+    <?php 
+    $page_title = 'Login';
+    $page_description = 'Sign in to your DRIYUM account to access your wishlist, saved addresses, and order history.';
+    include 'includes/head.php'; 
+    ?>
 </head>
 <body class="bg-[#FFFBEB] min-h-screen flex items-center justify-center p-4">
 

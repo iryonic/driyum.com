@@ -55,12 +55,11 @@ if ($query) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php render_seo_tags('Track Order', 'Track your DRIYUM shipment and see the current status of your chunky snacks journey.'); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>">
+    <?php 
+    $page_title = 'Track Order';
+    $page_description = 'Track your DRIYUM shipment and see the current status of your chunky snacks journey.';
+    include 'includes/head.php'; 
+    ?>
     <style>
         .timeline-item::before {
             content: '';
@@ -74,9 +73,7 @@ if ($query) {
         .timeline-item:last-child::before {
             display: none;
         }
-        }
     </style>
-
 </head>
 <body class="bg-[#FFFBEB] font-['Outfit']">
 

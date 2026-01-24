@@ -31,12 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php render_seo_tags('Contact Us', 'Have a question? Get in touch with the DRIYUM team. We are here to help you with your snack queries and orders.'); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>">
+    <?php 
+    $page_title = 'Contact Us';
+    $page_description = 'Have a question? Get in touch with the DRIYUM team. We are here to help you with your snack queries and orders.';
+    include 'includes/head.php'; 
+    ?>
 </head>
 <body class="bg-[#FFFBEB]">
 

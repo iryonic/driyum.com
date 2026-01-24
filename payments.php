@@ -20,13 +20,10 @@ $total = $subtotal + $shipping + $tax;
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Payment - DRIYUM</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/chunky.css">
-    <script src="assets/js/chunky.js" defer></script>
+    <?php 
+    $page_title = 'Secure Payment';
+    include 'includes/head.php'; 
+    ?>
 </head>
 <body class="bg-[#F8FAFC]">
 

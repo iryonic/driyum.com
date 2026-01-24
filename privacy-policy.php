@@ -6,12 +6,11 @@ require_once 'includes/functions.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php render_seo_tags('Privacy Policy & Terms', 'Read about how DRIYUM protects your data and our terms of service and refund policies.'); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/chunky.css">
+    <?php 
+    $page_title = 'Privacy Policy & Terms';
+    $page_description = 'Read about how DRIYUM protects your data and our terms of service and refund policies.';
+    include 'includes/head.php'; 
+    ?>
 </head>
 <body class="bg-[#FFFBEB] font-['Outfit']">
 

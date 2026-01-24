@@ -1,29 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php require_once 'config/database.php'; require_once 'includes/functions.php'; ?>
-    <?php render_seo_tags('Platform Features', 'Explore the unique features of the DRIYUM platform, from its premium design to its advanced eCommerce capabilities.'); ?>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#2BB35C',
-                        'primary-dark': '#229447',
-                        'primary-light': '#3DD96F'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+    <?php 
+    $page_title = 'Platform Features';
+    $page_description = 'Explore the unique features of the DRIYUM platform, from its premium design to its advanced eCommerce capabilities.';
+    include 'includes/head.php'; 
+    ?>
 </head>
 <body class="bg-gradient-mesh min-h-screen">
     
