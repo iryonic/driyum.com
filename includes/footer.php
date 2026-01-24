@@ -1,6 +1,6 @@
 
 <!-- MASTER FOOTER -->
-<footer class="bg-black text-white pt-24 pb-40 relative overflow-hidden mt-20 rounded-t-[50px]">
+<footer class="bg-black text-white pt-16 md:pt-24 pb-32 md:pb-40 relative overflow-hidden mt-10 md:mt-20 rounded-t-[40px] md:rounded-t-[50px]">
     <!-- Background Gradients -->
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[500px] bg-[#19DC7E] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
@@ -185,12 +185,12 @@
         .dock-item-v2.active::after {
             content: '';
             position: absolute;
-            bottom: 14px;
-            width: 5px;
-            height: 5px;
+            bottom: 12px;
+            width: 6px;
+            height: 6px;
             background: #19DC7E;
             border-radius: 50%;
-            box-shadow: 0 0 8px #19DC7E;
+            box-shadow: 0 0 10px rgba(25, 220, 126, 0.6);
             animation: dot-fade 0.3s ease-out;
         }
 
@@ -207,19 +207,19 @@
         }
 
         .dock-fab-v2 {
-            width: 68px;
-            height: 68px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, #19DC7E 0%, #059669 100%);
-            border: 6px solid #FFFBEB; /* Matches site background, looks like cutout */
+            border: 4px solid #111; /* Dark border to separate from glass */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #022c22;
             box-shadow: 
-                0 12px 25px -5px rgba(25, 220, 126, 0.5),
+                0 10px 20px -5px rgba(25, 220, 126, 0.6),
                 inset 0 2px 4px rgba(255, 255, 255, 0.3);
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
         }
 
