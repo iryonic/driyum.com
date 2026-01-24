@@ -68,40 +68,67 @@ try {
     // --- GET ITEMS (SIDEBAR/CART) ---
     elseif ($action === 'get_items') {
         if (empty($_SESSION['cart'])) {
-            echo json_encode(['success' => true, 'items' => [], 'subtotal' => 0]);
+            echo json_encode(['success' => true, 'items' => [], 'subtotal' => 0, 'count' => 0]);
             exit;
         }
 
-        $ids = array_keys($_SESSION['cart']);
+        // Force integer IDs to prevent SQL injection or type errors
+        $ids = array_map('intval', array_keys($_SESSION['cart']));
+        
+        // Filter out zero or invalid IDs
+        $ids = array_filter($ids, function($id) { return $id > 0; });
+        
+        if (empty($ids)) {
+             echo json_encode(['success' => true, 'items' => [], 'subtotal' => 0, 'count' => 0]);
+             exit;
+        }
+
         $placeholders = str_repeat('?,', count($ids) - 1) . '?';
-        $sql = "SELECT id, name, price, image, weight FROM products WHERE id IN ($placeholders)";
+        
+        // Explicitly select columns to avoid massive blobs if any
+        $sql = "SELECT id, name, price, image, weight, stock FROM products WHERE id IN ($placeholders)";
         $products = fetch_all($sql, $ids);
         
         $cart_items = [];
         $subtotal = 0;
         
-        foreach ($products as $p) {
-            $qty = $_SESSION['cart'][$p['id']];
-            $total_price = $p['price'] * $qty;
+        // Re-key products by ID for faster lookup
+        $product_map = [];
+        foreach($products as $p) {
+            $product_map[$p['id']] = $p;
+        }
+        
+        foreach ($ids as $id) {
+            if (!isset($product_map[$id])) continue; // Product might have been deleted
+            
+            $p = $product_map[$id];
+            $qty = (int)$_SESSION['cart'][$id];
+            
+            // Optional: Auto-correct stock if cart has more than available?
+            // For now, let's just calculate logic
+            
+            $total_price = (float)$p['price'] * $qty;
             $subtotal += $total_price;
             
             $cart_items[] = [
-                'id' => $p['id'],
-                'name' => $p['name'],
-                'price' => $p['price'],
-                'image' => $p['image'],
-                'weight' => $p['weight'],
+                'id' => (int)$p['id'],
+                'name' => html_entity_decode($p['name'], ENT_QUOTES, 'UTF-8'), // Ensure clean text
+                'price' => (float)$p['price'],
+                'image' => (string)$p['image'],
+                'weight' => (string)$p['weight'],
                 'quantity' => $qty,
+                'max_stock' => (int)$p['max_stock'] ?? 100, // Fallback
                 'total' => $total_price
             ];
         }
         
+        // Output with flags ensuring numbers are preserved
         echo json_encode([
             'success' => true, 
             'items' => $cart_items, 
             'subtotal' => $subtotal,
             'count' => array_sum($_SESSION['cart'])
-        ]);
+        ], JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE);
     }
     // --- REMOVE COUPON ---
     elseif ($action === 'remove_coupon') {
