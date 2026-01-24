@@ -89,7 +89,7 @@ if (isset($_SESSION['user_id'])) {
             </div>
 
             <!-- Headline -->
-            <h1 class="uppercase mb-6 tracking-tight relative">
+            <h1 class="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-['Fredoka'] font-black leading-[0.9] text-gray-900 mb-6 tracking-tight relative">
                 <?php echo htmlspecialchars($main_head); ?> <br>
                 <?php if($sub_head): ?>
                 <span class="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#19DC7E] to-[#0ea5e9]">
@@ -177,7 +177,7 @@ if (isset($_SESSION['user_id'])) {
 
                 <div class="text-center md:text-left relative z-10">
                     <span class="inline-block bg-[#19DC7E] text-black font-black uppercase text-xs px-3 py-1 rounded-full mb-4 animate-bounce">Limited Time Offer</span>
-                    <h2 class="uppercase mb-2"><?php echo htmlspecialchars($active_sale['title']); ?></h2>
+                    <h2 class="text-3xl md:text-5xl font-['Fredoka'] font-black leading-none mb-2"><?php echo htmlspecialchars($active_sale['title']); ?></h2>
                     <p class="text-gray-400 font-['Outfit'] text-sm">Don't miss out on these crunch-tastic deals!</p>
                 </div>
 
@@ -242,7 +242,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="container mx-auto px-6 mb-8 flex justify-between items-end">
             <div>
                 <span class="text-[#19DC7E] font-bold tracking-wider uppercase text-sm mb-2 block">Browse by Vibe</span>
-                <h2 class="uppercase">Find Your Crunch</h2>
+                <h2 class="text-3xl md:text-5xl font-bold text-gray-900">Find Your Crunch</h2>
             </div>
 
             <!-- Category Slider Controls -->
@@ -292,7 +292,7 @@ if (isset($_SESSION['user_id'])) {
                              <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-xs md:text-base"></i>
                         </div>
                     </div>
-                    <h3 class="uppercase <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
+                    <h3 class="text-xl md:text-4xl font-['Fredoka'] font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
                     <p class="<?php echo $s['text']; ?>/80 font-['Outfit'] font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
                         <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current animate-pulse"></span>
                         <?php echo $c['product_count']; ?> Varieties
@@ -334,7 +334,7 @@ if (isset($_SESSION['user_id'])) {
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
                 <div>
                     <span class="text-[#19DC7E] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-['Outfit']">Fresh From The Farm</span>
-                    <h2 class="uppercase leading-none">New Drops <span class="text-[#19DC7E]">🔥</span></h2>
+                    <h2 class="text-4xl md:text-7xl font-['Fredoka'] font-black text-gray-900 leading-none">New Drops <span class="text-[#19DC7E]">🔥</span></h2>
                 </div>
                 <!-- Slider Controls -->
                 <div class="flex gap-3">
@@ -412,7 +412,7 @@ if (isset($_SESSION['user_id'])) {
                                         <span class="w-2 h-2 rounded-full bg-[#19DC7E] opacity-50"></span>
                                         <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Outfit']">Premium Select</p>
                                     </div>
-                                    <h3 class="uppercase text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
+                                    <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
                                     <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
                                         <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
                                         <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest ml-1">(4.9)</span>
@@ -495,7 +495,7 @@ if (isset($_SESSION['user_id'])) {
                         <div class="inline-block bg-[#19DC7E] text-black text-[10px] md:text-xs font-bold px-3 py-1 rounded-full mb-3 md:mb-4 uppercase tracking-widest transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">
                             Watch Brand Story
                         </div>
-                        <h2 class="text-white mb-2 md:mb-4 leading-tight transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-200 uppercase">
+                        <h2 class="text-2xl md:text-5xl font-['Fredoka'] font-bold text-white mb-2 md:mb-4 leading-tight transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-200">
                             <?php echo nl2br(htmlspecialchars($vid_sec['heading'])); ?>
                         </h2>
                         <p class="text-gray-200 font-['Outfit'] text-sm md:text-xl max-w-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-300 hidden md:block">
@@ -554,7 +554,7 @@ if (isset($_SESSION['user_id'])) {
                          <?php for($i=0; $i<$t['rating']; $i++) echo '<i class="fas fa-star"></i>'; ?>
                     </div>
                     
-                    <h2 class="leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center p-4">
+                    <h2 class="text-xl md:text-5xl lg:text-6xl font-['Fredoka'] font-bold leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center p-4">
                         "<?php echo $t['message']; ?>"
                     </h2>
                     

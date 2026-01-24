@@ -302,7 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <!-- STEP 1: SHIPPING -->
                     <div id="step-1" class="checkout-step active anim-slide">
                         <div class="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-gray-100">
-                            <h2 class="mb-8 uppercase">Shipping Address</h2>
+                            <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900 mb-8">Shipping Address</h2>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
@@ -358,7 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <!-- STEP 2: PAYMENT -->
                     <div id="step-2" class="checkout-step anim-slide">
                         <div class="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-gray-100">
-                            <h2 class="mb-2 uppercase">Payment Method</h2>
+                            <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900 mb-2">Payment Method</h2>
                             <p class="text-gray-400 text-sm mb-10">All transactions are secure and encrypted.</p>
                             
                             <div class="space-y-4">

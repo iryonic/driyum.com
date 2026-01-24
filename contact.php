@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
         <div class="container mx-auto max-w-6xl relative z-10">
             <div class="text-center mb-16">
                 <span class="inline-block bg-white border border-gray-100 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-[#19DC7E] mb-4 shadow-sm transform -rotate-2">Say Hello 🍑</span>
-                <h1 class="uppercase">Let's Get <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#19DC7E] to-[#0ea5e9]">Crunching.</span></h1>
+                <h1 class="text-5xl md:text-7xl font-['Fredoka'] font-black text-gray-900 mb-6">Let's Get <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#19DC7E] to-[#0ea5e9]">Crunching.</span></h1>
                 <p class="text-gray-500 font-['Outfit'] text-lg md:text-xl max-w-2xl mx-auto">Have a question or just want to tell us how much you love our chunky snacks? We're all ears!</p>
             </div>
 

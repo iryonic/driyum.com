@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="<?php echo get_url(''); ?>" class="font-['Fredoka'] font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
             
             <div class="relative z-10">
-                <h1 class="mb-4 uppercase text-black">Join the Crunch Club.</h1>
-                <p class="text-lg font-['Outfit'] opacity-80 text-black/70">Get exclusive deals, new harvest alerts, and faster checkout.</p>
+                <h1 class="text-5xl font-['Fredoka'] font-bold mb-4">Join the Crunch Club.</h1>
+                <p class="text-lg font-['Outfit'] opacity-80">Get exclusive deals, new harvest alerts, and faster checkout.</p>
             </div>
             
             <!-- Decor -->
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- LEFT: FORM -->
         <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
             
-            <h2 class="mb-8 uppercase">Create Account</h2>
+            <h2 class="text-3xl font-['Fredoka'] font-bold text-gray-900 mb-8">Create Account</h2>
             
             <?php if($error): ?>
                 <div class="bg-red-50 text-red-500 p-4 rounded-xl mb-6 font-bold flex items-center gap-2">

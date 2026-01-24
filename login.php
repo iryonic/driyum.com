@@ -77,7 +77,7 @@ $error = $flash ? $flash['message'] : '';
             <a href="<?php echo get_url(''); ?>" class="text-white font-['Fredoka'] font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
             
             <div class="relative z-10">
-                <h1 class="text-white mb-4 uppercase">Welcome Back!</h1>
+                <h1 class="text-5xl font-['Fredoka'] font-bold text-white mb-4">Welcome Back!</h1>
                 <p class="text-green-50 text-lg font-['Outfit']">Your daily dose of sun-dried happiness is waiting.</p>
             </div>
             
@@ -89,7 +89,7 @@ $error = $flash ? $flash['message'] : '';
         <!-- RIGHT: FORM -->
         <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
             
-            <h2 class="mb-8 uppercase">Sign In</h2>
+            <h2 class="text-3xl font-['Fredoka'] font-bold text-gray-900 mb-8">Sign In</h2>
             
             <?php if($flash): ?>
                 <div class="<?php echo $flash['type'] === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'; ?> p-4 rounded-xl mb-6 font-bold flex items-center gap-2">
