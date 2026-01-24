@@ -195,7 +195,17 @@ window.addToCart = async function (productId, btnElement, quantity = 1) {
             btnElement.innerHTML = '<i class="fas fa-check"></i>';
             btnElement.classList.add('bg-[#19DC7E]', 'text-white', 'border-transparent', 'scale-110');
             fireConfetti(btnElement);
-            updateCartIcon();
+
+            // Update all UI components
+            await updateCartIcon();
+
+            // Check if sidebar is technically "active" or just reload it silently if user opens it later
+            // But if it IS open, reload it now
+            const sidebar = document.getElementById('cart-sidebar');
+            if (sidebar && !sidebar.classList.contains('translate-x-full')) {
+                loadCartItems();
+            }
+
             setTimeout(() => {
                 btnElement.innerHTML = originalText;
                 btnElement.classList.remove('bg-[#19DC7E]', 'text-white', 'border-transparent', 'scale-110');
@@ -247,16 +257,26 @@ window.quickBuy = async function (productId, btnElement, quantity = 1) {
 };
 
 window.updateCartQty = async function (productId, quantity) {
+    // Optimistic UI update could go here, but for now we wait for fast API
     try {
         const formData = new FormData();
         formData.append('product_id', productId);
         formData.append('quantity', quantity);
+
         await fetch(`${BASE_URL}api/cart.php?action=update`, { method: 'POST', body: formData });
 
-        updateCartIcon();
-        if (document.getElementById('cart-sidebar') && !document.getElementById('cart-sidebar').classList.contains('translate-x-full')) {
+        // Force both updates immediately
+        await updateCartIcon();
+
+        // If sidebar is open, reload it
+        const sidebar = document.getElementById('cart-sidebar');
+        if (sidebar && sidebar.classList.contains('translate-x-0')) {
+            loadCartItems();
+        } else if (sidebar && !sidebar.classList.contains('translate-x-full')) {
+            // Backup check for older class usage
             loadCartItems();
         }
+
     } catch (e) {
         console.error("Update failed", e);
     }
