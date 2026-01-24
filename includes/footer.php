@@ -144,8 +144,8 @@
             padding: 0 28px;
             height: 76px;
             width: auto;
-            min-width: 340px;
-            max-width: 95%;
+            min-width: 350px;
+            max-width: 98%;
             
             display: flex;
             align-items: center;

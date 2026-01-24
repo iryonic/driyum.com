@@ -161,7 +161,7 @@ run_crons();
 <header class="md:hidden sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-6 shadow-sm">
     <div class="flex items-center gap-2">
    
-        <button onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors"><i class="fas fa-search"></i></button>
+        <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors"><i class="fas fa-search"></i></button>
     </div>
     <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?>" class="w-24"></a>
     <button onclick="openCartSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-700 relative hover:text-black transition-colors">
@@ -254,15 +254,49 @@ run_crons();
     </div>
 </div>
 
-
-<?php 
-$flash = get_flash_message();
-if ($flash): ?>
 <script>
+    // Robust Search Trigger
     document.addEventListener('DOMContentLoaded', function() {
+        const trigger = document.getElementById('mobile-search-trigger');
+        if (trigger) {
+            trigger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (typeof toggleSearch === 'function') {
+                    toggleSearch();
+                } else {
+                    const overlay = document.getElementById('search-modal-overlay');
+                    const modal = document.getElementById('search-modal');
+                    const input = document.getElementById('header-search-input');
+                    
+                    if (overlay && modal) {
+                        const isHidden = overlay.classList.contains('hidden');
+                         if(isHidden) {
+                             overlay.classList.remove('hidden');
+                             setTimeout(() => {
+                                overlay.style.opacity = '1';
+                                modal.style.transform = 'translateY(0)';
+                                if(input) input.focus();
+                             }, 10);
+                             document.body.style.overflow = 'hidden';
+                         } else {
+                             overlay.style.opacity = '0';
+                             modal.style.transform = 'translateY(-3rem)';
+                             setTimeout(() => overlay.classList.add('hidden'), 300);
+                             document.body.style.overflow = '';
+                         }
+                    }
+                }
+            });
+        }
+    });
+
+    <?php 
+    $flash = get_flash_message();
+    if ($flash): ?>
         if (typeof showToast === 'function') {
             showToast("<?php echo addslashes($flash['message']); ?>", "<?php echo $flash['type']; ?>");
         }
-    });
+    <?php endif; ?>
 </script>
-<?php endif; ?>
