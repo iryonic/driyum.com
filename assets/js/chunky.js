@@ -45,18 +45,28 @@ function renderSearchResults(results, container) {
         return;
     }
 
-    container.innerHTML = results.map(product => `
-        <a href="${BASE_URL}product/${product.slug}" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-white/10 transition-all group">
-            <div class="w-16 h-16 bg-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                <img src="${BASE_URL}${product.image}" class="w-full h-full object-contain p-2" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23d1d5db%22 font-family=%22sans-serif%22 font-size=%2224%22%3ENo Image%3C/text%3E%3C/svg%3E'">
+    container.innerHTML = `<div class="grid gap-3">` + results.map(product => `
+        <a href="${BASE_URL}product/${product.slug}" class="flex items-center gap-6 p-4 rounded-[20px] bg-white/5 border border-white/10 hover:bg-white/20 hover:scale-[1.02] transition-all duration-300 group relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-200%] group-hover:animate-shine"></div>
+            
+            <div class="w-20 h-20 bg-white rounded-2xl p-2 flex-shrink-0 shadow-lg group-hover:rotate-6 transition-transform duration-500">
+                <img src="${BASE_URL}${product.image}" class="w-full h-full object-contain" 
+                     onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
             </div>
-            <div class="flex-1">
-                <h4 class="text-white font-bold text-lg">${product.name}</h4>
-                <p class="text-[#19DC7E] text-sm font-black">₹${product.price}</p>
+            
+            <div class="flex-1 min-w-0">
+                <h4 class="text-white font-['Fredoka'] font-bold text-xl truncate group-hover:text-[#19DC7E] transition-colors">${product.name}</h4>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="text-[#19DC7E] font-black text-lg">₹${product.price}</span>
+                    <span class="text-white/40 text-xs uppercase font-bold tracking-widest hidden sm:inline-block">View Product</span>
+                </div>
             </div>
-            <i class="fas fa-chevron-right text-white/20 group-hover:text-[#19DC7E] transition-colors"></i>
+            
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-[#19DC7E] group-hover:text-black transition-all">
+                <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+            </div>
         </a>
-    `).join('');
+    `).join('') + `</div>`;
 }
 
 /* --- UI CONTROLLERS --- */
@@ -293,25 +303,31 @@ window.loadCartItems = async function () {
                     </div>`;
             } else {
                 container.innerHTML = data.items.map((item, index) => `
-                    <div class="group relative flex gap-6 items-center bg-white p-5 rounded-[32px] border-2 border-transparent hover:border-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
-                        <div class="relative w-24 h-24 flex-shrink-0 bg-[#F3F4F6] rounded-[24px] overflow-hidden">
-                             <img src="${BASE_URL}${item.image}" class="w-full h-full object-contain p-2" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23d1d5db%22 font-family=%22sans-serif%22 font-size=%2224%22%3ENo Image%3C/text%3E%3C/svg%3E'">
+                    <div class="cart-item-card group relative flex gap-5 items-center bg-white p-4 rounded-[28px] border-2 border-transparent hover:border-gray-50 transition-all duration-300">
+                        <!-- Image Container with Float Animation -->
+                        <div class="relative w-24 h-24 flex-shrink-0 bg-[#F3F4F6] rounded-[22px] overflow-hidden group-hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)] transition-shadow">
+                             <a href="${BASE_URL}product/${item.id}"><img src="${BASE_URL}${item.image}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'"></a>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-black text-gray-900 line-clamp-1 font-['Fredoka'] text-lg mb-1">${item.name}</h4>
-                            <div class="flex items-center justify-between mt-3">
-                                <div class="flex flex-col">
-                                    <span class="text-sm font-black text-gray-900">₹${item.total}</span>
-                                </div>
-                                <div class="flex items-center bg-[#F3F4F6] rounded-xl p-1">
-                                    <button onclick="updateCartQty(${item.id}, ${item.quantity - 1})" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-gray-400 hover:text-black transition-all"><i class="fas fa-minus text-xs"></i></button>
+                        
+                        <div class="flex-1 min-w-0 pr-6">
+                            <a href="${BASE_URL}product/${item.id}" class="block">
+                                <h4 class="font-black text-gray-900 truncate font-['Fredoka'] text-lg mb-0.5 leading-tight group-hover:text-[#19DC7E] transition-colors">${item.name}</h4>
+                                <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-3">500g Pack</p>
+                            </a>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-100">
+                                    <button onclick="updateCartQty(${item.id}, ${item.quantity - 1})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-gray-400 hover:text-black shadow-sm transition-all hover:scale-110 active:scale-95"><i class="fas fa-minus text-[10px]"></i></button>
                                     <span class="text-sm font-black w-8 text-center">${item.quantity}</span>
-                                    <button onclick="updateCartQty(${item.id}, ${item.quantity + 1})" class="w-8 h-8 flex items-center justify-center rounded-lg bg-white text-gray-400 hover:text-black transition-all"><i class="fas fa-plus text-xs"></i></button>
+                                    <button onclick="updateCartQty(${item.id}, ${item.quantity + 1})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-black hover:bg-[#19DC7E] shadow-sm transition-all hover:scale-110 active:scale-95"><i class="fas fa-plus text-[10px]"></i></button>
                                 </div>
+                                <span class="font-black text-gray-900 text-lg">₹${item.total}</span>
                             </div>
                         </div>
-                        <button onclick="updateCartQty(${item.id}, 0)" class="absolute -top-2 -right-2 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg hover:bg-red-500">
-                            <i class="fas fa-times text-xs"></i>
+
+                        <!-- Modern Remove Button -->
+                        <button onclick="updateCartQty(${item.id}, 0)" class="absolute top-2 right-2 w-7 h-7 bg-red-50 text-red-300 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all shadow-lg scale-75 hover:scale-100">
+                            <i class="fas fa-times text-[10px]"></i>
                         </button>
                     </div>
                 `).join('');
