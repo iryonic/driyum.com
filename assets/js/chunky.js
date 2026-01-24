@@ -3,6 +3,9 @@
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Debug for prod issues
+    console.log("BASE_URL Configured:", BASE_URL);
+
     if (typeof updateCartIcon === 'function') updateCartIcon();
     initSearch();
 });

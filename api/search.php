@@ -2,6 +2,10 @@
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
+// Turn off error reporting to avoid breaking JSON
+error_reporting(0);
+ini_set('display_errors', 0);
+
 header('Content-Type: application/json');
 
 $query = $_GET['q'] ?? '';
