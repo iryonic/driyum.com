@@ -152,6 +152,11 @@
             gap: 12px;
         }
 
+        @keyframes dot-fade {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
         .dock-item-v2 {
             display: flex;
             flex-direction: column;
@@ -162,90 +167,109 @@
             background: transparent;
             border: none;
             padding: 0;
-            width: 52px;
+            width: 60px;
             height: 100%;
             position: relative;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 4px;
         }
         
+        .dock-label-v2 {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-family: 'Outfit', sans-serif;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
         /* Hover/Active Effects */
         .dock-item-v2 i {
-            font-size: 24px;
+            font-size: 20px;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
         .dock-item-v2.active i {
             color: #19DC7E;
-            transform: translateY(-5px) scale(1.1);
+            transform: translateY(-2px) scale(1.15);
             filter: drop-shadow(0 0 12px rgba(25, 220, 126, 0.4));
+        }
+
+        .dock-item-v2.active .dock-label-v2 {
+            color: #19DC7E;
+            opacity: 1;
+            transform: translateY(-1px);
         }
 
         .dock-item-v2.active::after {
             content: '';
             position: absolute;
-            bottom: 12px;
-            width: 6px;
-            height: 6px;
+            bottom: 6px;
+            width: 4px;
+            height: 4px;
             background: #19DC7E;
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(25, 220, 126, 0.6);
-            animation: dot-fade 0.3s ease-out;
+            box-shadow: 0 0 12px rgba(25, 220, 126, 0.8);
+            animation: dot-fade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         /* FAB (Cart) Button */
         .dock-fab-wrapper-v2 {
             position: relative;
-            width: 64px;
+            width: 76px;
             height: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            transform: translateY(-28px);
+            transform: translateY(-34px);
             z-index: 10;
         }
 
         .dock-fab-v2 {
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             background: linear-gradient(135deg, #19DC7E 0%, #059669 100%);
-            border: 4px solid #111; /* Dark border to separate from glass */
+            border: 6px solid #0f172a; /* Slate 900 to match background */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #022c22;
             box-shadow: 
-                0 10px 20px -5px rgba(25, 220, 126, 0.6),
+                0 15px 30px -5px rgba(25, 220, 126, 0.5),
                 inset 0 2px 4px rgba(255, 255, 255, 0.3);
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
         }
 
         .dock-fab-v2:active {
-            transform: scale(0.92);
+            transform: scale(0.9);
         }
 
         .dock-fab-v2 i {
-            font-size: 26px;
+            font-size: 28px;
         }
 
         .dock-badge-v2 {
             position: absolute;
-            top: 2px;
-            right: 2px;
+            top: -2px;
+            right: -2px;
             background: #EF4444;
             color: white;
-            font-size: 11px;
-            font-weight: 800;
+            font-size: 10px;
+            font-weight: 900;
             min-width: 22px;
             height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 99px;
-            border: 3px solid #FFFBEB;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 3px solid #0f172a;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: dock-pop-up 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
         body { padding-bottom: 140px; }
@@ -257,11 +281,13 @@
         <!-- Home -->
         <a href="<?php echo get_url(''); ?>" class="dock-item-v2 <?php echo in_array(basename($_SERVER['PHP_SELF']), ['index.php', '']) ? 'active' : ''; ?>">
             <i class="fas fa-home"></i>
+            <span class="dock-label-v2">Home</span>
         </a>
 
         <!-- Shop -->
         <a href="<?php echo get_url('shop'); ?>" class="dock-item-v2 <?php echo basename($_SERVER['PHP_SELF'])=='shop.php' ? 'active' : ''; ?>">
             <i class="fa-solid fa-bag-shopping"></i>
+            <span class="dock-label-v2">Shop</span>
         </a>
 
         <!-- Cart FAB (Center) -->
@@ -277,11 +303,13 @@
         <!-- Track -->
         <a href="<?php echo get_url('track'); ?>" class="dock-item-v2 <?php echo basename($_SERVER['PHP_SELF'])=='track.php' ? 'active' : ''; ?>">
             <i class="fas fa-map-location-dot"></i>
+            <span class="dock-label-v2">Track</span>
         </a>
 
         <!-- Menu (Hamburger) -->
         <button id="mobile-menu-trigger-btn" class="dock-item-v2">
             <i class="fas fa-bars"></i>
+            <span class="dock-label-v2">Menu</span>
         </button>
     </div>
 </div>
