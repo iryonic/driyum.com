@@ -109,22 +109,19 @@ if (isset($_SESSION['user_id'])) {
 
         @media (max-width: 768px) {
             .sticky-mobile-bar {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(20px);
-                padding: 1rem;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+                padding: 1.25rem;
                 display: flex;
+                align-items: center;
                 gap: 1rem;
-                box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
-                z-index: 9999;
-                border-radius: 24px 24px 0 0;
+                box-shadow: 0 -15px 40px rgba(0,0,0,0.15);
+                z-index: 999;
                 animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
             }
-            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-            body { padding-bottom: 100px; }
+            @keyframes slideUp { from { transform: translateY(120%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            body { padding-bottom: 160px !important; }
         }
     </style>
 </head>
@@ -220,12 +217,12 @@ if (isset($_SESSION['user_id'])) {
 
                 <div class="mb-10">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="flex text-yellow-400 text-xs gap-0.5">
+                        <div class="flex text-yellow-400 text-[10px] md:text-xs gap-0.5">
                             <?php for($i=0;$i<5;$i++) echo '<i class="fas fa-star"></i>'; ?>
                         </div>
-                        <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest ml-2">4.9 (<?php echo count($reviews); ?> Reviews)</span>
+                        <span class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">4.9 (<?php echo count($reviews); ?> Reviews)</span>
                     </div>
-                    <h1 class="text-4xl sm:text-6xl md:text-8xl font-['Fredoka'] font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>
+                    <h1 class="text-[clamp(2.5rem,10vw,8rem)] font-['Fredoka'] font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>
                     
                     <div class="flex items-center gap-6">
                         <span class="text-5xl sm:text-7xl font-black text-gray-900 font-['Fredoka'] tracking-tighter leading-none">₹<?php echo $product['price']; ?></span>
@@ -271,31 +268,36 @@ if (isset($_SESSION['user_id'])) {
                 </div>
 
                 <!-- ADD TO CART & QUANTITY -->
-                <div class="flex flex-col sm:flex-row gap-5 mb-16 lg:pr-10">
-                    <div class="flex items-center bg-white rounded-[40px] p-2 border-2 border-transparent shadow-xl ring-1 ring-gray-100">
-                        <button onclick="updateQty(-1)" class="w-16 h-16 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all">
+                <div class="flex flex-col sm:flex-row gap-4 md:gap-5 mb-16 lg:pr-10">
+                    <div class="flex items-center bg-white rounded-[40px] p-2 border-2 border-transparent shadow-xl ring-1 ring-gray-100 w-full sm:w-auto justify-between sm:justify-start">
+                        <button onclick="updateQty(-1)" class="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all">
                             <i class="fas fa-minus text-xs"></i>
                         </button>
-                        <input type="number" id="qty" value="1" min="1" class="w-14 text-center font-black text-2xl bg-transparent outline-none pointer-events-none">
-                        <button onclick="updateQty(1)" class="w-16 h-16 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all">
+                        <input type="number" id="qty" value="1" min="1" class="w-12 md:w-14 text-center font-black text-xl md:text-2xl bg-transparent outline-none pointer-events-none">
+                        <button onclick="updateQty(1)" class="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all">
                             <i class="fas fa-plus text-xs"></i>
                         </button>
                     </div>
-                    <button 
-                        onclick="addToCart(<?php echo $id; ?>, this, document.getElementById('qty').value)" 
-                        <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed' : 'bg-white text-black border-2 border-black hover:bg-amber-400 hover:border-amber-500 hover:text-white'; ?> text-lg px-8 py-6 rounded-[40px] shadow-xl transition-all duration-500 font-black tracking-tight active:scale-95 group">
-                        <?php echo $product['stock'] <= 0 ? 'Out of Bag' : 'Add to Bag'; ?>
-                    </button>
+                    <div class="flex flex-1 gap-3 md:gap-5 order-first sm:order-none">
+                        <button 
+                            onclick="addToCart(<?php echo $id; ?>, this, document.getElementById('qty').value)" 
+                            <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
+                            class="flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed' : 'bg-white text-black border-2 border-black hover:bg-amber-400 hover:border-amber-500 hover:text-white'; ?> text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-[30px] md:rounded-[40px] shadow-xl transition-all duration-500 font-black tracking-tight active:scale-95 group">
+                            <?php echo $product['stock'] <= 0 ? 'Out of Bag' : 'Add to Bag'; ?>
+                        </button>
+                        <?php $is_wishlisted = in_array($id, $wishlist_ids); ?>
+                        <button onclick="toggleWishlist(<?php echo $id; ?>, this)" class="w-16 h-16 md:hidden rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-xl <?php echo $is_wishlisted ? 'active text-red-500' : 'text-gray-300'; ?> hover:border-red-500 transition-all shadow-xl">
+                            <i class="<?php echo $is_wishlisted ? 'fas' : 'far'; ?> fa-heart"></i>
+                        </button>
+                    </div>
                     <button 
                         onclick="quickBuy(<?php echo $id; ?>, this, document.getElementById('qty').value)" 
                         <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-[#19DC7E] text-black shadow-[0_30px_60px_-15px_rgba(25,220,126,0.3)] hover:scale-105'; ?> text-lg px-12 py-6 rounded-[40px] transition-all duration-500 font-black tracking-tight active:scale-95 group">
-                        <?php echo $product['stock'] <= 0 ? 'Sold Out' : 'Quick Buy — <span class="group-hover:translate-x-1 inline-block transition">₹' . $product['price'] . '</span>'; ?>
+                        class="w-full sm:flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-[#19DC7E] text-black shadow-[0_30px_60px_-15px_rgba(25,220,126,0.3)] hover:scale-[1.02]'; ?> text-base md:text-lg px-8 md:px-12 py-5 md:py-6 rounded-[30px] md:rounded-[40px] transition-all duration-500 font-black tracking-tight active:scale-95 group">
+                        <?php echo $product['stock'] <= 0 ? 'Sold Out' : 'Quick Buy — <span class="group-hover:translate-x-1 inline-block transition tracking-tighter">₹' . $product['price'] . '</span>'; ?>
                     </button>
                     
-                    <?php $is_wishlisted = in_array($id, $wishlist_ids); ?>
-                    <button onclick="toggleWishlist(<?php echo $id; ?>, this)" class="w-16 h-16 rounded-[40px] bg-white border-2 border-gray-100 flex items-center justify-center text-xl <?php echo $is_wishlisted ? 'active text-red-500' : 'text-gray-300'; ?> hover:border-red-500 hover:text-red-500 transition-all shadow-xl active:scale-90 group/wish">
+                    <button onclick="toggleWishlist(<?php echo $id; ?>, this)" class="hidden md:flex w-16 h-16 rounded-[40px] bg-white border-2 border-gray-100 items-center justify-center text-xl <?php echo $is_wishlisted ? 'active text-red-500' : 'text-gray-300'; ?> hover:border-red-500 hover:text-red-500 transition-all shadow-xl active:scale-90 group/wish">
                         <i class="<?php echo $is_wishlisted ? 'fas' : 'far'; ?> fa-heart group-hover/wish:scale-110 transition-transform"></i>
                     </button>
                 </div>
