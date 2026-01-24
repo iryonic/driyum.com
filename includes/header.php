@@ -159,7 +159,9 @@ run_crons();
 <!-- MOBILE TOP BAR -->
 <header class="md:hidden sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-6 shadow-sm">
     <div class="flex items-center gap-2">
-   
+        <button onclick="toggleMobileMenuDrawer()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors" aria-label="Open menu">
+            <i class="fas fa-bars text-lg"></i>
+        </button>
         <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors"><i class="fas fa-search"></i></button>
     </div>
     <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?>" class="w-24"></a>
