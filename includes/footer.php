@@ -103,39 +103,54 @@
     </div>
 </footer>
 
-<!-- MOBILE NAV - CHUNKY PREMIUM - V2 Clean -->
+<!-- MOBILE NAV - CHUNKY PREMIUM - V2 Modern -->
 <style>
-    /* Clean Dock Styles - No hacks */
+    /* Modern iOS-Style Floating Dock */
     #driyum-mobile-dock-v2 {
         display: none;
         position: fixed;
-        bottom: 24px;
+        bottom: 30px;
         left: 0;
         right: 0;
         justify-content: center;
-        z-index: 99999;
+        z-index: 2147483640; /* High but below modal overlays */
+        pointer-events: none; /* Container is passthrough */
     }
 
     @media screen and (max-width: 768px) {
         #driyum-mobile-dock-v2 {
             display: flex;
+            animation: dock-pop-up 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes dock-pop-up {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         #driyum-mobile-dock-inner-v2 {
-            background: #111827;
-            background: rgba(17, 24, 39, 0.95);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            border-radius: 32px;
-            padding: 0 24px;
-            height: 72px;
-            width: 100%;
-            max-width: 400px;
+            pointer-events: auto;
+            background: rgba(15, 23, 42, 0.85); /* Slate 900 Glass */
+            backdrop-filter: blur(24px) saturate(140%);
+            -webkit-backdrop-filter: blur(24px) saturate(140%);
+            
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 20px 40px -5px rgba(0, 0, 0, 0.4),
+                0 10px 10px -5px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15); /* Top highlight */
+            
+            border-radius: 40px;
+            padding: 0 28px;
+            height: 76px;
+            width: auto;
+            min-width: 320px;
+            max-width: 90%;
+            
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
         }
 
         .dock-item-v2 {
@@ -143,29 +158,43 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #9CA3AF;
+            color: #94A3B8; /* Slate 400 */
             text-decoration: none;
             background: transparent;
             border: none;
-            padding: 8px;
-            width: 50px;
+            padding: 0;
+            width: 52px;
+            height: 100%;
             position: relative;
-        }
-
-        .dock-item-v2 i {
-            font-size: 22px;
-            transition: 0.2s;
-        }
-
-        .dock-item-v2.active {
-            color: #FFFFFF;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .dock-item-v2.active i {
-            color: #19DC7E;
-            transform: translateY(-4px);
+        /* Hover/Active Effects */
+        .dock-item-v2 i {
+            font-size: 24px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
+        .dock-item-v2.active i {
+            color: #19DC7E;
+            transform: translateY(-5px) scale(1.1);
+            filter: drop-shadow(0 0 12px rgba(25, 220, 126, 0.4));
+        }
+
+        .dock-item-v2.active::after {
+            content: '';
+            position: absolute;
+            bottom: 14px;
+            width: 5px;
+            height: 5px;
+            background: #19DC7E;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #19DC7E;
+            animation: dot-fade 0.3s ease-out;
+        }
+
+        /* FAB (Cart) Button */
         .dock-fab-wrapper-v2 {
             position: relative;
             width: 64px;
@@ -173,26 +202,39 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transform: translateY(-24px);
+            transform: translateY(-28px);
+            z-index: 10;
         }
 
         .dock-fab-v2 {
-            width: 64px;
-            height: 64px;
-            background: #19DC7E;
-            border: 5px solid #111827; 
+            width: 68px;
+            height: 68px;
+            background: linear-gradient(135deg, #19DC7E 0%, #059669 100%);
+            border: 6px solid #FFFBEB; /* Matches site background, looks like cutout */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #000;
-            box-shadow: 0 10px 25px rgba(25, 220, 126, 0.4);
+            color: #022c22;
+            box-shadow: 
+                0 12px 25px -5px rgba(25, 220, 126, 0.5),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+        }
+
+        .dock-fab-v2:active {
+            transform: scale(0.92);
+        }
+
+        .dock-fab-v2 i {
+            font-size: 26px;
         }
 
         .dock-badge-v2 {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 2px;
+            right: 2px;
             background: #EF4444;
             color: white;
             font-size: 11px;
@@ -203,10 +245,11 @@
             align-items: center;
             justify-content: center;
             border-radius: 99px;
-            border: 2px solid #111827;
+            border: 3px solid #FFFBEB;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        body { padding-bottom: 120px; }
+        body { padding-bottom: 140px; }
     }
 </style>
 
@@ -219,13 +262,13 @@
 
         <!-- Shop -->
         <a href="<?php echo get_url('shop'); ?>" class="dock-item-v2 <?php echo basename($_SERVER['PHP_SELF'])=='shop.php' ? 'active' : ''; ?>">
-            <i class="fas fa-store"></i>
+            <i class="fa-solid fa-bag-shopping"></i>
         </a>
 
-        <!-- Cart FAB -->
+        <!-- Cart FAB (Center) -->
         <div class="dock-fab-wrapper-v2">
             <a href="#" onclick="openCartSidebar(); return false;" class="dock-fab-v2">
-                <i class="fas fa-shopping-bag"></i>
+                <i class="fas fa-shopping-cart"></i>
                 <?php if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
                     <span class="dock-badge-v2" id="mobile-cart-count"><?php echo count($_SESSION['cart']); ?></span>
                 <?php endif; ?>
@@ -234,15 +277,52 @@
 
         <!-- Track -->
         <a href="<?php echo get_url('track'); ?>" class="dock-item-v2 <?php echo basename($_SERVER['PHP_SELF'])=='track.php' ? 'active' : ''; ?>">
-            <i class="fas fa-map-marker-alt"></i>
+            <i class="fas fa-map-location-dot"></i>
         </a>
 
-        <!-- Menu -->
-        <button onclick="toggleMobileMenuDrawer()" class="dock-item-v2">
+        <!-- Menu (Hamburger) -->
+        <button id="mobile-menu-trigger-btn" class="dock-item-v2">
             <i class="fas fa-bars"></i>
         </button>
     </div>
 </div>
+
+<script>
+    // Robust Hamburger Trigger
+    document.getElementById('mobile-menu-trigger-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Try Global Function First
+        if (typeof toggleMobileMenuDrawer === 'function') {
+            toggleMobileMenuDrawer();
+        } else {
+            // Fallback: Direct DOM manipulation if JS failed
+            const overlay = document.getElementById('mobile-menu-overlay');
+            const drawer = document.getElementById('mobile-menu-drawer');
+            
+            if (overlay && drawer) {
+                 const isHidden = overlay.classList.contains('hidden');
+                 if(isHidden) {
+                     overlay.classList.remove('hidden');
+                     setTimeout(() => {
+                        overlay.style.opacity = '1';
+                        drawer.style.transform = 'translateX(0)';
+                     }, 10);
+                     document.body.style.overflow = 'hidden';
+                 } else {
+                     overlay.style.opacity = '0';
+                     drawer.style.transform = 'translateX(-100%)';
+                     setTimeout(() => overlay.classList.add('hidden'), 300);
+                     document.body.style.overflow = '';
+                 }
+            } else {
+                console.error("Mobile menu elements not found");
+                alert("Menu unavailable");
+            }
+        }
+    });
+</script>
 
 <!-- Toast Container for Notifications -->
 <div id="toast-container" class="fixed bottom-24 right-4 z-[9999] md:bottom-4"></div>
