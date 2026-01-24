@@ -85,19 +85,19 @@ if ($query) {
     <div class="container mx-auto px-6 py-16 max-w-4xl">
         
         <!-- SEARCH BOX -->
-        <div class="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-100 mb-12 text-center anim-up">
-            <h1 class="text-4xl md:text-5xl font-['Fredoka'] font-black text-gray-900 mb-4">Track Order.</h1>
-            <p class="text-gray-400 font-bold mb-10 uppercase tracking-[0.2em] text-[10px]">Verify your order details</p>
+        <div class="bg-white rounded-[40px] p-6 md:p-12 shadow-sm border border-gray-100 mb-12 text-center anim-up">
+            <h1 class="text-[clamp(2rem,6vw,4rem)] font-['Fredoka'] font-black text-gray-900 mb-4 leading-tight">Track Order.</h1>
+            <p class="text-gray-400 font-bold mb-8 md:mb-10 uppercase tracking-[0.2em] text-[8px] md:text-[10px]">Verify your order details</p>
             
-            <form class="flex flex-col gap-6 max-w-2xl mx-auto">
+            <form class="flex flex-col gap-5 md:gap-6 max-w-2xl mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2 text-left">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-6">Order ID / Number</label>
-                        <input type="text" name="id" value="<?php echo htmlspecialchars($query); ?>" required placeholder="e.g. ORD-123" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-8 py-5 outline-none transition-all font-black text-lg">
+                        <label class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 ml-5 md:ml-6">Order ID / Number</label>
+                        <input type="text" name="id" value="<?php echo htmlspecialchars($query); ?>" required placeholder="e.g. ORD-123" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] md:rounded-[24px] px-6 md:px-8 py-4 md:py-5 outline-none transition-all font-black text-base md:text-lg">
                     </div>
                     <div class="space-y-2 text-left">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-[#19DC7E] ml-6">Email / Phone (Verification)</label>
-                        <input type="text" name="contact" value="<?php echo htmlspecialchars($contact); ?>" required placeholder="Verify identity..." class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-8 py-5 outline-none transition-all font-black text-lg">
+                        <label class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#19DC7E] ml-5 md:ml-6">Email / Phone (Verification)</label>
+                        <input type="text" name="contact" value="<?php echo htmlspecialchars($contact); ?>" required placeholder="Verify identity..." class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] md:rounded-[24px] px-6 md:px-8 py-4 md:py-5 outline-none transition-all font-black text-base md:text-lg">
                     </div>
                 </div>
                 <?php if(isset($error)): ?>

@@ -5,10 +5,10 @@
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[500px] bg-[#19DC7E] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
     <div class="container mx-auto px-6 relative z-10">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 border-b border-white/10 pb-16">
+        <div class="grid grid-cols-2 md:grid-cols-12 gap-y-12 gap-x-8 border-b border-white/10 pb-16">
             
-            <!-- BRAND COLUMN (Left, massive) -->
-            <div class="md:col-span-12 xl:col-span-5 space-y-6 md:space-y-8 text-center xl:text-left">
+            <!-- BRAND COLUMN -->
+            <div class="col-span-2 md:col-span-12 xl:col-span-5 space-y-6 md:space-y-8 text-center xl:text-left">
                 <a href="<?php echo get_url(''); ?>" class="inline-block group pb-2">
                     <img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo get_setting('store_name', 'DRIYUM'); ?>" class="w-28 md:w-32 lg:w-40 inline-block group-hover:scale-105 transition-transform duration-300">
                 </a>
@@ -54,8 +54,8 @@
                 </div>
             </div>
 
-            <!-- LINKS (Middle) -->
-            <div class="col-span-6 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
+            <!-- LINKS (Shop) -->
+            <div class="col-span-1 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
                 <h4 class="text-base md:text-lg font-bold font-['Fredoka'] text-[#19DC7E] uppercase tracking-widest">Shop</h4>
                 <ul class="space-y-4 font-['Outfit'] text-gray-400">
                     <li><a href="<?php echo get_url('shop'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">All Snacks</a></li>
@@ -64,7 +64,8 @@
                 </ul>
             </div>
 
-            <div class="col-span-6 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
+            <!-- LINKS (Support) -->
+            <div class="col-span-1 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
                 <h4 class="text-base md:text-lg font-bold font-['Fredoka'] text-[#19DC7E] uppercase tracking-widest">Support</h4>
                 <ul class="space-y-4 font-['Outfit'] text-gray-400">
                     <li><a href="<?php echo get_url('about'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">Our Story</a></li>
@@ -75,8 +76,8 @@
                 </ul>
             </div>
 
-            <!-- NEWSLETTER (Right) -->
-            <div class="col-span-12 md:col-span-4 xl:col-span-3 space-y-6 pt-4 text-center md:text-left">
+            <!-- NEWSLETTER -->
+            <div class="col-span-2 md:col-span-4 xl:col-span-3 space-y-6 pt-4 text-center md:text-left">
                 <h4 class="text-base md:text-lg font-bold font-['Fredoka'] text-[#19DC7E] uppercase tracking-widest">Stay Fresh</h4>
                 <p class="text-gray-400 font-['Outfit']">Join the club for distinct drops and exclusive deals.</p>
                 <form class="relative group" id="newsletter-form" onsubmit="subscribeNewsletter(event)">

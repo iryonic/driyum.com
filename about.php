@@ -19,10 +19,10 @@ require_once 'includes/functions.php';
 
     <!-- HERO SECTION -->
     <section class="pt-32 pb-20 px-6 relative overflow-hidden">
-        <div class="container mx-auto max-w-5xl text-center relative z-10">
-            <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up">The Driyum Journey</span>
-            <h1 class="text-6xl md:text-8xl font-['Fredoka'] font-black text-gray-900 mb-8 anim-up delay-100 leading-tight">Born from <span class="text-[#19DC7E]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.</h1>
-            <p class="text-xl md:text-2xl text-gray-500 font-medium max-w-3xl mx-auto anim-up delay-200 leading-relaxed">We're on a mission to prove that healthy snacking shouldn't cost the earth or your health.</p>
+        <div class="container mx-auto max-w-5xl text-center relative z-10 px-4">
+            <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-[10px] md:text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up">The Driyum Journey</span>
+            <h1 class="text-[clamp(2.5rem,8vw,6rem)] font-['Fredoka'] font-black text-gray-900 mb-8 anim-up delay-100 leading-[1.1] tracking-tighter">Born from <span class="text-[#19DC7E]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.</h1>
+            <p class="text-lg md:text-2xl text-gray-500 font-medium max-w-3xl mx-auto anim-up delay-200 leading-relaxed px-4">We're on a mission to prove that healthy snacking shouldn't cost the earth or your health.</p>
         </div>
         
         <!-- Background Elements -->
@@ -34,10 +34,10 @@ require_once 'includes/functions.php';
     <section class="py-20 px-6">
         <div class="container mx-auto max-w-6xl">
             <div class="flex flex-col md:flex-row items-center gap-16">
-                <div class="w-full md:w-1/2 anim-up">
+                <div class="w-full md:w-1/2 anim-up px-4">
                     <div class="relative group">
                         <div class="absolute -inset-4 bg-[#19DC7E]/20 rounded-[50px] blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-                        <img src="<?php echo get_url('assets/images/about_story.jpg'); ?>" alt="Our Story" onerror="this.src='https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?q=80&w=1000&auto=format&fit=crop'" class="relative rounded-[40px] w-full h-[500px] object-cover shadow-2xl transform group-hover:scale-[1.02] -rotate-2 group-hover:rotate-0 transition-all duration-700">
+                        <img src="<?php echo get_url('assets/images/about_story.jpg'); ?>" alt="Our Story" onerror="this.src='https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?q=80&w=1000&auto=format&fit=crop'" class="relative rounded-[40px] w-full h-[350px] md:h-[500px] object-cover shadow-2xl transform group-hover:scale-[1.02] -rotate-1 md:-rotate-2 group-hover:rotate-0 transition-all duration-700">
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 space-y-8 anim-up delay-200">
@@ -55,9 +55,9 @@ require_once 'includes/functions.php';
 
     <!-- TRADITION SECTION: HOKH SUIN -->
     <section class="py-32 px-6 bg-white rounded-[60px] md:rounded-[100px] shadow-sm my-20">
-        <div class="container mx-auto max-w-6xl text-center mb-16 px-4">
-             <h2 class="text-5xl md:text-7xl font-['Fredoka'] font-black text-gray-900 mb-6">HOKH SUIN</h2>
-             <span class="text-[#19DC7E] font-black uppercase tracking-[0.3em] text-sm">A piece of Kashmiri heritage</span>
+        <div class="container mx-auto max-w-6xl text-center mb-16 px-6">
+             <h2 class="text-[clamp(2.5rem,7vw,5rem)] font-['Fredoka'] font-black text-gray-900 mb-6 leading-none">HOKH SUIN</h2>
+             <span class="text-[#19DC7E] font-black uppercase tracking-[0.3em] text-xs md:text-sm">A piece of Kashmiri heritage</span>
         </div>
 
         <div class="container mx-auto max-w-6xl">
@@ -73,10 +73,10 @@ require_once 'includes/functions.php';
                         </div>
                     </div>
                 </div>
-                <div class="order-1 md:order-2 anim-up delay-200">
+                <div class="order-1 md:order-2 anim-up delay-200 px-4">
                     <div class="relative group">
                          <div class="absolute inset-0 bg-amber-400/20 rounded-[50px] rotate-6 scale-95 blur-xl group-hover:rotate-0 transition-transform duration-500"></div>
-                         <img src="<?php echo get_url('assets/images/tradition.jpg'); ?>" alt="Heritage" onerror="this.src='https://images.unsplash.com/photo-1543362906-acfc16c623a2?q=80&w=1000&auto=format&fit=crop'" class="relative rounded-[50px] w-full h-[600px] object-cover shadow-2xl transition hover:scale-[1.01]">
+                         <img src="<?php echo get_url('assets/images/tradition.jpg'); ?>" alt="Heritage" onerror="this.src='https://images.unsplash.com/photo-1543362906-acfc16c623a2?q=80&w=1000&auto=format&fit=crop'" class="relative rounded-[50px] w-full h-[400px] md:h-[600px] object-cover shadow-2xl transition hover:scale-[1.01]">
                          
                          <!-- Floating Badge -->
                          <div class="absolute -bottom-10 -left-10 bg-white p-6 rounded-[30px] shadow-2xl border-4 border-[#FFFBEB] transform -rotate-6 hidden md:block">
