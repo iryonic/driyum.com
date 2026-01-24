@@ -162,9 +162,8 @@ if (isset($_SESSION['user_id'])) {
     </section>
 
 
-    <!-- SALE COUNTDOWN SECTION -->
     <?php
-    $active_sale = fetch_one("SELECT * FROM sale_countdowns WHERE is_active = 1 AND end_date > NOW() ORDER BY end_date ASC LIMIT 1");
+    $active_sale = fetch_one("SELECT * FROM sale_countdowns WHERE is_active = 1 LIMIT 1");
     if($active_sale):
     ?>
     <section class="py-0 px-4 -mt-16 relative z-20 mb-16">
@@ -214,23 +213,43 @@ if (isset($_SESSION['user_id'])) {
         (function() {
             const timer = document.getElementById('sale-timer');
             if(!timer) return;
-            const endDate = new Date(timer.dataset.end).getTime();
+            
+            // Standardize date for cross-browser support (replace space with T)
+            const dateStr = timer.dataset.end.replace(' ', 'T');
+            const endDate = new Date(dateStr).getTime();
+            
+            if (isNaN(endDate)) {
+                console.error("Countdown Date Invalid:", timer.dataset.end);
+                return;
+            }
+
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minsEl = document.getElementById('minutes');
+            const secsEl = document.getElementById('seconds');
             
             const update = () => {
                 const now = new Date().getTime();
                 const distance = endDate - now;
                 
                 if (distance < 0) {
-                    timer.innerHTML = '<div class="col-span-4 text-2xl font-bold text-[#19DC7E]">SALE ENDED</div>';
+                    timer.innerHTML = '<div class="col-span-4 text-2xl font-black text-[#19DC7E] animate-pulse">SALE ENDED</div>';
+                    clearInterval(timerInterval);
                     return;
                 }
 
-                document.getElementById('days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
-                document.getElementById('hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                document.getElementById('minutes').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                document.getElementById('seconds').innerText = Math.floor((distance % (1000 * 60)) / 1000);
+                const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if(daysEl) daysEl.innerText = d.toString().padStart(2, '0');
+                if(hoursEl) hoursEl.innerText = h.toString().padStart(2, '0');
+                if(minsEl) minsEl.innerText = m.toString().padStart(2, '0');
+                if(secsEl) secsEl.innerText = s.toString().padStart(2, '0');
             };
-            setInterval(update, 1000);
+            
+            const timerInterval = setInterval(update, 1000);
             update();
         })();
         </script>

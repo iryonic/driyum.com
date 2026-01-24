@@ -12,8 +12,12 @@ $subscribers_count = fetch_one("SELECT COUNT(*) as c FROM newsletter_subscribers
 $recent_orders = fetch_all("SELECT * FROM orders ORDER BY created_at DESC LIMIT 5");
 
 // Activity Pulse Data
-$low_stock = fetch_all("SELECT name, stock FROM products WHERE stock <= 5 AND is_active = 1 LIMIT 3");
+$low_stock = fetch_all("SELECT name, stock, image FROM products WHERE stock <= 5 AND is_active = 1 LIMIT 3");
 $recent_reviews = fetch_all("SELECT r.*, u.name as user_name, p.name as prod_name FROM reviews r JOIN users u ON r.user_id = u.id JOIN products p ON r.product_id = p.id ORDER BY r.created_at DESC LIMIT 3");
+
+// Business Intelligence Stats
+$sales_today = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = CURDATE() AND order_status != 'cancelled'")['t'] ?? 0;
+$top_selling = fetch_all("SELECT p.name, SUM(oi.quantity) as total_sold, p.image, p.price FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.id ORDER BY total_sold DESC LIMIT 3");
 ?>
 
 <div class="mb-8 flex justify-between items-center">
@@ -139,9 +143,22 @@ updateClock();
                                 <span class="font-black text-gray-900">₹<?php echo number_format($o['total']); ?></span>
                             </td>
                             <td class="p-6">
-                                <a href="orders.php?id=<?php echo $o['id']; ?>" class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform inline-block <?php echo get_status_color($o['order_status']); ?>">
-                                    <?php echo $o['order_status']; ?>
-                                </a>
+                                <div class="relative inline-block status-dropdown-container">
+                                    <button onclick="toggleStatusDropdown(this, event)" class="status-btn px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 <?php echo get_status_color($o['order_status']); ?>">
+                                        <?php echo str_replace('_', ' ', $o['order_status']); ?> 
+                                        <i class="fas fa-chevron-down opacity-50 text-[10px] transition-transform duration-300"></i>
+                                    </button>
+                                    
+                                    <!-- Dropdown Menu (Standardized with Orders Page) -->
+                                    <div class="status-menu absolute left-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 hidden z-50 overflow-hidden transform origin-top-left transition-all">
+                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'pending', this)" class="block px-4 py-2 hover:bg-yellow-50 text-yellow-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Pending</a>
+                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'confirmed', this)" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Confirm</a>
+                                        <a href="javascript:void(0)" onclick="openDispatchModal(<?php echo $o['id']; ?>, '<?php echo $o['id']; ?>')" class="block px-4 py-2 hover:bg-blue-50 text-blue-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Ship / Dispatch</a>
+                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'delivered', this)" class="block px-4 py-2 hover:bg-green-50 text-green-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Delivered</a>
+                                        <div class="border-t border-gray-50 my-1"></div>
+                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'cancelled', this)" class="block px-4 py-2 hover:bg-red-50 text-red-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Cancel</a>
+                                    </div>
+                                </div>
                             </td>
                             <td class="p-6 text-right">
                                 <a href="orders.php?id=<?php echo $o['id']; ?>" class="w-10 h-10 inline-flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl group-hover:bg-black group-hover:text-white transition shadow-sm"><i class="fas fa-eye text-xs"></i></a>
@@ -160,27 +177,56 @@ updateClock();
     <!-- RIGHT: ACTIVITY PULSE & NOTIFICATIONS -->
     <div class="space-y-8">
         
-        <!-- Live Notifications -->
+        <!-- Live Pulse & Intelligence -->
         <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
-            <h3 class="font-bold text-xl font-['Fredoka'] text-gray-900 mb-6 flex items-center gap-2">
-                <span class="relative flex h-3 w-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                </span>
-                Activity Pulse
-            </h3>
+                <h3 class="font-bold text-xl font-['Fredoka'] text-gray-900 mb-6 flex items-center gap-2">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    Activity Pulse
+                </h3>
 
-            <div class="space-y-6">
+                <div class="space-y-6">
+                    <!-- Sales Today Indicator -->
+                    <div class="p-6 bg-gradient-to-r from-green-600 to-[#19DC7E] rounded-[30px] text-white shadow-lg relative overflow-hidden group mb-2">
+                        <div class="relative z-10">
+                            <div class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Market Velocity</div>
+                            <div class="text-3xl font-black fredoka">₹<?php echo number_format($sales_today); ?></div>
+                            <p class="text-[10px] font-bold opacity-80 mt-1 italic">Today's Revenue</p>
+                        </div>
+                        <i class="fas fa-bolt absolute -right-2 -bottom-2 text-white/10 text-6xl group-hover:scale-125 transition-all duration-500"></i>
+                    </div>
+
                 <!-- New Orders Alert -->
                 <?php if($pending_orders > 0): ?>
-                <div class="p-4 bg-yellow-50 rounded-2xl border border-yellow-100 flex gap-4">
+                <div class="p-4 bg-yellow-50 rounded-2xl border border-yellow-100 flex gap-4 hover:shadow-md transition">
                     <div class="w-10 h-10 rounded-xl bg-yellow-400 text-white flex items-center justify-center shrink-0 shadow-sm animate-bounce">
                         <i class="fas fa-shopping-basket"></i>
                     </div>
                     <div>
                         <div class="text-xs font-black text-yellow-800 uppercase tracking-widest">Action Required</div>
                         <p class="text-sm font-bold text-yellow-900"><?php echo $pending_orders; ?> pending orders need dispatching.</p>
+                        <a href="orders.php?status_filter=pending" class="text-[10px] font-black text-yellow-600 hover:underline">Process Now &rarr;</a>
                     </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Top Selling Products -->
+                <?php if(!empty($top_selling)): ?>
+                <div class="space-y-4 pt-4 border-t border-gray-50">
+                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Top Performers</h4>
+                    <?php foreach($top_selling as $ts): ?>
+                    <div class="flex items-center gap-4 group cursor-default">
+                        <div class="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden border border-gray-100 p-1 group-hover:border-[#19DC7E] transition-colors">
+                            <img src="<?php echo get_url($ts['image']); ?>" class="w-full h-full object-cover rounded-lg">
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-xs font-bold text-gray-900 leading-tight"><?php echo $ts['name']; ?></div>
+                            <div class="text-[10px] text-gray-400 font-medium">₹<?php echo number_format($ts['price']); ?> • <span class="text-[#19DC7E] font-black"><?php echo $ts['total_sold']; ?> Sold</span></div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
 
@@ -238,5 +284,142 @@ updateClock();
     </div>
 </div>
 
+<!-- Dispatch Modal -->
+<div id="dispatchModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-[200]">
+    <div class="bg-white rounded-[40px] p-10 w-full max-w-lg shadow-2xl anim-up">
+        <div class="flex items-center gap-4 mb-8">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl">
+                <i class="fas fa-shipping-fast"></i>
+            </div>
+            <div>
+                <h3 class="text-3xl font-black fredoka text-gray-900">Dispatch Order</h3>
+                <p class="text-gray-400 font-medium" id="dispatch-order-number">ORD-000000</p>
+            </div>
+        </div>
+        
+        <form action="orders.php" method="POST" id="dispatch-form" class="space-y-6">
+            <input type="hidden" name="order_id" id="dispatch-order-id">
+            <input type="hidden" name="dispatch_order" value="1">
+            
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Tracking Number</label>
+                <input type="text" name="tracking_number" required placeholder="Paste tracking ID here..." class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+            </div>
+            
+            <div class="space-y-2">
+                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Dispatch Date</label>
+                <input type="date" name="dispatch_date" required value="<?php echo date('Y-m-d'); ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+            </div>
+
+            <div class="flex gap-4 pt-4">
+                <button type="button" onclick="closeDispatchModal()" class="flex-1 bg-gray-100 text-gray-500 py-5 rounded-[24px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all">Cancel</button>
+                <button type="submit" class="flex-1 bg-black text-white py-5 rounded-[24px] font-black uppercase tracking-widest shadow-xl hover:bg-[#19DC7E] hover:text-black transition-all" id="dispatch-btn">Dispatch Now</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Dashboard Status Management Logic
+async function updateOrderStatus(id, status, el) {
+    const container = el.closest('.status-dropdown-container');
+    const btn = container.querySelector('.status-btn');
+    const originalContent = btn.innerHTML;
+    
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+    
+    try {
+        const formData = new FormData();
+        formData.append('ajax_action', 'update_status');
+        formData.append('id', id);
+        formData.append('status', status);
+
+        const response = await fetch('orders.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            btn.innerHTML = `${data.label} <i class="fas fa-chevron-down opacity-50 text-[10px]"></i>`;
+            btn.className = `status-btn px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 ${getStatusColor(status)}`;
+            
+            // Pulse success
+            btn.classList.add('scale-110');
+            setTimeout(() => btn.classList.remove('scale-110'), 200);
+        } else {
+            alert('Error: ' + data.message);
+            btn.innerHTML = originalContent;
+        }
+    } catch (e) {
+        alert('Status update failed');
+        btn.innerHTML = originalContent;
+    }
+    container.querySelector('.status-menu').classList.add('hidden');
+}
+
+function getStatusColor(status) {
+    switch(status) {
+        case 'pending': return 'bg-yellow-400 text-black';
+        case 'confirmed': return 'bg-indigo-600 text-white';
+        case 'shipped': return 'bg-blue-600 text-white';
+        case 'delivered': return 'bg-[#19DC7E] text-black';
+        case 'cancelled': return 'bg-red-600 text-white';
+        default: return 'bg-gray-100 text-gray-800';
+    }
+}
+
+function toggleStatusDropdown(btn, e) {
+    e.stopPropagation();
+    const menu = btn.nextElementSibling;
+    const isHidden = menu.classList.contains('hidden');
+    
+    document.querySelectorAll('.status-menu').forEach(m => m.classList.add('hidden'));
+    if(isHidden) menu.classList.remove('hidden');
+}
+
+function openDispatchModal(id, num) {
+    document.getElementById('dispatch-order-id').value = id;
+    document.getElementById('dispatch-order-number').textContent = 'Order #' + num;
+    document.getElementById('dispatchModal').classList.replace('hidden', 'flex');
+}
+
+function closeDispatchModal() {
+    document.getElementById('dispatchModal').classList.replace('flex', 'hidden');
+}
+
+// Handle Dispatch Submission
+document.getElementById('dispatch-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('dispatch-btn');
+    const original = btn.textContent;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    btn.disabled = true;
+
+    try {
+        const formData = new FormData(this);
+        formData.append('is_ajax', '1');
+        const response = await fetch('orders.php', { method: 'POST', body: formData });
+        const data = await response.json();
+
+        if(data.success) {
+            location.reload(); // Refresh to update all stats and lists
+        } else {
+            alert('Dispatch failed: ' + data.message);
+            btn.textContent = original;
+            btn.disabled = false;
+        }
+    } catch(err) {
+        alert('Network error');
+        btn.textContent = original;
+        btn.disabled = false;
+    }
+});
+
+document.addEventListener('click', () => {
+    document.querySelectorAll('.status-menu').forEach(m => m.classList.add('hidden'));
+});
+</script>
 </body>
 </html>
