@@ -103,134 +103,142 @@
     </div>
 </footer>
 
-<!-- MOBILE NAV - GUARANTEED VISIBILITY -->
-<!-- This structure purposely avoids framework classes to prevent conflicts -->
-<div id="driyum-mobile-dock">
-    <style>
-        /* Force Reset for Dock */
-        #driyum-mobile-dock {
-            display: none; /* Hidden by default on desktop */
+<!-- MOBILE NAV - CHUNKY PREMIUM - V2 Clean -->
+<style>
+    /* Clean Dock Styles - No hacks */
+    #driyum-mobile-dock-v2 {
+        display: none;
+        position: fixed;
+        bottom: 24px;
+        left: 0;
+        right: 0;
+        justify-content: center;
+        z-index: 99999;
+    }
+
+    @media screen and (max-width: 768px) {
+        #driyum-mobile-dock-v2 {
+            display: flex;
         }
 
-        @media screen and (max-width: 768px) {
-            #driyum-mobile-dock {
-                display: block !important;
-                position: fixed !important;
-                bottom: 20px !important;
-                left: 16px !important;
-                right: 16px !important;
-                height: 70px !important;
-                z-index: 2147483647 !important;
-                background: #111827 !important; /* Dark Gray/Black */
-                border-radius: 35px !important;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
-                border: 1px solid rgba(255,255,255,0.1) !important;
-                padding: 0 20px !important;
-                isolation: isolate !important;
-            }
-
-            #driyum-mobile-dock-inner {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: space-between !important;
-                width: 100% !important;
-                height: 100% !important;
-            }
-
-            .dock-item {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-                color: #9CA3AF !important; /* Gray-400 */
-                text-decoration: none !important;
-                transition: color 0.3s ease !important;
-                background: none !important;
-                border: none !important;
-                padding: 0 !important;
-                width: 48px !important;
-            }
-
-            .dock-item.active {
-                color: #19DC7E !important; /* Brand Green */
-            }
-
-            .dock-item i {
-                font-size: 20px !important;
-                margin-bottom: 2px !important;
-            }
-
-            /* Floating Call to Action (Cart) */
-            .dock-fab {
-                position: relative !important;
-                top: -30px !important;
-                width: 64px !important;
-                height: 64px !important;
-                background: #19DC7E !important;
-                border-radius: 50% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                border: 4px solid #FFFBEB !important; /* Matches Body BG */
-                color: #000 !important;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
-                transition: transform 0.2s ease !important;
-            }
-            
-            .dock-fab:active {
-                transform: scale(0.95) !important;
-            }
-
-            .dock-fab-badge {
-                position: absolute !important;
-                top: -4px !important;
-                right: -4px !important;
-                background: #EF4444 !important; /* Red */
-                color: white !important;
-                font-size: 10px !important;
-                font-weight: bold !important;
-                width: 20px !important;
-                height: 20px !important;
-                border-radius: 50% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                border: 2px solid white !important;
-            }
-
-            /* Ensure Page content is not hidden behind dock */
-            body {
-                padding-bottom: 120px !important;
-            }
+        #driyum-mobile-dock-inner-v2 {
+            background: #111827;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border-radius: 32px;
+            padding: 0 24px;
+            height: 72px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-    </style>
 
-    <div id="driyum-mobile-dock-inner">
+        .dock-item-v2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #9CA3AF;
+            text-decoration: none;
+            background: transparent;
+            border: none;
+            padding: 8px;
+            width: 50px;
+            position: relative;
+        }
+
+        .dock-item-v2 i {
+            font-size: 22px;
+            transition: 0.2s;
+        }
+
+        .dock-item-v2.active {
+            color: #FFFFFF;
+        }
+        
+        .dock-item-v2.active i {
+            color: #19DC7E;
+            transform: translateY(-4px);
+        }
+
+        .dock-fab-wrapper-v2 {
+            position: relative;
+            width: 64px;
+            height: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(-24px);
+        }
+
+        .dock-fab-v2 {
+            width: 64px;
+            height: 64px;
+            background: #19DC7E;
+            border: 5px solid #111827; 
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            box-shadow: 0 10px 25px rgba(25, 220, 126, 0.4);
+        }
+
+        .dock-badge-v2 {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #EF4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            min-width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 99px;
+            border: 2px solid #111827;
+        }
+        
+        body { padding-bottom: 120px; }
+    }
+</style>
+
+<div id="driyum-mobile-dock-v2">
+    <div id="driyum-mobile-dock-inner-v2">
         <!-- Home -->
-        <a href="<?php echo get_url(''); ?>" class="dock-item <?php echo in_array(basename($_SERVER['PHP_SELF']), ['index.php', '']) ? 'active' : ''; ?>">
+        <a href="<?php echo get_url(''); ?>" class="dock-item-v2 <?php echo in_array(basename($_SERVER['PHP_SELF']), ['index.php', '']) ? 'active' : ''; ?>">
             <i class="fas fa-home"></i>
         </a>
 
         <!-- Shop -->
-        <a href="<?php echo get_url('shop'); ?>" class="dock-item <?php echo basename($_SERVER['PHP_SELF'])=='shop.php' ? 'active' : ''; ?>">
+        <a href="<?php echo get_url('shop'); ?>" class="dock-item-v2 <?php echo basename($_SERVER['PHP_SELF'])=='shop.php' ? 'active' : ''; ?>">
             <i class="fas fa-store"></i>
         </a>
 
         <!-- Cart FAB -->
-        <a href="#" onclick="openCartSidebar(); return false;" class="dock-fab">
-            <i class="fas fa-shopping-bag" style="font-size: 24px;"></i>
-            <?php if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
-                <span class="dock-fab-badge" id="mobile-cart-count"><?php echo count($_SESSION['cart']); ?></span>
-            <?php endif; ?>
-        </a>
+        <div class="dock-fab-wrapper-v2">
+            <a href="#" onclick="openCartSidebar(); return false;" class="dock-fab-v2">
+                <i class="fas fa-shopping-bag"></i>
+                <?php if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
+                    <span class="dock-badge-v2" id="mobile-cart-count"><?php echo count($_SESSION['cart']); ?></span>
+                <?php endif; ?>
+            </a>
+        </div>
 
         <!-- Track -->
-        <a href="<?php echo get_url('track'); ?>" class="dock-item <?php echo basename($_SERVER['PHP_SELF'])=='track.php' ? 'active' : ''; ?>">
-            <i class="fas fa-box"></i>
+        <a href="<?php echo get_url('track'); ?>" class="dock-item-v2 <?php echo basename($_SERVER['PHP_SELF'])=='track.php' ? 'active' : ''; ?>">
+            <i class="fas fa-map-marker-alt"></i>
         </a>
 
         <!-- Menu -->
-        <button onclick="toggleMobileMenuDrawer()" class="dock-item">
+        <button onclick="toggleMobileMenuDrawer()" class="dock-item-v2">
             <i class="fas fa-bars"></i>
         </button>
     </div>
@@ -243,11 +251,11 @@
 function subscribeNewsletter(e) {
     e.preventDefault();
     const form = document.getElementById('newsletter-form');
+    // ... existing logic ...
     const formData = new FormData(form);
     const btn = form.querySelector('button');
     const icon = btn.querySelector('i');
     
-    // Loading State
     icon.className = 'fas fa-spinner fa-spin';
     
     fetch('<?php echo get_url('api/subscribe.php'); ?>', {
@@ -256,48 +264,10 @@ function subscribeNewsletter(e) {
     })
     .then(response => response.json())
     .then(data => {
-        if(typeof showToast === 'function') {
-            showToast(data.message, data.success ? 'success' : 'error');
-        }
-        
-        if(data.success) {
-            form.reset();
-        }
+        if(typeof showToast === 'function') showToast(data.message, data.success ? 'success' : 'error');
+        if(data.success) form.reset();
     })
-    .catch(error => {
-        console.error('Error:', error);
-        if(typeof showToast === 'function') {
-            showToast('Something went wrong. Please try again.', 'error');
-        }
-    })
-    .finally(() => {
-        icon.className = 'fas fa-arrow-right';
-    });
+    .catch(error => { console.error('Error:', error); })
+    .finally(() => { icon.className = 'fas fa-arrow-right'; });
 }
-
-// FORCE MOBILE NAV VISIBILITY SCRIPT
-document.addEventListener('DOMContentLoaded', function() {
-    if (window.innerWidth <= 768) {
-        const dock = document.getElementById('driyum-mobile-dock');
-        if (dock && dock.parentElement !== document.body) {
-            // Move dock to direct body child to escape any overflow:hidden parents
-            document.body.appendChild(dock);
-            console.log('Mobile Dock moved to body for visibility.');
-        }
-        
-        // Debug indicator (Optional, self-removing)
-        /*
-        const debug = document.createElement('div');
-        debug.style.position = 'fixed';
-        debug.style.top = '0';
-        debug.style.left = '0';
-        debug.style.background = 'red';
-        debug.style.color = 'white';
-        debug.style.zIndex = '9999999';
-        debug.textContent = 'Footer Loaded';
-        document.body.appendChild(debug);
-        setTimeout(() => debug.remove(), 2000);
-        */
-    }
-});
 </script>
