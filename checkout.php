@@ -760,10 +760,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     const options = {
                         "key": rData.key,
                         "amount": rData.amount,
-                        "currency": "INR",
+                        "currency": rData.currency || "INR",
                         "name": rData.name,
                         "description": rData.description,
-                        "image": "assets/images/logo.png",
+                        "image": BASE_URL + "assets/images/logo.png",
                         "order_id": rData.order_id,
                         "handler": async function (response){
                             // 3. Verify Payment

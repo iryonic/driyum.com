@@ -54,6 +54,7 @@ if ($action === 'create_order') {
             'success' => true,
             'order_id' => $razorpayOrder['id'],
             'amount' => $orderData['amount'],
+            'currency' => RAZORPAY_CURRENCY,
             'key' => RAZORPAY_KEY_ID,
             'name' => RAZORPAY_COMPANY_NAME,
             'description' => RAZORPAY_DESCRIPTION,
