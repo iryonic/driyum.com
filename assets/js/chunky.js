@@ -199,24 +199,14 @@ window.addToCart = async function (productId, btnElement, quantity = 1) {
             // Update all UI components
             await updateCartIcon();
 
-            // Check if sidebar is technically "active" or just reload it silently if user opens it later
-            // But if it IS open, reload it now
-            const sidebar = document.getElementById('cart-sidebar');
-            const isSidebarOpen = sidebar && (
-                sidebar.style.transform === 'translateX(0px)' ||
-                sidebar.style.transform === 'translateX(0)' ||
-                !sidebar.classList.contains('translate-x-full')
-            );
-            if (isSidebarOpen) {
-                loadCartItems();
-            }
+            // Seamlessly open the sidebar to show the user the result
+            openCartSidebar();
 
             setTimeout(() => {
                 btnElement.innerHTML = originalText;
                 btnElement.classList.remove('bg-[#19DC7E]', 'text-white', 'border-transparent', 'scale-110');
                 btnElement.disabled = false;
             }, 2000);
-            showToast(`Added ${data.product.name} to cart!`);
         } else {
             btnElement.innerHTML = originalText;
             btnElement.disabled = false;
@@ -262,31 +252,58 @@ window.quickBuy = async function (productId, btnElement, quantity = 1) {
 };
 
 window.updateCartQty = async function (productId, quantity) {
-    // Optimistic UI update could go here, but for now we wait for fast API
+    const itemEl = document.getElementById(`cart-item-${productId}`);
+
+    // OPTIMISTIC UI: If removing, hide immediately
+    if (quantity === 0 && itemEl) {
+        itemEl.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+        itemEl.style.opacity = '0';
+        itemEl.style.transform = 'translateX(50px) scale(0.9)';
+        itemEl.style.pointerEvents = 'none';
+        // After animation, we'll reload anyway, but this makes it look instant
+    }
+
     try {
         const formData = new FormData();
         formData.append('product_id', productId);
         formData.append('quantity', quantity);
 
-        await fetch(`${BASE_URL}api/cart.php?action=update`, { method: 'POST', body: formData });
+        const response = await fetch(`${BASE_URL}api/cart.php?action=update`, { method: 'POST', body: formData });
+        const data = await response.json();
 
-        // Force both updates immediately
-        await updateCartIcon();
+        if (data.success) {
+            // Force both updates immediately
+            await updateCartIcon();
 
-        // If sidebar is open, reload it
-        const sidebar = document.getElementById('cart-sidebar');
-        const isSidebarOpen = sidebar && (
-            sidebar.style.transform === 'translateX(0px)' ||
-            sidebar.style.transform === 'translateX(0)' ||
-            !sidebar.classList.contains('translate-x-full')
-        );
+            // If sidebar is open, reload it
+            const sidebar = document.getElementById('cart-sidebar');
+            const isSidebarOpen = sidebar && (
+                sidebar.style.transform === 'translateX(0px)' ||
+                sidebar.style.transform === 'translateX(0)' ||
+                !sidebar.classList.contains('translate-x-full')
+            );
 
-        if (isSidebarOpen) {
-            loadCartItems();
+            if (isSidebarOpen) {
+                loadCartItems();
+            }
+        } else {
+            // ROLLBACK if failed
+            if (itemEl) {
+                itemEl.style.opacity = '1';
+                itemEl.style.transform = 'translateX(0) scale(1)';
+                itemEl.style.pointerEvents = 'auto';
+            }
+            showToast(data.message || 'Update failed', 'error');
         }
 
     } catch (e) {
         console.error("Update failed", e);
+        // ROLLBACK
+        if (itemEl) {
+            itemEl.style.opacity = '1';
+            itemEl.style.transform = 'translateX(0) scale(1)';
+            itemEl.style.pointerEvents = 'auto';
+        }
     }
 }
 
@@ -331,7 +348,9 @@ window.loadCartItems = async function () {
                     </div>`;
             } else {
                 container.innerHTML = data.items.map((item, index) => `
-                    <div class="cart-item-card group relative flex gap-5 items-center bg-white p-4 rounded-[28px] border-2 border-transparent hover:border-gray-50 transition-all duration-300">
+                    <div id="cart-item-${item.id}" 
+                         class="cart-item-card group relative flex gap-5 items-center bg-white p-4 rounded-[28px] border-2 border-transparent hover:border-gray-50 transition-all duration-300"
+                         style="animation: cartItemSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: ${index * 50}ms; opacity: 0; transform: translateX(20px);">
                         <!-- Image Container with Float Animation -->
                         <div class="relative w-24 h-24 flex-shrink-0 bg-[#F3F4F6] rounded-[22px] overflow-hidden group-hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)] transition-shadow">
                              <a href="${BASE_URL}product/${item.id}"><img src="${BASE_URL}${item.image}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'"></a>
