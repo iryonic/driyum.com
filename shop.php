@@ -236,29 +236,29 @@ if (isset($_SESSION['user_id'])) {
                             </a>
                             
                             <!-- Glass Action Bar (Floating at bottom) -->
-                            <div class="px-5 pb-5 pt-3 mt-auto z-20 relative">
-                                <div class="bg-white rounded-[30px] p-3 flex items-center justify-between border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
+                            <div class="px-3 pb-4 md:px-5 md:pb-5 pt-2 md:pt-3 mt-auto z-20 relative">
+                                <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 flex items-center justify-between border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
                                      
                                      <!-- Price -->
-                                     <div class="pl-4 flex flex-col leading-none">
+                                     <div class="pl-2 md:pl-4 flex flex-col leading-none">
                                         <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
-                                            <span class="text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
+                                            <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
                                         <?php endif; ?>
-                                        <span class="text-3xl font-black text-gray-900 font-['Fredoka'] tracking-tighter">₹<?php echo $p['price']; ?></span>
+                                        <span class="text-xl md:text-3xl font-black text-gray-900 font-['Fredoka'] tracking-tighter">₹<?php echo $p['price']; ?></span>
                                      </div>
 
-                                     <div class="flex gap-2">
+                                     <div class="flex gap-1 md:gap-2">
                                         <!-- Quick Buy -->
                                         <button onclick="event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
                                             <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                            class="w-14 h-14 rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" title="Flash Buy">
-                                            <i class="fas fa-bolt text-xl group-hover/btn:animate-pulse"></i>
+                                            class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" title="Flash Buy">
+                                            <i class="fas fa-bolt text-sm md:text-xl group-hover/btn:animate-pulse"></i>
                                         </button>
                                         <!-- Add Cart -->
                                         <button onclick="event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" 
                                             <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                            class="w-14 h-14 rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
-                                            <i class="fas fa-shopping-bag text-xl group-hover/btn:rotate-12 transition-transform"></i>
+                                            class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
+                                            <i class="fas fa-shopping-bag text-sm md:text-xl group-hover/btn:rotate-12 transition-transform"></i>
                                         </button>
                                      </div>
                                 </div>

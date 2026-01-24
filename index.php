@@ -58,26 +58,26 @@ if (isset($_SESSION['user_id'])) {
         <!-- FUN FLOATING FRUITS 🍎 -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
             <!-- Top Left -->
-            <div class="absolute top-10 left-[10%] text-6xl opacity-20 animate-bounce duration-[3000ms] rotate-12 drop-shadow-lg">🍎</div>
-            <div class="absolute top-40 left-[5%] text-4xl opacity-15 animate-ping duration-[4000ms]">🍃</div>
-            <div class="absolute top-60 left-[20%] text-5xl opacity-20 animate-bounce duration-[3500ms] -rotate-6">🍓</div>
+            <div class="absolute top-10 left-[10%] text-6xl opacity-20 animate-bounce duration-[3000ms] rotate-12 drop-shadow-lg hidden sm:block">🍎</div>
+            <div class="absolute top-40 left-[5%] text-4xl opacity-15 animate-ping duration-[4000ms] hidden sm:block">🍃</div>
+            <div class="absolute top-60 left-[20%] text-5xl opacity-20 animate-bounce duration-[3500ms] -rotate-6 hidden lg:block">🍓</div>
             
             <!-- Bottom Left -->
-            <div class="absolute bottom-20 left-[15%] text-7xl opacity-20 animate-bounce duration-[4000ms] -rotate-12 blur-[1px]">🍑</div>
-            <div class="absolute bottom-40 left-[25%] text-4xl opacity-15 animate-spin-slow duration-[12s]">🥝</div>
+            <div class="absolute bottom-20 left-[15%] text-7xl opacity-20 animate-bounce duration-[4000ms] -rotate-12 blur-[1px] hidden sm:block">🍑</div>
+            <div class="absolute bottom-40 left-[25%] text-4xl opacity-15 animate-spin-slow duration-[12s] hidden lg:block">🥝</div>
             
             <!-- Top Right -->
-            <div class="absolute top-20 right-[10%] text-5xl opacity-20 animate-bounce duration-[3500ms] rotate-[20deg]">🌰</div>
-            <div class="absolute top-1/2 right-[5%] text-4xl opacity-10 animate-spin-slow duration-[10s]">🍇</div>
-            <div class="absolute top-32 right-[20%] text-6xl opacity-20 animate-bounce duration-[4200ms] rotate-12">🥭</div>
+            <div class="absolute top-20 right-[10%] text-5xl opacity-20 animate-bounce duration-[3500ms] rotate-[20deg] hidden sm:block">🌰</div>
+            <div class="absolute top-1/2 right-[5%] text-4xl opacity-10 animate-spin-slow duration-[10s] hidden sm:block">🍇</div>
+            <div class="absolute top-32 right-[20%] text-6xl opacity-20 animate-bounce duration-[4200ms] rotate-12 hidden lg:block">🥭</div>
             
             <!-- Bottom Right -->
-            <div class="absolute bottom-32 right-[15%] text-6xl opacity-20 animate-bounce duration-[4500ms] -rotate-[15deg] blur-[1px]">🍒</div>
-            <div class="absolute bottom-10 right-[25%] text-5xl opacity-15 animate-bounce duration-[3800ms] rotate-6">🍊</div>
+            <div class="absolute bottom-32 right-[15%] text-6xl opacity-20 animate-bounce duration-[4500ms] -rotate-[15deg] blur-[1px] hidden sm:block">🍒</div>
+            <div class="absolute bottom-10 right-[25%] text-5xl opacity-15 animate-bounce duration-[3800ms] rotate-6 hidden sm:block">🍊</div>
             
             <!-- Center area drift -->
-            <div class="absolute top-1/3 left-1/4 text-3xl opacity-10 animate-pulse">✨</div>
-            <div class="absolute bottom-1/3 right-1/4 text-3xl opacity-10 animate-pulse delay-700">✨</div>
+            <div class="absolute top-1/4 left-1/4 text-3xl opacity-10 animate-pulse hidden md:block">✨</div>
+            <div class="absolute bottom-1/4 right-1/4 text-3xl opacity-10 animate-pulse delay-700 hidden md:block">✨</div>
         </div>
 
         <div class="container mx-auto max-w-5xl relative z-10">
@@ -128,16 +128,16 @@ if (isset($_SESSION['user_id'])) {
                 </div>
 
                 <!-- Floating Elements (Stickers) -->
-                <div class="absolute -top-10 -left-10 md:left-[-40px] z-20 animate-bounce-slow">
-                     <div class="bg-[#19DC7E] text-white font-black font-['Fredoka'] text-xl md:text-3xl px-6 py-4 rounded-[2rem] shadow-xl transform -rotate-12 border-4 border-white">
+                <div class="absolute -top-6 -left-4 md:-top-10 md:-left-10 z-20 animate-bounce-slow">
+                     <div class="bg-[#19DC7E] text-white font-black font-['Fredoka'] text-sm md:text-3xl px-4 py-2 md:px-6 md:py-4 rounded-[1.5rem] md:rounded-[2rem] shadow-xl transform -rotate-12 border-2 md:border-4 border-white">
                         100% NATURAL 🌿
                      </div>
                 </div>
 
-                <div class="absolute -bottom-10 -right-5 md:right-[-30px] z-20">
-                     <div class="bg-yellow-400 text-black font-black font-['Fredoka'] text-lg md:text-2xl px-6 py-8 rounded-full shadow-xl transform rotate-12 border-4 border-white flex flex-col items-center leading-none group-hover:rotate-[20deg] transition duration-500">
+                <div class="absolute -bottom-8 -right-4 md:-bottom-10 md:-right-5 z-20">
+                     <div class="bg-yellow-400 text-black font-black font-['Fredoka'] text-xs md:text-2xl px-4 py-6 md:px-6 md:py-8 rounded-full shadow-xl transform rotate-12 border-2 md:border-4 border-white flex flex-col items-center leading-none group-hover:rotate-[20deg] transition duration-500">
                         <span>ZERO</span>
-                        <span class="text-sm">JUNK</span>
+                        <span class="text-[8px] md:text-sm">JUNK</span>
                      </div>
                 </div>
 
@@ -182,22 +182,22 @@ if (isset($_SESSION['user_id'])) {
                 </div>
 
                 <!-- Timer Grid -->
-                <div class="grid grid-cols-4 gap-2 md:gap-4 text-center relative z-10" id="sale-timer" data-end="<?php echo $active_sale['end_date']; ?>">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[70px] md:min-w-[90px]">
+                <div class="grid grid-cols-2 xs:grid-cols-4 gap-2 md:gap-4 text-center relative z-10" id="sale-timer" data-end="<?php echo $active_sale['end_date']; ?>">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[65px] md:min-w-[90px]">
                         <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="days">00</div>
-                        <div class="text-[10px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Days</div>
+                        <div class="text-[9px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Days</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[70px] md:min-w-[90px]">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[65px] md:min-w-[90px]">
                         <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="hours">00</div>
-                        <div class="text-[10px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Hours</div>
+                        <div class="text-[9px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Hours</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[70px] md:min-w-[90px]">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[65px] md:min-w-[90px]">
                         <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="minutes">00</div>
-                        <div class="text-[10px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Mins</div>
+                        <div class="text-[9px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Mins</div>
                     </div>
-                    <div class="bg-[#19DC7E] text-black rounded-2xl p-3 md:p-6 border border-[#19DC7E] min-w-[70px] md:min-w-[90px] shadow-[0_0_30px_rgba(25,220,126,0.5)] animate-pulse">
+                    <div class="bg-[#19DC7E] text-black rounded-2xl p-3 md:p-6 border border-[#19DC7E] min-w-[65px] md:min-w-[90px] shadow-[0_0_30px_rgba(25,220,126,0.5)] animate-pulse">
                         <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="seconds">00</div>
-                        <div class="text-[10px] md:text-xs uppercase font-bold tracking-wider">Secs</div>
+                        <div class="text-[9px] md:text-xs uppercase font-bold tracking-wider">Secs</div>
                     </div>
                 </div>
 
@@ -285,16 +285,16 @@ if (isset($_SESSION['user_id'])) {
                 <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out z-30 pointer-events-none"></div>
 
                 <!-- Text Container with Glass Effect -->
-                <div class="relative z-20 bg-white/40 backdrop-blur-md rounded-[30px] p-6 border border-white/60 shadow-[0_8px_32px_rgba(255,255,255,0.2)] group-hover:scale-[1.02] transition-transform duration-500 origin-top-left">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-white/80 backdrop-blur-sm <?php echo $s['text']; ?> shadow-sm"><?php echo $s['sub']; ?></span>
-                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-black group-hover:text-white transition-colors duration-300">
-                             <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
+                <div class="relative z-20 bg-white/40 backdrop-blur-md rounded-[20px] md:rounded-[30px] p-4 md:p-6 border border-white/60 shadow-[0_8px_32px_rgba(255,255,255,0.2)] group-hover:scale-[1.02] transition-transform duration-500 origin-top-left">
+                    <div class="flex justify-between items-start mb-1 md:mb-2">
+                        <span class="px-2 py-1 md:px-3 md:py-1 rounded-full text-[8px] md:text-[10px] font-black tracking-widest uppercase bg-white/80 backdrop-blur-sm <?php echo $s['text']; ?> shadow-sm"><?php echo $s['sub']; ?></span>
+                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-black group-hover:text-white transition-colors duration-300">
+                             <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-xs md:text-base"></i>
                         </div>
                     </div>
-                    <h3 class="text-3xl md:text-4xl font-['Fredoka'] font-black <?php echo $s['text']; ?> leading-none mb-2 drop-shadow-sm"><?php echo $c['name']; ?></h3>
-                    <p class="<?php echo $s['text']; ?>/80 font-['Outfit'] font-bold text-sm tracking-wide flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-current animate-pulse"></span>
+                    <h3 class="text-xl md:text-4xl font-['Fredoka'] font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm truncate"><?php echo $c['name']; ?></h3>
+                    <p class="<?php echo $s['text']; ?>/80 font-['Outfit'] font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current animate-pulse"></span>
                         <?php echo $c['product_count']; ?> Varieties
                     </p>
                 </div>
@@ -422,29 +422,29 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                         
                         <!-- Glass Action Bar (Floating at bottom) -->
-                        <div class="px-5 pb-5 pt-3 mt-auto z-20 relative">
-                            <div class="bg-white rounded-[30px] p-3 flex items-center justify-between border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
+                        <div class="px-3 pb-4 md:px-5 md:pb-5 pt-2 md:pt-3 mt-auto z-20 relative">
+                            <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 flex items-center justify-between border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
                                  
                                  <!-- Price -->
-                                 <div class="pl-4 flex flex-col leading-none">
+                                 <div class="pl-2 md:pl-4 flex flex-col leading-none">
                                     <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
-                                        <span class="text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
+                                        <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
                                     <?php endif; ?>
-                                    <span class="text-3xl font-black text-gray-900 font-['Fredoka'] tracking-tighter">₹<?php echo $p['price']; ?></span>
+                                    <span class="text-xl md:text-3xl font-black text-gray-900 font-['Fredoka'] tracking-tighter">₹<?php echo $p['price']; ?></span>
                                  </div>
 
-                                 <div class="flex gap-2">
+                                 <div class="flex gap-1 md:gap-2">
                                     <!-- Quick Buy -->
                                     <button onclick="event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
                                         <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                        class="w-14 h-14 rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" title="Flash Buy">
-                                        <i class="fas fa-bolt text-xl group-hover/btn:animate-pulse"></i>
+                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" title="Flash Buy">
+                                        <i class="fas fa-bolt text-sm md:text-xl group-hover/btn:animate-pulse"></i>
                                     </button>
                                     <!-- Add Cart -->
                                     <button onclick="event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" 
                                         <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                        class="w-14 h-14 rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
-                                        <i class="fas fa-shopping-bag text-xl group-hover/btn:rotate-12 transition-transform"></i>
+                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
+                                        <i class="fas fa-shopping-bag text-sm md:text-xl group-hover/btn:rotate-12 transition-transform"></i>
                                     </button>
                                  </div>
                             </div>
@@ -475,9 +475,9 @@ if (isset($_SESSION['user_id'])) {
         ];
     }
     ?>
-    <section class="py-10 px-4" id="video_brand_story">
+    <section class="py-10 px-4 mb-20 md:mb-0" id="video_brand_story">
         <div class="container mx-auto">
-            <div class="relative w-full rounded-[40px] overflow-hidden shadow-2xl group cursor-pointer aspect-video bg-black">
+            <div class="relative w-full rounded-[40px] overflow-hidden shadow-2xl group cursor-pointer aspect-[16/10] md:aspect-video bg-black">
                 
                 <!-- Video Placeholder (Dynamic Image) -->
                 <img src="<?php echo $vid_sec['media_url']; ?>" class="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-700 transform group-hover:scale-105">
@@ -554,7 +554,7 @@ if (isset($_SESSION['user_id'])) {
                          <?php for($i=0; $i<$t['rating']; $i++) echo '<i class="fas fa-star"></i>'; ?>
                     </div>
                     
-                    <h2 class="text-2xl md:text-5xl lg:text-6xl font-['Fredoka'] font-bold leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center">
+                    <h2 class="text-xl md:text-5xl lg:text-6xl font-['Fredoka'] font-bold leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center p-4">
                         "<?php echo $t['message']; ?>"
                     </h2>
                     
