@@ -86,7 +86,7 @@ if ($query) {
         
         <!-- SEARCH BOX -->
         <div class="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border border-gray-100 mb-12 text-center anim-up">
-            <h1 class="text-4xl md:text-5xl font-['Fredoka'] font-black text-gray-900 mb-4">Track Order.</h1>
+            <h1 class="uppercase">Track Order.</h1>
             <p class="text-gray-400 font-bold mb-10 uppercase tracking-[0.2em] text-[10px]">Verify your order details</p>
             
             <form class="flex flex-col gap-6 max-w-2xl mx-auto">
@@ -118,7 +118,7 @@ if ($query) {
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
                             <div>
                                 <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest mb-3 inline-block">Order #<?php echo $order['order_number']; ?></span>
-                                <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Current Status: <span class="capitalize"><?php echo $order['order_status']; ?></span></h2>
+                                <h2 class="fredoka uppercase">Current Status: <span class="capitalize text-[#19DC7E]"><?php echo $order['order_status']; ?></span></h2>
                             </div>
                             <?php if(is_admin() || $order['order_status'] === 'delivered'): ?>
                             <a href="<?php echo get_url('invoice.php?id=' . $order['order_number']); ?>" target="_blank" class="btn-chunky bg-gray-50 text-gray-600 border-none text-xs px-6 py-3 hover:bg-gray-100">

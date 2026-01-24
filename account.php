@@ -61,7 +61,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                     </div>
                     <div>
-                        <h1 class="text-3xl md:text-5xl font-['Fredoka'] font-black mb-2">Hello, <?php echo explode(' ', $user['name'])[0]; ?>!</h1>
+                        <h1 class="uppercase">Hello, <?php echo explode(' ', $user['name'])[0]; ?>!</h1>
                         <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Premium Member • Since <?php echo date('M Y', strtotime($user['created_at'])); ?></p>
                     </div>
                 </div>
@@ -95,7 +95,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <div class="w-20 h-20 bg-gray-50 rounded-3xl mx-auto mb-4 flex items-center justify-center text-2xl group-hover:bg-[#19DC7E] group-hover:text-white transition-all duration-500">
                         <i class="far fa-user"></i>
                     </div>
-                    <h3 class="font-['Fredoka'] font-black text-xl text-gray-900"><?php echo $user['name']; ?></h3>
+                    <h3 class="uppercase text-xl"><?php echo $user['name']; ?></h3>
                     <p class="text-sm text-gray-400 font-medium mb-6"><?php echo $user['email']; ?></p>
                     <div class="flex justify-center gap-2">
                          <span class="px-3 py-1 bg-gray-50 text-gray-400 text-[9px] font-black uppercase tracking-tighter rounded-full border border-gray-100">Classic Account</span>

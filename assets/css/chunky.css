@@ -437,8 +437,28 @@ input#header-search-input.search-input-premium:focus {
 
 /* Fluid Typography & Responsive Scaling */
 :root {
-    --heading-clamp: clamp(2.5rem, 8vw, 6rem);
-    --subheading-clamp: clamp(1.25rem, 3vw, 2.5rem);
+    --heading-clamp-h1: clamp(2.5rem, 12vw, 8rem);
+    --heading-clamp-h2: clamp(2rem, 8vw, 5rem);
+    --heading-clamp-h3: clamp(1.5rem, 6vw, 3rem);
+    --radius-xl: 40px;
+    --radius-l: 24px;
+}
+
+h1 {
+    font-size: var(--heading-clamp-h1) !important;
+    line-height: 0.9 !important;
+    letter-spacing: -0.04em !important;
+}
+
+h2 {
+    font-size: var(--heading-clamp-h2) !important;
+    line-height: 1 !important;
+    letter-spacing: -0.02em !important;
+}
+
+h3 {
+    font-size: var(--heading-clamp-h3) !important;
+    line-height: 1.1 !important;
 }
 
 @media (max-width: 768px) {
@@ -448,33 +468,40 @@ input#header-search-input.search-input-premium:focus {
     }
 
     .container {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    }
-
-    /* Global Heading Scaling */
-    h1 {
-        font-size: clamp(2.2rem, 10vw, 4rem) !important;
-        line-height: 1 !important;
-        letter-spacing: -0.02em !important;
-    }
-
-    h2 {
-        font-size: clamp(1.8rem, 8vw, 3.2rem) !important;
-        line-height: 1.1 !important;
-    }
-
-    h3 {
-        font-size: clamp(1.4rem, 6vw, 2.4rem) !important;
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
     }
 
     /* Buttons Scaling - Touch Friendly */
     .btn-chunky {
         width: 100%;
         justify-content: center;
-        padding: 1rem 1.5rem !important;
-        font-size: 0.9rem !important;
+        padding: 1.15rem 1.5rem !important;
+        font-size: 0.95rem !important;
+        border-radius: 20px !important;
     }
+
+    section {
+        padding-top: 4rem !important;
+        padding-bottom: 4rem !important;
+    }
+}
+
+/* Premium Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.anim-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Hide scrollbars but keep functionality */

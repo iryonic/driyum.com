@@ -21,7 +21,7 @@ require_once 'includes/functions.php';
     <section class="pt-32 pb-20 px-6 relative overflow-hidden">
         <div class="container mx-auto max-w-5xl text-center relative z-10">
             <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up">The Driyum Journey</span>
-            <h1 class="text-6xl md:text-8xl font-['Fredoka'] font-black text-gray-900 mb-8 anim-up delay-100 leading-tight">Born from <span class="text-[#19DC7E]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.</h1>
+            <h1 class="anim-up delay-100 uppercase">Born from <span class="text-[#19DC7E]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.</h1>
             <p class="text-xl md:text-2xl text-gray-500 font-medium max-w-3xl mx-auto anim-up delay-200 leading-relaxed">We're on a mission to prove that healthy snacking shouldn't cost the earth or your health.</p>
         </div>
         
@@ -41,7 +41,7 @@ require_once 'includes/functions.php';
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 space-y-8 anim-up delay-200">
-                    <h2 class="text-4xl md:text-5xl font-['Fredoka'] font-black text-gray-900 leading-tight">The "Aha!" Moment</h2>
+                    <h2 class="anim-up delay-100 uppercase">The "Aha!" Moment</h2>
                     <div class="text-lg text-gray-500 leading-relaxed space-y-6 font-medium">
                         <p>Our whole journey started with a simple frustration: why were all the truly healthy snacks so expensive, while the cheap ones were loaded with processed ingredients?</p>
                         <p>It felt like we were filling our bodies with chemical experiments and guilt rather than a snack. We realized the market was missing something. So, we took matters into our own hands, deciding to create the perfect alternative.</p>
@@ -56,7 +56,7 @@ require_once 'includes/functions.php';
     <!-- TRADITION SECTION: HOKH SUIN -->
     <section class="py-32 px-6 bg-white rounded-[60px] md:rounded-[100px] shadow-sm my-20">
         <div class="container mx-auto max-w-6xl text-center mb-16 px-4">
-             <h2 class="text-5xl md:text-7xl font-['Fredoka'] font-black text-gray-900 mb-6">HOKH SUIN</h2>
+             <h2 class="anim-up uppercase">HOKH SUIN</h2>
              <span class="text-[#19DC7E] font-black uppercase tracking-[0.3em] text-sm">A piece of Kashmiri heritage</span>
         </div>
 
@@ -161,7 +161,7 @@ require_once 'includes/functions.php';
         <div class="container mx-auto max-w-6xl">
             <div class="bg-[#19DC7E] rounded-[60px] p-12 md:p-20 text-center relative overflow-hidden anim-up">
                 <div class="relative z-10">
-                    <h2 class="text-5xl md:text-7xl font-['Fredoka'] font-black text-black mb-8">Ready to snack better?</h2>
+                    <h2 class="mb-8 uppercase">Ready to snack better?</h2>
                     <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white px-12 py-6 text-xl shadow-2xl hover:bg-white hover:text-black transition-all">Explore the Collection</a>
                 </div>
                 

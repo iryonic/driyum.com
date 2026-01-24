@@ -41,7 +41,7 @@ $products = fetch_all("
         
         <!-- HEADER -->
         <header class="mb-12 anim-up text-center md:text-left">
-            <h1 class="text-5xl font-['Fredoka'] font-black text-gray-900 mb-2">My Wishlist <span class="text-red-500" aria-hidden="true">❤️</span></h1>
+            <h1 class="uppercase">My Wishlist <span class="text-red-500" aria-hidden="true">❤️</span></h1>
             <p class="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Your saved mountain treats</p>
         </header>
 
@@ -49,7 +49,7 @@ $products = fetch_all("
             <section class="bg-white rounded-[50px] p-20 text-center border-2 border-dashed border-gray-100 anim-up relative overflow-hidden">
                 <div class="relative z-10">
                     <div class="text-8xl mb-8 animate-pulse" aria-hidden="true">📦</div>
-                    <h2 class="text-3xl font-black font-['Fredoka'] text-gray-900 mb-4">Your wishlist is empty!</h2>
+                    <h2 class="uppercase">Your wishlist is empty!</h2>
                     <p class="text-gray-400 font-medium mb-10 max-w-sm mx-auto leading-relaxed">It looks like you haven't saved any snacks yet. Let's find some favorites!</p>
                     <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white px-12 py-5 shadow-2xl hover:bg-[#19DC7E] hover:text-black transition-all inline-block">Explore the Shop</a>
                 </div>
