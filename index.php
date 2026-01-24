@@ -166,45 +166,47 @@ if (isset($_SESSION['user_id'])) {
     $active_sale = fetch_one("SELECT * FROM sale_countdowns WHERE is_active = 1 LIMIT 1");
     if($active_sale):
     ?>
-    <section class="py-0 px-4 -mt-16 relative z-20 mb-16">
+    <section class="py-0 px-4 -mt-8 md:-mt-16 relative z-20 mb-12 md:mb-20">
         <div class="container mx-auto">
-            <div class="bg-black text-white rounded-[40px] p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.3)] flex flex-col md:flex-row items-center justify-between gap-8 border-4 border-[#19DC7E] overflow-hidden relative">
+            <div class="bg-black text-white rounded-[32px] md:rounded-[48px] p-6 md:p-12 shadow-[0_40px_80px_rgba(0,0,0,0.4)] flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12 border-4 border-[#19DC7E] overflow-hidden relative">
                 
                 <!-- Background Glitch Effect -->
                 <div class="absolute inset-0 bg-[url('<?php echo get_url('assets/images/noise.png'); ?>')] opacity-20 pointer-events-none mix-blend-overlay"></div>
                 <div class="absolute -right-20 -top-20 w-64 h-64 bg-[#19DC7E] rounded-full blur-[100px] opacity-20 animate-pulse"></div>
 
-                <div class="text-center md:text-left relative z-10">
-                    <span class="inline-block bg-[#19DC7E] text-black font-black uppercase text-xs px-3 py-1 rounded-full mb-4 animate-bounce">Limited Time Offer</span>
-                    <h2 class="text-3xl md:text-5xl font-['Fredoka'] font-black leading-none mb-2"><?php echo htmlspecialchars($active_sale['title']); ?></h2>
-                    <p class="text-gray-400 font-['Outfit'] text-sm">Don't miss out on these crunch-tastic deals!</p>
+                <div class="text-center lg:text-left relative z-10 lg:max-w-md">
+                    <span class="inline-block bg-[#19DC7E] text-black font-black uppercase text-[10px] md:text-xs px-4 py-1.5 rounded-full mb-4 animate-bounce">Limited Time Offer</span>
+                    <h2 class="text-2xl md:text-4xl lg:text-5xl font-['Fredoka'] font-black leading-tight mb-2"><?php echo htmlspecialchars($active_sale['title']); ?></h2>
+                    <p class="text-gray-400 font-['Outfit'] text-sm md:text-base opacity-80">Don't miss out on these crunch-tastic deals!</p>
                 </div>
 
-                <!-- Timer Grid -->
-                <div class="grid grid-cols-2 xs:grid-cols-4 gap-2 md:gap-4 text-center relative z-10" id="sale-timer" data-end="<?php echo $active_sale['end_date']; ?>">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[65px] md:min-w-[90px]">
-                        <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="days">00</div>
-                        <div class="text-[9px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Days</div>
+                <div class="flex flex-col sm:flex-row items-center gap-8 relative z-10 w-full lg:w-auto">
+                    <!-- Timer Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 text-center w-full sm:w-auto" id="sale-timer" data-end="<?php echo $active_sale['end_date']; ?>">
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-6 border border-white/10 min-w-[75px] md:min-w-[100px]">
+                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="days">00</div>
+                            <div class="text-[9px] md:text-xs uppercase text-[#19DC7E] font-black tracking-widest">Days</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-6 border border-white/10 min-w-[75px] md:min-w-[100px]">
+                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="hours">00</div>
+                            <div class="text-[9px] md:text-xs uppercase text-[#19DC7E] font-black tracking-widest">Hrs</div>
+                        </div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-6 border border-white/10 min-w-[75px] md:min-w-[100px]">
+                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="minutes">00</div>
+                            <div class="text-[9px] md:text-xs uppercase text-[#19DC7E] font-black tracking-widest">Mins</div>
+                        </div>
+                        <div class="bg-[#19DC7E] text-black rounded-2xl md:rounded-3xl p-4 md:p-6 border border-[#19DC7E] min-w-[75px] md:min-w-[100px] shadow-[0_0_40px_rgba(25,220,126,0.4)]">
+                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="seconds">00</div>
+                            <div class="text-[9px] md:text-xs uppercase font-black tracking-widest">Secs</div>
+                        </div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[65px] md:min-w-[90px]">
-                        <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="hours">00</div>
-                        <div class="text-[9px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Hours</div>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-3 md:p-6 border border-white/10 min-w-[65px] md:min-w-[90px]">
-                        <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="minutes">00</div>
-                        <div class="text-[9px] md:text-xs uppercase text-gray-400 font-bold tracking-wider">Mins</div>
-                    </div>
-                    <div class="bg-[#19DC7E] text-black rounded-2xl p-3 md:p-6 border border-[#19DC7E] min-w-[65px] md:min-w-[90px] shadow-[0_0_30px_rgba(25,220,126,0.5)] animate-pulse">
-                        <div class="text-2xl md:text-4xl font-black font-['Fredoka']" id="seconds">00</div>
-                        <div class="text-[9px] md:text-xs uppercase font-bold tracking-wider">Secs</div>
-                    </div>
-                </div>
 
-                <!-- CTA -->
-                <div class="relative z-10">
-                    <a href="<?php echo get_url('shop'); ?>" class="inline-flex items-center gap-2 bg-white text-black font-bold px-8 py-4 rounded-xl hover:bg-[#19DC7E] hover:scale-105 transition-all duration-300 shadow-xl group">
-                        Shop Sale <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i>
-                    </a>
+                    <!-- CTA Button -->
+                    <div class="w-full sm:w-auto">
+                        <a href="<?php echo get_url('shop'); ?>" class="btn-chunky w-full sm:w-auto bg-white text-black font-black uppercase text-sm px-8 py-5 rounded-2xl hover:bg-[#19DC7E] hover:scale-105 transition-all duration-300 shadow-2xl group flex items-center justify-center gap-3">
+                            Shop Sale <i class="fas fa-shopping-bag group-hover:animate-bounce"></i>
+                        </a>
+                    </div>
                 </div>
 
             </div>
@@ -233,7 +235,7 @@ if (isset($_SESSION['user_id'])) {
                 const distance = endDate - now;
                 
                 if (distance < 0) {
-                    timer.innerHTML = '<div class="col-span-4 text-2xl font-black text-[#19DC7E] animate-pulse">SALE ENDED</div>';
+                    timer.innerHTML = '<div class="col-span-full text-center py-4 text-2xl md:text-3xl font-black text-[#19DC7E] animate-bounce uppercase tracking-widest">Sale has Ended!</div>';
                     clearInterval(timerInterval);
                     return;
                 }
