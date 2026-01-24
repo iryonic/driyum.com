@@ -210,16 +210,16 @@ run_crons();
 <div id="search-modal-overlay" onclick="toggleSearch()" class="fixed inset-0 bg-black/95 z-[120] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-6">
     <div id="search-modal" onclick="event.stopPropagation()" class="w-full max-w-4xl relative transform -translate-y-12 transition-transform duration-500">
         <button onclick="toggleSearch()" class="absolute -top-16 right-0 text-white text-4xl hover:text-[#19DC7E] transition"><i class="fas fa-times"></i></button>
-        <form action="<?php echo get_url('shop.php'); ?>" method="GET" class="relative group">
+        <form action="<?php echo get_url('shop'); ?>" method="GET" class="relative group">
             <input type="text" name="q" id="header-search-input" placeholder="What are you craving?" class="w-full bg-transparent border-b-4 border-white pb-6 text-4xl md:text-7xl font-bold font-['Fredoka'] text-white focus:outline-none focus:border-[#19DC7E] transition-all placeholder-white/20">
             <button type="submit" class="absolute right-0 bottom-6 text-4xl text-white group-focus-within:text-[#19DC7E] transition-colors"><i class="fas fa-arrow-right"></i></button>
         </form>
         <div class="mt-12">
             <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#19DC7E] mb-4 block">Trending</span>
             <div class="flex flex-wrap gap-3">
-                <a href="<?php echo get_url('shop.php?q=apple'); ?>" class="px-6 py-2 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition">🍎 Apple Chips</a>
-                <a href="<?php echo get_url('shop.php?q=walnut'); ?>" class="px-6 py-2 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition">🌰 Walnuts</a>
-                <a href="<?php echo get_url('shop.php?q=combo'); ?>" class="px-6 py-2 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition">🎁 Value Packs</a>
+                <a href="<?php echo get_url('shop?q=apple'); ?>" class="px-6 py-2 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition">🍎 Apple Chips</a>
+                <a href="<?php echo get_url('shop?q=walnut'); ?>" class="px-6 py-2 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition">🌰 Walnuts</a>
+                <a href="<?php echo get_url('shop?q=combo'); ?>" class="px-6 py-2 rounded-full border border-white/20 text-white hover:bg-white hover:text-black transition">🎁 Value Packs</a>
             </div>
         </div>
         

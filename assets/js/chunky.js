@@ -219,7 +219,7 @@ window.quickBuy = async function (productId, btnElement, quantity = 1) {
         const data = await response.json();
 
         if (data.success) {
-            window.location.href = `${BASE_URL}checkout.php`;
+            window.location.href = `${BASE_URL}checkout`;
         } else {
             btnElement.innerHTML = originalContent;
             btnElement.disabled = false;
@@ -286,7 +286,7 @@ window.loadCartItems = async function () {
                         <div class="w-32 h-32 bg-white rounded-[40px] shadow-2xl flex items-center justify-center text-5xl mb-8">🛍️</div>
                         <h3 class="text-3xl font-['Fredoka'] font-black text-gray-900 mb-4">Bag is empty!</h3>
                         <p class="text-gray-400 font-medium mb-10 leading-relaxed">It seems your snack vault is empty.</p>
-                        <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop.php'" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#19DC7E] hover:text-black transition-all shadow-xl active:scale-95">Explore Snacks</button>
+                        <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop'" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#19DC7E] hover:text-black transition-all shadow-xl active:scale-95">Explore Snacks</button>
                     </div>`;
             } else {
                 container.innerHTML = data.items.map((item, index) => `
@@ -377,7 +377,7 @@ window.toggleWishlist = async function (productId, btnElement) {
             }
         } else if (data.message === 'Login required') {
             showToast('Please login first!', 'warning');
-            setTimeout(() => window.location.href = `${BASE_URL}login.php`, 1500);
+            setTimeout(() => window.location.href = `${BASE_URL}login`, 1500);
         }
     } catch (e) {
         console.error(e);
