@@ -21,6 +21,7 @@ $wa = get_setting('whatsapp_number', '');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restocking Freshness | <?php echo $store_name; ?></title>
+    <meta name="description" content="We're currently restocking our premium Kashmiri snacks. Join our VIP list for the big reveal.">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>

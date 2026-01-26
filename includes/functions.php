@@ -648,32 +648,50 @@ function get_canonical_url() {
     return FULL_BASE_URL . $path;
 }
 
-function render_seo_tags($title = '', $description = '', $image = '') {
+function render_seo_tags($title = '', $description = '', $image = '', $type = 'website') {
     $store_name = get_setting('store_name', 'DRIYUM');
-    $title = $title ? "$title | $store_name" : "DRIYUM - Premium Sun-Dried Healthy Snacks";
-    $description = $description ?: get_setting('meta_description', 'Redefining the art of snacking with premium, indulgence. Naturally sweet, unapologetically bold.');
-    $image = $image ? get_url($image) : FULL_BASE_URL . 'assets/images/og-image.jpg';
+    $base_title = "DRIYUM - Premium Sun-Dried Healthy Snacks";
+    $full_title = $title ? "$title | $store_name" : $base_title;
+    
+    $default_desc = get_setting('seo_description', 'Redefining the art of snacking with premium, indulgence. Naturally sweet, unapologetically bold.');
+    $description = $description ?: $default_desc;
+    
+    // Clean description: strip tags and truncate
+    $description = mb_strimwidth(strip_tags($description), 0, 160, "...");
+    
+    $image = $image ? get_url(ltrim($image, './')) : get_url('assets/images/og-image.jpg');
+    // Ensure absolute image URL if possible
+    if (!preg_match("~^(?:f|ht)tps?://~i", $image)) {
+        $image = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]" . $image;
+    }
+
     $url = get_canonical_url();
 
-    echo "
-    <title>$title</title>
-    <meta name='description' content='" . htmlspecialchars($description) . "'>
-    <link rel='canonical' href='$url'>
+    echo "\n    <!-- SEO Basics -->\n";
+    echo "    <title>" . htmlspecialchars($full_title) . "</title>\n";
+    echo "    <meta name='description' content='" . htmlspecialchars($description) . "'>\n";
+    echo "    <meta name='robots' content='index, follow'>\n";
+    echo "    <link rel='canonical' href='$url'>\n";
     
-    <!-- Open Graph / Facebook -->
-    <meta property='og:type' content='website'>
-    <meta property='og:url' content='$url'>
-    <meta property='og:title' content='$title'>
-    <meta property='og:description' content='" . htmlspecialchars($description) . "'>
-    <meta property='og:image' content='$image'>
+    echo "\n    <!-- Open Graph / Facebook -->\n";
+    echo "    <meta property='og:type' content='$type'>\n";
+    echo "    <meta property='og:url' content='$url'>\n";
+    echo "    <meta property='og:site_name' content='$store_name'>\n";
+    echo "    <meta property='og:title' content='" . htmlspecialchars($full_title) . "'>\n";
+    echo "    <meta property='og:description' content='" . htmlspecialchars($description) . "'>\n";
+    echo "    <meta property='og:image' content='$image'>\n";
 
-    <!-- Twitter -->
-    <meta property='twitter:card' content='summary_large_image'>
-    <meta property='twitter:url' content='$url'>
-    <meta property='twitter:title' content='$title'>
-    <meta property='twitter:description' content='" . htmlspecialchars($description) . "'>
-    <meta property='twitter:image' content='$image'>
-    ";
+    echo "\n    <!-- Twitter -->\n";
+    echo "    <meta name='twitter:card' content='summary_large_image'>\n";
+    echo "    <meta name='twitter:url' content='$url'>\n";
+    echo "    <meta name='twitter:title' content='" . htmlspecialchars($full_title) . "'>\n";
+    echo "    <meta name='twitter:description' content='" . htmlspecialchars($description) . "'>\n";
+    echo "    <meta name='twitter:image' content='$image'>\n";
+    
+    // Optional: Add Itemprop for Google Plus (legacy but harmless)
+    echo "\n    <meta itemprop='name' content='" . htmlspecialchars($full_title) . "'>\n";
+    echo "    <meta itemprop='description' content='" . htmlspecialchars($description) . "'>\n";
+    echo "    <meta itemprop='image' content='$image'>\n";
 }
 
 function product_url($slug) {

@@ -70,8 +70,16 @@ if (isset($_SESSION['user_id'])) {
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'Shop Snacks';
-    $page_description = "Browse our collection of premium, sun-dried healthy snacks. Fresh from the valley, 100% organic.";
+    $page_title = 'The Snack Shop';
+    if($search) $page_title = "Searching for '$search'";
+    elseif($cat_slug) {
+        $cat_display = str_replace('-', ' ', $cat_slug);
+        $page_title = ucwords($cat_display) . " Collection";
+    }
+    
+    $page_description = "Browse our collection of premium, sun-dried healthy snacks. Fresh from the valley, 100% organic snacks delivered to your doorstep.";
+    if($cat_slug) $page_description = "Explore our premium " . str_replace('-', ' ', $cat_slug) . " collection. Hand-picked and sun-dried organic Kashmiri delicacies.";
+    
     include 'includes/head.php'; 
     ?>
 

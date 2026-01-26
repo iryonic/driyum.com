@@ -7,8 +7,8 @@ require_once 'includes/functions.php';
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'Our Story';
-    $page_description = 'Learn about the DRIYUM journey, how we started, and our mission to provide healthy, sun-dried Kashmiri snacks to the world.';
+    $page_title = 'Our Sacred Story';
+    $page_description = "Discover the heritage of Kashmiri Hokh Suin and our mission to redefine snacking. Real ingredients, sun-dried perfection, and a modern twist on ancient Kashmiri traditions.";
     include 'includes/head.php'; 
     ?>
 </head>

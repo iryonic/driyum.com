@@ -56,8 +56,8 @@ if ($query) {
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'Track Order';
-    $page_description = 'Track your DRIYUM shipment and see the current status of your chunky snacks journey.';
+    $page_title = 'Track Your Pack';
+    $page_description = "Track your DRIYUM shipment and watch your chunky snacks journey from the valley to your doorstep in real-time.";
     include 'includes/head.php'; 
     ?>
     <style>

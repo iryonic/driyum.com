@@ -62,8 +62,8 @@ $error = $flash ? $flash['message'] : '';
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'Login';
-    $page_description = 'Sign in to your DRIYUM account to access your wishlist, saved addresses, and order history.';
+    $page_title = 'Welcome Back to the Valley';
+    $page_description = "Sign in to your DRIYUM account to access your snack wishlist, manage orders, and unlock mountain-fresh deals.";
     include 'includes/head.php'; 
     ?>
 </head>

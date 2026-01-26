@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'Join Us';
-    $page_description = 'Join the DRIYUM family and start your journey towards healthier snacking with our premium sun-dried products.';
+    $page_title = 'Join the Crunch Club';
+    $page_description = "Join the DRIYUM family today. Create an account to track your sun-dried snack orders, save your mountain favorites, and get exclusive harvest alerts.";
     include 'includes/head.php'; 
     ?>
 </head>

@@ -7,8 +7,8 @@ require_once 'includes/functions.php';
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'Privacy Policy & Terms';
-    $page_description = 'Read about how DRIYUM protects your data and our terms of service and refund policies.';
+    $page_title = 'Privacy, Terms & Refunds';
+    $page_description = "Our commitment to trust and transparency. Read our privacy policy, terms of service, and refund guidelines. No secrets, just healthy snacks.";
     include 'includes/head.php'; 
     ?>
 </head>

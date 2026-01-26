@@ -69,6 +69,7 @@ if (isset($_SESSION['user_id'])) {
     $page_title = $product['name'];
     $page_description = $product['description'];
     $page_image = $product['image'];
+    $page_type = 'product';
     include 'includes/head.php'; 
     ?>
 

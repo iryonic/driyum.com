@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'Contact Us';
-    $page_description = 'Have a question? Get in touch with the DRIYUM team. We are here to help you with your snack queries and orders.';
+    $page_title = 'Get in Touch';
+    $page_description = "Have questions about our premium snacks? Want to discuss a partnership? Contact the DRIYUM team today. We're here to help from the heart of the valley.";
     include 'includes/head.php'; 
     ?>
 </head>

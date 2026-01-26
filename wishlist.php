@@ -26,8 +26,8 @@ $products = fetch_all("
 <html lang="en">
 <head>
     <?php 
-    $page_title = 'My Wishlist';
-    $page_description = 'Manage your favorite Driyum mountain treats. Save your top sun-dried snacks and hokh suin for later.';
+    $page_title = 'My Snack Vault';
+    $page_description = "Your personal collection of saved mountain treats. Keep track of your favorite Kashmiri sun-dried snacks and hokh suin in one place.";
     include 'includes/head.php'; 
     ?>
 </head>

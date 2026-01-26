@@ -253,7 +253,7 @@ run_crons();
                                 </a>
                             <?php endif; ?>
                             <a href="<?php echo get_url('account'); ?>" class="flex items-center gap-3 px-4 py-2 hover:bg-white/10 rounded-xl text-xs font-bold transition-colors">
-                                <i class="fas fa-user-circle opacity-50"></i> Dashboard
+                                <i class="fas fa-user-circle opacity-50"></i> Account
                             </a>
                             <a href="<?php echo get_url('logout'); ?>" class="flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-xl text-xs font-bold transition-colors">
                                 <i class="fas fa-sign-out-alt"></i> Logout

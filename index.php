@@ -15,7 +15,8 @@ if (isset($_SESSION['user_id'])) {
 <html lang="en">
 <head>
     <?php 
-    $page_description = "Experience the crunch of 100% natural, sun-dried healthy snacks. Absolutely no added sugar, 100% guilt-free snacking.";
+    $page_title = 'The Art of Healthy Snacking';
+    $page_description = "Experience 100% natural, sun-dried healthy snacks from the heart of Kashmir. No added sugar, no guilt—just pure, crunchy indulgence delivered to your door.";
     include 'includes/head.php'; 
     ?>
     <!-- Custom Scroll Styles -->       

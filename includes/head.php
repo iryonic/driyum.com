@@ -18,7 +18,8 @@ if (!isset($page_description) && isset($description)) $page_description = $descr
 
 <?php 
 if (function_exists('render_seo_tags')) {
-    render_seo_tags($page_title, $page_description, $page_image);
+    $page_type = $page_type ?? 'website';
+    render_seo_tags($page_title, $page_description, $page_image, $page_type);
 } else {
     echo "<title>" . ($page_title ? "$page_title | DRIYUM" : "DRIYUM") . "</title>";
 }
