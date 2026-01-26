@@ -221,6 +221,14 @@ run_crons();
                     </a>
                 </li>
                 <li>
+                    <a href="<?php echo get_url('wishlist'); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 text-gray-600 hover:text-black transition-all group">
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <span class="text-xl font-['Fredoka'] font-bold">Wishlist</span>
+                    </a>
+                </li>
+                <li>
                     <a href="<?php echo get_url('contact'); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 text-gray-600 hover:text-black transition-all group">
                         <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
                             <i class="fas fa-headset"></i>
