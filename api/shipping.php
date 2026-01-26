@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['success' => false, 'message' => 'Pincode is required']);
         exit;
     }
+    $_SESSION['shipping_zip'] = $pincode;
 
     $weight = get_cart_weight();
     $methods = get_shipping_methods_with_rates($pincode, $weight);

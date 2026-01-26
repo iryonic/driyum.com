@@ -550,7 +550,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         </div>
                         <div class="flex justify-between items-center text-sm font-medium">
                             <span class="text-gray-400">Shipping</span>
-                            <span class="text-gray-900 font-bold" id="shipping_display"><?php echo $shipping == 0 ? '<span class="text-gray-300">Enter Zip</span>' : '₹' . $shipping; ?></span>
+                            <span class="text-gray-900 font-bold" id="shipping_display">
+                                <?php 
+                                if($shipping_method_id > 0) {
+                                    echo $shipping == 0 ? '<span class="text-green-500">FREE</span>' : '₹' . $shipping;
+                                } else {
+                                    echo '<span class="text-gray-300">Enter Zip</span>';
+                                }
+                                ?>
+                            </span>
                         </div>
                         <div class="flex justify-between items-center text-sm font-medium">
                             <span class="text-gray-400" id="tax_perc_label">Processing Tax (<?php echo $tax_perc; ?>%)</span>
@@ -931,7 +939,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                         <p class="text-[10px] text-gray-500 font-medium">Estimated arrival in ${m.min_days}-${m.max_days} days</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-black text-lg text-gray-900 leading-none">₹${m.cost}</p>
+                                        <p class="font-black text-lg text-gray-900 leading-none">${m.cost == 0 ? '<span class="text-green-500">FREE</span>' : '₹' + m.cost}</p>
                                     </div>
                                 </label>
                             </div>
@@ -997,6 +1005,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     document.getElementById('tax_display').textContent = '₹' + d.tax;
                     document.getElementById('grand_total_display').textContent = '₹' + d.total;
                     document.getElementById('tax_perc_label').textContent = `Processing Tax (${d.tax_perc}%)`;
+                    
+                    // Update Shipping Display
+                    const shipEl = document.getElementById('shipping_display');
+                    if (d.shipping_method_id > 0) {
+                        shipEl.innerHTML = d.shipping == 0 ? '<span class="text-green-500">FREE</span>' : '₹' + d.shipping;
+                    } else {
+                        shipEl.innerHTML = '<span class="text-gray-300">Enter Zip</span>';
+                    }
                     
                     // Update Discounts
                     let discountsHtml = '';

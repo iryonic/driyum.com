@@ -100,6 +100,7 @@ if (isset($_SESSION['affiliate'])) {
 }
 
 // Shipping
+sync_shipping_cost($subtotal);
 $shipping = $_SESSION['shipping_cost'] ?? 0;
 
 // Totals Calculation (matching checkout.php central logic)
@@ -120,6 +121,7 @@ echo json_encode([
         'affiliate_discount' => $affiliate_discount,
         'affiliate_code' => $affiliate_code,
         'shipping' => $shipping,
+        'shipping_method_id' => $_SESSION['shipping_method_id'] ?? 0,
         'tax' => $tax,
         'tax_perc' => $tax_perc,
         'total' => $total,

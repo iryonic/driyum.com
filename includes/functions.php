@@ -913,7 +913,7 @@ function get_shipping_methods_with_rates($pincode, $total_weight_kg) {
         }
         
         // Apply Free Shipping Threshold
-        $free_threshold = (float)get_setting('free_shipping_threshold', 500);
+        $free_threshold = (float)get_setting('free_shipping_threshold', 499);
         $cart_total = (float)get_cart_items()['total'];
         if ($cart_total >= $free_threshold) {
             $cost = 0;
@@ -932,6 +932,24 @@ function get_shipping_methods_with_rates($pincode, $total_weight_kg) {
     }
     
     return $available_methods;
+}
+function sync_shipping_cost($subtotal = null) {
+    if (!isset($_SESSION['shipping_method_id']) || !isset($_SESSION['shipping_zip'])) {
+        return;
+    }
+
+    $method_id = (int)$_SESSION['shipping_method_id'];
+    $pincode = $_SESSION['shipping_zip'];
+    $weight = get_cart_weight();
+    
+    // Use get_shipping_methods_with_rates which already has free threshold logic
+    $methods = get_shipping_methods_with_rates($pincode, $weight);
+    foreach ($methods as $m) {
+        if ($m['id'] == $method_id) {
+            $_SESSION['shipping_cost'] = $m['cost'];
+            return;
+        }
+    }
 }
 
 function get_cart_weight() {
