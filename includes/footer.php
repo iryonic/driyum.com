@@ -10,7 +10,7 @@
             <!-- BRAND COLUMN -->
             <div class="col-span-2 md:col-span-12 xl:col-span-5 space-y-6 md:space-y-8 text-center xl:text-left">
                 <a href="<?php echo get_url(''); ?>" class="inline-block group pb-2">
-                    <img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo get_setting('store_name', 'DRIYUM'); ?>" class="w-28 md:w-32 lg:w-40 inline-block group-hover:scale-105 transition-transform duration-300">
+                    <img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo get_setting('store_name', 'DRIYUM'); ?> Logo" loading="lazy" class="w-28 md:w-32 lg:w-40 inline-block group-hover:scale-105 transition-transform duration-300">
                 </a>
                 <p class="text-base md:text-xl text-gray-400 font-['Outfit'] max-w-2xl md:max-w-md mx-auto xl:mx-0 leading-relaxed">
                     <?php echo get_setting('footer_description', 'Redefining the art of snacking with premium, indulgence. Naturally sweet, unapologetically bold.'); ?>
@@ -82,7 +82,7 @@
                 <p class="text-gray-400 font-['Outfit']">Join the club for distinct drops and exclusive deals.</p>
                 <form class="relative group" id="newsletter-form" onsubmit="subscribeNewsletter(event)">
                     <input type="email" name="email" required placeholder="Your email..." class="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-6 pr-14 text-white placeholder-gray-500 focus:outline-none focus:border-[#19DC7E] focus:bg-white/10 transition-all">
-                    <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 w-10 h-10 bg-[#19DC7E] rounded-full flex items-center justify-center text-black hover:scale-110 transition shadow-lg shadow-green-900/50">
+                    <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 w-10 h-10 bg-[#19DC7E] rounded-full flex items-center justify-center text-black hover:scale-110 transition shadow-lg shadow-green-900/50" aria-label="Subscribe to newsletter">
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </form>

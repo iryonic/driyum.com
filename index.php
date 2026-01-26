@@ -112,7 +112,7 @@ if (isset($_SESSION['user_id'])) {
                 <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white text-lg md:text-xl px-10 py-5 rounded-[20px] shadow-2xl hover:scale-110 hover:-rotate-3 hover:bg-[#19DC7E] hover:text-black transition-all duration-300 border-none">
                     <?php echo htmlspecialchars($hero['cta_text']); ?>
                 </a>
-                <a href="#video_brand_story" class="hidden sm:flex w-16 h-16 rounded-[20px] bg-white text-gray-900 border-2 border-gray-100 items-center justify-center text-xl shadow-lg hover:border-[#19DC7E] hover:text-[#19DC7E] hover:rotate-12 transition-all duration-300">
+                <a href="#video_brand_story" class="hidden sm:flex w-16 h-16 rounded-[20px] bg-white text-gray-900 border-2 border-gray-100 items-center justify-center text-xl shadow-lg hover:border-[#19DC7E] hover:text-[#19DC7E] hover:rotate-12 transition-all duration-300" aria-label="Watch Brand Story">
                     <i class="fas fa-play ml-1"></i>
                 </a>
             </div>
@@ -123,8 +123,11 @@ if (isset($_SESSION['user_id'])) {
                 
                 <!-- Main Image Container -->
                 <div class="relative bg-white p-1 md:p-2 rounded-[2.5rem] md:rounded-[3.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.15)] transform rotate-[-2deg] group-hover:rotate-0 transition-all duration-700 ease-out z-10 border-4 border-white ring-4 ring-gray-50">
-                    <img src="<?php echo !empty($hero['media_url']) ? get_url(ltrim($hero['media_url'], '/')) : get_url('assets/images/hero.jpg'); ?>" class="rounded-[2.2rem] md:rounded-[3rem] w-full h-[280px] md:h-[450px] object-cover transform scale-100 group-hover:scale-105 transition duration-[1.5s]">
-                    
+                    <img src="<?php echo !empty($hero['media_url']) ? get_url(ltrim($hero['media_url'], '/')) : get_url('assets/images/hero.jpg'); ?>" 
+                         fetchpriority="high" 
+                         loading="eager" 
+                         alt="Premium Healthy Snacks"
+                         class="rounded-[2.2rem] md:rounded-[3rem] w-full h-[280px] md:h-[450px] object-cover transform scale-100 group-hover:scale-105 transition duration-[1.5s]">                    
                     <!-- Overlay Gradient -->
                     <div class="absolute inset-0 rounded-[2.2rem] md:rounded-[3rem] bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                 </div>
@@ -146,9 +149,9 @@ if (isset($_SESSION['user_id'])) {
                 <!-- Glass Stats Card -->
                 <div class="absolute bottom-10 left-10 md:left-10 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-white/50 z-30 transform translate-y-4 group-hover:translate-y-0 transition duration-500 hidden md:flex items-center gap-3">
                     <div class="flex -space-x-2">
-                        <img src="https://i.pravatar.cc/100?img=5" class="w-8 h-8 rounded-full border-2 border-white">
-                        <img src="https://i.pravatar.cc/100?img=8" class="w-8 h-8 rounded-full border-2 border-white">
-                        <img src="https://i.pravatar.cc/100?img=12" class="w-8 h-8 rounded-full border-2 border-white">
+                        <img src="https://i.pravatar.cc/100?img=5" loading="lazy" alt="User review 1" class="w-8 h-8 rounded-full border-2 border-white">
+                        <img src="https://i.pravatar.cc/100?img=8" loading="lazy" alt="User review 2" class="w-8 h-8 rounded-full border-2 border-white">
+                        <img src="https://i.pravatar.cc/100?img=12" loading="lazy" alt="User review 3" class="w-8 h-8 rounded-full border-2 border-white">
                     </div>
                     <div>
                         <div class="flex text-yellow-500 text-[10px]">
@@ -271,10 +274,10 @@ if (isset($_SESSION['user_id'])) {
 
             <!-- Category Slider Controls -->
             <div class="hidden md:flex gap-3">
-                <button onclick="scrollCategories('left')" class="w-16 h-16 rounded-[24px] bg-white border-3 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black hover:rotate-[-5deg] transition-all shadow-sm active:scale-90">
+                <button onclick="scrollCategories('left')" class="w-16 h-16 rounded-[24px] bg-white border-3 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black hover:rotate-[-5deg] transition-all shadow-sm active:scale-90" aria-label="Previous categories">
                     <i class="fas fa-arrow-left text-xl"></i>
                 </button>
-                <button onclick="scrollCategories('right')" class="w-16 h-16 rounded-[24px] bg-black text-[#19DC7E] flex items-center justify-center hover:scale-105 hover:rotate-[5deg] transition-all shadow-2xl active:scale-90">
+                <button onclick="scrollCategories('right')" class="w-16 h-16 rounded-[24px] bg-black text-[#19DC7E] flex items-center justify-center hover:scale-105 hover:rotate-[5deg] transition-all shadow-2xl active:scale-90" aria-label="Next categories">
                     <i class="fas fa-arrow-right text-xl"></i>
                 </button>
             </div>
@@ -326,7 +329,7 @@ if (isset($_SESSION['user_id'])) {
                 <!-- Main Image - Floating 3D Effect -->
                 <?php if($c['image']): ?>
                     <div class="absolute inset-0 flex items-end justify-center z-10 perspective-[1000px]">
-                         <img src="<?php echo $c['image']; ?>" class="w-64 h-64 object-contain transform translate-y-8 scale-95 group-hover:translate-y-0 group-hover:scale-110 group-hover:rotate-3 transition duration-700 ease-out drop-shadow-2xl brightness-105">
+                         <img src="<?php echo $c['image']; ?>" alt="<?php echo htmlspecialchars($c['name']); ?>" class="w-64 h-64 object-contain transform translate-y-8 scale-95 group-hover:translate-y-0 group-hover:scale-110 group-hover:rotate-3 transition duration-700 ease-out drop-shadow-2xl brightness-105">
                     </div>
                 <?php else: ?>
                     <!-- Fallback Emoji Art -->
@@ -362,10 +365,10 @@ if (isset($_SESSION['user_id'])) {
                 </div>
                 <!-- Slider Controls -->
                 <div class="flex gap-3">
-                    <button onclick="scrollProducts('left')" class="w-16 h-16 rounded-[24px] bg-white border-3 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black hover:rotate-[-5deg] transition-all shadow-sm active:scale-90">
+                    <button onclick="scrollProducts('left')" class="w-16 h-16 rounded-[24px] bg-white border-3 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black hover:rotate-[-5deg] transition-all shadow-sm active:scale-90" aria-label="Previous products">
                         <i class="fas fa-arrow-left text-xl"></i>
                     </button>
-                    <button onclick="scrollProducts('right')" class="w-16 h-16 rounded-[24px] bg-black text-[#19DC7E] flex items-center justify-center hover:scale-105 hover:rotate-[5deg] transition-all shadow-2xl active:scale-90">
+                    <button onclick="scrollProducts('right')" class="w-16 h-16 rounded-[24px] bg-black text-[#19DC7E] flex items-center justify-center hover:scale-105 hover:rotate-[5deg] transition-all shadow-2xl active:scale-90" aria-label="Next products">
                         <i class="fas fa-arrow-right text-xl"></i>
                     </button>
                 </div>
@@ -403,8 +406,10 @@ if (isset($_SESSION['user_id'])) {
                                 <!-- Background Bloom -->
                                 <div class="absolute inset-0 bg-gradient-to-tr from-white via-transparent to-white/50 opacity-0 group-hover:opacity-100 transition duration-700 z-0"></div>
                                 
-                                <img src="<?php echo get_url($p['image']); ?>" class="w-[85%] h-[85%] object-contain transform group-hover:scale-110 group-hover:-rotate-6 group-hover:-translate-y-4 transition duration-700 ease-out z-10 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.05)] group-hover:drop-shadow-[0_30px_30px_rgba(0,0,0,0.1)] <?php echo $p['stock'] <= 0 ? 'grayscale' : ''; ?>">
-                                
+                                <img src="<?php echo get_url($p['image']); ?>" 
+                                     loading="lazy"
+                                     alt="<?php echo htmlspecialchars($p['name']); ?>"
+                                     class="w-[85%] h-[85%] object-contain transform group-hover:scale-110 group-hover:-rotate-6 group-hover:-translate-y-4 transition duration-700 ease-out z-10 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.05)] group-hover:drop-shadow-[0_30px_30px_rgba(0,0,0,0.1)] <?php echo $p['stock'] <= 0 ? 'grayscale' : ''; ?>">                                
                                 <!-- Badges -->
                                 <div class="absolute top-6 left-6 flex flex-col gap-2 z-20 items-start">
                                     <?php if(isset($p['is_new']) && $p['is_new']): ?>
@@ -424,7 +429,7 @@ if (isset($_SESSION['user_id'])) {
 
                                 <!-- Heart Icon -->
                                 <?php $is_wishlisted = in_array($p['id'], $wishlist_ids); ?>
-                                <button onclick="event.preventDefault(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="absolute top-5 right-5 w-12 h-12 bg-white rounded-[18px] flex items-center justify-center shadow-lg <?php echo $is_wishlisted ? 'active text-red-500' : 'text-gray-300'; ?> hover:text-red-500 hover:scale-110 transition-all duration-300 z-20 group/heart active:scale-90 border border-gray-50">
+                                <button onclick="event.preventDefault(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="absolute top-5 right-5 w-12 h-12 bg-white rounded-[18px] flex items-center justify-center shadow-lg <?php echo $is_wishlisted ? 'active text-red-500' : 'text-gray-300'; ?> hover:text-red-500 hover:scale-110 transition-all duration-300 z-20 group/heart active:scale-90 border border-gray-50" aria-label="Add <?php echo htmlspecialchars($p['name']); ?> to Wishlist">
                                     <i class="<?php echo $is_wishlisted ? 'fas' : 'far'; ?> fa-heart group-hover/heart:animate-bounce"></i>
                                 </button>
                             </div>
@@ -461,13 +466,13 @@ if (isset($_SESSION['user_id'])) {
                                     <!-- Quick Buy -->
                                     <button onclick="event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
                                         <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" title="Flash Buy">
+                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" aria-label="Quick buy <?php echo htmlspecialchars($p['name']); ?>">
                                         <i class="fas fa-bolt text-sm md:text-xl group-hover/btn:animate-pulse"></i>
                                     </button>
                                     <!-- Add Cart -->
                                     <button onclick="event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" 
                                         <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
+                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" aria-label="Add <?php echo htmlspecialchars($p['name']); ?> to Bag">
                                         <i class="fas fa-shopping-bag text-sm md:text-xl group-hover/btn:rotate-12 transition-transform"></i>
                                     </button>
                                  </div>
@@ -504,11 +509,10 @@ if (isset($_SESSION['user_id'])) {
             <div class="relative w-full rounded-[40px] overflow-hidden shadow-2xl group cursor-pointer aspect-[16/10] md:aspect-video bg-black">
                 
                 <!-- Video Placeholder (Dynamic Image) -->
-                <img src="<?php echo $vid_sec['media_url']; ?>" class="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-700 transform group-hover:scale-105">
+                <img src="<?php echo $vid_sec['media_url']; ?>" alt="Brand Story Video Thumbnail" class="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-700 transform group-hover:scale-105">
                 
                 <!-- Play Button (Glassmorphism) -->
-                <button onclick="openVideoModal('<?php echo $vid_sec['video_url']; ?>')" class="absolute inset-0 flex items-center justify-center z-30 w-full h-full cursor-pointer focus:outline-none">
-                    <div class="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full border border-white/30 flex items-center justify-center group-hover:scale-110 transition duration-500 shadow-[0_0_50px_rgba(25,220,126,0.5)] group-hover:bg-[#19DC7E] group-hover:border-transparent">
+                <button onclick="openVideoModal('<?php echo $vid_sec['video_url']; ?>')" class="absolute inset-0 flex items-center justify-center z-30 w-full h-full cursor-pointer focus:outline-none" aria-label="Play Brand Story Video">                    <div class="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full border border-white/30 flex items-center justify-center group-hover:scale-110 transition duration-500 shadow-[0_0_50px_rgba(25,220,126,0.5)] group-hover:bg-[#19DC7E] group-hover:border-transparent">
                         <i class="fas fa-play text-2xl md:text-4xl text-white ml-2"></i>
                     </div>
                 </button>
@@ -598,18 +602,18 @@ if (isset($_SESSION['user_id'])) {
             <div class="flex flex-col-reverse md:flex-row justify-center items-center gap-6 md:gap-8 mt-12 md:mt-20 relative z-20">
                 <!-- Mobile Arrows + Dots Container -->
                 <div class="flex items-center gap-6 w-full justify-center md:w-auto">
-                    <button onclick="prevReview()" class="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition duration-300 group active:scale-95">
+                    <button onclick="prevReview()" class="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition duration-300 group active:scale-95" aria-label="Previous Review">
                         <i class="fas fa-arrow-left text-lg md:text-xl group-hover:-translate-x-1 transition-transform"></i>
                     </button>
                     
                     <!-- Indicators (Visible on Desktop/Tablet, Smaller on Mobile) -->
                     <div class="flex gap-2 md:gap-3">
                         <?php foreach($testimonials as $k => $t): ?>
-                        <button onclick="goToReview(<?php echo $k; ?>)" class="w-8 h-1 md:w-12 md:h-1 rounded-full bg-white/20 hover:bg-[#19DC7E] transition-all duration-300 review-dot <?php echo $k===0 ? 'bg-[#19DC7E]' : ''; ?>" data-index="<?php echo $k; ?>"></button>
+                        <button onclick="goToReview(<?php echo $k; ?>)" class="w-8 h-1 md:w-12 md:h-1 rounded-full bg-white/20 hover:bg-[#19DC7E] transition-all duration-300 review-dot <?php echo $k===0 ? 'bg-[#19DC7E]' : ''; ?>" data-index="<?php echo $k; ?>" aria-label="Go to Review <?php echo $k+1; ?>"></button>
                         <?php endforeach; ?>
                     </div>
 
-                    <button onclick="nextReview()" class="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition duration-300 group active:scale-95">
+                    <button onclick="nextReview()" class="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition duration-300 group active:scale-95" aria-label="Next Review">
                         <i class="fas fa-arrow-right text-lg md:text-xl group-hover:translate-x-1 transition-transform"></i>
                     </button>
                 </div>

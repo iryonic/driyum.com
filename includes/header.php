@@ -159,10 +159,10 @@ run_crons();
 <!-- MOBILE TOP BAR -->
 <header class="md:hidden sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-6 shadow-sm">
     <div class="flex items-center gap-2">
-        <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors"><i class="fas fa-search"></i></button>
+        <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors" aria-label="Search"><i class="fas fa-search"></i></button>
     </div>
-    <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?>" class="w-24"></a>
-    <button onclick="openCartSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-700 relative hover:text-black transition-colors">
+    <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?> - Home" class="w-24"></a>
+    <button onclick="openCartSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-700 relative hover:text-black transition-colors" aria-label="Open Shopping Bag">
         <i class="fas fa-shopping-bag"></i>
     </button>
 </header>
@@ -176,7 +176,7 @@ run_crons();
         <a href="<?php echo get_url(''); ?>">
             <img src="<?php echo get_url('assets/images/logo.png'); ?>" class="w-20">
         </a>
-        <button onclick="toggleMobileMenuDrawer()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-black shadow-sm transition-all active:scale-90">
+        <button onclick="toggleMobileMenuDrawer()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-black shadow-sm transition-all active:scale-90" aria-label="Close Mobile Menu">
             <i class="fas fa-times text-lg"></i>
         </button>
     </div>
@@ -310,7 +310,7 @@ run_crons();
 <div id="search-modal-overlay" onclick="toggleSearch()" class="fixed inset-0 bg-black/90 z-[2000] hidden opacity-0 transition-opacity duration-300 flex flex-col items-center justify-start p-4 pt-20 md:p-6 backdrop-blur-md">
     <div id="search-modal" onclick="event.stopPropagation()" class="w-full max-w-5xl relative transform -translate-y-12 transition-transform duration-500 flex flex-col max-h-full">
         
-        <button onclick="toggleSearch()" class="absolute -top-16 right-0 md:-top-20 md:right-0 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/10 text-white text-lg md:text-xl hover:bg-white hover:text-black hover:rotate-90 transition-all duration-300 z-50"><i class="fas fa-times"></i></button>
+        <button onclick="toggleSearch()" class="absolute -top-16 right-0 md:-top-20 md:right-0 w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/10 text-white text-lg md:text-xl hover:bg-white hover:text-black hover:rotate-90 transition-all duration-300 z-50" aria-label="Close Search"><i class="fas fa-times"></i></button>
         
         <div class="text-center mb-4 md:mb-8 shrink-0">
             <span class="inline-block px-3 py-1 md:px-4 md:py-1 rounded-full border border-[#19DC7E]/30 text-[#19DC7E] text-xs md:text-[10px] font-black uppercase tracking-[0.3em] bg-[#19DC7E]/5 mb-2 md:mb-4">Search The Store</span>
@@ -352,7 +352,7 @@ run_crons();
             <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#19DC7E] mb-1 block">Your Stash</span>
             <h2 class="text-2xl md:text-3xl font-['Fredoka'] font-black text-gray-900">Shopping Bag.</h2>
         </div>
-        <button onclick="closeCartSidebar()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all">
+        <button onclick="closeCartSidebar()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all" aria-label="Close Shopping Bag">
             <i class="fas fa-times text-lg md:text-xl"></i>
         </button>
     </div>

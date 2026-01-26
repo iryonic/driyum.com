@@ -16,6 +16,12 @@ if (!isset($page_description) && isset($description)) $page_description = $descr
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Critical Resource Preconnects -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
 <?php 
 if (function_exists('render_seo_tags')) {
     $page_type = $page_type ?? 'website';
@@ -25,15 +31,15 @@ if (function_exists('render_seo_tags')) {
 }
 ?>
 
-<!-- Frameworks -->
+<!-- Optimized Asset Loading -->
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
-<!-- Core Styling with Cache Busting -->
-<link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>?v=1.0.2">
 
 <!-- JS Config & Core Logic -->
 <script>
     const BASE_URL = "<?php echo get_url(''); ?>";
 </script>
-<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=<?php echo time(); ?>" defer></script>
+<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=1.0.2" defer></script>
