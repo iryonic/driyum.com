@@ -87,9 +87,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="email" name="email" required placeholder="hello@example.com" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full">
                 </div>
 
-                <div>
+                <div class="relative">
                     <label class="block text-gray-400 font-bold mb-2 text-sm uppercase">Password</label>
-                    <input type="password" name="password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full">
+                    <div class="relative">
+                        <input type="password" name="password" id="register-password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-12" oninput="validatePassword(this.value)">
+                        <button type="button" onclick="togglePasswordVisibility('register-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#19DC7E] transition-colors focus:outline-none" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Password Validator UI -->
+                    <div id="password-validator" class="mt-4 space-y-2 hidden">
+                        <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div id="strength-bar" class="h-full w-0 transition-all duration-500 bg-red-500"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div id="crit-length" class="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-1.5">
+                                <i class="fas fa-circle text-[6px]"></i> 8+ Characters
+                            </div>
+                            <div id="crit-upper" class="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-1.5">
+                                <i class="fas fa-circle text-[6px]"></i> Uppercase Letter
+                            </div>
+                            <div id="crit-number" class="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-1.5">
+                                <i class="fas fa-circle text-[6px]"></i> One Number
+                            </div>
+                            <div id="crit-special" class="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-1.5">
+                                <i class="fas fa-circle text-[6px]"></i> Special Char
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-chunky btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 bg-black text-white hover:bg-[#19DC7E]">

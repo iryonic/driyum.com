@@ -10,6 +10,58 @@ document.addEventListener('DOMContentLoaded', () => {
     initSearch();
 });
 
+/* --- PASSWORD LOGIC --- */
+window.togglePasswordVisibility = function (inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (!input || !icon) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+};
+
+window.validatePassword = function (val) {
+    const validator = document.getElementById('password-validator');
+    const bar = document.getElementById('strength-bar');
+    if (!validator || !bar) return;
+
+    if (val.length > 0) validator.classList.remove('hidden');
+    else {
+        validator.classList.add('hidden');
+        return;
+    }
+
+    const criteria = {
+        length: val.length >= 8,
+        upper: /[A-Z]/.test(val),
+        number: /[0-9]/.test(val),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(val)
+    };
+
+    let score = 0;
+    Object.keys(criteria).forEach(key => {
+        const el = document.getElementById(`crit-${key}`);
+        if (criteria[key]) {
+            el.classList.replace('text-gray-400', 'text-[#19DC7E]');
+            el.querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
+            score++;
+        } else {
+            el.classList.replace('text-[#19DC7E]', 'text-gray-400');
+            el.querySelector('i').classList.replace('fa-check-circle', 'fa-circle');
+        }
+    });
+
+    // Update Strength Bar
+    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-[#19DC7E]'];
+    bar.className = `h-full transition-all duration-500 ${colors[score]}`;
+    bar.style.width = `${(score / 4) * 100}%`;
+};
+
 /* --- SEARCH LOGIC --- */
 function initSearch() {
     const input = document.getElementById('header-search-input');

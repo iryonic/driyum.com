@@ -103,9 +103,14 @@ $error = $flash ? $flash['message'] : '';
                     <input type="email" name="email" required placeholder="hello@example.com" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full">
                 </div>
 
-                <div>
+                <div class="relative">
                     <label class="block text-gray-400 font-bold mb-2 text-sm uppercase">Password</label>
-                    <input type="password" name="password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full">
+                    <div class="relative">
+                        <input type="password" name="password" id="login-password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-12">
+                        <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#19DC7E] transition-colors focus:outline-none" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-between">

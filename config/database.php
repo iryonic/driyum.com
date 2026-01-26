@@ -1,6 +1,7 @@
 <?php
 // Database Configuration
-if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1') {
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+if ($host == 'localhost' || $host == '127.0.0.1') {
     // LOCAL
     define('DB_HOST', '127.0.0.1');
     define('DB_USER', 'root');
