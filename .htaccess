@@ -31,6 +31,7 @@ RewriteRule ^reset-password$ reset-password.php [L,QSA]
 RewriteRule ^sitemap.xml$ sitemap.php [L,QSA]
 RewriteRule ^robots.txt$ robots.txt.php [L,QSA]
 RewriteRule ^features$ features.php [L,QSA]
+RewriteRule ^maintenance$ maintenance.php [L,QSA]
 
 # 2. Product SEO URL (/product/slug)
 RewriteRule ^product/([a-zA-Z0-9_-]+)$ product.php?slug=$1 [L,QSA]
