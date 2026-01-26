@@ -116,6 +116,7 @@ if (isset($_SESSION['user_id'])) {
                 </a>
             </div>
 
+            <?php if(!isset($hero['show_media']) || $hero['show_media']): ?>
             <!-- 3D HERO IMAGE COMPOSITION -->
             <div class="relative max-w-4xl mx-auto group perspective-[1000px]">
                 
@@ -157,6 +158,7 @@ if (isset($_SESSION['user_id'])) {
                 </div>
 
             </div>
+            <?php endif; ?>
 
         </div>
     </section>

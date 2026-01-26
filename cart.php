@@ -162,7 +162,7 @@ if (isset($_SESSION['coupon'])) {
                                     </button>
                                 </div>
                             <?php else: ?>
-                                <div class="flex gap-2">
+                                <div class="flex flex-wrap gap-2">
                                     <input type="text" id="coupon-code" placeholder="Promo Code" class="input-chunky text-sm py-2 px-4 border-2 bg-gray-50 focus:bg-white flex-1">
                                     <button onclick="applyCoupon()" class="btn-chunky bg-black text-white px-4 py-2 text-xs">Apply</button>
                                 </div>

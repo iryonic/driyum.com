@@ -170,37 +170,129 @@ run_crons();
 <!-- MOBILE MENU DRAWER -->
 <div id="mobile-menu-overlay" onclick="toggleMobileMenuDrawer()" class="fixed inset-0 bg-black/60 z-[3000] hidden transition-opacity duration-300 backdrop-blur-sm"></div>
 <div id="mobile-menu-drawer" class="fixed top-0 left-0 h-full w-[310px] bg-white z-[3001] transform -translate-x-full transition-transform duration-500 flex flex-col shadow-2xl">
-    <div class="px-8 pt-10 pb-8 flex justify-between items-center bg-gray-50">
-        <a href="<?php echo get_url(''); ?>"><img src="<?php echo get_url('assets/images/logo.png'); ?>" class="w-24"></a>
-        <button onclick="toggleMobileMenuDrawer()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white text-gray-400 hover:text-black shadow-sm">
-            <i class="fas fa-times text-xl"></i>
+    
+    <!-- Drawer Header -->
+    <div class="px-6 pt-10 pb-6 flex justify-between items-center border-b border-gray-50">
+        <a href="<?php echo get_url(''); ?>">
+            <img src="<?php echo get_url('assets/images/logo.png'); ?>" class="w-20">
+        </a>
+        <button onclick="toggleMobileMenuDrawer()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-black shadow-sm transition-all active:scale-90">
+            <i class="fas fa-times text-lg"></i>
         </button>
     </div>
 
-    <div class="flex-1 overflow-y-auto px-8 py-10 space-y-12">
-        <ul class="space-y-6">
-            <li><a href="<?php echo get_url(''); ?>" class="text-3xl font-['Fredoka'] font-black text-gray-900 border-b-8 border-[#19DC7E]/20">Home</a></li>
-            <li><a href="<?php echo get_url('shop'); ?>" class="text-3xl font-['Fredoka'] font-black text-gray-400 hover:text-black">Shop</a></li>
-            <li><a href="<?php echo get_url('about'); ?>" class="text-3xl font-['Fredoka'] font-black text-gray-400 hover:text-black">Story</a></li>
-            <li><a href="<?php echo get_url('track'); ?>" class="text-3xl font-['Fredoka'] font-black text-gray-400 hover:text-black">Tracking</a></li>
-            <li><a href="<?php echo get_url('contact'); ?>" class="text-3xl font-['Fredoka'] font-black text-gray-400 hover:text-black">Contact</a></li>
-        </ul>
+    <!-- Drawer Content -->
+    <div class="flex-1 overflow-y-auto px-6 py-8 no-scrollbar">
         
-        <div class="bg-black rounded-[32px] p-6 text-white">
-            <?php if ($is_logged_in): ?>
-                <h4 class="text-xl font-['Fredoka'] font-black mb-4">In, <?php echo htmlspecialchars($_SESSION['user_name']); ?></h4>
-                <div class="flex flex-col gap-2">
-                    <a href="<?php echo get_url('account'); ?>" class="text-sm font-bold opacity-60 hover:opacity-100">My Account</a>
-                    <a href="<?php echo get_url('logout'); ?>" class="text-sm font-bold text-red-500">Logout</a>
-                </div>
-            <?php else: ?>
-                <h4 class="text-xl font-['Fredoka'] font-black mb-4">Join the club</h4>
-                <div class="flex gap-2">
-                    <a href="<?php echo get_url('login'); ?>" class="flex-1 bg-white text-black text-center py-3 rounded-xl font-black text-sm">Login</a>
-                    <a href="<?php echo get_url('register'); ?>" class="flex-1 bg-[#19DC7E] text-black text-center py-3 rounded-xl font-black text-sm">Join</a>
-                </div>
-            <?php endif; ?>
+        <!-- Navigation Section -->
+        <div class="mb-10">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6 block ml-2">Shop & Explore</span>
+            <ul class="space-y-2">
+                <li>
+                    <a href="<?php echo get_url(''); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl bg-[#19DC7E]/5 text-gray-900 group">
+                        <div class="w-10 h-10 rounded-xl bg-[#19DC7E] text-black flex items-center justify-center text-sm shadow-sm group-hover:rotate-12 transition-transform">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <span class="text-xl font-['Fredoka'] font-bold">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo get_url('shop'); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 text-gray-600 hover:text-black transition-all group">
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <span class="text-xl font-['Fredoka'] font-bold">Shop Packs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo get_url('track'); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 text-gray-600 hover:text-black transition-all group">
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
+                            <i class="fas fa-truck-fast"></i>
+                        </div>
+                        <span class="text-xl font-['Fredoka'] font-bold">Track Order</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo get_url('about'); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 text-gray-600 hover:text-black transition-all group">
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <span class="text-xl font-['Fredoka'] font-bold">Our Story</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="<?php echo get_url('contact'); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 text-gray-600 hover:text-black transition-all group">
+                        <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <span class="text-xl font-['Fredoka'] font-bold">Support</span>
+                    </a>
+                </li>
+            </ul>
         </div>
+
+        <!-- Account Section -->
+        <div class="mb-10">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6 block ml-2">Personalize</span>
+            <div class="bg-gray-900 rounded-[30px] p-6 text-white relative overflow-hidden">
+                <!-- Background Blob -->
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-[#19DC7E] rounded-full blur-3xl opacity-20"></div>
+
+                <?php if ($is_logged_in): ?>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-full bg-[#19DC7E] flex items-center justify-center text-black font-black uppercase text-sm">
+                                <?php echo substr($_SESSION['user_name'], 0, 1); ?>
+                            </div>
+                            <h4 class="text-lg font-['Fredoka'] font-black leading-none">Hi, <?php echo explode(' ', htmlspecialchars($_SESSION['user_name']))[0]; ?>!</h4>
+                        </div>
+                        <div class="grid grid-cols-1 gap-2">
+                            <?php if($_SESSION['is_admin'] == 1): ?>
+                                <a href="<?php echo get_url('admin/'); ?>" class="flex items-center gap-3 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-bold transition-colors">
+                                    <i class="fas fa-crown text-[#19DC7E]"></i> Admin Panel
+                                </a>
+                            <?php endif; ?>
+                            <a href="<?php echo get_url('account'); ?>" class="flex items-center gap-3 px-4 py-2 hover:bg-white/10 rounded-xl text-xs font-bold transition-colors">
+                                <i class="fas fa-user-circle opacity-50"></i> Dashboard
+                            </a>
+                            <a href="<?php echo get_url('logout'); ?>" class="flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-red-500/10 rounded-xl text-xs font-bold transition-colors">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="relative z-10">
+                        <h4 class="text-xl font-['Fredoka'] font-black mb-2">Join the Club</h4>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-6">Earn points on every bite.</p>
+                        <div class="flex gap-2">
+                            <a href="<?php echo get_url('login'); ?>" class="flex-1 bg-white text-black text-center py-3 rounded-xl font-black text-xs hover:scale-105 transition-transform">Login</a>
+                            <a href="<?php echo get_url('register'); ?>" class="flex-1 bg-[#19DC7E] text-black text-center py-3 rounded-xl font-black text-xs hover:scale-105 transition-transform shadow-[0_10px_20px_rgba(25,220,126,0.2)]">Join</a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Support Info & Socials -->
+        <div class="px-2">
+             <div class="flex flex-col gap-4 mb-8">
+                 <div class="flex items-center gap-3 text-gray-400">
+                     <i class="fas fa-phone-alt text-xs"></i>
+                     <span class="text-xs font-bold">+91 9622 931 931</span>
+                 </div>
+                 <div class="flex items-center gap-3 text-gray-400">
+                     <i class="fas fa-envelope text-xs"></i>
+                     <span class="text-xs font-bold">hello@driyum.com</span>
+                 </div>
+             </div>
+
+             <div class="flex gap-3">
+                 <a href="#" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#E1306C] hover:text-white transition-all"><i class="fab fa-instagram"></i></a>
+                 <a href="#" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white transition-all"><i class="fab fa-facebook-f"></i></a>
+                 <a href="#" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#1DA1F2] hover:text-white transition-all"><i class="fab fa-twitter"></i></a>
+             </div>
+        </div>
+
     </div>
 </div>
 

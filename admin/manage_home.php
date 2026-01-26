@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cta_text = $_POST['hero_cta_text'] ?? '';
         $cta_link = $_POST['hero_cta_link'] ?? '';
         $media_url = $_POST['current_hero_media'] ?? '';
+        $show_media = isset($_POST['hero_show_media']) ? 1 : 0;
 
         // Fetch old data for cleanup
         $old_data = fetch_one("SELECT media_url FROM homepage_sections WHERE section_name = 'hero'");
@@ -44,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (!$error) {
-            $stmt = $conn->prepare("UPDATE homepage_sections SET heading = ?, subheading = ?, cta_text = ?, cta_link = ?, media_url = ? WHERE section_name = 'hero'");
-            $stmt->bind_param("sssss", $heading, $subheading, $cta_text, $cta_link, $media_url);
+            $stmt = $conn->prepare("UPDATE homepage_sections SET heading = ?, subheading = ?, cta_text = ?, cta_link = ?, media_url = ?, show_media = ? WHERE section_name = 'hero'");
+            $stmt->bind_param("sssssi", $heading, $subheading, $cta_text, $cta_link, $media_url, $show_media);
             if ($stmt->execute()) {
                 $msg = "Hero section updated!";
             } else {
@@ -262,6 +263,17 @@ $announcement_text = get_setting('announcement_text', '🚀 Free Shipping on All
                                 <label class="block text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">Button Link</label>
                                 <input type="text" name="hero_cta_link" value="<?php echo htmlspecialchars($hero['cta_link']); ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] rounded-2xl px-6 py-4 outline-none font-bold">
                             </div>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 mt-4">
+                            <label class="flex items-center gap-4 cursor-pointer group">
+                                <div class="relative">
+                                    <input type="checkbox" name="hero_show_media" value="1" class="sr-only peer" <?php echo ($hero['show_media'] ?? 1) ? 'checked' : ''; ?>>
+                                    <div class="w-12 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[#19DC7E] transition-colors"></div>
+                                    <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-6"></div>
+                                </div>
+                                <span class="text-xs font-black text-gray-900 group-hover:text-black uppercase">Enable Hero Image</span>
+                            </label>
+                            <p class="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-widest italic">If disabled, only texts and floating elements will appear.</p>
                         </div>
                     </div>
 
