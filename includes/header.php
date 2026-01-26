@@ -168,8 +168,8 @@ run_crons();
 </header>
 
 <!-- MOBILE MENU DRAWER -->
-<div id="mobile-menu-overlay" onclick="toggleMobileMenuDrawer()" class="fixed inset-0 bg-black/60 z-[110] hidden transition-opacity duration-300 backdrop-blur-sm"></div>
-<div id="mobile-menu-drawer" class="fixed top-0 left-0 h-full w-[320px] bg-white z-[111] transform -translate-x-full transition-transform duration-500 flex flex-col">
+<div id="mobile-menu-overlay" onclick="toggleMobileMenuDrawer()" class="fixed inset-0 bg-black/60 z-[3000] hidden transition-opacity duration-300 backdrop-blur-sm"></div>
+<div id="mobile-menu-drawer" class="fixed top-0 left-0 h-full w-[310px] bg-white z-[3001] transform -translate-x-full transition-transform duration-500 flex flex-col shadow-2xl">
     <div class="px-8 pt-10 pb-8 flex justify-between items-center bg-gray-50">
         <a href="<?php echo get_url(''); ?>"><img src="<?php echo get_url('assets/images/logo.png'); ?>" class="w-24"></a>
         <button onclick="toggleMobileMenuDrawer()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white text-gray-400 hover:text-black shadow-sm">
@@ -309,48 +309,7 @@ run_crons();
         };
     }
 
-    // 2. Mobile Menu Toggle
-    if (!window.toggleMobileMenuDrawer) {
-        window.toggleMobileMenuDrawer = function() {
-            const overlay = document.getElementById('mobile-menu-overlay');
-            const drawer = document.getElementById('mobile-menu-drawer');
-            const bottomNavBtn = document.getElementById('mobile-menu-trigger-btn');
-            
-            if (!overlay || !drawer) return;
 
-            const isHidden = overlay.classList.contains('hidden');
-            if (isHidden) {
-                overlay.classList.remove('hidden');
-                void overlay.offsetWidth;
-                overlay.style.opacity = '1';
-                drawer.style.transform = 'translateX(0)';
-                document.body.style.overflow = 'hidden';
-
-                // Sync Bottom Nav Button
-                if (bottomNavBtn) {
-                    bottomNavBtn.classList.add('active');
-                    const icon = bottomNavBtn.querySelector('i');
-                    const label = bottomNavBtn.querySelector('span');
-                    if(icon) icon.className = 'fas fa-times';
-                    if(label) label.textContent = 'Close';
-                }
-            } else {
-                overlay.style.opacity = '0';
-                drawer.style.transform = 'translateX(-100%)';
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-                document.body.style.overflow = '';
-
-                // Sync Bottom Nav Button
-                if (bottomNavBtn) {
-                    bottomNavBtn.classList.remove('active');
-                    const icon = bottomNavBtn.querySelector('i');
-                    const label = bottomNavBtn.querySelector('span');
-                    if(icon) icon.className = 'fas fa-bars';
-                    if(label) label.textContent = 'Menu';
-                }
-            }
-        };
-    }
 
     // 3. Cart Sidebar Toggle
     if (!window.openCartSidebar) {

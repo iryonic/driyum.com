@@ -14,6 +14,12 @@ if (isset($_GET['mode']) && $_GET['mode'] === 'guest') {
     $_SESSION['checkout_mode'] = 'guest';
 }
 
+// If user is not logged in and not explicitly in guest mode via URL, 
+// and not submitting an order, reset choice to force choice modal.
+if (!is_logged_in() && !isset($_GET['mode']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    unset($_SESSION['checkout_mode']);
+}
+
 // Require Login or Choice
 $show_choice_modal = !is_logged_in() && !isset($_SESSION['checkout_mode']);
 // require_login(); // Removed for Guest Checkout
@@ -254,8 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-100">
         <div class="container mx-auto px-6 h-20 flex items-center justify-between">
             <a href="<?php echo get_url(''); ?>" class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-[#19DC7E] rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg rotate-3 uppercase">D</div>
-                <span class="text-2xl font-['Fredoka'] font-black text-gray-900 tracking-tight">DRIYUM</span>
+                <img src="<?php echo get_url('./assets/images/logo.png'); ?>" alt="Logo" class="w-20">
             </a>
             <div class="flex items-center gap-3 text-gray-400 font-bold text-xs uppercase tracking-widest">
                 <i class="fas fa-lock text-[#19DC7E]"></i> 
@@ -516,51 +521,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     <div id="checkout-choice-overlay" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-xl"></div>
         
-        <div class="relative bg-white rounded-[50px] w-full max-w-4xl overflow-hidden shadow-2xl anim-slide border-4 border-white">
-            <div class="flex flex-col md:flex-row h-full">
+        <div class="relative bg-white rounded-[32px] md:rounded-[50px] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl anim-slide border-4 border-white no-scrollbar">
+            <div class="flex flex-col md:flex-row min-h-full">
                 
                 <!-- Section 1: Member Benefit -->
-                <div class="flex-1 p-10 md:p-14 bg-gray-50 flex flex-col justify-center border-r border-gray-100">
-                    <div class="w-16 h-16 bg-[#19DC7E] rounded-3xl flex items-center justify-center text-white text-3xl shadow-lg mb-8 rotate-3">
+                <div class="flex-1 p-8 md:p-14 bg-gray-50 flex flex-col justify-center border-b md:border-b-0 md:border-r border-gray-100">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-[#19DC7E] rounded-2xl md:rounded-3xl flex items-center justify-center text-white text-2xl md:text-3xl shadow-lg mb-6 md:mb-8 rotate-3">
                         <i class="fas fa-user-check"></i>
                     </div>
-                    <h2 class="text-4xl font-['Fredoka'] font-black text-gray-900 mb-4 uppercase tracking-tight leading-none">The Member<br>Club.</h2>
-                    <p class="text-gray-500 font-bold text-sm mb-10 leading-relaxed">
+                    <h2 class="text-3xl md:text-4xl font-['Fredoka'] font-black text-gray-900 mb-3 md:mb-4 uppercase tracking-tight leading-none">The Member<br>Club.</h2>
+                    <p class="text-gray-500 font-bold text-xs md:text-sm mb-8 md:mb-10 leading-relaxed">
                         Save addresses, track every crunch, and earn 10% cash-back on every order.
                     </p>
                     
-                    <div class="space-y-4">
-                        <a href="<?php echo get_url('login.php?redirect=checkout'); ?>" class="btn-chunky bg-black text-white w-full py-4 text-center block hover:scale-105 transition">
+                    <div class="space-y-3 md:space-y-4">
+                        <a href="<?php echo get_url('login.php?redirect=checkout'); ?>" class="btn-chunky bg-black text-white w-full py-4 text-center block hover:scale-105 transition text-sm">
                             Login to Account
                         </a>
-                        <a href="<?php echo get_url('register.php?redirect=checkout'); ?>" class="btn-chunky border-2 border-gray-200 text-gray-400 w-full py-4 text-center block hover:border-black hover:text-black transition">
+                        <a href="<?php echo get_url('register.php?redirect=checkout'); ?>" class="btn-chunky border-2 border-gray-200 text-gray-400 w-full py-4 text-center block hover:border-black hover:text-black transition text-sm">
                             Create New Account
                         </a>
                     </div>
                 </div>
 
                 <!-- Section 2: Guest Checkout -->
-                <div class="flex-1 p-10 md:p-14 bg-white flex flex-col justify-center relative overflow-hidden">
+                <div class="flex-1 p-8 md:p-14 bg-white flex flex-col justify-center relative overflow-hidden">
                     <!-- Decor -->
                     <div class="absolute -right-10 -top-10 w-40 h-40 bg-gray-50 rounded-full blur-3xl opacity-50"></div>
                     
-                    <div class="w-16 h-16 bg-white border-2 border-gray-100 rounded-3xl flex items-center justify-center text-gray-400 text-3xl shadow-sm mb-8 -rotate-3">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-white border-2 border-gray-100 rounded-2xl md:rounded-3xl flex items-center justify-center text-gray-400 text-2xl md:text-3xl shadow-sm mb-6 md:mb-8 -rotate-3">
                         <i class="fas fa-ghost"></i>
                     </div>
-                    <h2 class="text-4xl font-['Fredoka'] font-black text-gray-900 mb-4 uppercase tracking-tight leading-none">Ghost<br>Checkout.</h2>
-                    <p class="text-gray-500 font-bold text-sm mb-10 leading-relaxed">
+                    <h2 class="text-3xl md:text-4xl font-['Fredoka'] font-black text-gray-900 mb-3 md:mb-4 uppercase tracking-tight leading-none">Ghost<br>Checkout.</h2>
+                    <p class="text-gray-500 font-bold text-xs md:text-sm mb-8 md:mb-10 leading-relaxed">
                         In a hurry? Checkout as a guest. You can always create an account later.
                     </p>
                     
-                    <a href="?mode=guest" class="btn-chunky bg-[#19DC7E] text-white w-full py-6 text-center block shadow-xl hover:rotate-2 hover:scale-105 transition-all text-lg border-none">
-                        Continue without an account <i class="fas fa-arrow-right ml-2 text-sm opacity-50"></i>
+                    <a href="?mode=guest" class="btn-chunky bg-[#19DC7E] text-white w-full py-5 md:py-6 text-center block shadow-xl hover:rotate-2 hover:scale-105 transition-all text-base md:text-lg border-none">
+                        Continue as Guest <i class="fas fa-arrow-right ml-2 text-sm opacity-50"></i>
                     </a>
                 </div>
 
             </div>
             
             <!-- Close Button (Back to Cart) -->
-            <a href="<?php echo get_url('cart'); ?>" class="absolute top-6 right-8 text-gray-300 hover:text-black transition text-xl">
+            <a href="<?php echo get_url('cart'); ?>" class="absolute top-4 right-6 md:top-6 md:right-8 text-gray-300 hover:text-black transition text-xl z-20">
                 <i class="fas fa-times"></i>
             </a>
         </div>
