@@ -159,9 +159,6 @@ run_crons();
 <!-- MOBILE TOP BAR -->
 <header class="md:hidden sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-6 shadow-sm">
     <div class="flex items-center gap-2">
-        <button onclick="toggleMobileMenuDrawer()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors" aria-label="Open menu">
-            <i class="fas fa-bars text-lg"></i>
-        </button>
         <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors"><i class="fas fa-search"></i></button>
     </div>
     <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?>" class="w-24"></a>
@@ -317,6 +314,8 @@ run_crons();
         window.toggleMobileMenuDrawer = function() {
             const overlay = document.getElementById('mobile-menu-overlay');
             const drawer = document.getElementById('mobile-menu-drawer');
+            const bottomNavBtn = document.getElementById('mobile-menu-trigger-btn');
+            
             if (!overlay || !drawer) return;
 
             const isHidden = overlay.classList.contains('hidden');
@@ -326,11 +325,29 @@ run_crons();
                 overlay.style.opacity = '1';
                 drawer.style.transform = 'translateX(0)';
                 document.body.style.overflow = 'hidden';
+
+                // Sync Bottom Nav Button
+                if (bottomNavBtn) {
+                    bottomNavBtn.classList.add('active');
+                    const icon = bottomNavBtn.querySelector('i');
+                    const label = bottomNavBtn.querySelector('span');
+                    if(icon) icon.className = 'fas fa-times';
+                    if(label) label.textContent = 'Close';
+                }
             } else {
                 overlay.style.opacity = '0';
                 drawer.style.transform = 'translateX(-100%)';
                 setTimeout(() => overlay.classList.add('hidden'), 300);
                 document.body.style.overflow = '';
+
+                // Sync Bottom Nav Button
+                if (bottomNavBtn) {
+                    bottomNavBtn.classList.remove('active');
+                    const icon = bottomNavBtn.querySelector('i');
+                    const label = bottomNavBtn.querySelector('span');
+                    if(icon) icon.className = 'fas fa-bars';
+                    if(label) label.textContent = 'Menu';
+                }
             }
         };
     }
@@ -375,9 +392,6 @@ run_crons();
     document.addEventListener('DOMContentLoaded', function() {
         const searchBtn = document.getElementById('mobile-search-trigger');
         if(searchBtn) searchBtn.onclick = function(e) { e.preventDefault(); window.toggleSearch(); };
-        
-        const menuBtn = document.getElementById('mobile-menu-trigger-btn');
-        if(menuBtn) menuBtn.onclick = function(e) { e.preventDefault(); window.toggleMobileMenuDrawer(); };
     });
 
     <?php 

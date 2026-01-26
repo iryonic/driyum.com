@@ -73,21 +73,41 @@ function renderSearchResults(results, container) {
 window.toggleMobileMenuDrawer = function () {
     const overlay = document.getElementById('mobile-menu-overlay');
     const drawer = document.getElementById('mobile-menu-drawer');
+    const triggerBtn = document.getElementById('mobile-menu-trigger-btn');
     if (!overlay || !drawer) return;
 
     const isHidden = overlay.classList.contains('hidden');
     if (isHidden) {
+        // Open Menu
         overlay.classList.remove('hidden');
-        setTimeout(() => {
-            overlay.style.opacity = '1';
-            drawer.style.transform = 'translateX(0)';
-        }, 10);
+        void overlay.offsetWidth; // Force reflow
+        overlay.style.opacity = '1';
+        drawer.style.transform = 'translateX(0)';
         document.body.style.overflow = 'hidden';
+
+        // Update Trigger State if exists in dock
+        if (triggerBtn) {
+            triggerBtn.classList.add('active');
+            const icon = triggerBtn.querySelector('i');
+            const label = triggerBtn.querySelector('span');
+            if (icon) icon.className = 'fas fa-times'; // Change to X
+            if (label) label.textContent = 'Close';
+        }
     } else {
+        // Close Menu
         overlay.style.opacity = '0';
         drawer.style.transform = 'translateX(-100%)';
         setTimeout(() => overlay.classList.add('hidden'), 300);
         document.body.style.overflow = '';
+
+        // Reset Trigger State
+        if (triggerBtn) {
+            triggerBtn.classList.remove('active');
+            const icon = triggerBtn.querySelector('i');
+            const label = triggerBtn.querySelector('span');
+            if (icon) icon.className = 'fas fa-bars'; // Back to Hamburger
+            if (label) label.textContent = 'Menu';
+        }
     }
 };
 

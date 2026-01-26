@@ -276,6 +276,49 @@
     }
 </style>
 
+<script>
+    // DEFINE TOGGLE FUNCTION IMMEDIATELY FOR DOCK RELIABILITY
+    window.toggleMobileMenuDrawer = function() {
+        const overlay = document.getElementById('mobile-menu-overlay');
+        const drawer = document.getElementById('mobile-menu-drawer');
+        const bottomNavBtn = document.getElementById('mobile-menu-trigger-btn');
+        
+        if (!overlay || !drawer) return;
+
+        const isHidden = overlay.classList.contains('hidden');
+        if (isHidden) {
+            overlay.classList.remove('hidden');
+            void overlay.offsetWidth;
+            overlay.style.opacity = '1';
+            drawer.style.transform = 'translateX(0)';
+            document.body.style.overflow = 'hidden';
+
+            // Sync Bottom Nav Button
+            if (bottomNavBtn) {
+                bottomNavBtn.classList.add('active');
+                const icon = bottomNavBtn.querySelector('i');
+                const label = bottomNavBtn.querySelector('span');
+                if(icon) icon.className = 'fas fa-times';
+                if(label) label.textContent = 'Close';
+            }
+        } else {
+            overlay.style.opacity = '0';
+            drawer.style.transform = 'translateX(-100%)';
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+            document.body.style.overflow = '';
+
+            // Sync Bottom Nav Button
+            if (bottomNavBtn) {
+                bottomNavBtn.classList.remove('active');
+                const icon = bottomNavBtn.querySelector('i');
+                const label = bottomNavBtn.querySelector('span');
+                if(icon) icon.className = 'fas fa-bars';
+                if(label) label.textContent = 'Menu';
+            }
+        }
+    };
+</script>
+
 <div id="driyum-mobile-dock-v2">
     <div id="driyum-mobile-dock-inner-v2">
         <!-- Home -->
@@ -307,49 +350,14 @@
         </a>
 
         <!-- Menu (Hamburger) -->
-        <button id="mobile-menu-trigger-btn" class="dock-item-v2">
+        <button id="mobile-menu-trigger-btn" onclick="toggleMobileMenuDrawer(); return false;" class="dock-item-v2">
             <i class="fas fa-bars"></i>
             <span class="dock-label-v2">Menu</span>
         </button>
     </div>
 </div>
 
-<script>
-    // Robust Hamburger Trigger
-    document.getElementById('mobile-menu-trigger-btn').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Try Global Function First
-        if (typeof toggleMobileMenuDrawer === 'function') {
-            toggleMobileMenuDrawer();
-        } else {
-            // Fallback: Direct DOM manipulation if JS failed
-            const overlay = document.getElementById('mobile-menu-overlay');
-            const drawer = document.getElementById('mobile-menu-drawer');
-            
-            if (overlay && drawer) {
-                 const isHidden = overlay.classList.contains('hidden');
-                 if(isHidden) {
-                     overlay.classList.remove('hidden');
-                     setTimeout(() => {
-                        overlay.style.opacity = '1';
-                        drawer.style.transform = 'translateX(0)';
-                     }, 10);
-                     document.body.style.overflow = 'hidden';
-                 } else {
-                     overlay.style.opacity = '0';
-                     drawer.style.transform = 'translateX(-100%)';
-                     setTimeout(() => overlay.classList.add('hidden'), 300);
-                     document.body.style.overflow = '';
-                 }
-            } else {
-                console.error("Mobile menu elements not found");
-                alert("Menu unavailable");
-            }
-        }
-    });
-</script>
+
 
 <!-- Toast Container for Notifications -->
 <div id="toast-container" class="fixed bottom-24 right-4 z-[9999] md:bottom-4"></div>
