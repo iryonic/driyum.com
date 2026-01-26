@@ -93,6 +93,49 @@ $tax_perc = $totals['tax_rate'];
 
 $error = "";
 
+// Magic Checkout: Fetch Saved Data
+$user_id = is_logged_in() ? $_SESSION['user_id'] : null;
+$user_data = $user_id ? fetch_one("SELECT * FROM users WHERE id = ?", [$user_id]) : null;
+$saved_address = is_logged_in() ? get_user_default_address($user_id) : null;
+
+// Form pre-fill logic
+$form = [
+    'email' => $user_data['email'] ?? '',
+    'phone' => '',
+    'first_name' => '',
+    'last_name' => '',
+    'address' => '',
+    'city' => '',
+    'state' => '',
+    'zip' => $zip
+];
+
+if ($saved_address) {
+    $name_parts = explode(' ', $saved_address['name'], 2);
+    $form['first_name'] = $name_parts[0] ?? '';
+    $form['last_name'] = $name_parts[1] ?? '';
+    $form['phone'] = $saved_address['phone'];
+    $form['address'] = $saved_address['address_line1'];
+    $form['city'] = $saved_address['city'];
+    $form['state'] = $saved_address['state'];
+    if (empty($zip)) {
+        $zip = $saved_address['pincode'];
+        $form['zip'] = $zip;
+    }
+}
+
+// Override with POST data if validation failed previously
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $form['email'] = sanitize_input($_POST['email'] ?? $form['email']);
+    $form['phone'] = sanitize_input($_POST['phone'] ?? $form['phone']);
+    $form['first_name'] = sanitize_input($_POST['first_name'] ?? $form['first_name']);
+    $form['last_name'] = sanitize_input($_POST['last_name'] ?? $form['last_name']);
+    $form['address'] = sanitize_input($_POST['address'] ?? $form['address']);
+    $form['city'] = sanitize_input($_POST['city'] ?? $form['city']);
+    $form['state'] = sanitize_input($_POST['state'] ?? $form['state']);
+    $form['zip'] = sanitize_input($_POST['zip'] ?? $form['zip']);
+}
+
 // Handle Order Placement
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     try {
@@ -104,15 +147,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         $order_number = 'ORD-' . strtoupper(uniqid());
 
         // Prepare Shipping Details
+        $first_name = sanitize_input($_POST['first_name']);
+        $last_name = sanitize_input($_POST['last_name']);
+        $email = sanitize_input($_POST['email']);
+        $phone = sanitize_input($_POST['phone']);
+        $address = sanitize_input($_POST['address']);
+        $city = sanitize_input($_POST['city']);
+        $state = sanitize_input($_POST['state'] ?? '');
+        $zip_code = sanitize_input($_POST['zip']);
+
         $shipping_details = json_encode([
-            'name' => sanitize_input($_POST['first_name']) . ' ' . sanitize_input($_POST['last_name']),
-            'email' => sanitize_input($_POST['email']),
-            'phone' => sanitize_input($_POST['phone']),
-            'address' => sanitize_input($_POST['address']),
-            'city' => sanitize_input($_POST['city']),
-            'state' => sanitize_input($_POST['state'] ?? ''),
-            'zip' => sanitize_input($_POST['zip'])
+            'name' => $first_name . ' ' . $last_name,
+            'email' => $email,
+            'phone' => $phone,
+            'address' => $address,
+            'city' => $city,
+            'state' => $state,
+            'zip' => $zip_code
         ]);
+
+        // Magic Checkout: Save Address for logged in users
+        if ($user_id) {
+            save_user_address($user_id, [
+                'name' => $first_name . ' ' . $last_name,
+                'phone' => $phone,
+                'address_line1' => $address,
+                'address_line2' => '',
+                'city' => $city,
+                'state' => $state,
+                'pincode' => $zip_code
+            ]);
+        }
 
         // Final Coupon Re-validation before order
         $final_coupon_discount = 0;
@@ -312,35 +377,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Email Address</label>
-                                    <input type="email" name="email" required placeholder="your@email.com" value="<?php echo $_SESSION['user_email'] ?? ''; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="email" name="email" required placeholder="your@email.com" value="<?php echo $form['email']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Phone Number</label>
-                                    <input type="text" name="phone" required placeholder="+91 00000 00000" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="phone" required placeholder="+91 00000 00000" value="<?php echo $form['phone']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">First Name</label>
-                                    <input type="text" name="first_name" required placeholder="John" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="first_name" required placeholder="John" value="<?php echo $form['first_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Last Name</label>
-                                    <input type="text" name="last_name" required placeholder="Doe" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="last_name" required placeholder="Doe" value="<?php echo $form['last_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2 md:col-span-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Delivery Address</label>
-                                    <input type="text" name="address" required placeholder="House No, Street, Locality" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="address" required placeholder="House No, Street, Locality" value="<?php echo $form['address']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">City</label>
-                                    <input type="text" name="city" required placeholder="Srinagar" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="city" required placeholder="Srinagar" value="<?php echo $form['city']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">State</label>
-                                    <input type="text" name="state" required placeholder="J&K" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="state" required placeholder="J&K" value="<?php echo $form['state']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">PIN Code</label>
-                                    <input type="text" name="zip" id="zip_input" required placeholder="190001" value="<?php echo $zip; ?>" onchange="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="zip" id="zip_input" required placeholder="190001" value="<?php echo $form['zip']; ?>" onchange="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
 
                                 <div class="md:col-span-2 mt-4 hidden" id="shipping-methods-container">

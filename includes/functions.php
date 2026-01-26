@@ -129,6 +129,38 @@ function require_login() {
     }
 }
 
+// User Address Functions (Magic Checkout)
+function get_user_default_address($user_id) {
+    if (!$user_id) return null;
+    return fetch_one("SELECT * FROM user_addresses WHERE user_id = ? ORDER BY is_default DESC, created_at DESC LIMIT 1", [$user_id]);
+}
+
+function save_user_address($user_id, $data) {
+    if (!$user_id) return false;
+    
+    // Check if address already exists matching exactly based on core fields
+    $existing = fetch_one("SELECT id FROM user_addresses WHERE user_id = ? AND address_line1 = ? AND city = ? AND pincode = ?", 
+        [$user_id, $data['address_line1'], $data['city'], $data['pincode']]);
+    
+    if ($existing) {
+        // Update existing address details and ensure it's marked as default/latest
+        $sql = "UPDATE user_addresses SET name = ?, phone = ?, address_line2 = ?, state = ?, is_default = 1, updated_at = NOW() WHERE id = ?";
+        // Clear other defaults first
+        execute_query("UPDATE user_addresses SET is_default = 0 WHERE user_id = ? AND id != ?", [$user_id, $existing['id']]);
+        return execute_query($sql, [$data['name'], $data['phone'], $data['address_line2'], $data['state'], $existing['id']]);
+    } else {
+        // Clear previous defaults
+        execute_query("UPDATE user_addresses SET is_default = 0 WHERE user_id = ?", [$user_id]);
+        
+        // Insert new default address
+        $sql = "INSERT INTO user_addresses (user_id, name, phone, address_line1, address_line2, city, state, pincode, is_default) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)";
+        return execute_query($sql, [
+            $user_id, $data['name'], $data['phone'], $data['address_line1'], 
+            $data['address_line2'], $data['city'], $data['state'], $data['pincode']
+        ]);
+    }
+}
+
 function require_admin() {
     if (!is_admin()) {
         header('Location: ' . get_url(''));
