@@ -88,7 +88,7 @@ if ($search) {
 }
 
 // Fetch Products
-$query = "SELECT p.*, c.name as cat_name FROM products p LEFT JOIN categories c ON p.category_id = c.id $where ORDER BY p.id DESC";
+$query = "SELECT p.*, c.name as cat_name FROM products p LEFT JOIN categories c ON p.category_id = c.id $where ORDER BY p.is_active DESC, p.id DESC";
 $pagination = get_pagination_data($query, $params, 12);
 $products = $pagination['records'];
 ?>
