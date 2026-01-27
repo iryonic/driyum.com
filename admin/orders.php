@@ -32,6 +32,9 @@ if ((isset($_GET['status']) || isset($_POST['ajax_action'])) && isset($_REQUEST[
         $notes = "Order status updated to $status by admin via " . (isset($_POST['ajax_action']) ? 'AJAX' : 'Direct Link');
         execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)", [$id, $status, $notes]);
         
+        // Send email notification to customer
+        send_order_status_email($id, $status);
+        
         if (isset($_POST['ajax_action'])) {
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'status' => $status, 'label' => str_replace('_', ' ', $status)]);
@@ -64,6 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dispatch_order'])) {
         
         $notes = "Order dispatched via India Post. Tracking Number: $tracking_number. Note: $tracking_note";
         execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, 'shipped', ?)", [$order_id, $notes]);
+        
+        // Send email notification to customer
+        send_order_status_email($order_id, 'shipped');
         
         if (isset($_POST['is_ajax'])) {
             header('Content-Type: application/json');

@@ -533,6 +533,80 @@ function send_order_confirmation($order_id) {
     return send_email($to, $subject, $email_content);
 }
 
+/**
+ * Send Order Status Update Email
+ */
+function send_order_status_email($order_id, $status) {
+    $order = fetch_one("SELECT * FROM orders WHERE id = ?", [$order_id]);
+    if (!$order) return false;
+
+    $addr = json_decode($order['shipping_address'], true);
+    $to = $addr['email'] ?? '';
+    if (!$to) return false;
+
+    $status_title = strtoupper(str_replace('_', ' ', $status));
+    $subject = "Order #{$order['order_number']} Status Update: {$status_title}";
+    
+    $status_messages = [
+        'confirmed' => "Good news! Your order has been confirmed and our team is currently packing your snacks with care.",
+        'shipped' => "Exciting news! Your order is on its way. It has been dispatched and is currently in transit.",
+        'delivered' => "Ding Dong! Your order has been delivered. We hope you enjoy your delicious Driyum snacks!",
+        'cancelled' => "Your order has been cancelled. If you have any questions, please contact our support team."
+    ];
+
+    $message_body = $status_messages[strtolower($status)] ?? "Your order status has been updated to " . str_replace('_', ' ', $status) . ".";
+    
+    // Tracking info for shipped status
+    $tracking_html = "";
+    if (strtolower($status) === 'shipped' && !empty($order['tracking_number'])) {
+        $tracking_html = "
+            <div style='margin-top: 30px; padding: 25px; background: #EEF2FF; border-radius: 20px; border: 1px solid #C7D2FE;'>
+                <p style='margin: 0 0 10px 0; font-size: 10px; font-weight: 900; color: #4338CA; text-transform: uppercase; letter-spacing: 0.1em;'>Tracking Details</p>
+                <p style='margin: 0; font-size: 18px; font-weight: 900; color: #1E1B4B;'>{$order['tracking_number']}</p>
+                " . (!empty($order['tracking_note']) ? "<p style='margin: 10px 0 0 0; font-size: 13px; color: #4338CA; font-style: italic;'>\"{$order['tracking_note']}\"</p>" : "") . "
+                <p style='margin: 15px 0 0 0; font-size: 12px; color: #6366F1;'>Carrier: India Post</p>
+            </div>
+        ";
+    }
+
+    $email_content = "
+        <div style='font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.05);'>
+            <div style='background-color: #000; padding: 50px 40px; text-align: center;'>
+                <div style='display: inline-block; padding: 10px 20px; background: #19DC7E; border-radius: 12px; color: #000; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;'>Order Update</div>
+                <h1 style='color: #fff; margin: 0; font-size: 32px; font-weight: 900;'>{$status_title}</h1>
+            </div>
+            <div style='padding: 40px; color: #333; line-height: 1.6;'>
+                <p stylealso='font-size: 18px; font-weight: bold; margin-bottom: 10px;'>Hi " . ($addr['name'] ?? 'Snacker') . ",</p>
+                <p style='color: #666;'>{$message_body}</p>
+                
+                {$tracking_html}
+
+                <div style='margin-top: 40px; text-align: center;'>
+                    <a href='http://{$_SERVER['HTTP_HOST']}/track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
+                </div>
+
+                <div style='margin-top: 50px; border-top: 1px solid #f0f0f0; padding-top: 30px;'>
+                    <div style='display: flex; justify-content: space-between; align-items: center;'>
+                        <div>
+                            <p style='margin: 0; font-size: 10px; font-weight: 900; color: #999; text-transform: uppercase;'>Order Number</p>
+                            <p style='margin: 0; font-weight: bold;'>#{$order['order_number']}</p>
+                        </div>
+                        <div style='text-align: right;'>
+                            <p style='margin: 0; font-size: 10px; font-weight: 900; color: #999; text-transform: uppercase;'>Total Value</p>
+                            <p style='margin: 0; font-weight: bold; color: #19DC7E;'>₹" . number_format($order['total'], 2) . "</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style='padding: 30px; background-color: #f9f9f9; text-align: center; font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; letter-spacing: 0.1em;'>
+                Driyum &bull; Premium Snacks &bull; Handcrafted with Love
+            </div>
+        </div>
+    ";
+
+    return send_email($to, $subject, $email_content);
+}
+
 function get_user_orders($user_id) {
     $sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC";
     return fetch_all($sql, [$user_id]);
