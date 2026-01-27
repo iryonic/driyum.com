@@ -209,17 +209,7 @@ if (isset($_SESSION['user_id'])) {
 
             <!-- RIGHT: DETAILS -->
             <div class="lg:pt-10">
-                <!-- Status & Social Proof Header -->
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="flex -space-x-3">
-                        <img src="https://i.pravatar.cc/100?u=1" class="w-8 h-8 rounded-full border-2 border-white shadow-sm">
-                        <img src="https://i.pravatar.cc/100?u=2" class="w-8 h-8 rounded-full border-2 border-white shadow-sm">
-                        <img src="https://i.pravatar.cc/100?u=3" class="w-8 h-8 rounded-full border-2 border-white shadow-sm">
-                    </div>
-                    <span class="text-xs font-bold text-gray-500">
-                        <span class="text-black font-black">28 people</span> viewing right now
-                    </span>
-                </div>
+              
 
                 <div class="mb-10">
                     <div class="flex items-center gap-2 mb-4">
