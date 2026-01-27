@@ -98,9 +98,11 @@ if (isset($_SESSION['user_id'])) {
             50% { transform: translateY(-10px) rotate(5deg); }
         }
 
-        .benefit-card:hover i {
-            transform: scale(1.2) rotate(-10deg);
+        @keyframes imageIn {
+            from { opacity: 0; transform: scale(1.1) translateY(10px) rotate(2deg); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); filter: blur(0); }
         }
+        .image-animate-in { animation: imageIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         .nutrition-item:hover {
             background: white;
@@ -156,7 +158,10 @@ if (isset($_SESSION['user_id'])) {
                     <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-yellow-400/10 rounded-full blur-[100px] animate-pulse delay-1000"></div>
 
                     <div class="aspect-[4/5] bg-white rounded-[40px] md:rounded-[60px] p-6 md:p-16 border border-white/40 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] flex items-center justify-center relative overflow-hidden backdrop-blur-sm">
-                        <img id="mainImage" src="<?php echo get_url(ltrim($product['image'], './')); ?>" class="w-full h-full object-contain transform group-hover:scale-110 transition-transform duration-1000 z-10 drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] <?php echo $product['stock'] <= 0 ? 'grayscale' : ''; ?>">
+                        <!-- Progress Indicator -->
+                        <div id="slideshow-progress" class="absolute top-0 left-0 h-1 bg-[#19DC7E]/30 w-0 z-30 transition-none"></div>
+                        
+                        <img id="mainImage" src="<?php echo get_url(ltrim($product['image'], './')); ?>" class="w-full h-full object-contain transform group-hover:scale-110 transition-all duration-[800ms] cubic-bezier(0.16, 1, 0.3, 1) z-10 drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] <?php echo $product['stock'] <= 0 ? 'grayscale' : ''; ?>">
                         
                         <!-- Premium Interactive Label -->
                         <div class="absolute top-6 right-6 md:top-10 md:right-10 flex flex-col items-end gap-3 z-20">
@@ -189,7 +194,7 @@ if (isset($_SESSION['user_id'])) {
                 <div class="grid grid-cols-3 gap-4 pt-4">
                     <div class="bg-white/50 backdrop-blur-sm p-5 rounded-[32px] border border-white/20 text-center benefit-card transition-all group">
                         <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-3 transition-transform">☀️</div>
-                        <span class="block text-[9px] font-black uppercase tracking-widest text-gray-400">Sun Dried</span>
+                        <span class="block text-[9px] font-black uppercase tracking-widest text-gray-400">Dried</span>
                     </div>
                     <div class="bg-white/50 backdrop-blur-sm p-5 rounded-[32px] border border-white/20 text-center benefit-card transition-all group">
                         <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-3 transition-transform">🍃</div>
@@ -364,37 +369,54 @@ if (isset($_SESSION['user_id'])) {
 
                             <?php if($product['nutritional_info']): ?>
                                 <div class="anim-up" style="animation-delay: 100ms">
-                                    <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6 flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
-                                        Nutrition Facts <span class="italic text-[8px] opacity-50 ml-1">(per 100g)</span>
+                                    <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-8 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#19DC7E]"></span>
+                                        Nutrition Facts <span class="italic text-[8px] opacity-40 ml-1">(per 100g)</span>
                                     </h5>
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                    
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         <?php 
                                             $raw_nut = trim($product['nutritional_info']);
                                             if (strpos($raw_nut, '\"') !== false) $raw_nut = stripslashes($raw_nut);
                                             
                                             $nut_data = json_decode($raw_nut, true);
+                                            
                                             if (json_last_error() === JSON_ERROR_NONE && is_array($nut_data)):
                                                 foreach($nut_data as $label => $value):
+                                                    if (empty($value)) continue; // Skip empty values
+
+                                                    // Icon & Color Logic
+                                                    $l = strtolower($label);
+                                                    $icon = 'fa-info-circle'; $color = 'indigo'; $bg = 'bg-indigo-50';
+                                                    if (strpos($l, 'energy') !== false) { $icon = 'fa-bolt'; $color = 'yellow-500'; $bg = 'bg-yellow-50'; }
+                                                    elseif (strpos($l, 'protein') !== false) { $icon = 'fa-dumbbell'; $color = 'blue-500'; $bg = 'bg-blue-50'; }
+                                                    elseif (strpos($l, 'carb') !== false) { $icon = 'fa-wheat-awn'; $color = 'orange-500'; $bg = 'bg-orange-50'; }
+                                                    elseif (strpos($l, 'sugar') !== false) { $icon = 'fa-cubes'; $color = 'pink-400'; $bg = 'bg-pink-50'; }
+                                                    elseif (strpos($l, 'fat') !== false) { $icon = 'fa-droplet'; $color = 'amber-500'; $bg = 'bg-amber-50'; }
+                                                    elseif (strpos($l, 'fiber') !== false) { $icon = 'fa-leaf'; $color = 'green-500'; $bg = 'bg-green-50'; }
+                                                    elseif (strpos($l, 'sodium') !== false || strpos($l, 'salt') !== false) { $icon = 'fa-circle-dot'; $color = 'gray-400'; $bg = 'bg-gray-50'; }
                                         ?>
-                                            <div class="bg-gray-50/50 p-5 rounded-[28px] border border-transparent hover:border-orange-200 hover:bg-white transition-all text-center">
-                                                <span class="text-[8px] font-black uppercase tracking-[0.15em] text-gray-400 block mb-2"><?php echo htmlspecialchars($label); ?></span>
-                                                <span class="text-2xl font-black text-gray-900 font-['Fredoka'] tracking-tighter"><?php echo htmlspecialchars($value); ?></span>
+                                            <div class="group bg-white p-5 rounded-[32px] border border-gray-100 hover:border-[#19DC7E] hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] transition-all duration-500 flex flex-col items-center text-center relative overflow-hidden">
+                                                <div class="w-10 h-10 <?php echo $bg; ?> rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6">
+                                                    <i class="fas <?php echo $icon; ?> <?php echo strpos($color, '-') ? 'text-'.$color : 'text-'.$color.'-500'; ?> text-xs"></i>
+                                                </div>
+                                                <span class="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1"><?php echo htmlspecialchars($label); ?></span>
+                                                <span class="text-xl font-black text-gray-900 font-['Fredoka'] tracking-tight"><?php echo htmlspecialchars($value); ?></span>
                                             </div>
                                         <?php 
                                                 endforeach;
                                             else:
-                                                // Fallback for old multi-line text
+                                                // Fallback for old data or simple text
                                                 $lines = array_filter(explode("\n", str_replace("\r", "", $product['nutritional_info'])));
                                                 foreach($lines as $line):
                                                     $parts = explode(':', $line, 2);
                                         ?>
-                                            <div class="p-5 bg-gray-50/50 rounded-3xl border border-transparent hover:bg-white transition-all">
+                                            <div class="p-6 bg-gray-50/50 rounded-[32px] border border-transparent hover:bg-white hover:border-gray-100 transition-all">
                                                 <?php if(count($parts) === 2): ?>
                                                     <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1 block"><?php echo htmlspecialchars(trim($parts[0])); ?></span>
                                                     <span class="text-xl font-black text-gray-900 font-['Fredoka']"><?php echo htmlspecialchars(trim($parts[1])); ?></span>
                                                 <?php else: ?>
-                                                    <span class="text-lg font-bold text-gray-800"><?php echo htmlspecialchars(trim($line)); ?></span>
+                                                    <span class="text-sm font-bold text-gray-800"><?php echo htmlspecialchars(trim($line)); ?></span>
                                                 <?php endif; ?>
                                             </div>
                                         <?php 
@@ -601,11 +623,75 @@ if (isset($_SESSION['user_id'])) {
         el.value = val;
     }
     
-    function changeImage(src, thumb) {
-        document.getElementById('mainImage').src = src;
-        document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('thumb-active'));
-        if(thumb) thumb.classList.add('thumb-active');
+    let currentThumbIndex = 0;
+    const thumbs = document.querySelectorAll('.thumb-item');
+    const progressBar = document.getElementById('slideshow-progress');
+    let slideshowInterval;
+    const slideDuration = 5000;
+
+    function resetProgressBar() {
+        progressBar.style.transition = 'none';
+        progressBar.style.width = '0%';
+        setTimeout(() => {
+            progressBar.style.transition = `width ${slideDuration}ms linear`;
+            progressBar.style.width = '100%';
+        }, 50);
     }
+
+    function startSlideshow() {
+        if (thumbs.length <= 1) return;
+        resetProgressBar();
+        slideshowInterval = setInterval(() => {
+            currentThumbIndex = (currentThumbIndex + 1) % thumbs.length;
+            const nextThumb = thumbs[currentThumbIndex];
+            const nextSrc = nextThumb.querySelector('img').src;
+            changeImage(nextSrc, nextThumb, true);
+            resetProgressBar();
+        }, slideDuration);
+    }
+
+    function changeImage(src, thumb, isAuto = false) {
+        const img = document.getElementById('mainImage');
+        
+        // Remove existing animation if any
+        img.classList.remove('image-animate-in');
+        
+        // Liquid out
+        img.style.opacity = '0';
+        img.style.transform = 'scale(0.9) translateY(-10px) rotate(-1deg)';
+        img.style.filter = 'blur(10px)';
+        
+        setTimeout(() => {
+            img.src = src;
+            // Pop in
+            img.classList.add('image-animate-in');
+            img.style.opacity = ''; // Clear inline styles to let class take over
+            img.style.transform = '';
+            img.style.filter = '';
+            
+            document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('thumb-active'));
+            if(thumb) {
+                thumb.classList.add('thumb-active');
+                thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }, 200);
+
+        if (!isAuto) {
+            clearInterval(slideshowInterval);
+            thumbs.forEach((t, i) => { if(t === thumb) currentThumbIndex = i; });
+            startSlideshow();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        startSlideshow();
+        const showcase = document.getElementById('mainImage').parentElement;
+        showcase.addEventListener('mouseenter', () => {
+            clearInterval(slideshowInterval);
+            progressBar.style.width = '0%'; // Pause visually
+        });
+        showcase.addEventListener('mouseleave', startSlideshow);
+    });
 
     async function checkPincode() {
         const pincode = document.getElementById('pincode_check').value;

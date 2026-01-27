@@ -250,15 +250,21 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Nutritional Info</label>
-                    <div id="nutrition-manager" class="space-y-3">
-                        <div class="flex gap-2">
-                            <input type="text" id="nut-label" placeholder="Label (e.g. Protein)" class="w-1/2 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#19DC7E]">
-                            <input type="text" id="nut-value" placeholder="Value (e.g. 5g)" class="w-1/2 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#19DC7E]">
-                            <button type="button" onclick="addNutrition()" class="bg-black text-white px-4 py-3 rounded-xl transition hover:bg-[#19DC7E] hover:text-black">
-                                <i class="fas fa-plus"></i>
+                    <div id="nutrition-manager" class="space-y-6">
+                        <div class="flex flex-col gap-3 bg-gray-50/50 p-4 rounded-[28px] border border-gray-100">
+                            <div class="flex-1 relative">
+                                <i class="fas fa-tag absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                                <input type="text" id="nut-label" placeholder="Nutrient" class="w-full bg-white rounded-2xl pl-10 pr-4 py-3 text-sm font-bold border-2 border-transparent focus:border-[#19DC7E] outline-none transition-all shadow-sm">
+                            </div>
+                            <div class="flex-1 relative">
+                                <i class="fas fa-flask absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                                <input type="text" id="nut-value" placeholder="Value" class="w-full bg-white rounded-2xl pl-10 pr-4 py-3 text-sm font-bold border-2 border-transparent focus:border-[#19DC7E] outline-none transition-all shadow-sm">
+                            </div>
+                            <button type="button" onclick="addNutrition()" class="bg-black text-[#19DC7E] px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2">
+                                <i class="fas fa-plus"></i> Add
                             </button>
                         </div>
-                        <div id="nut-list" class="space-y-2 max-h-[150px] overflow-y-auto p-2 bg-gray-50/50 rounded-xl border-2 border-dashed border-gray-100 custom-scroll">
+                        <div id="nut-list" class="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto p-1 custom-scroll">
                             <!-- Items will appear here -->
                         </div>
                         <input type="hidden" name="nutritional_info" id="nutrition-json" value="<?php echo htmlspecialchars($product['nutritional_info']); ?>">
@@ -266,17 +272,29 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
 
                     <script>
                         let nutrition = {};
+                        const defaultLabels = [
+                            "Energy", "Protein", "Carbohydrates", "Total Sugars", 
+                            "Total Fat", "Dietary Fiber", "Sodium"
+                        ];
+
                         try {
                             const initial = document.getElementById('nutrition-json').value;
                             if (initial && initial.startsWith('{')) {
                                 nutrition = JSON.parse(initial);
                             } else if (initial) {
-                                // Fallback for old line-separated text (e.g. "Protein: 5g\nCarbs: 10g")
+                                // Fallback for old line-separated text
                                 initial.split('\n').forEach(line => {
                                     const parts = line.split(':');
                                     if(parts.length === 2) {
                                         nutrition[parts[0].trim()] = parts[1].trim();
                                     }
+                                });
+                            }
+
+                            // If new product or empty nutrition, add defaults
+                            if (Object.keys(nutrition).length === 0) {
+                                defaultLabels.forEach(label => {
+                                    nutrition[label] = "";
                                 });
                             }
                         } catch (e) {
@@ -286,20 +304,47 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                         function renderNutrition() {
                             const list = document.getElementById('nut-list');
                             list.innerHTML = '';
-                            Object.entries(nutrition).forEach(([label, value], index) => {
+                            
+                            const getIcon = (label) => {
+                                const l = label.toLowerCase();
+                                if (l.includes('energy')) return 'fa-bolt text-yellow-500';
+                                if (l.includes('protein')) return 'fa-dumbbell text-blue-500';
+                                if (l.includes('carb')) return 'fa-wheat-awn text-orange-500';
+                                if (l.includes('sugar')) return 'fa-cubes text-pink-400';
+                                if (l.includes('fat')) return 'fa-droplet text-amber-500';
+                                if (l.includes('fiber')) return 'fa-leaf text-green-500';
+                                if (l.includes('sodium') || l.includes('salt')) return 'fa-circle-dot text-gray-400';
+                                return 'fa-info-circle text-indigo-400';
+                            };
+
+                            Object.entries(nutrition).forEach(([label, value]) => {
                                 const el = document.createElement('div');
-                                el.className = 'bg-white px-4 py-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between anim-up';
+                                el.className = 'group bg-white p-4 rounded-[24px] border border-gray-100 hover:border-[#19DC7E] hover:shadow-[0_20px_40px_-20px_rgba(25,220,126,0.15)] transition-all duration-300 flex items-center gap-4 anim-up';
                                 el.innerHTML = `
-                                    <div class="flex flex-col">
-                                        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">${label}</span>
-                                        <span class="text-sm font-bold text-gray-900">${value}</span>
+                                    <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-[#19DC7E]/10 transition-colors">
+                                        <i class="fas ${getIcon(label)} text-xs transition-transform group-hover:scale-110"></i>
                                     </div>
-                                    <button type="button" onclick="removeNutrition('${label}')" class="text-gray-300 hover:text-red-500 transition-colors">
-                                        <i class="fas fa-times-circle text-lg"></i>
+                                    <div class="flex-1">
+                                        <span class="text-[9px] font-black uppercase tracking-[0.15em] text-gray-300 block mb-0.5">${label}</span>
+                                        <input type="text" value="${value}" onchange="updateNutritionValue('${label}', this.value)" 
+                                               class="text-sm font-bold text-gray-900 bg-transparent border-none outline-none p-0 focus:ring-0 w-full placeholder-gray-200" 
+                                               placeholder="Set value (e.g. 10g)">
+                                    </div>
+                                    <button type="button" onclick="removeNutrition('${label}')" class="w-10 h-10 rounded-xl text-gray-200 hover:bg-red-50 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100">
+                                        <i class="fas fa-trash-alt text-xs"></i>
                                     </button>
                                 `;
                                 list.appendChild(el);
                             });
+                            syncNutrition();
+                        }
+
+                        function updateNutritionValue(label, value) {
+                            nutrition[label] = value;
+                            syncNutrition();
+                        }
+
+                        function syncNutrition() {
                             document.getElementById('nutrition-json').value = JSON.stringify(nutrition);
                         }
 
@@ -309,11 +354,10 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                             const label = labelInput.value.trim();
                             const value = valueInput.value.trim();
                             
-                            if (label && value) {
-                                nutrition[label] = value;
+                            if (label) {
+                                nutrition[label] = value || "";
                                 labelInput.value = '';
                                 valueInput.value = '';
-                                labelInput.focus();
                                 renderNutrition();
                             }
                         }
