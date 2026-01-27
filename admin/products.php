@@ -1,5 +1,54 @@
-<?php include 'includes/header.php'; ?>
+<?php
+require_once '../config/database.php';
+require_once '../includes/functions.php';
 
+// AJAX Bulk Delete
+if (isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'bulk_delete') {
+    $ids = $_POST['ids'] ?? [];
+    if (!empty($ids)) {
+        $conn = get_db_connection();
+        $ids_str = implode(',', array_map('intval', $ids));
+        
+        // Fetch paths to delete featured images
+        $res = $conn->query("SELECT image FROM products WHERE id IN ($ids_str)");
+        while ($row = $res->fetch_assoc()) {
+            if ($row['image']) {
+                $full_path = '../' . $row['image'];
+                if (file_exists($full_path)) unlink($full_path);
+            }
+        }
+        
+        // Delete gallery images records and files
+        $g_res = $conn->query("SELECT image_path FROM product_images WHERE product_id IN ($ids_str)");
+        while ($g_row = $g_res->fetch_assoc()) {
+            $full_path = '../' . $g_row['image_path'];
+            if (file_exists($full_path)) unlink($full_path);
+        }
+        $conn->query("DELETE FROM product_images WHERE product_id IN ($ids_str)");
+
+        // Delete products
+        $conn->query("DELETE FROM products WHERE id IN ($ids_str)");
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+}
+
+// AJAX Status Toggle
+if (isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'toggle_status') {
+    $id = (int)$_POST['id'];
+    $current = fetch_one("SELECT is_active FROM products WHERE id = ?", [$id]);
+    if ($current) {
+        $new_status = $current['is_active'] ? 0 : 1;
+        execute_query("UPDATE products SET is_active = ? WHERE id = ?", [$new_status, $id]);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true, 'new_status' => $new_status, 'label' => $new_status ? 'Active' : 'Draft']);
+        exit;
+    }
+}
+?>
+<?php include 'includes/header.php'; ?>
 <?php
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,19 +63,6 @@ if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
     get_db_connection()->query("DELETE FROM products WHERE id = $id");
     echo "<script>window.location='products.php';</script>";
-}
-
-// AJAX Status Toggle
-if (isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'toggle_status') {
-    $id = (int)$_POST['id'];
-    $current = fetch_one("SELECT is_active FROM products WHERE id = ?", [$id]);
-    if ($current) {
-        $new_status = $current['is_active'] ? 0 : 1;
-        execute_query("UPDATE products SET is_active = ? WHERE id = ?", [$new_status, $id]);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'new_status' => $new_status, 'label' => $new_status ? 'Active' : 'Draft']);
-        exit;
-    }
 }
 
 // Search Logic
@@ -50,6 +86,14 @@ $products = $pagination['records'];
         <p class="text-gray-500 font-medium font-['Outfit']">Managing <span class="text-black font-bold"><?php echo $pagination['total_records']; ?></span> active products in your catalog.</p>
     </div>
     <div class="flex items-center gap-4 w-full md:w-auto">
+        <!-- Bulk Actions (Hidden by default) -->
+        <div id="bulk-action-bar" class="hidden flex items-center gap-4 bg-red-50 px-6 py-2 rounded-2xl border border-red-100 anim-up">
+            <span class="text-xs font-black text-red-600 uppercase tracking-widest"><span id="selected-count">1</span> Selected</span>
+            <button onclick="bulkDeleteProducts()" class="bg-red-500 text-white p-3 rounded-xl hover:bg-red-600 transition shadow-lg">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+
         <form class="relative flex-1 md:w-64">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
             <input type="text" name="search" value="<?php echo $search; ?>" placeholder="Search snacks..." class="w-full pl-12 pr-4 py-3 bg-white border-2 border-transparent focus:border-[#19DC7E] outline-none rounded-2xl shadow-sm transition-all font-bold font-['Outfit']">
@@ -67,6 +111,10 @@ $products = $pagination['records'];
         
         <!-- Status & Badge -->
         <div class="absolute top-6 left-6 z-20 flex flex-col gap-2">
+            <!-- Multi-Select Checkbox -->
+            <div class="mb-2">
+                <input type="checkbox" class="product-checkbox w-6 h-6 rounded-lg border-2 border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer transition-all hover:scale-110" value="<?php echo $p['id']; ?>" onchange="updateBulkBar()">
+            </div>
             <button onclick="toggleProductStatus(<?php echo $p['id']; ?>, this)" class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm font-['Outfit'] transition-all hover:scale-105 active:scale-95 status-badge <?php echo $p['is_active'] ? 'bg-[#19DC7E] text-black' : 'bg-gray-200 text-gray-500'; ?>">
                 <?php echo $p['is_active'] ? 'Active' : 'Draft'; ?>
             </button>
@@ -152,6 +200,56 @@ async function toggleProductStatus(id, btn) {
         btn.innerHTML = originalContent;
     } finally {
         btn.disabled = false;
+    }
+}
+
+function updateBulkBar() {
+    const checked = document.querySelectorAll('.product-checkbox:checked');
+    const bar = document.getElementById('bulk-action-bar');
+    const count = document.getElementById('selected-count');
+    
+    if (checked.length > 0) {
+        bar.classList.remove('hidden');
+        bar.classList.add('flex');
+        count.innerText = checked.length;
+    } else {
+        bar.classList.add('hidden');
+        bar.classList.remove('flex');
+    }
+}
+
+async function bulkDeleteProducts() {
+    const checked = document.querySelectorAll('.product-checkbox:checked');
+    if (checked.length === 0) return;
+    if (!confirm(`Danger! You are about to delete ${checked.length} products. This will also delete their gallery images and cannot be undone. Proceed?`)) return;
+
+    const ids = Array.from(checked).map(cb => cb.value);
+    const bar = document.getElementById('bulk-action-bar');
+    const originalBar = bar.innerHTML;
+    bar.innerHTML = '<i class="fas fa-spinner fa-spin text-red-500 text-xl"></i>';
+
+    try {
+        const formData = new FormData();
+        formData.append('ajax_action', 'bulk_delete');
+        ids.forEach(id => formData.append('ids[]', id));
+
+        const response = await fetch('products.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            // Success animation or refresh
+            window.location.reload(); 
+        } else {
+            alert('Failed to delete products');
+            bar.innerHTML = originalBar;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred');
+        bar.innerHTML = originalBar;
     }
 }
 </script>

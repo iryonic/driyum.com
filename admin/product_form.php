@@ -1,15 +1,41 @@
+<?php
+require_once '../config/database.php';
+require_once '../includes/functions.php';
+
+// AJAX DELETE GALLERY IMAGES
+if (isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'delete_gallery') {
+    $ids = $_POST['ids'] ?? [];
+    if (!empty($ids)) {
+        $conn = get_db_connection();
+        $ids_str = implode(',', array_map('intval', $ids));
+        
+        // Fetch paths to delete files
+        $res = $conn->query("SELECT image_path FROM product_images WHERE id IN ($ids_str)");
+        while ($row = $res->fetch_assoc()) {
+            $full_path = '../' . $row['image_path'];
+            if (file_exists($full_path)) unlink($full_path);
+        }
+
+        $conn->query("DELETE FROM product_images WHERE id IN ($ids_str)");
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    }
+}
+?>
 <?php include 'includes/header.php'; ?>
 <?php
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $msg = '';
 $err = '';
 
-// DELETE GALLERY IMAGE
+// DELETE GALLERY IMAGE (Fallback / Legacy - technically not needed if AJAX is used)
 if (isset($_GET['del_img'])) {
     $img_id = (int)$_GET['del_img'];
     $conn = get_db_connection();
     $conn->query("DELETE FROM product_images WHERE id = $img_id");
     echo "<script>window.location='product_form.php?id=$id';</script>";
+    exit;
 }
 
 // Handle Form Submission
@@ -316,13 +342,30 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                 <label class="block text-xs font-bold uppercase text-gray-400 mb-4">Gallery Images</label>
                 
                 <div id="gallery-container" class="space-y-4">
+                    <!-- Bulk Action Bar -->
+                    <div id="bulk-action-bar" class="hidden flex items-center justify-between bg-red-50 p-4 rounded-2xl border border-red-100 mb-4 anim-up">
+                        <span class="text-xs font-bold text-red-600 uppercase tracking-widest"><span id="selected-count">0</span> Images Selected</span>
+                        <button type="button" onclick="bulkDeleteImages()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition shadow-lg">
+                            <i class="fas fa-trash-alt mr-2"></i> Delete Selected
+                        </button>
+                    </div>
+
                     <!-- Existing Gallery -->
                     <?php if(!empty($gallery_images)): ?>
-                        <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="grid grid-cols-4 gap-4 mb-6" id="existing-gallery">
                             <?php foreach($gallery_images as $img): ?>
-                                <div class="relative group aspect-square">
-                                    <img src="../<?php echo $img['image_path']; ?>" class="w-full h-full object-cover rounded-xl border border-gray-100 shadow-sm">
-                                    <a href="?id=<?php echo $id; ?>&del_img=<?php echo $img['id']; ?>" class="absolute top-1 right-1 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow-lg" onclick="return confirm('Delete image?')"><i class="fas fa-times"></i></a>
+                                <div class="relative group aspect-square gallery-item" id="gallery-item-<?php echo $img['id']; ?>">
+                                    <img src="../<?php echo $img['image_path']; ?>" class="w-full h-full object-cover rounded-xl border border-gray-100 shadow-sm transition-all group-hover:brightness-75">
+                                    
+                                    <!-- Selection Overlay -->
+                                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+                                        <input type="checkbox" class="gallery-checkbox w-6 h-6 rounded-lg text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" value="<?php echo $img['id']; ?>" onchange="updateBulkBar()">
+                                    </div>
+
+                                    <!-- Quick Delete -->
+                                    <button type="button" onclick="deleteGalleryImage(<?php echo $img['id']; ?>)" class="absolute top-2 right-2 bg-white/90 text-red-500 w-8 h-8 rounded-xl flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow-lg hover:bg-red-500 hover:text-white">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -424,5 +467,98 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
 
     </form>
 </div>
+
+<script>
+function updateBulkBar() {
+    const checked = document.querySelectorAll('.gallery-checkbox:checked');
+    const bar = document.getElementById('bulk-action-bar');
+    const count = document.getElementById('selected-count');
+    
+    if (checked.length > 0) {
+        bar.classList.remove('hidden');
+        count.innerText = checked.length;
+    } else {
+        bar.classList.add('hidden');
+    }
+}
+
+async function deleteGalleryImage(id) {
+    if (!confirm('Are you sure you want to delete this image?')) return;
+    
+    const item = document.getElementById(`gallery-item-${id}`);
+    item.style.opacity = '0.5';
+    item.style.pointerEvents = 'none';
+
+    try {
+        const formData = new FormData();
+        formData.append('ajax_action', 'delete_gallery');
+        formData.append('ids[]', id);
+
+        const response = await fetch('product_form.php?id=<?php echo $id; ?>', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            item.remove();
+            updateBulkBar();
+            // If gallery is empty, hide container or show placeholder?
+            if (document.querySelectorAll('.gallery-item').length === 0) {
+                document.getElementById('existing-gallery')?.remove();
+            }
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Failed to delete image');
+        item.style.opacity = '1';
+        item.style.pointerEvents = 'auto';
+    }
+}
+
+async function bulkDeleteImages() {
+    const checked = document.querySelectorAll('.gallery-checkbox:checked');
+    if (checked.length === 0) return;
+    if (!confirm(`Are you sure you want to delete ${checked.length} selected images?`)) return;
+
+    const ids = Array.from(checked).map(cb => cb.value);
+    const bar = document.getElementById('bulk-action-bar');
+    bar.innerHTML = '<div class="flex items-center gap-3"><i class="fas fa-spinner fa-spin text-red-500"></i> <span class="text-xs font-bold text-red-600">Deleting...</span></div>';
+
+    try {
+        const formData = new FormData();
+        formData.append('ajax_action', 'delete_gallery');
+        ids.forEach(id => formData.append('ids[]', id));
+
+        const response = await fetch('product_form.php?id=<?php echo $id; ?>', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            ids.forEach(id => {
+                document.getElementById(`gallery-item-${id}`)?.remove();
+            });
+            updateBulkBar();
+            if (document.querySelectorAll('.gallery-item').length === 0) {
+                document.getElementById('existing-gallery')?.remove();
+            }
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Failed to delete images');
+    } finally {
+        updateBulkBar();
+        // Restore bar if any were missed or if refresh needed
+        bar.innerHTML = `
+            <span class="text-xs font-bold text-red-600 uppercase tracking-widest"><span id="selected-count">0</span> Images Selected</span>
+            <button type="button" onclick="bulkDeleteImages()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition shadow-lg">
+                <i class="fas fa-trash-alt mr-2"></i> Delete Selected
+            </button>
+        `;
+    }
+}
+</script>
 </body>
 </html>
