@@ -14,6 +14,46 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     exit;
 }
 
+// AJAX Bulk Actions
+if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_status', 'bulk_delete'])) {
+    $ids = $_POST['ids'] ?? [];
+    if (empty($ids)) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'No orders selected']);
+        exit;
+    }
+
+    $conn = get_db_connection();
+    $ids_str = implode(',', array_map('intval', $ids));
+    
+    try {
+        if ($_POST['ajax_action'] === 'bulk_delete') {
+            // Delete order items first (foreign key constraints)
+            $conn->query("DELETE FROM order_items WHERE order_id IN ($ids_str)");
+            $conn->query("DELETE FROM order_status_history WHERE order_id IN ($ids_str)");
+            $conn->query("DELETE FROM orders WHERE id IN ($ids_str)");
+        } else {
+            $status = sanitize_input($_POST['status']);
+            $conn->query("UPDATE orders SET order_status = '$status' WHERE id IN ($ids_str)");
+            
+            // Add history and send emails for each
+            foreach ($ids as $id) {
+                $notes = "Order status updated to $status via bulk action by admin";
+                execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)", [$id, $status, $notes]);
+                send_order_status_email($id, $status);
+            }
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    } catch (Exception $e) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
 // Update Status
 if ((isset($_GET['status']) || isset($_POST['ajax_action'])) && isset($_REQUEST['id'])) {
     $status = sanitize_input($_REQUEST['status'] ?? $_POST['status']);
@@ -118,6 +158,24 @@ $query = "SELECT o.*, u.name as user_name FROM orders o LEFT JOIN users u ON o.u
 $pagination = get_pagination_data($query, $params, 10);
 $orders = $pagination['records'];
 ?>
+<style>
+    @media (max-width: 768px) {
+        #bulk-action-bar {
+            position: fixed;
+            bottom: 2rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            z-index: 9999;
+            flex-direction: column;
+            align-items: stretch;
+            border-style: solid;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 30px;
+        }
+    }
+</style>
 
 <div class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 anim-up">
     <div>
@@ -129,11 +187,32 @@ $orders = $pagination['records'];
         </div>
     </div>
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
+        <!-- Bulk Actions Bar -->
+        <div id="bulk-action-bar" class="hidden flex-wrap items-center gap-4 bg-white px-6 py-3 rounded-[30px] border-2 border-dashed border-[#19DC7E] anim-up shadow-2xl">
+            <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-widest border-r border-gray-100 pr-4"><span id="selected-count">0</span> Selected</span>
+            
+            <div class="flex items-center gap-2">
+                <select id="bulk-status-select" class="bg-gray-50 border-none rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-1 focus:ring-[#19DC7E]">
+                    <option value="">Change Status</option>
+                    <option value="confirmed">Confirm</option>
+                    <option value="shipped">Ship</option>
+                    <option value="delivered">Deliver</option>
+                    <option value="cancelled">Cancel</option>
+                </select>
+                <button onclick="applyBulkStatus()" class="px-4 py-2 bg-black text-[#19DC7E] rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition">Update</button>
+            </div>
+
+            <div class="h-6 w-px bg-gray-100 hidden sm:block"></div>
+
+            <button onclick="applyBulkDelete()" class="bg-red-50 text-red-500 p-3 rounded-xl hover:bg-red-500 hover:text-white transition w-10 h-10 flex items-center justify-center">
+                <i class="fas fa-trash-alt text-xs"></i>
+            </button>
+        </div>
         <form class="flex flex-col sm:flex-row gap-4 w-full">
             <div class="relative group flex-1">
                 <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search orders, customers..." 
                     class="bg-white border-2 border-gray-100 rounded-2xl px-6 py-4 pl-12 outline-none focus:border-[#19DC7E] transition-all font-bold text-xs w-full shadow-sm">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
+                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
             </div>
             <select name="status_filter" onchange="this.form.submit()" class="bg-white border-2 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-[#19DC7E] transition-all font-bold text-xs shadow-sm">
                 <option value="">All Statuses</option>
@@ -152,19 +231,25 @@ $orders = $pagination['records'];
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr class="text-gray-400 text-[10px] uppercase bg-gray-50/30 border-b border-gray-100 font-['Outfit']">
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40">Shipment Details</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40">Recipient Info</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40 text-center">Revenue</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40">Order Status</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40 text-right">Utility</th>
+                    <th class="p-10 w-20">
+                        <input type="checkbox" id="select-all" class="w-6 h-6 rounded-lg border-2 border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer transition-all">
+                    </th>
+                    <th class="p-10 font-black tracking-[0.2em] opacity-40 whitespace-nowrap">Shipment Details</th>
+                    <th class="p-10 font-black tracking-[0.2em] opacity-40 whitespace-nowrap">Recipient Info</th>
+                    <th class="p-10 font-black tracking-[0.2em] opacity-40 text-center whitespace-nowrap">Revenue</th>
+                    <th class="p-10 font-black tracking-[0.2em] opacity-40 whitespace-nowrap">Order Status</th>
+                    <th class="p-10 font-black tracking-[0.2em] opacity-40 text-right whitespace-nowrap">Utility</th>
                 </tr>
             </thead>
             <tbody class="text-sm font-['Outfit'] text-gray-600">
                 <?php foreach ($orders as $o): ?>
                 <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-300 group">
                     <td class="p-10">
+                        <input type="checkbox" class="order-checkbox w-6 h-6 rounded-lg border-2 border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer transition-all hover:scale-110" value="<?php echo $o['id']; ?>">
+                    </td>
+                    <td class="p-10">
                         <div class="flex items-center gap-5">
-                            <div class="w-16 h-16 bg-white border-2 border-dashed border-gray-100 rounded-[24px] flex flex-col items-center justify-center text-gray-300 group-hover:border-[#19DC7E] group-hover:text-[#19DC7E] transition-colors shadow-sm">
+                            <div class="w-16 h-16 bg-white border-2 border-dashed border-gray-100 rounded-[24px] flex flex-col items-center justify-center text-gray-500 group-hover:border-[#19DC7E] group-hover:text-[#19DC7E] transition-colors shadow-sm">
                                 <span class="text-[10px] font-black uppercase">ID</span>
                                 <span class="font-black text-lg leading-none">#<?php echo $o['id']; ?></span>
                             </div>
@@ -202,7 +287,7 @@ $orders = $pagination['records'];
                             
                             <!-- Dropdown -->
                             <div class="status-menu absolute left-0 top-full mt-4 w-56 bg-white rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-gray-100 py-4 hidden z-50 overflow-hidden transform origin-top-left transition-all">
-                                <div class="px-6 py-2 mb-2 text-[10px] font-black text-gray-300 uppercase tracking-widest border-b border-gray-50">Workflow Status</div>
+                                <div class="px-6 py-2 mb-2 text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-50">Workflow Status</div>
                                 <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'pending', this)" class="block px-6 py-3 hover:bg-yellow-400 hover:text-black text-yellow-600 font-black text-[10px] uppercase tracking-widest transition-colors">Mark Pending</a>
                                 <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'confirmed', this)" class="block px-6 py-3 hover:bg-indigo-600 hover:text-white text-indigo-600 font-black text-[10px] uppercase tracking-widest transition-colors">Confirm Order</a>
                                 <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'shipped', this)" class="block px-6 py-3 hover:bg-blue-600 hover:text-white text-blue-600 font-black text-[10px] uppercase tracking-widest transition-colors">Ship Parcel</a>
@@ -237,7 +322,7 @@ $orders = $pagination['records'];
                         <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                             <i class="fas fa-inbox text-gray-200 text-3xl"></i>
                         </div>
-                        <h3 class="text-xl font-black text-gray-300 fredoka uppercase tracking-widest">No Shipments Found</h3>
+                        <h3 class="text-xl font-black text-gray-500 fredoka uppercase tracking-widest">No Shipments Found</h3>
                         <p class="text-gray-400 font-medium font-['Outfit'] mt-2">Orders will appear here once customers start buying snacks!</p>
                     </td>
                 </tr>
@@ -288,6 +373,88 @@ $orders = $pagination['records'];
 </div>
 
 <script>
+// Bulk Actions Logic
+const selectAll = document.getElementById('select-all');
+const orderCheckboxes = document.querySelectorAll('.order-checkbox');
+const bulkBar = document.getElementById('bulk-action-bar');
+const selectedCountText = document.getElementById('selected-count');
+
+function updateBulkBar() {
+    const checked = document.querySelectorAll('.order-checkbox:checked');
+    if (checked.length > 0) {
+        bulkBar.classList.remove('hidden');
+        bulkBar.classList.add('flex');
+        selectedCountText.textContent = checked.length;
+    } else {
+        bulkBar.classList.add('hidden');
+        bulkBar.classList.remove('flex');
+    }
+}
+
+if(selectAll) {
+    selectAll.addEventListener('change', () => {
+        orderCheckboxes.forEach(cb => {
+            cb.checked = selectAll.checked;
+        });
+        updateBulkBar();
+    });
+}
+
+orderCheckboxes.forEach(cb => {
+    cb.addEventListener('change', updateBulkBar);
+});
+
+async function applyBulkStatus() {
+    const status = document.getElementById('bulk-status-select').value;
+    if (!status) return alert('Select a status first');
+    
+    const checked = document.querySelectorAll('.order-checkbox:checked');
+    const ids = Array.from(checked).map(cb => cb.value);
+    
+    if(!confirm(`Update ${ids.length} orders to ${status}?`)) return;
+    
+    await performBulkAction('bulk_status', { status });
+}
+
+async function applyBulkDelete() {
+    const checked = document.querySelectorAll('.order-checkbox:checked');
+    const ids = Array.from(checked).map(cb => cb.value);
+    
+    if(!confirm(`DANGER! Delete ${ids.length} orders forever? This cannot be undone.`)) return;
+    
+    await performBulkAction('bulk_delete');
+}
+
+async function performBulkAction(action, extraParams = {}) {
+    const checked = document.querySelectorAll('.order-checkbox:checked');
+    const ids = Array.from(checked).map(cb => cb.value);
+    const originalContent = bulkBar.innerHTML;
+    
+    bulkBar.innerHTML = `<div class="flex items-center gap-3 px-10"><i class="fas fa-spinner fa-spin text-[#19DC7E] text-xl"></i> <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Processing...</span></div>`;
+
+    try {
+        const formData = new FormData();
+        formData.append('ajax_action', action);
+        ids.forEach(id => formData.append('ids[]', id));
+        for (const [key, value] of Object.entries(extraParams)) {
+            formData.append(key, value);
+        }
+
+        const response = await fetch('orders.php', { method: 'POST', body: formData });
+        const data = await response.json();
+
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert('Error: ' + data.message);
+            bulkBar.innerHTML = originalContent;
+        }
+    } catch (e) {
+        alert('Operation failed');
+        bulkBar.innerHTML = originalContent;
+    }
+}
+
 async function updateOrderStatus(id, status, el) {
     const container = el.closest('.status-dropdown-container');
     const btn = container.querySelector('.status-btn');

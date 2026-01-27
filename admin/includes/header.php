@@ -69,9 +69,24 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
         }
         
         @media (max-width: 1024px) {
-            .admin-sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+            .admin-sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
             .admin-sidebar.open { transform: translateX(0); }
             .admin-content { margin-left: 0; padding: 1.5rem; }
+            
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(4px);
+                z-index: 90;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            .sidebar-overlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
     </style>
     <script>
@@ -124,8 +139,11 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
 </head>
 <body class="bg-gray-50">
 
+    <!-- SIDEBAR OVERLAY -->
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
     <!-- MOBILE TOGGLE -->
-    <button onclick="document.querySelector('.admin-sidebar').classList.toggle('open')" class="lg:hidden fixed bottom-4 right-4 z-50 w-14 h-14 bg-black text-white rounded-full shadow-2xl flex items-center justify-center text-xl">
+    <button onclick="toggleSidebar()" class="lg:hidden fixed bottom-6 right-6 z-[110] w-14 h-14 bg-black text-white rounded-full shadow-[0_15px_30px_rgba(25,220,126,0.4)] flex items-center justify-center text-xl hover:scale-110 active:scale-90 transition-all">
         <i class="fas fa-bars"></i>
     </button>
 
@@ -261,12 +279,26 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
         
         <script>
         async function markRead(id) {
-             // In a real app we would use fetch to mark as read without reload
-             // For this simple version, we'll let the click navigate and maybe assume read
-             // Or better, creating a quick endpoint
-             try {
-                // We'll create a simple ajax endpoint for this next
+            try {
                 await fetch('mark_notification_read.php?id=' + id);
-             } catch(e) {}
+            } catch(e) {}
         }
+
+        function toggleSidebar(force) {
+            const sidebar = document.querySelector('.admin-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (force === true) {
+                sidebar.classList.add('open');
+                overlay.classList.add('active');
+            } else if (force === false) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                const isOpen = sidebar.classList.toggle('open');
+                overlay.classList.toggle('active', isOpen);
+            }
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') toggleSidebar(false);
+        });
         </script>
