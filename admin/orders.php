@@ -204,6 +204,10 @@ $orders = $pagination['records'];
 
             <div class="h-6 w-px bg-gray-100 hidden sm:block"></div>
 
+            <button onclick="applyBulkShipments()" class="bg-gray-50 text-gray-900 border border-gray-100 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black hover:border-[#19DC7E] transition flex items-center gap-2">
+                <i class="fas fa-shipping-fast"></i> Shipping Desk
+            </button>
+
             <button onclick="applyBulkDelete()" class="bg-red-50 text-red-500 p-3 rounded-xl hover:bg-red-500 hover:text-white transition w-10 h-10 flex items-center justify-center">
                 <i class="fas fa-trash-alt text-xs"></i>
             </button>
@@ -425,6 +429,14 @@ async function applyBulkDelete() {
     await performBulkAction('bulk_delete');
 }
 
+function applyBulkShipments() {
+    const checked = document.querySelectorAll('.order-checkbox:checked');
+    if (checked.length === 0) return alert('Select at least one order');
+    
+    const ids = Array.from(checked).map(cb => cb.value).join(',');
+    window.open(`generate_batch_shipments.php?ids=${ids}`, '_blank');
+}
+
 async function performBulkAction(action, extraParams = {}) {
     const checked = document.querySelectorAll('.order-checkbox:checked');
     const ids = Array.from(checked).map(cb => cb.value);
@@ -621,5 +633,4 @@ document.addEventListener('click', () => {
 </script>
 
 <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>

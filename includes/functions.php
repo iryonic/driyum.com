@@ -884,13 +884,18 @@ function adjust_brightness($hex, $steps) {
 
 // Reviews Functions
 function get_product_reviews($product_id) {
-    $sql = "SELECT r.*, u.name as user_name FROM reviews r LEFT JOIN users u ON r.user_id = u.id WHERE r.product_id = ? ORDER BY r.created_at DESC";
+    $where = "WHERE r.product_id = ?";
+    $sql = "SELECT r.*, u.name as user_name FROM reviews r LEFT JOIN users u ON r.user_id = u.id $where ORDER BY r.created_at DESC";
     return fetch_all($sql, [$product_id]);
 }
 
 function add_review($user_id, $product_id, $rating, $comment) {
     if (!$rating) $rating = 5;
-    $sql = "INSERT INTO reviews (user_id, product_id, rating, comment, created_at) VALUES (?, ?, ?, ?, NOW())";
+    $sql = "INSERT INTO reviews (user_id, product_id, rating, comment, is_approved, created_at) VALUES (?, ?, ?, ?, 1, NOW())";
+    
+    // Notify admin about new review
+    create_admin_notification("New review received for product #$product_id", 'review', 'reviews.php');
+    
     return execute_query($sql, [$user_id, $product_id, $rating, $comment]);
 }
 

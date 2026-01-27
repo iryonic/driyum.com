@@ -329,5 +329,4 @@ async function bulkDeleteProducts() {
     await bulkUpdateAction('bulk_delete');
 }
 </script>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>

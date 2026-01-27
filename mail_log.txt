@@ -152,3 +152,75 @@
         </div>
     
 ----------------------------------------
+[2026-01-27 11:49:10] To: admin@driyum.com | Subject: Order #ORD-69778B75A5658 Status Update: CONFIRMED
+
+        <div style='font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.05);'>
+            <div style='background-color: #000; padding: 50px 40px; text-align: center;'>
+                <div style='display: inline-block; padding: 10px 20px; background: #19DC7E; border-radius: 12px; color: #000; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;'>Order Update</div>
+                <h1 style='color: #fff; margin: 0; font-size: 32px; font-weight: 900;'>CONFIRMED</h1>
+            </div>
+            <div style='padding: 40px; color: #333; line-height: 1.6;'>
+                <p stylealso='font-size: 18px; font-weight: bold; margin-bottom: 10px;'>Hi irfan manzoor,</p>
+                <p style='color: #666;'>Good news! Your order has been confirmed and our team is currently packing your snacks with care.</p>
+                
+                
+
+                <div style='margin-top: 40px; text-align: center;'>
+                    <a href='http://localhost/track.php?id=ORD-69778B75A5658&contact=admin@driyum.com' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
+                </div>
+
+                <div style='margin-top: 50px; border-top: 1px solid #f0f0f0; padding-top: 30px;'>
+                    <div style='display: flex; justify-content: space-between; align-items: center;'>
+                        <div>
+                            <p style='margin: 0; font-size: 10px; font-weight: 900; color: #999; text-transform: uppercase;'>Order Number</p>
+                            <p style='margin: 0; font-weight: bold;'>#ORD-69778B75A5658</p>
+                        </div>
+                        <div style='text-align: right;'>
+                            <p style='margin: 0; font-size: 10px; font-weight: 900; color: #999; text-transform: uppercase;'>Total Value</p>
+                            <p style='margin: 0; font-weight: bold; color: #19DC7E;'>₹334.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style='padding: 30px; background-color: #f9f9f9; text-align: center; font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; letter-spacing: 0.1em;'>
+                Driyum &bull; Premium Snacks &bull; Handcrafted with Love
+            </div>
+        </div>
+    
+----------------------------------------
+[2026-01-27 11:49:12] To: drop.mail.iry@gmail.com | Subject: Order #ORD-696E06D28F1C5 Status Update: CONFIRMED
+
+        <div style='font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.05);'>
+            <div style='background-color: #000; padding: 50px 40px; text-align: center;'>
+                <div style='display: inline-block; padding: 10px 20px; background: #19DC7E; border-radius: 12px; color: #000; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;'>Order Update</div>
+                <h1 style='color: #fff; margin: 0; font-size: 32px; font-weight: 900;'>CONFIRMED</h1>
+            </div>
+            <div style='padding: 40px; color: #333; line-height: 1.6;'>
+                <p stylealso='font-size: 18px; font-weight: bold; margin-bottom: 10px;'>Hi irfan manzoor,</p>
+                <p style='color: #666;'>Good news! Your order has been confirmed and our team is currently packing your snacks with care.</p>
+                
+                
+
+                <div style='margin-top: 40px; text-align: center;'>
+                    <a href='http://localhost/track.php?id=ORD-696E06D28F1C5&contact=drop.mail.iry@gmail.com' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
+                </div>
+
+                <div style='margin-top: 50px; border-top: 1px solid #f0f0f0; padding-top: 30px;'>
+                    <div style='display: flex; justify-content: space-between; align-items: center;'>
+                        <div>
+                            <p style='margin: 0; font-size: 10px; font-weight: 900; color: #999; text-transform: uppercase;'>Order Number</p>
+                            <p style='margin: 0; font-weight: bold;'>#ORD-696E06D28F1C5</p>
+                        </div>
+                        <div style='text-align: right;'>
+                            <p style='margin: 0; font-size: 10px; font-weight: 900; color: #999; text-transform: uppercase;'>Total Value</p>
+                            <p style='margin: 0; font-weight: bold; color: #19DC7E;'>₹681.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style='padding: 30px; background-color: #f9f9f9; text-align: center; font-size: 11px; color: #aaa; text-transform: uppercase; font-weight: bold; letter-spacing: 0.1em;'>
+                Driyum &bull; Premium Snacks &bull; Handcrafted with Love
+            </div>
+        </div>
+    
+----------------------------------------

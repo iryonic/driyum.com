@@ -18,7 +18,20 @@ $recent_reviews = fetch_all("SELECT r.*, u.name as user_name, p.name as prod_nam
 // Business Intelligence Stats
 $sales_today = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = CURDATE() AND order_status != 'cancelled'")['t'] ?? 0;
 $top_selling = fetch_all("SELECT p.name, SUM(oi.quantity) as total_sold, p.image, p.price FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.id ORDER BY total_sold DESC LIMIT 3");
+
+// Chart Data: Last 7 Days Sales
+$sales_data = [];
+for($i = 6; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-$i days"));
+    $label = date('D', strtotime($date));
+    $val = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = ? AND order_status != 'cancelled'", [$date])['t'] ?? 0;
+    $sales_data[] = ['label' => $label, 'value' => (float)$val];
+}
+
+// Category Distribution
+$cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEFT JOIN products p ON c.id = p.category_id GROUP BY c.id");
 ?>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="mb-8 flex justify-between items-center">
     <div>
@@ -102,6 +115,35 @@ updateClock();
         <div>
             <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Subscribers</div>
             <div class="text-3xl font-black text-gray-900 fredoka"><?php echo $subscribers_count; ?></div>
+        </div>
+    </div>
+</div>
+
+<!-- BUSINESS INTELLIGENCE SECTION -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12">
+    <!-- Sales Chart -->
+    <div class="xl:col-span-2 bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 anim-up">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h3 class="font-bold text-2xl font-['Fredoka'] text-gray-900">Revenue Stream</h3>
+                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Performance over the last 7 days</p>
+            </div>
+            <div class="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-[#19DC7E]"></span>
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Live Velocity</span>
+            </div>
+        </div>
+        <div class="h-80 relative">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Category Performance -->
+    <div class="bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
+        <h3 class="font-bold text-2xl font-['Fredoka'] text-gray-900 mb-2">Category Spread</h3>
+        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-8">Product distribution by sector</p>
+        <div class="h-64 flex items-center justify-center">
+            <canvas id="categoryChart"></canvas>
         </div>
     </div>
 </div>
@@ -420,6 +462,96 @@ document.getElementById('dispatch-form').addEventListener('submit', async functi
 document.addEventListener('click', () => {
     document.querySelectorAll('.status-menu').forEach(m => m.classList.add('hidden'));
 });
+
+// Analytics Charts
+document.addEventListener('DOMContentLoaded', () => {
+    // Sales Revenue Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    const salesData = <?php echo json_encode($sales_data); ?>;
+    
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: salesData.map(d => d.label),
+            datasets: [{
+                label: 'Revenue',
+                data: salesData.map(d => d.value),
+                borderColor: '#19DC7E',
+                backgroundColor: 'rgba(25, 220, 126, 0.1)',
+                borderWidth: 4,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#19DC7E',
+                pointBorderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#000',
+                    padding: 12,
+                    titleFont: { size: 10, weight: 'bold' },
+                    bodyFont: { size: 14, weight: '900' },
+                    callbacks: {
+                        label: (ctx) => '₹' + ctx.raw.toLocaleString()
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 10, weight: 'bold' },
+                        callback: (val) => '₹' + (val / 1000) + 'k'
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 10, weight: 'bold' } }
+                }
+            }
+        }
+    });
+
+    // Category Doughnut Chart
+    const catCtx = document.getElementById('categoryChart').getContext('2d');
+    const catData = <?php echo json_encode($cat_data); ?>;
+    
+    new Chart(catCtx, {
+        type: 'doughnut',
+        data: {
+            labels: catData.map(d => d.name),
+            datasets: [{
+                data: catData.map(d => d.count),
+                backgroundColor: [
+                    '#19DC7E', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1'
+                ],
+                borderWidth: 0,
+                cutout: '75%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: { size: 10, weight: 'bold' }
+                    }
+                }
+            }
+        }
+    });
+});
 </script>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>

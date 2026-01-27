@@ -169,6 +169,9 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             <a href="orders.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='orders.php'?'nav-link-active':'text-gray-400'; ?>">
                 <i class="fas fa-shipping-fast w-6"></i> Orders
             </a>
+            <a href="abandoned_carts.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='abandoned_carts.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-ghost w-6"></i> Abandoned Carts
+            </a>
             <a href="users.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='users.php'?'nav-link-active':'text-gray-400'; ?>">
                 <i class="fas fa-users w-6"></i> Customers
             </a>
@@ -215,67 +218,96 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
         </div>
     </aside>
 
-    <main class="admin-content min-h-screen">
-        <!-- Top Bar with Notifications -->
-        <div class="flex justify-end mb-8 relative z-50">
-           <?php 
-           $unread_notifs = get_unread_notifications(); 
-           $unread_count = count($unread_notifs);
-           ?>
-           <div class="relative group" id="notif-dropdown">
-               <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all relative">
-                   <i class="fas fa-bell text-gray-400 text-lg group-hover:text-black transition-colors"></i>
-                   <?php if ($unread_count > 0): ?>
-                       <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white animate-pulse">
-                           <?php echo $unread_count; ?>
-                       </span>
-                   <?php endif; ?>
-               </button>
-               
-               <!-- Dropdown -->
-               <div class="absolute right-0 top-full mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 hidden group-hover:block transition-all opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
-                   <div class="px-4 py-3 border-b border-gray-50 flex justify-between items-center">
-                       <h4 class="font-bold text-gray-900">Notifications</h4>
-                       <span class="text-xs text-gray-400"><?php echo $unread_count; ?> new</span>
-                   </div>
-                   <div class="max-h-[70vh] overflow-y-auto">
-                       <?php if (empty($unread_notifs)): ?>
-                           <div class="p-8 text-center text-gray-400 text-sm">
-                               <i class="far fa-bell-slash text-2xl mb-2 block opacity-50"></i>
-                               All caught up!
-                           </div>
-                       <?php else: ?>
-                           <?php foreach($unread_notifs as $notif): ?>
-                               <a href="<?php echo !empty($notif['link']) ? $notif['link'] : '#'; ?>" onclick="markRead(<?php echo $notif['id']; ?>)" class="block px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-50 last:border-0 relative group/item">
-                                   <div class="flex gap-4">
-                                       <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                                            <?php if($notif['type'] == 'order'): ?>
-                                                <i class="fas fa-shopping-bag"></i>
-                                            <?php elseif($notif['type'] == 'alert'): ?>
-                                                <i class="fas fa-exclamation-triangle text-amber-500"></i>
-                                            <?php else: ?>
-                                                <i class="fas fa-info-circle"></i>
-                                            <?php endif; ?>
-                                       </div>
-                                       <div>
-                                           <p class="text-sm font-medium text-gray-800 leading-tight mb-1 group-hover/item:text-blue-600 transition-colors">
-                                               <?php echo htmlspecialchars($notif['message']); ?>
-                                           </p>
-                                           <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                               <?php echo date('M d, H:i', strtotime($notif['created_at'])); ?>
-                                           </p>
-                                       </div>
-                                        <?php if(!$notif['is_read']): ?>
-                                           <div class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full"></div>
-                                        <?php endif; ?>
-                                   </div>
-                               </a>
-                           <?php endforeach; ?>
-                       <?php endif; ?>
-                   </div>
-               </div>
-           </div>
-        </div>
+    <main class="admin-content">
+        <header class="mb-12 relative z-50">
+            <div class="flex flex-row  justify-between items-center gap-6 bg-white/50 backdrop-blur-md p-6 rounded-[35px] border border-gray-100 shadow-sm">
+                <!-- Global Omni-Search -->
+                <div class="relative w-full md:max-w-md group" id="omni-search-container">
+                    <div class="relative">
+                        <input type="text" id="omni-search-input" placeholder="Search orders, snacks, or people..." 
+                            class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[22px] px-6 py-3 pl-12 outline-none transition-all font-bold text-sm"
+                            autocomplete="off">
+                        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#19DC7E] transition-colors"></i>
+                        
+                        <!-- Loading Spinner -->
+                        <div id="omni-search-loading" class="absolute right-5 top-1/2 -translate-y-1/2 hidden">
+                            <i class="fas fa-circle-notch fa-spin text-[#19DC7E]"></i>
+                        </div>
+                    </div>
+
+                    <!-- Search Results Dropdown -->
+                    <div id="omni-results" class="absolute left-0 top-full mt-4 w-full bg-white rounded-[32px] shadow-[0_25px_70px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden hidden anim-up">
+                        <div id="omni-results-content" class="max-h-[60vh] overflow-y-auto p-2">
+                            <!-- Results injected here -->
+                        </div>
+                        <div class="bg-gray-50 px-6 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest border-t border-gray-100 flex justify-between">
+                            <span>Quick Find</span>
+                            <span>ESC to close</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 ml-auto md:ml-0">
+                    <?php 
+                    $unread_notifs = get_unread_notifications(); 
+                    $unread_count = count($unread_notifs);
+                    ?>
+                    <div class="relative group" id="notif-dropdown">
+                        <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all relative">
+                            <i class="fas fa-bell text-gray-400 text-lg group-hover:text-black transition-colors"></i>
+                            <?php if ($unread_count > 0): ?>
+                                <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white animate-pulse">
+                                    <?php echo $unread_count; ?>
+                                </span>
+                            <?php endif; ?>
+                        </button>
+                        
+                        <!-- Dropdown -->
+                        <div class="absolute right-0 top-full mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 hidden group-hover:block transition-all opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
+                            <div class="px-4 py-3 border-b border-gray-50 flex justify-between items-center">
+                                <h4 class="font-bold text-gray-900">Notifications</h4>
+                                <span class="text-xs text-gray-400"><?php echo $unread_count; ?> new</span>
+                            </div>
+                            <div class="max-h-[70vh] overflow-y-auto">
+                                <?php if (empty($unread_notifs)): ?>
+                                    <div class="p-8 text-center text-gray-400 text-sm">
+                                        <i class="far fa-bell-slash text-2xl mb-2 block opacity-50"></i>
+                                        All caught up!
+                                    </div>
+                                <?php else: ?>
+                                    <?php foreach($unread_notifs as $notif): ?>
+                                        <a href="<?php echo !empty($notif['link']) ? $notif['link'] : '#'; ?>" onclick="markRead(<?php echo $notif['id']; ?>)" class="block px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-50 last:border-0 relative group/item">
+                                            <div class="flex gap-4">
+                                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                                                     <?php if($notif['type'] == 'order'): ?>
+                                                         <i class="fas fa-shopping-bag"></i>
+                                                     <?php elseif($notif['type'] == 'alert'): ?>
+                                                         <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                                                     <?php else: ?>
+                                                         <i class="fas fa-info-circle"></i>
+                                                     <?php endif; ?>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-800 leading-tight mb-1 group-hover/item:text-blue-600 transition-colors">
+                                                        <?php echo htmlspecialchars($notif['message']); ?>
+                                                    </p>
+                                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                                        <?php echo date('M d, H:i', strtotime($notif['created_at'])); ?>
+                                                    </p>
+                                                </div>
+                                                 <?php if(!$notif['is_read']): ?>
+                                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full"></div>
+                                                 <?php endif; ?>
+                                            </div>
+                                        </a>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
         
         <script>
         async function markRead(id) {
@@ -299,6 +331,81 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             }
         }
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') toggleSidebar(false);
+            if (e.key === 'Escape') {
+                toggleSidebar(false);
+                document.getElementById('omni-results').classList.add('hidden');
+            }
+        });
+
+        // Omni-Search Logic
+        const omniInput = document.getElementById('omni-search-input');
+        const omniResults = document.getElementById('omni-results');
+        const omniResultsContent = document.getElementById('omni-results-content');
+        const omniLoading = document.getElementById('omni-search-loading');
+        let searchTimeout = null;
+
+        omniInput.addEventListener('input', (e) => {
+            const q = e.target.value.trim();
+            clearTimeout(searchTimeout);
+
+            if (q.length < 2) {
+                omniResults.classList.add('hidden');
+                return;
+            }
+
+            omniLoading.classList.remove('hidden');
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`api/omni_search.php?q=${encodeURIComponent(q)}`);
+                    const data = await response.json();
+                    
+                    renderOmniResults(data);
+                } catch (err) {
+                    console.error('Search failed', err);
+                } finally {
+                    omniLoading.classList.add('hidden');
+                }
+            }, 300);
+        });
+
+        function renderOmniResults(results) {
+            if (results.length === 0) {
+                omniResultsContent.innerHTML = `
+                    <div class="p-8 text-center text-gray-400">
+                        <i class="fas fa-ghost text-2xl mb-2 block opacity-30"></i>
+                        <p class="text-xs font-bold uppercase tracking-widest">Nothing found for "${omniInput.value}"</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                results.forEach(res => {
+                    const icon = res.image 
+                        ? `<img src="../${res.image}" class="w-10 h-10 rounded-lg object-cover">`
+                        : `<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100"><i class="${res.icon || 'fas fa-info-circle'}"></i></div>`;
+                    
+                    html += `
+                        <a href="${res.url}" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl transition-all group/item">
+                            ${icon}
+                            <div>
+                                <p class="text-sm font-black text-gray-900 group-hover/item:text-[#19DC7E] transition-colors">${res.title}</p>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${res.subtitle}</p>
+                            </div>
+                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 transition-opacity">
+                                <i class="fas fa-chevron-right text-[10px] text-[#19DC7E]"></i>
+                            </div>
+                        </a>
+                    `;
+                });
+                omniResultsContent.innerHTML = html;
+            }
+            omniResults.classList.remove('hidden');
+        }
+
+        // Close search on click outside
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('omni-search-container').contains(e.target)) {
+                omniResults.classList.add('hidden');
+            }
         });
         </script>

@@ -2,20 +2,24 @@
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
-// AJAX Bulk Delete
-if (isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'bulk_delete_reviews') {
+// AJAX Actions
+if (isset($_POST['ajax_action'])) {
     $ids = $_POST['ids'] ?? [];
     if (!empty($ids)) {
         $conn = get_db_connection();
         $ids_str = implode(',', array_map('intval', $ids));
         
-        $conn->query("DELETE FROM reviews WHERE id IN ($ids_str)");
+        if ($_POST['ajax_action'] === 'bulk_delete_reviews') {
+            $conn->query("DELETE FROM reviews WHERE id IN ($ids_str)");
+        }
         
         header('Content-Type: application/json');
         echo json_encode(['success' => true]);
         exit;
     }
 }
+
+
 ?>
 <?php include 'includes/header.php'; ?>
 <?php
@@ -36,20 +40,25 @@ if (isset($_GET['delete'])) {
 }
 
 $search = sanitize_input($_GET['q'] ?? '');
+$status_filter = $_GET['status'] ?? '';
 $params = [];
-$query = "SELECT r.*, u.name as user_name, u.email as user_email, p.name as product_name 
-          FROM reviews r 
-          JOIN users u ON r.user_id = u.id 
-          JOIN products p ON r.product_id = p.id";
+$where = "WHERE 1=1";
 
 if ($search) {
-    $query .= " WHERE (u.name LIKE ? OR p.name LIKE ? OR r.comment LIKE ?)";
+    $where .= " AND (u.name LIKE ? OR p.name LIKE ? OR r.comment LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
 
-$query .= " ORDER BY r.created_at DESC";
+
+
+$query = "SELECT r.*, u.name as user_name, u.email as user_email, p.name as product_name 
+          FROM reviews r 
+          JOIN users u ON r.user_id = u.id 
+          JOIN products p ON r.product_id = p.id
+          $where
+          ORDER BY r.created_at DESC";
 
 $pagination = get_pagination_data($query, $params, 15);
 $reviews = $pagination['records'];
@@ -66,18 +75,21 @@ $reviews = $pagination['records'];
     </div>
     
     <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-        <!-- Bulk Actions -->
-        <div id="bulk-action-bar" class="hidden flex items-center gap-4 bg-red-50 px-6 py-2 rounded-2xl border border-red-100 anim-up">
-            <span class="text-xs font-black text-red-600 uppercase tracking-widest"><span id="selected-count">0</span> Selected</span>
-            <button onclick="bulkDeleteReviews()" class="bg-red-500 text-white p-3 rounded-xl hover:bg-red-600 transition shadow-lg">
-                <i class="fas fa-trash-alt"></i>
+        <!-- Bulk Actions Bar -->
+        <div id="bulk-action-bar" class="hidden flex-wrap items-center gap-4 bg-white px-6 py-3 rounded-[30px] border-2 border-dashed border-[#19DC7E] anim-up shadow-2xl">
+            <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-widest border-r border-gray-100 pr-4"><span id="selected-count">0</span> Selected</span>
+            <button onclick="bulkReviewAction('bulk_delete_reviews')" class="bg-red-50 text-red-500 p-3 rounded-xl hover:bg-red-500 hover:text-white transition w-10 h-10 flex items-center justify-center">
+                <i class="fas fa-trash-alt text-xs"></i>
             </button>
         </div>
 
-        <form class="relative group">
-            <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search reviews..." 
-                   class="bg-white border-2 border-gray-100 rounded-2xl px-6 py-4 pl-12 outline-none focus:border-[#19DC7E] transition-all font-bold text-xs w-full sm:w-64 shadow-sm">
-            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
+        <form class="flex flex-col sm:flex-row gap-4 w-full">
+
+            <div class="relative group">
+                <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search reviews..." 
+                       class="bg-white border-2 border-gray-100 rounded-2xl px-6 py-4 pl-12 outline-none focus:border-[#19DC7E] transition-all font-bold text-xs w-full sm:w-64 shadow-sm">
+                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
+            </div>
         </form>
     </div>
 </div>
@@ -137,7 +149,9 @@ $reviews = $pagination['records'];
                             </div>
                             <div>
                                 <div class="font-black text-lg text-gray-900 leading-tight"><?php echo $r['user_name']; ?></div>
-                                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest"><?php echo $r['user_email']; ?></div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest"><?php echo $r['user_email']; ?></div>
+                                </div>
                             </div>
                         </div>
                     </td>
@@ -156,8 +170,9 @@ $reviews = $pagination['records'];
                         <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest mt-1 inline-block"><?php echo $r['rating']; ?> / 5 Stars</span>
                     </td>
                     <td class="p-10 text-right">
-                        <div class="flex justify-end translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                            <a href="?delete=<?php echo $r['id']; ?><?php echo $search ? '&q='.$search : ''; ?>" onclick="return confirm('Nuke this review? This cannot be undone.')" class="w-14 h-14 bg-red-50 text-red-500 hover:bg-red-600 hover:text-white flex items-center justify-center rounded-[20px] transition-all shadow-sm active:scale-95">
+                        <div class="flex justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
+
+                            <a href="?delete=<?php echo $r['id']; ?><?php echo $search ? '&q='.$search : ''; ?>" onclick="return confirm('Nuke this review? This cannot be undone.')" class="w-14 h-14 bg-red-50 text-red-500 hover:bg-red-600 hover:text-white flex items-center justify-center rounded-[20px] transition-all shadow-sm active:scale-95" title="Delete Permanentely">
                                 <i class="fas fa-trash-alt text-lg"></i>
                             </a>
                         </div>
@@ -207,19 +222,23 @@ function updateBulkBar() {
     }
 }
 
-async function bulkDeleteReviews() {
+async function bulkReviewAction(action) {
     const checked = document.querySelectorAll('.review-checkbox:checked');
     if (checked.length === 0) return;
-    if (!confirm(`Warning! You are about to permanentely delete ${checked.length} reviews. Proceed?`)) return;
+    
+    let confirmMsg = `Apply ${action.replace('bulk_', '').replace('_', ' ')} to ${checked.length} reviews?`;
+    if (action === 'bulk_delete_reviews') confirmMsg = `DANGER! Permanentely delete ${checked.length} reviews?`;
+    
+    if (!confirm(confirmMsg)) return;
 
     const ids = Array.from(checked).map(cb => cb.value);
     const bar = document.getElementById('bulk-action-bar');
     const originalBar = bar.innerHTML;
-    bar.innerHTML = '<i class="fas fa-spinner fa-spin text-red-500 text-xl"></i>';
+    bar.innerHTML = '<div class="flex items-center gap-3 px-6"><i class="fas fa-spinner fa-spin text-[#19DC7E] text-xl"></i> <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Applying...</span></div>';
 
     try {
         const formData = new FormData();
-        formData.append('ajax_action', 'bulk_delete_reviews');
+        formData.append('ajax_action', action);
         ids.forEach(id => formData.append('ids[]', id));
 
         const response = await fetch('reviews.php', {
@@ -231,7 +250,7 @@ async function bulkDeleteReviews() {
         if (data.success) {
             window.location.reload(); 
         } else {
-            alert('Failed to delete reviews');
+            alert('Operation failed');
             bar.innerHTML = originalBar;
         }
     } catch (error) {
@@ -241,6 +260,4 @@ async function bulkDeleteReviews() {
     }
 }
 </script>
-</main>
-</body>
-</html>
+<?php include 'includes/footer.php'; ?>
