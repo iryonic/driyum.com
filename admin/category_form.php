@@ -40,6 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
         $msg = "Category saved! Slug: $slug";
         if ($id == 0) $id = $stmt->insert_id;
+        echo "<script>window.location='categories.php';</script>";
+        exit;
     } else {
         $err = "Error: " . $stmt->error;
     }

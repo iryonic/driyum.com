@@ -83,6 +83,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
+        
+        // Redirect to products list
+        echo "<script>window.location='products.php';</script>";
+        exit;
     } else {
         $err = "Database Error: " . $stmt->error;
     }
