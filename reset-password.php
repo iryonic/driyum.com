@@ -73,14 +73,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
             </div>
         <?php else: ?>
             <form method="POST" class="space-y-6">
-                <div>
+                <div class="space-y-2">
                     <label class="block text-gray-400 font-bold mb-2 text-sm uppercase">New Password</label>
-                    <input type="password" name="password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full">
+                    <div class="relative group">
+                        <input type="password" name="password" id="new_password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-14">
+                        <button type="button" onclick="togglePasswordVisibility('new_password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-300 hover:text-black transition-colors focus:outline-none">
+                            <i class="fas fa-eye text-lg"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <div>
+                <div class="space-y-2">
                     <label class="block text-gray-400 font-bold mb-2 text-sm uppercase">Confirm Password</label>
-                    <input type="password" name="confirm_password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full">
+                    <div class="relative group">
+                        <input type="password" name="confirm_password" id="confirm_password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-14">
+                        <button type="button" onclick="togglePasswordVisibility('confirm_password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-300 hover:text-black transition-colors focus:outline-none">
+                            <i class="fas fa-eye text-lg"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-chunky btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1">
