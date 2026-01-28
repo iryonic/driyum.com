@@ -372,6 +372,36 @@ window.loadCartItems = async function (isUpdate = false) {
             const totalEl = document.getElementById('cart-total');
             if (totalEl) totalEl.textContent = `₹${data.subtotal}`;
 
+            // --- FREE SHIPPING PROGRESS LOGIC ---
+            const fsContainer = document.getElementById('free-shipping-progress-container');
+            const fsMsg = document.getElementById('free-shipping-msg');
+            const fsBar = document.getElementById('free-shipping-bar');
+
+            if (fsContainer && fsMsg && fsBar) {
+                if (data.items.length === 0) {
+                    fsContainer.classList.add('hidden');
+                } else {
+                    fsContainer.classList.remove('hidden');
+                    const subtotal = data.subtotal;
+                    const threshold = typeof FREE_SHIPPING_THRESHOLD !== 'undefined' ? FREE_SHIPPING_THRESHOLD : 499;
+
+                    if (subtotal >= threshold) {
+                        fsMsg.innerHTML = '<span class="text-[#19DC7E] font-black">Booyah! You unlocked FREE SHIPPING! 🚀</span>';
+                        fsBar.style.width = '100%';
+                        fsBar.classList.add('progress-shimmer');
+                        document.getElementById('free-shipping-icon').textContent = '🎉';
+                    } else {
+                        const remaining = threshold - subtotal;
+                        const percentage = (subtotal / threshold) * 100;
+                        fsMsg.innerHTML = `Add <span class="text-black font-black">₹${remaining}</span> more for <span class="text-[#19DC7E]">FREE SHIPPING</span>`;
+                        fsBar.style.width = `${percentage}%`;
+                        fsBar.classList.remove('progress-shimmer');
+                        document.getElementById('free-shipping-icon').textContent = '🚚';
+                    }
+                }
+            }
+            // ------------------------------------
+
             if (data.items.length === 0) {
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-full px-12 text-center">

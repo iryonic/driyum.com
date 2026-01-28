@@ -357,6 +357,17 @@ run_crons();
         </button>
     </div>
     
+    <!-- Free Shipping Progress Bar -->
+    <div id="free-shipping-progress-container" class="px-6 md:px-8 pt-6 hidden">
+        <div class="flex justify-between items-center mb-2">
+            <span id="free-shipping-msg" class="text-[10px] font-black uppercase tracking-widest text-gray-500"></span>
+            <span id="free-shipping-icon" class="text-lg">🚚</span>
+        </div>
+        <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div id="free-shipping-bar" class="h-full bg-[#19DC7E] w-0 transition-all duration-1000"></div>
+        </div>
+    </div>
+    
     <div id="cart-items-container" class="flex-1 overflow-y-auto px-4 md:px-8 py-6 md:py-10 space-y-4 md:space-y-6">
         <!-- populated by chunky.js -->
     </div>

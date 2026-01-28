@@ -525,3 +525,19 @@ input#header-search-input.search-input-premium:focus {
         padding-right: 1rem !important;
     }
 }
+
+@keyframes progress-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.progress-shimmer {
+    background: linear-gradient(90deg, #19DC7E 0%, #12C06A 30%, #4ade80 50%, #12C06A 70%, #19DC7E 100%);
+    background-size: 200% 100%;
+    animation: progress-shimmer 2s infinite linear;
+}
