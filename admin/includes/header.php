@@ -194,6 +194,9 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             <a href="manage_home.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_home.php'?'nav-link-active':'text-gray-400'; ?>">
                 <i class="fas fa-home w-6"></i> Homepage
             </a>
+            <a href="manage_pages.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_pages.php'?'nav-link-active':'text-gray-400'; ?>">
+                <i class="fas fa-file-alt w-6"></i> About & Legal Pages
+            </a>
             <a href="manage_contact.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_contact.php'?'nav-link-active':'text-gray-400'; ?>">
                 <i class="fas fa-headset w-6"></i> Contact & Inbox
             </a>

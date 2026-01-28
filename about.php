@@ -19,9 +19,9 @@ require_once 'includes/functions.php';
     <!-- HERO SECTION -->
     <section class="pt-32 pb-20 px-6 relative overflow-hidden">
         <div class="container mx-auto max-w-5xl text-center relative z-10 px-4">
-            <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-[10px] md:text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up">The Driyum Journey</span>
-            <h1 class="text-[clamp(2.5rem,8vw,6rem)] font-['Fredoka'] font-black text-gray-900 mb-8 anim-up delay-100 leading-[1.1] tracking-tighter">Born from <span class="text-[#19DC7E]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.</h1>
-            <p class="text-lg md:text-2xl text-gray-500 font-medium max-w-3xl mx-auto anim-up delay-200 leading-relaxed px-4">We're on a mission to prove that healthy snacking shouldn't cost the earth or your health.</p>
+            <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-[10px] md:text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up"><?php echo get_setting('about_hero_subtitle', 'The Driyum Journey'); ?></span>
+            <h1 class="text-[clamp(2.5rem,8vw,6rem)] font-['Fredoka'] font-black text-gray-900 mb-8 anim-up delay-100 leading-[1.1] tracking-tighter"><?php echo get_setting('about_hero_title', 'Born from <span class="text-[#19DC7E]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.'); ?></h1>
+            <p class="text-lg md:text-2xl text-gray-500 font-medium max-w-3xl mx-auto anim-up delay-200 leading-relaxed px-4"><?php echo get_setting('about_hero_desc', "We're on a mission to prove that healthy snacking shouldn't cost the earth or your health."); ?></p>
         </div>
         
         <!-- Background Elements -->
@@ -40,12 +40,13 @@ require_once 'includes/functions.php';
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 space-y-8 anim-up delay-200">
-                    <h2 class="text-4xl md:text-5xl font-['Fredoka'] font-black text-gray-900 leading-tight">The "Aha!" Moment</h2>
+                    <h2 class="text-4xl md:text-5xl font-['Fredoka'] font-black text-gray-900 leading-tight"><?php echo get_setting('about_story_title', 'The "Aha!" Moment'); ?></h2>
                     <div class="text-lg text-gray-500 leading-relaxed space-y-6 font-medium">
-                        <p>Our whole journey started with a simple frustration: why were all the truly healthy snacks so expensive, while the cheap ones were loaded with processed ingredients?</p>
-                        <p>It felt like we were filling our bodies with chemical experiments and guilt rather than a snack. We realized the market was missing something. So, we took matters into our own hands, deciding to create the perfect alternative.</p>
-                        <p class="text-gray-900 font-bold italic border-l-4 border-[#19DC7E] pl-6">"We simply select the best fruit and gently dehydrate it. That's it!"</p>
-                        <p>This pack is proof that you don't need processed prices or sky-high margins to enjoy a clean, delicious, and nutritious snack. Welcome to the way snacking was always meant to be!</p>
+                        <?php 
+                        $story_text = get_setting('about_story_text', "Our whole journey started with a simple frustration: why were all the truly healthy snacks so expensive, while the cheap ones were loaded with processed ingredients?\n\nIt felt like we were filling our bodies with chemical experiments and guilt rather than a snack. We realized the market was missing something. So, we took matters into our own hands, deciding to create the perfect alternative.");
+                        echo nl2br(htmlspecialchars($story_text)); 
+                        ?>
+                        <p class="text-gray-900 font-bold italic border-l-4 border-[#19DC7E] pl-6"><?php echo get_setting('about_story_quote', '"We simply select the best fruit and gently dehydrate it. That\'s it!"'); ?></p>
                     </div>
                 </div>
             </div>
@@ -55,20 +56,21 @@ require_once 'includes/functions.php';
     <!-- TRADITION SECTION: HOKH SUIN -->
     <section class="py-32 px-6 bg-white rounded-[60px] md:rounded-[100px] shadow-sm my-20">
         <div class="container mx-auto max-w-6xl text-center mb-16 px-6">
-             <h2 class="text-[clamp(2.5rem,7vw,5rem)] font-['Fredoka'] font-black text-gray-900 mb-6 leading-none">HOKH SUIN</h2>
+             <h2 class="text-[clamp(2.5rem,7vw,5rem)] font-['Fredoka'] font-black text-gray-900 mb-6 leading-none"><?php echo get_setting('about_tradition_title', 'HOKH SUIN'); ?></h2>
              <span class="text-[#19DC7E] font-black uppercase tracking-[0.3em] text-xs md:text-sm">A piece of Kashmiri heritage</span>
         </div>
 
         <div class="container mx-auto max-w-6xl">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
                 <div class="space-y-8 order-2 md:order-1 anim-up">
-                    <p class="text-xl text-gray-600 font-medium leading-relaxed italic">Hokh suin by Driyum is inspired by a time when sun-drying vegetables was not a choice, but a necessity in Kashmir.</p>
                     <div class="text-gray-500 leading-relaxed space-y-6 font-medium">
-                        <p>With long, harsh winters and limited access to fresh produce, families would preserve vegetables during summer so the warmth and flavour of the season could be carried into winter meals. What was once an everyday practice has now become a delicacy — a way to taste tradition, history, and memory.</p>
-                        <p>As modern lifestyles take over, this practice is slowly fading. "Hokh suin by Driyum" is our effort to revive this tradition and make it accessible again.</p>
+                        <?php 
+                        $trad_text = get_setting('about_tradition_text', "With long, harsh winters and limited access to fresh produce, families would preserve vegetables during summer so the warmth and flavour of the season could be carried into winter meals. What was once an everyday practice has now become a delicacy — a way to taste tradition, history, and memory.\n\nAs modern lifestyles take over, this practice is slowly fading. \"Hokh suin by Driyum\" is our effort to revive this tradition and make it accessible again.");
+                        echo nl2br(htmlspecialchars($trad_text));
+                        ?>
                         <div class="bg-[#FFFBEB] p-8 rounded-[40px] border border-amber-100">
-                            <h4 class="font-black text-gray-900 mb-2 font-['Fredoka']">Modern Twist on Ancient Traditions</h4>
-                            <p class="text-sm">Prepared from fresh vegetables, Hokh suin is traditionally sun-dried, but unlike earlier times, it is handled with modern hygiene standards and packed carefully to ensure safety, quality, and convenience.</p>
+                            <h4 class="font-black text-gray-900 mb-2 font-['Fredoka']"><?php echo get_setting('about_twist_title', 'Modern Twist on Ancient Traditions'); ?></h4>
+                            <p class="text-sm"><?php echo get_setting('about_twist_text', 'Prepared from fresh vegetables, Hokh suin is traditionally sun-dried, but unlike earlier times, it is handled with modern hygiene standards and packed carefully to ensure safety, quality, and convenience.'); ?></p>
                         </div>
                     </div>
                 </div>
@@ -94,8 +96,8 @@ require_once 'includes/functions.php';
                 <div class="relative z-10 flex flex-col md:flex-row items-center gap-12">
                     <div class="text-6xl">🥘</div>
                     <div>
-                        <h3 class="text-3xl font-['Fredoka'] font-black mb-4">A Quick Tip for the Perfect Meal</h3>
-                        <p class="text-gray-400 text-lg max-w-3xl leading-relaxed">In dried form, the vegetables may feel hard or chewy, which is natural. Once soaked or cooked, they soften and become ready for use in rice dishes, curries, and traditional meals. It is not just dehydrated vegetables — it is a piece of Kashmiri heritage, thoughtfully prepared and delivered to your doorstep.</p>
+                        <h3 class="text-3xl font-['Fredoka'] font-black mb-4"><?php echo get_setting('about_tip_title', 'A Quick Tip for the Perfect Meal'); ?></h3>
+                        <p class="text-gray-400 text-lg max-w-3xl leading-relaxed"><?php echo get_setting('about_tip_text', 'In dried form, the vegetables may feel hard or chewy, which is natural. Once soaked or cooked, they soften and become ready for use in rice dishes, curries, and traditional meals. It is not just dehydrated vegetables — it is a piece of Kashmiri heritage, thoughtfully prepared and delivered to your doorstep.'); ?></p>
                     </div>
                 </div>
                 <!-- Decor -->
@@ -115,7 +117,7 @@ require_once 'includes/functions.php';
                         <i class="fas fa-rocket"></i>
                     </div>
                     <h2 class="text-4xl font-['Fredoka'] font-black text-gray-900 mb-6">Our Mission</h2>
-                    <p class="text-xl text-gray-500 leading-relaxed font-medium">Our mission is to make healthy snacking affordable, accessible, and convenient for everyone.</p>
+                    <p class="text-xl text-gray-500 leading-relaxed font-medium"><?php echo get_setting('about_mission', 'Our mission is to make healthy snacking affordable, accessible, and convenient for everyone.'); ?></p>
                 </div>
 
                 <!-- Vision Card -->
@@ -124,7 +126,7 @@ require_once 'includes/functions.php';
                         <i class="fas fa-eye"></i>
                     </div>
                     <h2 class="text-4xl font-['Fredoka'] font-black text-white mb-6">Our Vision</h2>
-                    <p class="text-xl text-gray-400 leading-relaxed font-medium">To build Driyum into one of India’s leading healthy snacking brands, starting from Kashmir and reaching across the country.</p>
+                    <p class="text-xl text-gray-400 leading-relaxed font-medium"><?php echo get_setting('about_vision', 'To build Driyum into one of India’s leading healthy snacking brands, starting from Kashmir and reaching across the country.'); ?></p>
                 </div>
 
             </div>

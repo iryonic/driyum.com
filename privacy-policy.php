@@ -40,10 +40,7 @@ require_once 'includes/functions.php';
                         <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Privacy Policy</h2>
                     </div>
                     <div class="text-gray-500 leading-relaxed space-y-4 font-medium">
-                        <p>At Driyum, we value your privacy and are committed to protecting your personal information. When you visit our website or place an order, we may collect basic details such as your name, phone number, email address, delivery address, and payment-related information.</p>
-                        <p>This information is collected solely for the purpose of processing orders, providing customer support, and improving our services. We do not sell, rent, or share your personal data with third parties, except where required to complete your order (such as payment gateways and delivery partners) or when required by law.</p>
-                        <p>All online payments are processed through secure third-party payment gateways. Driyum does not store your card, UPI, or banking details.</p>
-                        <p>By using our website, you consent to the collection and use of information as described in this Privacy Policy. Driyum reserves the right to update this policy at any time. Any changes will be reflected on this page.</p>
+                        <?php echo nl2br(htmlspecialchars(get_setting('legal_privacy_policy', "At Driyum, we value your privacy and are committed to protecting your personal information. When you visit our website or place an order, we may collect basic details such as your name, phone number, email address, delivery address, and payment-related information.\n\nThis information is collected solely for the purpose of processing orders, providing customer support, and improving our services. We do not sell, rent, or share your personal data with third parties, except where required to complete your order (such as payment gateways and delivery partners) or when required by law.\n\nAll online payments are processed through secure third-party payment gateways. Driyum does not store your card, UPI, or banking details.\n\nBy using our website, you consent to the collection and use of information as described in this Privacy Policy. Driyum reserves the right to update this policy at any time. Any changes will be reflected on this page."))); ?>
                     </div>
                 </div>
 
@@ -58,9 +55,7 @@ require_once 'includes/functions.php';
                         <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Terms & Conditions</h2>
                     </div>
                     <div class="text-gray-500 leading-relaxed space-y-4 font-medium">
-                        <p>By accessing and using the Driyum website, you agree to comply with these terms and conditions.</p>
-                        <p>All products sold by Driyum are food products. Dehydrated fruits are intended for direct consumption, while dehydrated vegetables are intended for cooking purposes only. Product images shown on the website are for representation purposes only. Actual product colour, size, and texture may vary due to natural variations in fruits and vegetables.</p>
-                        <p>Prices, product availability, and offers are subject to change without prior notice. Driyum reserves the right to cancel or refuse any order due to unforeseen circumstances, including stock unavailability, pricing errors, or quality concerns. By placing an order, you confirm that the information provided by you is accurate and complete.</p>
+                        <?php echo nl2br(htmlspecialchars(get_setting('legal_terms_conditions', "By accessing and using the Driyum website, you agree to comply with these terms and conditions.\n\nAll products sold by Driyum are food products. Dehydrated fruits are intended for direct consumption, while dehydrated vegetables are intended for cooking purposes only. Product images shown on the website are for representation purposes only. Actual product colour, size, and texture may vary due to natural variations in fruits and vegetables.\n\nPrices, product availability, and offers are subject to change without prior notice. Driyum reserves the right to cancel or refuse any order due to unforeseen circumstances, including stock unavailability, pricing errors, or quality concerns. By placing an order, you confirm that the information provided by you is accurate and complete."))); ?>
                     </div>
                 </div>
 
@@ -75,25 +70,7 @@ require_once 'includes/functions.php';
                         <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Returns & Refund Policy</h2>
                     </div>
                     <div class="text-gray-500 leading-relaxed space-y-6 font-medium">
-                        <p>Due to the nature of food products, returns are not accepted once an order has been delivered. Refunds may be considered only in special cases, including:</p>
-                        <ul class="grid gap-3">
-                            <li class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                <i class="fas fa-circle-check text-[#19DC7E]"></i> Damaged or broken packaging
-                            </li>
-                            <li class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                <i class="fas fa-circle-check text-[#19DC7E]"></i> Opened or unsealed pouches
-                            </li>
-                            <li class="flex items-center gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                <i class="fas fa-circle-check text-[#19DC7E]"></i> Product received in a compromised or unfit condition
-                            </li>
-                        </ul>
-                        <div class="bg-yellow-50 p-6 rounded-3xl border border-yellow-100">
-                            <p class="text-yellow-800 font-bold mb-2 flex items-center gap-2">
-                                <i class="fas fa-video"></i> Unboxing Video Required
-                            </p>
-                            <p class="text-yellow-700 text-sm">To request a refund, customers are required to share a clear unboxing video of the package. The video must show the parcel being opened from start to finish and clearly display the condition of the outer packaging, inner pouch, and product seal at the time of opening. Refund requests without a valid unboxing video may not be considered.</p>
-                        </div>
-                        <p>If the issue is verified, a refund will be initiated. Refunds will include only the product cost. Shipping charges and any additional charges are non-refundable. Approved refunds will be credited to the original payment method within 3–5 working days. Driyum reserves the right to approve or reject refund requests based on verification.</p>
+                        <?php echo nl2br(htmlspecialchars(get_setting('legal_returns_refunds', "Due to the nature of food products, returns are not accepted once an order has been delivered. Refunds may be considered only in special cases, including:\n\n• Damaged or broken packaging\n• Opened or unsealed pouches\n• Product received in a compromised or unfit condition\n\nTo request a refund, customers are required to share a clear unboxing video of the package. The video must show the parcel being opened from start to finish and clearly display the condition of the outer packaging, inner pouch, and product seal at the time of opening. Refund requests without a valid unboxing video may not be considered."))); ?>
                     </div>
                 </div>
 
@@ -108,10 +85,7 @@ require_once 'includes/functions.php';
                         <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Disclaimer</h2>
                     </div>
                     <div class="text-gray-500 leading-relaxed space-y-4 font-medium">
-                        <p>Driyum products are made using natural fruits and vegetables. As these are agricultural products, variations in colour, taste, texture, and appearance may occur.</p>
-                        <p>Nutritional values mentioned on the website or packaging are approximate values based on standard food composition data. Actual values may vary.</p>
-                        <p>Driyum products are not intended to diagnose, treat, cure, or prevent any disease. Customers with specific medical conditions or dietary requirements are advised to consult a professional before consumption.</p>
-                        <p>Dehydrated vegetables sold by Driyum are intended for cooking purposes only and are not meant for direct consumption.</p>
+                        <?php echo nl2br(htmlspecialchars(get_setting('legal_disclaimer', "Driyum products are made using natural fruits and vegetables. As these are agricultural products, variations in colour, taste, texture, and appearance may occur.\n\nNutritional values mentioned on the website or packaging are approximate values based on standard food composition data. Actual values may vary.\n\nDriyum products are not intended to diagnose, treat, cure, or prevent any disease. Customers with specific medical conditions or dietary requirements are advised to consult a professional before consumption.\n\nDehydrated vegetables sold by Driyum are intended for cooking purposes only and are not meant for direct consumption."))); ?>
                     </div>
                 </div>
 
