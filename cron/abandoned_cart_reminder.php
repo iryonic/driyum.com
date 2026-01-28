@@ -50,17 +50,7 @@ foreach ($abandoned_carts as $cart) {
         }
     }
 
-    // Use helper if available, otherwise construct
-    if (function_exists('get_url')) {
-        // get_url returns path relative to domain root usually.
-        // For email we need absolute URL including domain.
-        // We can use the logic from before but replace /newdry/ with BASE_URL path
-        $scheme = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http");
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $checkout_url = $scheme . "://" . $host . get_url('checkout');
-    } else {
-        $checkout_url = (defined('BASE_URL') ? BASE_URL : '/') . "checkout";
-    }
+    $checkout_url = FULL_BASE_URL . "checkout";
 
     $message = "
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;'>

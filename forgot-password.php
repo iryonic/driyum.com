@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         execute_query("INSERT INTO password_resets (email, token) VALUES (?, ?)", [$email, $token]);
         
         // Generate Reset Link
-        $reset_link = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/reset-password.php?token=" . $token;
+        $reset_link = FULL_BASE_URL . "reset-password.php?token=" . $token;
 
         // For Live Mode: Send actual email
         $subject = "Reset Your Driyum Password";

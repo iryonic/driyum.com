@@ -31,16 +31,21 @@ if (session_status() === PHP_SESSION_NONE) {
  * Currently uses standard mail(), should be upgraded to PHPMailer for Production
  */
 function send_email($to, $subject, $message) {
+    // Determine the base domain for headers
+    $domain = parse_url(FULL_BASE_URL, PHP_URL_HOST) ?: ($_SERVER['HTTP_HOST'] ?? 'driyum.com');
+    
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= 'From: Driyum <noreply@' . $_SERVER['HTTP_HOST'] . '>' . "\r\n";
+    $headers .= 'From: Driyum <noreply@' . $domain . '>' . "\r\n";
+    $headers .= 'Reply-To: support@' . $domain . "\r\n";
+    $headers .= 'X-Mailer: PHP/' . phpversion();
     
-    // Log for debugging (especially useful in local/XAMPP)
+    // Log for debugging
     $log_entry = "[" . date('Y-m-d H:i:s') . "] To: $to | Subject: $subject\n$message\n" . str_repeat("-", 40) . "\n";
     file_put_contents(__DIR__ . '/../mail_log.txt', $log_entry, FILE_APPEND);
     
-    // Attempt to send (suppressing error if on localhost)
-    if ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') {
+    // Attempt to send
+    if ($domain === 'localhost' || $domain === '127.0.0.1') {
         return @mail($to, $subject, $message, $headers);
     }
     return mail($to, $subject, $message, $headers);
@@ -521,7 +526,7 @@ function send_order_confirmation($order_id) {
                 </div>
 
                 <div style='text-align: center; margin-top: 40px;'>
-                    <a href='http://{$_SERVER['HTTP_HOST']}/track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 15px 30px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 50px; font-weight: bold; font-family: sans-serif;'>Track Your Order</a>
+                    <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 15px 30px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 50px; font-weight: bold; font-family: sans-serif;'>Track Your Order</a>
                 </div>
             </div>
             <div style='padding: 20px; background-color: #eee; text-align: center; font-size: 12px; color: #999;'>
@@ -582,7 +587,7 @@ function send_order_status_email($order_id, $status) {
                 {$tracking_html}
 
                 <div style='margin-top: 40px; text-align: center;'>
-                    <a href='http://{$_SERVER['HTTP_HOST']}/track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
+                    <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
                 </div>
 
                 <div style='margin-top: 50px; border-top: 1px solid #f0f0f0; padding-top: 30px;'>
