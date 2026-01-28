@@ -76,10 +76,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
                 <div class="space-y-2">
                     <label class="block text-gray-400 font-bold mb-2 text-sm uppercase">New Password</label>
                     <div class="relative group">
-                        <input type="password" name="password" id="new_password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-14">
+                        <input type="password" name="password" id="new_password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-14" oninput="validatePassword(this.value)">
                         <button type="button" onclick="togglePasswordVisibility('new_password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-300 hover:text-black transition-colors focus:outline-none">
                             <i class="fas fa-eye text-lg"></i>
                         </button>
+                    </div>
+
+                    <!-- Password Validator UI -->
+                    <div id="password-validator" class="mt-4 space-y-3 hidden anim-up">
+                        <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div id="strength-bar" class="h-full w-0 transition-all duration-500 bg-red-500"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-y-2 gap-x-4">
+                            <div id="crit-length" class="text-[9px] font-black text-gray-400 uppercase flex items-center gap-2">
+                                <i class="fas fa-circle text-[6px]"></i> 8+ Characters
+                            </div>
+                            <div id="crit-upper" class="text-[9px] font-black text-gray-400 uppercase flex items-center gap-2">
+                                <i class="fas fa-circle text-[6px]"></i> Uppercase
+                            </div>
+                            <div id="crit-number" class="text-[9px] font-black text-gray-400 uppercase flex items-center gap-2">
+                                <i class="fas fa-circle text-[6px]"></i> One Number
+                            </div>
+                            <div id="crit-special" class="text-[9px] font-black text-gray-400 uppercase flex items-center gap-2">
+                                <i class="fas fa-circle text-[6px]"></i> Special Char
+                            </div>
+                        </div>
                     </div>
                 </div>
 
