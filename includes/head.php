@@ -36,11 +36,11 @@ if (function_exists('render_seo_tags')) {
 <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
-<link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>?v=1.0.2">
+<link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>?v=1.0.3">
 
 <!-- JS Config & Core Logic -->
 <script>
     const BASE_URL = "<?php echo get_url(''); ?>";
     const FREE_SHIPPING_THRESHOLD = <?php echo get_setting('free_shipping_threshold', 499); ?>;
 </script>
-<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=1.0.2" defer></script>
+<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=1.0.3" defer></script>
