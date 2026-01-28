@@ -31,24 +31,52 @@ if (session_status() === PHP_SESSION_NONE) {
  * Currently uses standard mail(), should be upgraded to PHPMailer for Production
  */
 function send_email($to, $subject, $message) {
-    // Determine the base domain for headers
+    // Log for debugging
+    $log_entry = "[" . date('Y-m-d H:i:s') . "] To: $to | Subject: $subject\n" . str_repeat("-", 40) . "\n";
+    file_put_contents(__DIR__ . '/../mail_log.txt', $log_entry, FILE_APPEND);
+
+    // Determine domain
     $domain = parse_url(FULL_BASE_URL, PHP_URL_HOST) ?: ($_SERVER['HTTP_HOST'] ?? 'driyum.com');
     
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= 'From: Driyum <noreply@' . $domain . '>' . "\r\n";
-    $headers .= 'Reply-To: support@' . $domain . "\r\n";
-    $headers .= 'X-Mailer: PHP/' . phpversion();
-    
-    // Log for debugging
-    $log_entry = "[" . date('Y-m-d H:i:s') . "] To: $to | Subject: $subject\n$message\n" . str_repeat("-", 40) . "\n";
-    file_put_contents(__DIR__ . '/../mail_log.txt', $log_entry, FILE_APPEND);
-    
-    // Attempt to send
-    if ($domain === 'localhost' || $domain === '127.0.0.1') {
+    // If on localhost and no SMTP config, fallback to mail()
+    if (($domain === 'localhost' || $domain === '127.0.0.1') && !defined('MAIL_HOST')) {
+        $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Driyum <noreply@driyum.com>";
         return @mail($to, $subject, $message, $headers);
     }
-    return mail($to, $subject, $message, $headers);
+
+    // Use PHPMailer
+    require_once __DIR__ . '/../vendor/autoload.php';
+    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host       = defined('MAIL_HOST') ? MAIL_HOST : 'smtp.hostinger.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = defined('MAIL_USER') ? MAIL_USER : 'contact@driyum.com';
+        $mail->Password   = defined('MAIL_PASS') ? MAIL_PASS : ''; 
+        $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS; 
+        $mail->Port       = defined('MAIL_PORT') ? MAIL_PORT : 465;
+
+        // Recipients
+        $mail->setFrom($mail->Username, 'Driyum');
+        $mail->addAddress($to);
+        $mail->addReplyTo($mail->Username, 'Driyum Support');
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body    = $message;
+        $mail->AltBody = strip_tags($message);
+
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        // Log error and fallback to mail() as last resort
+        error_log("PHPMailer Error: " . $mail->ErrorInfo);
+        $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Driyum <contact@driyum.com>";
+        return @mail($to, $subject, $message, $headers);
+    }
 }
 
 // Flash Message Helpers

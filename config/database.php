@@ -13,6 +13,12 @@ if ($host == 'localhost' || $host == '127.0.0.1') {
     define('DB_USER', 'u167160735_driyum');
     define('DB_PASS', 'DriyuM@1234');
     define('DB_NAME', 'u167160735_driyum');
+    
+    // Mail Configuration (SMTP)
+    define('MAIL_HOST', 'smtp.hostinger.com');
+    define('MAIL_USER', 'contact@driyum.com');
+    define('MAIL_PASS', 'DriyuM@1234'); // Often matches DB pass or is unique - placeholder if different
+    define('MAIL_PORT', 465);
 }       
 
 // Dynamic Base URL Configuration
