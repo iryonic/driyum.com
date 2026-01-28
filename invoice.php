@@ -13,14 +13,31 @@ $order = fetch_one("SELECT o.*, u.name as user_name, u.email as user_email, u.ph
 
 if (!$order) die("Order not found.");
 
-// Only allow owner or admin to view invoice
-if (!is_admin() && $_SESSION['user_id'] != $order['user_id']) {
-    die("Access denied.");
+// Authorization Logic
+$can_view = false;
+
+if (is_admin()) {
+    $can_view = true;
+} elseif (isset($_SESSION['user_id']) && $order['user_id'] == $_SESSION['user_id']) {
+    $can_view = true;
+} elseif (isset($_GET['contact'])) {
+    $contact = sanitize_input($_GET['contact']);
+    $address = json_decode($order['shipping_address'], true);
+    $order_email = $address['email'] ?? '';
+    $order_phone = $address['phone'] ?? '';
+    
+    if (strtolower(trim($contact)) === strtolower(trim($order_email)) || trim($contact) === trim($order_phone)) {
+        $can_view = true;
+    }
 }
 
-// Restriction: Customers can only see invoice after delivery
-if (!is_admin() && $order['order_status'] !== 'delivered') {
-    die("Order not delivered yet. Get invoice after delivery.");
+if (!$can_view) {
+    die("Access denied. Please login or provide verification contact.");
+}
+
+// Restriction: Customers can only see invoice after delivery (can be relaxed if needed)
+if (!is_admin() && !in_array($order['order_status'], ['confirmed', 'shipped', 'out_for_delivery', 'delivered'])) {
+    die("Your order has not been confirmed yet. Invoice is available once processed.");
 }
 
 $items = fetch_all("SELECT oi.*, p.name, p.sku FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?", [$order['id']]);
@@ -64,7 +81,7 @@ $address = json_decode($order['shipping_address'], true);
     <div class="invoice-box">
         <div class="header">
             <div>
-                <h1>DRIYUM</h1>
+                <h1><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="DRIYUM" width="100" ></h1>
                 <p style="font-size: 12px; color: #666; margin-top: 5px;">
                     Srinagar, Jammu & Kashmir 190001<br>
                     GSTIN: 01ABCDE1234F1Z5
@@ -80,9 +97,9 @@ $address = json_decode($order['shipping_address'], true);
         <div class="details-grid">
             <div>
                 <h3>Billed To:</h3>
-                <p><strong><?php echo htmlspecialchars($order['user_name']); ?></strong></p>
-                <p><?php echo htmlspecialchars($order['user_email']); ?></p>
-                <p><?php echo htmlspecialchars($order['user_phone']); ?></p>
+                <p><strong><?php echo htmlspecialchars($order['user_name'] ?: ($address['name'] ?? 'Guest')); ?></strong></p>
+                <p><?php echo htmlspecialchars($order['user_email'] ?: ($address['email'] ?? '')); ?></p>
+                <p><?php echo htmlspecialchars($order['user_phone'] ?: ($address['phone'] ?? '')); ?></p>
             </div>
             <div>
                 <h3>Shipped To:</h3>

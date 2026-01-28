@@ -210,14 +210,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                             <p class="text-[10px] font-black uppercase text-gray-400 mb-0.5">Order Value</p>
                                             <p class="text-3xl font-['Fredoka'] font-black text-gray-900">₹<?php echo number_format($order['total']); ?></p>
                                         </div>
-                                        <div class="flex gap-4">
-                                            <?php if($order['order_status'] == 'delivered'): ?>
-                                                <a href="<?php echo get_url('invoice.php?id=' . $order['order_number']); ?>" target="_blank" class="w-14 h-14 bg-gray-50 flex items-center justify-center rounded-2xl text-gray-400 hover:bg-black hover:text-white transition-all shadow-sm" title="Download Invoice">
-                                                    <i class="fas fa-file-invoice-dollar text-xl"></i>
-                                                </a>
-                                            <?php endif; ?>
-                                            <a href="<?php echo get_url('track.php?id=' . $order['order_number']); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-3.5 shadow-xl group-hover:bg-[#19DC7E] group-hover:text-black transition-all">View Details</a>
-                                        </div>
+                                        <a href="<?php echo get_url('track.php?id=' . $order['order_number']); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-3.5 shadow-xl group-hover:bg-[#19DC7E] group-hover:text-black transition-all">View Details</a>
                                     </div>
                                 </div>
                             </div>

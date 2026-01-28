@@ -270,9 +270,9 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                     $unread_notifs = get_unread_notifications(); 
                     $unread_count = count($unread_notifs);
                     ?>
-                    <div class="relative group" id="notif-dropdown">
-                        <button class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all relative">
-                            <i class="fas fa-bell text-gray-400 text-lg group-hover:text-black transition-colors"></i>
+                    <div class="relative" id="notif-dropdown">
+                        <button onclick="toggleNotifDropdown(event)" class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all relative">
+                            <i class="fas fa-bell text-gray-400 text-lg hover:text-black transition-colors"></i>
                             <?php if ($unread_count > 0): ?>
                                 <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white animate-pulse">
                                     <?php echo $unread_count; ?>
@@ -281,7 +281,7 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                         </button>
                         
                         <!-- Dropdown -->
-                        <div class="absolute right-0 top-full mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 hidden group-hover:block transition-all opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
+                        <div id="notif-dropdown-content" class="absolute right-0 top-full mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 hidden z-[100] anim-up">
                             <div class="px-4 py-3 border-b border-gray-50 flex justify-between items-center">
                                 <h4 class="font-bold text-gray-900">Notifications</h4>
                                 <span class="text-xs text-gray-400"><?php echo $unread_count; ?> new</span>
@@ -352,8 +352,15 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             if (e.key === 'Escape') {
                 toggleSidebar(false);
                 document.getElementById('omni-results').classList.add('hidden');
+                document.getElementById('notif-dropdown-content').classList.add('hidden');
             }
         });
+
+        function toggleNotifDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('notif-dropdown-content').classList.toggle('hidden');
+            document.getElementById('omni-results').classList.add('hidden');
+        }
 
         // Omni-Search Logic
         const omniInput = document.getElementById('omni-search-input');
@@ -420,10 +427,13 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             omniResults.classList.remove('hidden');
         }
 
-        // Close search on click outside
+        // Close dropdowns on click outside
         document.addEventListener('click', (e) => {
             if (!document.getElementById('omni-search-container').contains(e.target)) {
                 omniResults.classList.add('hidden');
+            }
+            if (!document.getElementById('notif-dropdown').contains(e.target)) {
+                document.getElementById('notif-dropdown-content').classList.add('hidden');
             }
         });
         </script>

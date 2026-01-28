@@ -73,42 +73,43 @@ run_crons();
                 <div class="mega-menu">
                     <div class="container mx-auto grid grid-cols-4 gap-8">
                         <?php 
-                        // Fetch top 3 parent categories
-                        $nav_cats = fetch_all("SELECT * FROM categories WHERE is_active = 1 AND parent_id IS NULL ORDER BY sort_order ASC, id DESC LIMIT 3");
-                        foreach($nav_cats as $nc):
+                        $header_cats = array_slice(get_all_categories(), 0, 3);
+                        foreach($header_cats as $cat): 
                         ?>
                         <div>
-                            <h4 class="text-[#19DC7E] mb-4 text-lg font-['Fredoka']">
-                                <a href="<?php echo get_url('category/' . $nc['slug']); ?>" class="hover:underline"><?php echo htmlspecialchars($nc['name']); ?></a>
-                            </h4>
+                            <h4 class="text-[#19DC7E] mb-4 text-lg font-['Fredoka']"><?php echo htmlspecialchars($cat['name']); ?></h4>
                             <ul class="space-y-2 font-['Outfit'] text-gray-500">
                                 <?php 
-                                // Dynamic Sub-items: Fetch up to 3 products for this category
-                                $nav_prods = fetch_all("SELECT name, slug FROM products WHERE category_id = ? AND is_active = 1 LIMIT 3", [$nc['id']]);
-                                if(count($nav_prods) > 0):
-                                    foreach($nav_prods as $np):
+                                $cat_prods = fetch_all("SELECT name, slug FROM products WHERE category_id = ? AND is_active = 1 LIMIT 3", [$cat['id']]);
+                                if(empty($cat_prods)):
                                 ?>
-                                    <li><a href="<?php echo get_url('product/' . $np['slug']); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block"><?php echo htmlspecialchars($np['name']); ?></a></li>
-                                <?php 
-                                    endforeach;
-                                else:
-                                    // Fallback if no products
-                                ?>
-                                    <li><a href="<?php echo get_url('shop?category=' . $nc['slug']); ?>" class="hover:text-black italic">Shop all <?php echo htmlspecialchars($nc['name']); ?></a></li>
+                                    <li class="text-xs opacity-50">Coming Soon...</li>
+                                <?php else: ?>
+                                    <?php foreach($cat_prods as $cp): ?>
+                                    <li><a href="<?php echo get_url('product/' . $cp['slug']); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block"><?php echo htmlspecialchars($cp['name']); ?></a></li>
+                                    <?php endforeach; ?>
                                 <?php endif; ?>
+                                <li><a href="<?php echo get_url('category/' . $cat['slug']); ?>" class="text-[10px] font-black uppercase text-[#19DC7E] hover:underline mt-2 inline-block">View All</a></li>
                             </ul>
                         </div>
                         <?php endforeach; ?>
 
-                         <!-- Highlight (Static Promo or Dynamic Best Seller) -->
+                        <!-- Highlight (Featured Product) -->
+                        <?php 
+                        $highlight = fetch_one("SELECT name, slug, image FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY RAND() LIMIT 1");
+                        if(!$highlight) $highlight = fetch_one("SELECT name, slug, image FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT 1");
+                        
+                        if($highlight):
+                        ?>
                         <div class="bg-[#f0fdf4] rounded-2xl p-6 flex gap-4 items-center border border-[#19DC7E]/20">
                             <div class="flex-1">
-                                <span class="badge bg-[#19DC7E] text-white mb-2 inline-block font-black text-[10px] px-2 py-0.5 rounded">BEST VALUE</span>
-                                <h3 class="text-xl mb-2 font-['Fredoka'] font-black">Grand Hamper</h3>
-                                <a href="<?php echo get_url('shop?q=hamper'); ?>" class="btn-chunky bg-white text-black text-[10px] font-black py-2 px-4 shadow-sm border-2 border-gray-100 hover:border-[#19DC7E] uppercase tracking-widest">View Deal</a>
+                                <span class="badge bg-[#19DC7E] text-white mb-2 inline-block">FEATURED</span>
+                                <h3 class="text-xl mb-2 font-['Fredoka'] line-clamp-2"><?php echo $highlight['name']; ?></h3>
+                                <a href="<?php echo get_url('product/' . $highlight['slug']); ?>" class="btn-chunky bg-white text-black text-[10px] py-2 px-4 shadow-sm border-2 border-gray-100 hover:border-[#19DC7E]">Shop Now</a>
                             </div>
-                            <img src="<?php echo get_url('assets/images/products/hamper.jpg'); ?>" alt="Grand Kashmir Hamper" width="80" height="80" class="w-20 h-20 object-contain rounded-xl mix-blend-multiply bg-white p-1">
+                            <img src="<?php echo get_url(ltrim($highlight['image'], './')); ?>" alt="<?php echo $highlight['name']; ?>" width="80" height="80" class="w-20 h-20 object-contain rounded-xl mix-blend-multiply">
                         </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -242,6 +243,16 @@ run_crons();
                     </a>
                 </li>
             </ul>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="mb-10">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6 block ml-2">Categories</span>
+            <div class="flex flex-wrap gap-2">
+                <?php foreach(get_all_categories() as $cat): ?>
+                    <a href="<?php echo get_url('category/' . $cat['slug']); ?>" class="px-4 py-2 bg-gray-50 rounded-xl text-xs font-bold text-gray-600 hover:bg-[#19DC7E] hover:text-black transition-all"><?php echo htmlspecialchars($cat['name']); ?></a>
+                <?php endforeach; ?>
+            </div>
         </div>
 
         <!-- Account Section -->

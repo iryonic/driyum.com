@@ -115,20 +115,25 @@ if ($query) {
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
                             <div>
                                 <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest mb-3 inline-block">Order #<?php echo $order['order_number']; ?></span>
-                                <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Current Status: <span class="capitalize"><?php echo $order['order_status']; ?></span></h2>
+                                <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Current Status: <span class="capitalize"><?php echo str_replace('_', ' ', $order['order_status']); ?></span></h2>
                             </div>
-                            <?php if(is_admin() || $order['order_status'] === 'delivered'): ?>
-                            <a href="<?php echo get_url('invoice.php?id=' . $order['order_number']); ?>" target="_blank" class="btn-chunky bg-gray-50 text-gray-600 border-none text-xs px-6 py-3 hover:bg-gray-100">
+                            <?php 
+                            $invoice_allowed = is_admin() || in_array($order['order_status'], ['confirmed', 'shipped', 'delivered']);
+                            $invoice_url = get_url('invoice.php?id=' . $order['order_number']);
+                            if ($contact) $invoice_url .= '&contact=' . urlencode($contact);
+                            
+                            if($invoice_allowed): ?>
+                            <a href="<?php echo $invoice_url; ?>" target="_blank" class="btn-chunky bg-[#19DC7E] text-black border-none text-xs px-6 py-3 hover:scale-105 active:scale-95 transition-all">
                                 <i class="fas fa-file-invoice mr-2"></i> Get Invoice
                             </a>
                             <?php else: ?>
                             <div class="flex flex-col items-end">
-                                <button onclick="showToast('Order not delivered yet. Get invoice after delivery.', 'info')" 
-                                        title="Order not delivered yet. Get invoice after delivery."
+                                <button onclick="showToast('Invoice is available once the order is confirmed.', 'info')" 
+                                        title="Order not confirmed yet."
                                         class="btn-chunky bg-gray-50 text-gray-300 border-none text-[10px] px-6 py-3 cursor-pointer opacity-60">
                                     <i class="fas fa-lock mr-2"></i> Invoice Locked
                                 </button>
-                                <span class="text-[8px] font-black text-gray-400 uppercase mt-2">Available after delivery</span>
+                                <span class="text-[8px] font-black text-gray-400 uppercase mt-2">Available after confirmation</span>
                             </div>
                             <?php endif; ?>
                         </div>
