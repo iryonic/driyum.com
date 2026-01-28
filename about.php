@@ -36,7 +36,7 @@ require_once 'includes/functions.php';
                 <div class="w-full md:w-1/2 anim-up px-4">
                     <div class="relative group">
                         <div class="absolute -inset-4 bg-[#19DC7E]/20 rounded-[50px] blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-                        <img src="<?php echo get_url('assets/images/about_story.jpg'); ?>" alt="Our Story" onerror="this.src='https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?q=80&w=1000&auto=format&fit=crop'" class="relative rounded-[40px] w-full h-[350px] md:h-[500px] object-cover shadow-2xl transform group-hover:scale-[1.02] -rotate-1 md:-rotate-2 group-hover:rotate-0 transition-all duration-700">
+                        <img src="<?php echo get_url(get_setting('about_story_image', 'assets/images/about_story.jpg')); ?>" alt="Our Story" onerror="this.src='./assets/images/about_story.jpg'" class="relative rounded-[40px] w-full h-[350px] md:h-[500px] object-cover shadow-2xl transform group-hover:scale-[1.02] -rotate-1 md:-rotate-2 group-hover:rotate-0 transition-all duration-700">
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 space-y-8 anim-up delay-200">
@@ -77,7 +77,7 @@ require_once 'includes/functions.php';
                 <div class="order-1 md:order-2 anim-up delay-200 px-4">
                     <div class="relative group">
                          <div class="absolute inset-0 bg-amber-400/20 rounded-[50px] rotate-6 scale-95 blur-xl group-hover:rotate-0 transition-transform duration-500"></div>
-                         <img src="<?php echo get_url('assets/images/tradition.jpg'); ?>" alt="Heritage" onerror="this.src='https://images.unsplash.com/photo-1543362906-acfc16c623a2?q=80&w=1000&auto=format&fit=crop'" class="relative rounded-[50px] w-full h-[400px] md:h-[600px] object-cover shadow-2xl transition hover:scale-[1.01]">
+                         <img src="<?php echo get_url(get_setting('about_tradition_image', 'assets/images/tradition.jpg')); ?>" alt="Heritage" onerror="this.src='./assets/images/tradition.jpg'" class="relative rounded-[50px] w-full h-[400px] md:h-[600px] object-cover shadow-2xl transition hover:scale-[1.01]">
                          
                          <!-- Floating Badge -->
                          <div class="absolute -bottom-10 -left-10 bg-white p-6 rounded-[30px] shadow-2xl border-4 border-[#FFFBEB] transform -rotate-6 hidden md:block">

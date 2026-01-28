@@ -22,7 +22,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pages'])) {
             update_setting($key, $_POST[$key]);
         }
     }
-    $success = "Page contents updated successfully!";
+    // Handle Image Uploads
+    $image_fields = ['about_story_image', 'about_tradition_image'];
+    foreach ($image_fields as $field) {
+        if (isset($_FILES[$field]) && $_FILES[$field]['error'] === 0) {
+            $target_dir = "../assets/images/uploads/";
+            if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+            
+            $filename = "page_" . uniqid() . "_" . basename($_FILES[$field]["name"]);
+            if (move_uploaded_file($_FILES[$field]["tmp_name"], $target_dir . $filename)) {
+                $path = "assets/images/uploads/" . $filename;
+                
+                // Delete old file if it exists and is an upload
+                $old_path = get_setting($field, '');
+                if (!empty($old_path) && strpos($old_path, 'assets/images/uploads/') === 0) {
+                    if (file_exists("../" . $old_path)) @unlink("../" . $old_path);
+                }
+                
+                update_setting($field, $path);
+            }
+        }
+    }
+
+    $success = "Page contents and visuals updated successfully!";
 }
 
 // Fetch Current Settings
@@ -48,7 +70,9 @@ $p = [
     'legal_privacy_policy' => get_setting('legal_privacy_policy', "At Driyum, we value your privacy and are committed to protecting your personal information. When you visit our website or place an order, we may collect basic details such as your name, phone number, email address, delivery address, and payment-related information.\n\nThis information is collected solely for the purpose of processing orders, providing customer support, and improving our services. We do not sell, rent, or share your personal data with third parties, except where required to complete your order (such as payment gateways and delivery partners) or when required by law."),
     'legal_terms_conditions' => get_setting('legal_terms_conditions', "By accessing and using the Driyum website, you agree to comply with these terms and conditions.\n\nAll products sold by Driyum are food products. Dehydrated fruits are intended for direct consumption, while dehydrated vegetables are intended for cooking purposes only. Product images shown on the website are for representation purposes only. Actual product colour, size, and texture may vary due to natural variations in fruits and vegetables."),
     'legal_returns_refunds' => get_setting('legal_returns_refunds', "Due to the nature of food products, returns are not accepted once an order has been delivered. Refunds may be considered only in special cases, including damaged packaging or unsealed pouches. To request a refund, customers are required to share a clear unboxing video of the package."),
-    'legal_disclaimer' => get_setting('legal_disclaimer', "Driyum products are made using natural fruits and vegetables. As these are agricultural products, variations in colour, taste, texture, and appearance may occur. Nutritional values are approximate. Consult a professional before consumption if you have medical conditions.")
+    'legal_disclaimer' => get_setting('legal_disclaimer', "Driyum products are made using natural fruits and vegetables. As these are agricultural products, variations in colour, taste, texture, and appearance may occur. Nutritional values are approximate. Consult a professional before consumption if you have medical conditions."),
+    'about_story_image' => get_setting('about_story_image', 'assets/images/about_story.jpg'),
+    'about_tradition_image' => get_setting('about_tradition_image', 'assets/images/tradition.jpg')
 ];
 ?>
 
@@ -70,7 +94,7 @@ $p = [
         </div>
     <?php endif; ?>
 
-    <form method="POST" class="space-y-12">
+    <form method="POST" enctype="multipart/form-data" class="space-y-12">
         <input type="hidden" name="update_pages" value="1">
 
         <!-- TAB NAVIGATION -->
@@ -107,10 +131,20 @@ $p = [
 
             <!-- Brand Story -->
             <div class="bg-white rounded-[48px] p-10 shadow-sm border border-gray-100">
-                <h3 class="font-black text-gray-900 text-xl fredoka mb-8 flex items-center gap-3">
-                    <span class="w-10 h-10 bg-[#19DC7E]/10 text-[#19DC7E] rounded-xl flex items-center justify-center text-sm"><i class="fas fa-book-open"></i></span>
-                    Brand Story
-                </h3>
+                    <div class="flex items-center justify-between gap-4 mb-8">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 bg-[#19DC7E]/10 text-[#19DC7E] rounded-xl flex items-center justify-center text-sm"><i class="fas fa-book-open"></i></span>
+                            <h3 class="font-black text-gray-900 text-xl fredoka">Brand Story</h3>
+                        </div>
+                        <label class="cursor-pointer bg-gray-50 hover:bg-black hover:text-[#19DC7E] text-gray-500 px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-gray-100 italic">
+                            Change Story Image
+                            <input type="file" name="about_story_image" class="hidden" onchange="this.form.submit()">
+                        </label>
+                    </div>
+                    <div class="mb-8 relative group max-w-sm">
+                        <img src="../<?php echo $p['about_story_image']; ?>" class="rounded-3xl h-40 w-full object-cover shadow-inner opacity-80">
+                        <div class="absolute inset-0 bg-black/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">Current Visual</div>
+                    </div>
                 <div class="space-y-8">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Story Heading</label>
@@ -131,10 +165,19 @@ $p = [
 
             <!-- Heritage Section -->
             <div class="bg-gray-900 rounded-[48px] p-10 shadow-sm text-white">
-                <h3 class="font-black text-white text-xl fredoka mb-8 flex items-center gap-3">
-                    <span class="w-10 h-10 bg-white/10 text-white rounded-xl flex items-center justify-center text-sm"><i class="fas fa-history"></i></span>
-                    Tradition & Heritage
-                </h3>
+                    <div class="flex items-center justify-between gap-4 mb-8">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 bg-white/10 text-white rounded-xl flex items-center justify-center text-sm"><i class="fas fa-history"></i></span>
+                            <h3 class="font-black text-white text-xl fredoka">Tradition & Heritage</h3>
+                        </div>
+                        <label class="cursor-pointer bg-white/10 hover:bg-white hover:text-black text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border border-white/5 italic">
+                            Change Heritage Image
+                            <input type="file" name="about_tradition_image" class="hidden" onchange="this.form.submit()">
+                        </label>
+                    </div>
+                    <div class="mb-8 relative group max-w-sm">
+                        <img src="../<?php echo $p['about_tradition_image']; ?>" class="rounded-3xl h-40 w-full object-cover shadow-inner opacity-50">
+                    </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <div class="space-y-6">
                         <div class="space-y-2">
