@@ -72,37 +72,42 @@ run_crons();
                 <!-- MEGA MENU CONTENT -->
                 <div class="mega-menu">
                     <div class="container mx-auto grid grid-cols-4 gap-8">
+                        <?php 
+                        // Fetch top 3 parent categories
+                        $nav_cats = fetch_all("SELECT * FROM categories WHERE is_active = 1 AND parent_id IS NULL ORDER BY sort_order ASC, id DESC LIMIT 3");
+                        foreach($nav_cats as $nc):
+                        ?>
                         <div>
-                            <h4 class="text-[#19DC7E] mb-4 text-lg font-['Fredoka']">Fruits</h4>
+                            <h4 class="text-[#19DC7E] mb-4 text-lg font-['Fredoka']">
+                                <a href="<?php echo get_url('category/' . $nc['slug']); ?>" class="hover:underline"><?php echo htmlspecialchars($nc['name']); ?></a>
+                            </h4>
                             <ul class="space-y-2 font-['Outfit'] text-gray-500">
-                                <li><a href="<?php echo get_url('category/fruit-snacks?q=apple'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Kashmiri Apple</a></li>
-                                <li><a href="<?php echo get_url('category/fruit-snacks?q=kiwi'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Premium Kiwi</a></li>
-                                <li><a href="<?php echo get_url('category/fruit-snacks?q=banana'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Dried Banana</a></li>
+                                <?php 
+                                // Dynamic Sub-items: Fetch up to 3 products for this category
+                                $nav_prods = fetch_all("SELECT name, slug FROM products WHERE category_id = ? AND is_active = 1 LIMIT 3", [$nc['id']]);
+                                if(count($nav_prods) > 0):
+                                    foreach($nav_prods as $np):
+                                ?>
+                                    <li><a href="<?php echo get_url('product/' . $np['slug']); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block"><?php echo htmlspecialchars($np['name']); ?></a></li>
+                                <?php 
+                                    endforeach;
+                                else:
+                                    // Fallback if no products
+                                ?>
+                                    <li><a href="<?php echo get_url('shop?category=' . $nc['slug']); ?>" class="hover:text-black italic">Shop all <?php echo htmlspecialchars($nc['name']); ?></a></li>
+                                <?php endif; ?>
                             </ul>
                         </div>
-                        <div>
-                            <h4 class="text-[#19DC7E] mb-4 text-lg font-['Fredoka']">Vegetable</h4>
-                            <ul class="space-y-2 font-['Outfit'] text-gray-500">
-                                <li><a href="<?php echo get_url('category/hokh-suin?q=al-hach'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Al Hach (Bottle Gourd)</a></li>
-                                <li><a href="<?php echo get_url('category/hokh-suin?q=vangan-hach'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Vangan Hach (Brinjal)</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="text-[#19DC7E] mb-4 text-lg font-['Fredoka']">Combos</h4>
-                            <ul class="space-y-2 font-['Outfit'] text-gray-500">
-                                <li><a href="<?php echo get_url('category/combos'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Value 3-Packs</a></li>
-                                <li><a href="<?php echo get_url('category/combos?q=mix'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Mixed Fruit Packs</a></li>
-                                <li><a href="<?php echo get_url('category/combos?q=hamper'); ?>" class="hover:text-black hover:translate-x-1 transition-transform inline-block">Grand Kashmir Hamper</a></li>
-                            </ul>
-                        </div>
-                         <!-- Highlight -->
+                        <?php endforeach; ?>
+
+                         <!-- Highlight (Static Promo or Dynamic Best Seller) -->
                         <div class="bg-[#f0fdf4] rounded-2xl p-6 flex gap-4 items-center border border-[#19DC7E]/20">
                             <div class="flex-1">
-                                <span class="badge bg-[#19DC7E] text-white mb-2 inline-block">BEST VALUE</span>
-                                <h3 class="text-xl mb-2 font-['Fredoka']">The Grand Hamper</h3>
-                                <a href="<?php echo get_url('product/grand-kashmir-hamper'); ?>" class="btn-chunky bg-white text-black text-[10px] py-2 px-4 shadow-sm border-2 border-gray-100 hover:border-[#19DC7E]">All in One</a>
+                                <span class="badge bg-[#19DC7E] text-white mb-2 inline-block font-black text-[10px] px-2 py-0.5 rounded">BEST VALUE</span>
+                                <h3 class="text-xl mb-2 font-['Fredoka'] font-black">Grand Hamper</h3>
+                                <a href="<?php echo get_url('shop?q=hamper'); ?>" class="btn-chunky bg-white text-black text-[10px] font-black py-2 px-4 shadow-sm border-2 border-gray-100 hover:border-[#19DC7E] uppercase tracking-widest">View Deal</a>
                             </div>
-                            <img src="<?php echo get_url('assets/images/products/hamper.jpg'); ?>" alt="Grand Kashmir Hamper" width="80" height="80" class="w-20 h-20 object-contain rounded-xl mix-blend-multiply">
+                            <img src="<?php echo get_url('assets/images/products/hamper.jpg'); ?>" alt="Grand Kashmir Hamper" width="80" height="80" class="w-20 h-20 object-contain rounded-xl mix-blend-multiply bg-white p-1">
                         </div>
                     </div>
                 </div>
