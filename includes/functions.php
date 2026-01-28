@@ -1239,8 +1239,8 @@ function run_crons() {
     $last_run = get_setting('last_cron_run', 0);
     $now = time();
     
-    // Run every 30 minutes
-    if ($now - $last_run > 1800) {
+    // Run every 5 minutes
+    if ($now - $last_run > 300) {
         update_setting('last_cron_run', $now);
         
         // Use a more reliable path for the cron script
