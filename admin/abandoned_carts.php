@@ -5,8 +5,12 @@ require_once '../includes/functions.php';
 // Handle Action
 if (isset($_GET['mark_reminded'])) {
     $id = (int)$_GET['mark_reminded'];
-    execute_query("UPDATE abandoned_carts SET is_reminded = 1 WHERE id = ?", [$id]);
-    $_SESSION['success'] = "Cart marked as reminded.";
+    if (send_abandoned_cart_reminder($id)) {
+        execute_query("UPDATE abandoned_carts SET is_reminded = 1 WHERE id = ?", [$id]);
+        $_SESSION['success'] = "Recovery email sent and status updated!";
+    } else {
+        $_SESSION['error'] = "Failed to send recovery email. Please check your SMTP settings.";
+    }
     header('Location: abandoned_carts.php');
     exit;
 }

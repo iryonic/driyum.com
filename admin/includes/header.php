@@ -219,6 +219,21 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     </aside>
 
     <main class="admin-content">
+        <!-- Flash Messages -->
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl font-bold flex items-center gap-3 anim-up shadow-sm">
+                <i class="fas fa-check-circle"></i>
+                <span><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></span>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl font-bold flex items-center gap-3 anim-up shadow-sm">
+                <i class="fas fa-exclamation-circle"></i>
+                <span><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></span>
+            </div>
+        <?php endif; ?>
+
         <header class="mb-12 relative z-50">
             <div class="flex flex-row  justify-between items-center gap-6 bg-white/50 backdrop-blur-md p-6 rounded-[35px] border border-gray-100 shadow-sm">
                 <!-- Global Omni-Search -->
