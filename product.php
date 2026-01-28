@@ -662,7 +662,16 @@ if (isset($_SESSION['user_id'])) {
             document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('thumb-active'));
             if(thumb) {
                 thumb.classList.add('thumb-active');
-                thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                
+                // Fix: Scroll only the container, not the whole page
+                const container = thumb.parentElement;
+                const thumbRect = thumb.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                
+                // Calculate offset to center the thumb
+                const offset = (thumbRect.left + thumbRect.width / 2) - (containerRect.left + containerRect.width / 2);
+                
+                container.scrollBy({ left: offset, behavior: 'smooth' });
             }
         }, 200);
 
