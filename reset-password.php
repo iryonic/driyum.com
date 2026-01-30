@@ -8,17 +8,12 @@ $error = '';
 $success = '';
 
 // Verify Token
-$reset_request = fetch_one("SELECT * FROM password_resets WHERE token = ?", [$token]);
+$reset_request = fetch_one("SELECT *, (created_at < NOW() - INTERVAL 1 HOUR) as is_expired FROM password_resets WHERE token = ?", [$token]);
 
 if (!$reset_request) {
-    $error = "This reset link is invalid or has expired.";
-} else {
-    // Check if token is older than 1 hour
-    $created_at = strtotime($reset_request['created_at']);
-    if (time() - $created_at > 3600) {
-        execute_query("DELETE FROM password_resets WHERE token = ?", [$token]);
-        $error = "This reset link has expired. Please request a new one.";
-    }
+    $error = "This reset link is invalid or has already been used.";
+} elseif ($reset_request['is_expired']) {
+    $error = "This reset link has expired. Please request a new one.";
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
