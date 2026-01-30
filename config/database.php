@@ -14,6 +14,10 @@ if ($host == 'localhost' || $host == '127.0.0.1') {
     define('DB_PASS', 'DriyuM@1234');
     define('DB_NAME', 'u167160735_driyum');
     
+    // Security: Hide errors in production
+    error_reporting(0);
+    ini_set('display_errors', 0);
+    
     // Mail Configuration (SMTP)
     define('MAIL_HOST', 'smtp.hostinger.com');
     define('MAIL_USER', 'contact@driyum.com');
@@ -59,6 +63,9 @@ function get_db_connection() {
         
         // Set charset to UTF-8
         mysqli_set_charset($conn, "utf8mb4");
+
+        // Set Timezone for current session (to match PHP)
+        mysqli_query($conn, "SET time_zone = '+05:30'");
     }
     
     return $conn;
