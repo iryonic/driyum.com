@@ -584,7 +584,7 @@ function send_order_status_email($order_id, $status) {
     $status_messages = [
         'confirmed' => "Good news! Your order has been confirmed and our team is currently packing your snacks with care.",
         'shipped' => "Exciting news! Your order is on its way. It has been dispatched and is currently in transit.",
-        'delivered' => "Ding Dong! Your order has been delivered. We hope you enjoy your delicious Driyum snacks!",
+        'delivered' => "Ding Dong! Your order has been delivered. We hope you enjoy your delicious Driyum snacks! Your order invoice details are provided below.",
         'cancelled' => "Your order has been cancelled. If you have any questions, please contact our support team."
     ];
 
@@ -603,6 +603,49 @@ function send_order_status_email($order_id, $status) {
         ";
     }
 
+    // Invoice details for delivered status
+    $invoice_html = "";
+    if (strtolower($status) === 'delivered') {
+        $items = fetch_all("SELECT oi.*, p.name FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?", [$order_id]);
+        $items_list = "";
+        foreach ($items as $item) {
+            $items_list .= "
+                <tr>
+                    <td style='padding: 10px; border-bottom: 1px solid #eee; font-size: 14px;'>{$item['name']} x {$item['quantity']}</td>
+                    <td style='padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; text-align: right;'>₹" . number_format($item['price'] * $item['quantity'], 2) . "</td>
+                </tr>";
+        }
+
+        $invoice_html = "
+            <div style='margin-top: 30px; padding: 25px; background: #F9FAFB; border-radius: 20px; border: 1px solid #E5E7EB;'>
+                <p style='margin: 0 0 15px 0; font-size: 10px; font-weight: 900; color: #374151; text-transform: uppercase; letter-spacing: 0.1em;'>Order Invoice Summary</p>
+                <table style='width: 100%; border-collapse: collapse;'>
+                    {$items_list}
+                    <tr>
+                        <td style='padding: 15px 10px 5px 10px; font-weight: bold; font-size: 14px;'>Subtotal</td>
+                        <td style='padding: 15px 10px 5px 10px; font-weight: bold; font-size: 14px; text-align: right;'>₹" . number_format($order['subtotal'], 2) . "</td>
+                    </tr>
+                    " . ($order['discount'] > 0 ? "
+                    <tr>
+                        <td style='padding: 5px 10px; font-size: 14px; color: #10B981;'>Discount</td>
+                        <td style='padding: 5px 10px; font-size: 14px; color: #10B981; text-align: right;'>- ₹" . number_format($order['discount'], 2) . "</td>
+                    </tr>" : "") . "
+                    <tr>
+                        <td style='padding: 5px 10px; font-size: 14px;'>Shipping</td>
+                        <td style='padding: 5px 10px; font-size: 14px; text-align: right;'>₹" . number_format($order['shipping_cost'], 2) . "</td>
+                    </tr>
+                    <tr>
+                        <td style='padding: 10px; border-top: 2px solid #374151; font-weight: 900; font-size: 16px;'>Grand Total</td>
+                        <td style='padding: 10px; border-top: 2px solid #374151; font-weight: 900; font-size: 16px; text-align: right; color: #19DC7E;'>₹" . number_format($order['total'], 2) . "</td>
+                    </tr>
+                </table>
+                <div style='margin-top: 20px; text-align: center;'>
+                    <a href='" . FULL_BASE_URL . "invoice.php?id={$order['order_number']}&contact={$to}' style='font-size: 11px; font-weight: 900; color: #19DC7E; text-decoration: none; text-transform: uppercase;'>View Full Professional Invoice &rarr;</a>
+                </div>
+            </div>
+        ";
+    }
+
     $email_content = "
         <div style='font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.05);'>
             <div style='background-color: #000; padding: 50px 40px; text-align: center;'>
@@ -610,10 +653,11 @@ function send_order_status_email($order_id, $status) {
                 <h1 style='color: #fff; margin: 0; font-size: 32px; font-weight: 900;'>{$status_title}</h1>
             </div>
             <div style='padding: 40px; color: #333; line-height: 1.6;'>
-                <p stylealso='font-size: 18px; font-weight: bold; margin-bottom: 10px;'>Hi " . ($addr['name'] ?? 'Snacker') . ",</p>
+                <p style='font-size: 18px; font-weight: bold; margin-bottom: 10px;'>Hi " . ($addr['name'] ?? 'Snacker') . ",</p>
                 <p style='color: #666;'>{$message_body}</p>
                 
                 {$tracking_html}
+                {$invoice_html}
 
                 <div style='margin-top: 40px; text-align: center;'>
                     <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
