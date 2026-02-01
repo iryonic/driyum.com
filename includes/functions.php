@@ -658,10 +658,10 @@ function send_order_status_email($order_id, $status) {
                 
                 {$tracking_html}
                 {$invoice_html}
-
+" . (strtolower($status) !== 'delivered' ? "
                 <div style='margin-top: 40px; text-align: center;'>
                     <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
-                </div>
+                </div>" : "") . "
 
                 <div style='margin-top: 50px; border-top: 1px solid #f0f0f0; padding-top: 30px;'>
                     <div style='display: flex; justify-content: space-between; align-items: center;'>
