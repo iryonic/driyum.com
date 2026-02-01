@@ -164,7 +164,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <div>
                     <div class="flex justify-between items-end mb-8">
                         <div>
-                            <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Your Activity.</h2>
+                            <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Your Orders.</h2>
                             <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-1">Most recent orders & history</p>
                         </div>
                     </div>
