@@ -105,11 +105,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $conn->close();
     
     // Trigger Background Process
-    $script_path = realpath(__DIR__ . '/../process_queue.php');
-    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        pclose(popen("start /B php \"$script_path\"", "r"));
+    // Absolute path is safer
+    $script_path = __DIR__ . '/../process_queue.php';
+
+    if (file_exists($script_path)) {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            pclose(popen("start /B php \"$script_path\"", "r"));
+        } else {
+             // Linux Production
+             // Use nohup or simple &
+            exec("php \"$script_path\" > /dev/null 2>&1 &");
+        }
     } else {
-        exec("php \"$script_path\" > /dev/null 2>&1 &");
+         error_log("Queue Error: process_queue.php not found at $script_path");
     }
 
     $_SESSION['success'] = "Emails have been queued for sending to $queued_count subscribers. Delivery will happen in the background.";
