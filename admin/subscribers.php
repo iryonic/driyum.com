@@ -77,15 +77,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $stmt->execute();
     $result = $stmt->get_result();
     
-    // ... send logic ...
-    $count = 0;
+    // Batch Insert into Queue to be instant
+    $insert_sql = "INSERT INTO email_queue (to_email, subject, body, status) VALUES (?, ?, ?, 'pending')";
+    $insert_stmt = $conn->prepare($insert_sql);
+    
+    $queued_count = 0;
+    
+    // Disable autocommit for speed
+    $conn->autocommit(FALSE);
+    
     while ($row = $result->fetch_assoc()) {
-        if (send_email($row['email'], $subject, $body)) {
-            $count++;
-        }
+        $insert_stmt->bind_param("sss", $row['email'], $subject, $body);
+        $insert_stmt->execute();
+        $queued_count++;
     }
+    
+    $conn->commit();
+    $conn->autocommit(TRUE);
+    
     $conn->close();
-    $_SESSION['success'] = "Email sent successfully to $count subscribers.";
+    
+    // Trigger Background Process
+    $script_path = realpath(__DIR__ . '/../process_queue.php');
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        pclose(popen("start /B php \"$script_path\"", "r"));
+    } else {
+        exec("php \"$script_path\" > /dev/null 2>&1 &");
+    }
+
+    $_SESSION['success'] = "Emails have been queued for sending to $queued_count subscribers. Delivery will happen in the background.";
     header("Location: subscribers.php" . ($search ? "?q=$search" : ""));
     exit;
 }
@@ -259,7 +279,7 @@ $subscribers = $pagination['records'];
                 <div class="pt-4 flex justify-end gap-4">
                     <button type="button" onclick="closeEmailModal()" class="px-8 py-4 rounded-2xl font-bold bg-gray-100 text-gray-500 hover:bg-gray-200 transition">Cancel</button>
                     <button type="submit" class="px-10 py-4 rounded-2xl font-black bg-[#19DC7E] text-[#111827] shadow-lg hover:scale-105 transition-transform flex items-center gap-3">
-                        <i class="fas fa-paper-plane"></i> Send Blast
+                        <i class="fas fa-paper-plane"></i> Send Email
                     </button>
                 </div>
             </div>
