@@ -38,6 +38,10 @@ if (isset($_GET['toggle'])) {
 
 // Handle Bulk Email
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'bulk_email') {
+    // Prevent timeout for large lists
+    set_time_limit(0); 
+    ignore_user_abort(true);
+
     $conn = get_db_connection();
     $ids = $_POST['selected_ids'] ?? [];
     $subject = sanitize_input($_POST['subject']);

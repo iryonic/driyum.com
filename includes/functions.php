@@ -73,10 +73,17 @@ function send_email($to, $subject, $message) {
     // Determine domain
     $domain = parse_url(FULL_BASE_URL, PHP_URL_HOST) ?: ($_SERVER['HTTP_HOST'] ?? 'driyum.com');
     
-    // If on localhost and no SMTP config, fallback to mail()
+    // If on localhost and no SMTP config, fallback to mail() with improved headers
     if (($domain === 'localhost' || $domain === '127.0.0.1') && !defined('MAIL_HOST')) {
-        $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Driyum <noreply@driyum.com>";
-        return @mail($to, $subject, $message, $headers);
+        $from = 'contact@driyum.com';
+        $headers  = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8\r\n";
+        $headers .= "From: Driyum <$from>\r\n";
+        $headers .= "Reply-To: $from\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+        
+        // The '-f' parameter is CRITICAL for passing SPF checks on some systems
+        return @mail($to, $subject, $message, $headers, "-f$from");
     }
 
     // Use PHPMailer
@@ -92,6 +99,11 @@ function send_email($to, $subject, $message) {
         $mail->Password   = defined('MAIL_PASS') ? MAIL_PASS : ''; 
         $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS; 
         $mail->Port       = defined('MAIL_PORT') ? MAIL_PORT : 465;
+        
+        // Anti-Spam & Reliability Settings
+        $mail->CharSet = 'UTF-8';
+        $mail->Encoding = 'base64';
+        $mail->Sender = $mail->Username; // Sets the 'Return-Path' header for SPF alignment
 
         // Recipients
         $mail->setFrom($mail->Username, 'Driyum');
@@ -107,10 +119,17 @@ function send_email($to, $subject, $message) {
         $mail->send();
         return true;
     } catch (Exception $e) {
-        // Log error and fallback to mail() as last resort
+        // Log error and fallback to mail() as last resort with robust headers
         error_log("PHPMailer Error: " . $mail->ErrorInfo);
-        $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\nFrom: Driyum <contact@driyum.com>";
-        return @mail($to, $subject, $message, $headers);
+        
+        $from = 'contact@driyum.com';
+        $headers  = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8\r\n";
+        $headers .= "From: Driyum <$from>\r\n";
+        $headers .= "Reply-To: $from\r\n";
+        $headers .= "X-Mailer: DriyumSystem/1.0";
+        
+        return @mail($to, $subject, $message, $headers, "-f$from");
     }
 }
 
