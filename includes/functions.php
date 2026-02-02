@@ -1376,3 +1376,45 @@ function render_pagination($total_pages, $current_page) {
     $html .= '</div>';
     return $html;
 }
+
+// -------------------------------------------------------------------------
+// GLOBAL MAINTENANCE MODE CHECK
+// -------------------------------------------------------------------------
+if (function_exists('get_setting') && !defined('MAINTENANCE_CHECK_RUN')) {
+    define('MAINTENANCE_CHECK_RUN', true);
+    
+    // Safety check: ensure DB is connected (get_setting relies on it)
+    // If get_setting fails (e.g. returns null because table missing), we default to 'off' inside it? 
+    // get_setting returns default if fetch_one returns false?
+    // fetch_one relies on execute_query -> get_db_connection.
+    // So if DB is down, this might throw. But if DB is down, site is down anyway.
+
+    $g_maintenance = get_setting('maintenance_mode', 'off');
+
+    if ($g_maintenance === 'on') {
+        // Check if user is admin (bypass everything)
+        $g_is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1;
+
+        if (!$g_is_admin) {
+            $g_script = basename($_SERVER['PHP_SELF']);
+            $g_uri = $_SERVER['REQUEST_URI'];
+            
+            // Allow admin access based on URL if not logged in (to see login page)
+            // But login.php is explicitly allowed.
+            // Admin folder usually protected by require_login/require_admin in their files.
+            
+            $g_allowed = (
+                $g_script === 'maintenance.php' || 
+                $g_script === 'login.php' ||
+                str_contains($g_uri, '/admin') || // Simple check for admin path
+                str_contains($g_uri, '/api')      // API access
+            );
+
+            if (!$g_allowed) {
+                header("Location: " . get_url('maintenance.php'));
+                exit;
+            }
+        }
+    }
+}
+

@@ -20,12 +20,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         'maintenance_mode',
         'footer_description',
         'order_prefix',
-        'seo_description'
+        'seo_description',
+        'maintenance_headline',
+        'maintenance_description',
+        'maintenance_progress',
+        'maintenance_status_label',
+        'maintenance_mode_text',
+		'maintenance_image'
     ];
 
     $error_found = false;
     foreach ($settings_to_update as $key) {
-        $val = sanitize_input($_POST[$key] ?? '');
+        $raw_val = $_POST[$key] ?? '';
+
+        // Strict Sanitization for Headline (No HTML or Tailwind classes)
+        if ($key === 'maintenance_headline') {
+            $raw_val = strip_tags($raw_val);
+        }
+
+        $val = sanitize_input($raw_val);
         
         // Validation for numeric fields
         if (in_array($key, ['tax_percentage', 'free_shipping_threshold']) && !empty($val) && !is_numeric($val)) {
@@ -36,8 +49,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         
         update_setting($key, $val);
     }
+
+    // Handle File Upload for Maintenance Image
+    if (isset($_FILES['maintenance_image_file']) && $_FILES['maintenance_image_file']['error'] === UPLOAD_ERR_OK) {
+        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
+        $filename = $_FILES['maintenance_image_file']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if (in_array($ext, $allowed)) {
+            $upload_dir = '../assets/uploads/';
+            if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+            
+            $new_name = 'maintenance_' . time() . '.' . $ext;
+            $dest = $upload_dir . $new_name;
+            
+            if (move_uploaded_file($_FILES['maintenance_image_file']['tmp_name'], $dest)) {
+                $db_path = 'assets/uploads/' . $new_name;
+                update_setting('maintenance_image', $db_path);
+            } else {
+                $error = "Failed to move uploaded file.";
+            }
+        } else {
+            $error = "Invalid file type. Only JPG, PNG, WEBP allowed.";
+        }
+    }
     
-    if (!$error_found) {
+    if (!$error_found && empty($error)) {
         $success = "Global configurations updated successfully!";
     }
 }
@@ -57,7 +94,13 @@ $s = [
     'maintenance' => get_setting('maintenance_mode', 'off'),
     'footer_desc' => get_setting('footer_description', 'Redefining the art of snacking with premium, sun-dried indulgence. Naturally sweet, unapologetically bold.'),
     'order_prefix' => get_setting('order_prefix', 'DRY-'),
-    'seo_desc' => get_setting('seo_description', 'Premium sun-dried snacks and organic delicacies from Kashmir.')
+    'seo_desc' => get_setting('seo_description', 'Premium sun-dried snacks and organic delicacies from Kashmir.'),
+    'm_headline' => get_setting('maintenance_headline', 'System Update <br><span class="text-[#19DC7E]">In Progress.</span>'),
+    'm_desc' => get_setting('maintenance_description', "We're performing scheduled maintenance to improve your experience.\nThings will be back and better than ever very soon."),
+    'm_progress' => get_setting('maintenance_progress', '80'),
+    'm_status' => get_setting('maintenance_status_label', 'System Optimization'),
+    'm_mode_text' => get_setting('maintenance_mode_text', 'Maintenance Mode'),
+    'm_image' => get_setting('maintenance_image', 'assets/images/hero.jpg')
 ];
 ?>
 
@@ -95,7 +138,7 @@ $s = [
         </div>
     <?php endif; ?>
 
-    <form method="POST" class="space-y-12">
+    <form method="POST" class="space-y-12" enctype="multipart/form-data">
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
@@ -201,6 +244,57 @@ $s = [
                     <div class="space-y-2">
                         <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Pinterest URL</label>
                         <input type="text" name="pinterest_url" value="<?php echo $s['pinterest']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-red-500 focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAINTENANCE CONFIG -->
+            <div class="bg-gray-900 rounded-[48px] p-10 shadow-xl border border-gray-800 lg:col-span-3 text-white overflow-hidden relative">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                
+                <div class="flex items-center gap-4 mb-10 pb-6 border-b border-gray-800 relative z-10">
+                    <div class="w-12 h-12 bg-gray-800 text-[#19DC7E] rounded-2xl flex items-center justify-center shadow-inner"><i class="fas fa-hammer"></i></div>
+                    <div>
+                        <h3 class="font-black text-white text-lg fredoka">Maintenance Aesthetics</h3>
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Customize the look of your lock screen</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+                    <div class="space-y-6 lg:col-span-2">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Headline</label>
+                            <input type="text" name="maintenance_headline" value="<?php echo htmlspecialchars($s['m_headline']); ?>" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white placeholder-gray-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Description</label>
+                            <textarea name="maintenance_description" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[32px] px-6 py-6 outline-none transition-all font-medium h-32 resize-none text-white shadow-inner placeholder-gray-600"><?php echo htmlspecialchars($s['m_desc']); ?></textarea>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Progress (%)</label>
+                            <input type="number" name="maintenance_progress" value="<?php echo $s['m_progress']; ?>" min="0" max="100" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white text-center text-2xl placeholder-gray-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Status Label</label>
+                            <input type="text" name="maintenance_status_label" value="<?php echo htmlspecialchars($s['m_status']); ?>" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white placeholder-gray-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Mode Badge Text</label>
+                            <input type="text" name="maintenance_mode_text" value="<?php echo htmlspecialchars($s['m_mode_text']); ?>" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white placeholder-gray-600">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Hero Image</label>
+                            <input type="file" name="maintenance_image_file" accept=".jpg,.jpeg,.png,.webp" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] text-white rounded-[20px] px-4 py-3 outline-none transition-all font-bold text-sm">
+                            <input type="hidden" name="maintenance_image" value="<?php echo htmlspecialchars($s['m_image']); ?>">
+                            <?php if(!empty($s['m_image'])): ?>
+                                <div class="mt-2 ml-4">
+                                     <p class="text-[9px] text-gray-400 mb-1">Current Image:</p>
+                                     <img src="../<?php echo $s['m_image']; ?>" class="h-16 w-16 object-cover rounded-lg border border-gray-600">
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
