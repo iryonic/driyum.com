@@ -104,20 +104,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     
     $conn->close();
     
-    // Trigger Background Process
-    // Absolute path is safer
-    $script_path = __DIR__ . '/../process_queue.php';
+    // Trigger Background Process via Non-Blocking HTTP Request
+    // This is much safer on shared hosting than exec()
+    $queueUrl = defined('FULL_BASE_URL') 
+        ? FULL_BASE_URL . '/process_queue.php' 
+        : (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]/process_queue.php";
 
-    if (file_exists($script_path)) {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            pclose(popen("start /B php \"$script_path\"", "r"));
-        } else {
-             // Linux Production
-             // Use nohup or simple &
-            exec("php \"$script_path\" > /dev/null 2>&1 &");
-        }
+    $parts = parse_url($queueUrl);
+    $host = $parts['host'];
+    $scheme = $parts['scheme'] ?? 'http';
+    $port = $parts['port'] ?? ($scheme === 'https' ? 443 : 80);
+    $path = $parts['path'] . ($parts['query'] ?? '');
+    
+    // Open connection
+    $fp = @fsockopen(
+        ($scheme === 'https' ? "ssl://" : "") . $host, 
+        $port, 
+        $errno, 
+        $errstr, 
+        5 // Short timeout for connection
+    );
+    
+    if ($fp) {
+        // Send Headers
+        $out = "GET $path HTTP/1.1\r\n";
+        $out .= "Host: $host\r\n";
+        $out .= "Connection: Close\r\n\r\n";
+        fwrite($fp, $out);
+        fclose($fp);
     } else {
-         error_log("Queue Error: process_queue.php not found at $script_path");
+        // Log if trigger failed, but don't stop execution
+        error_log("Queue Trigger Failed: $errstr ($errno)");
     }
 
     $_SESSION['success'] = "Emails have been queued for sending to $queued_count subscribers. Delivery will happen in the background.";
