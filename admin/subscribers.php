@@ -82,7 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $insert_stmt = $conn->prepare($insert_sql);
     
     if (!$insert_stmt) {
-        // Table likely missing, handle gracefully
         $_SESSION['error'] = "Error: 'email_queue' table missing. Please run setup_queue.php or check database.";
         header("Location: subscribers.php");
         exit;
@@ -90,11 +89,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     
     $queued_count = 0;
     
+    // Correct Binding: Bind variables ONCE
+    // referencing $current_email, $subject, $body
+    $current_email = "";
+    $insert_stmt->bind_param("sss", $current_email, $subject, $body);
+
     // Disable autocommit for speed
     $conn->autocommit(FALSE);
     
     while ($row = $result->fetch_assoc()) {
-        $insert_stmt->bind_param("sss", $row['email'], $subject, $body);
+        $current_email = $row['email']; // Update the bound variable
         $insert_stmt->execute();
         $queued_count++;
     }
