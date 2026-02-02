@@ -36,6 +36,40 @@ function send_email($to, $subject, $message) {
     $log_entry = "[" . date('Y-m-d H:i:s') . "] To: $to | Subject: $subject\n" . str_repeat("-", 40) . "\n";
     file_put_contents(__DIR__ . '/../mail_log.txt', $log_entry, FILE_APPEND);
 
+    // Construct Signature
+    $s_name = function_exists('get_setting') ? get_setting('store_name', 'Driyum') : 'Driyum';
+    $s_url  = defined('FULL_BASE_URL') ? FULL_BASE_URL : 'https://driyum.com';
+    $s_email = function_exists('get_setting') ? get_setting('support_email', 'help@driyum.com') : 'help@driyum.com';
+    $current_year = date('Y');
+
+    $signature = "
+    <br><br>
+    <div style='font-family: Arial, sans-serif; font-size: 13px; color: #555; border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;'>
+        <p style='margin-bottom: 5px; font-weight: bold; color: #000;'>Best Regards,</p>
+        <p style='margin-top: 0; margin-bottom: 20px;'>The {$s_name} Team</p>
+        
+        <table style='width: 100%; max-width: 600px; font-size: 11px; color: #999;'>
+            <tr>
+                <td style='padding-right: 20px;'>
+                    <strong>{$s_name} Inc.</strong><br>
+                    Premium Sun-Dried Delicacies<br>
+                    <a href='{$s_url}' style='color: #19DC7E; text-decoration: none;'>{$s_url}</a>
+                </td>
+                <td style='text-align: right;'>
+                    Need help? <a href='mailto:{$s_email}' style='color: #555; text-decoration: none;'>{$s_email}</a><br>
+                    &copy; {$current_year} All rights reserved.
+                </td>
+            </tr>
+        </table>
+        
+        <div style='margin-top: 15px; font-size: 10px; color: #ccc; text-align: center;'>
+            You received this email because you are a valued part of the {$s_name} community.<br>
+            If you believe this was a mistake, please ignore this email.
+        </div>
+    </div>";
+
+    $message .= $signature;
+
     // Determine domain
     $domain = parse_url(FULL_BASE_URL, PHP_URL_HOST) ?: ($_SERVER['HTTP_HOST'] ?? 'driyum.com');
     
