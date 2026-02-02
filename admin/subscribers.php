@@ -81,6 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $insert_sql = "INSERT INTO email_queue (to_email, subject, body, status) VALUES (?, ?, ?, 'pending')";
     $insert_stmt = $conn->prepare($insert_sql);
     
+    if (!$insert_stmt) {
+        // Table likely missing, handle gracefully
+        $_SESSION['error'] = "Error: 'email_queue' table missing. Please run setup_queue.php or check database.";
+        header("Location: subscribers.php");
+        exit;
+    }
+    
     $queued_count = 0;
     
     // Disable autocommit for speed
