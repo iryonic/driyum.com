@@ -405,7 +405,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">PIN Code</label>
-                                    <input type="text" name="zip" id="zip_input" required placeholder="190001" value="<?php echo $form['zip']; ?>" onchange="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="zip" id="zip_input" required placeholder="190001" value="<?php echo $form['zip']; ?>" maxlength="6" oninput="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
 
                                 <div class="md:col-span-2 mt-4 hidden" id="shipping-methods-container">
@@ -1161,5 +1161,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             }
         }
     </script>
+    <script>
+        // Auto-fetch shipping if zip is already filled (Magic Checkout)
+        document.addEventListener('DOMContentLoaded', () => {
+            const zipInput = document.getElementById('zip_input');
+            if(zipInput && zipInput.value.trim().length >= 6) {
+                 fetchShippingMethods();
+            }
+        });
+    </script>
+
 </body>
 </html>
