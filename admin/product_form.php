@@ -160,7 +160,7 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
              <?php if($msg): ?>
                 <div class="bg-green-100 text-green-700 px-4 py-2 rounded-lg font-bold animate-pulse"><?php echo $msg; ?></div>
              <?php endif; ?>
-             <button type="submit" form="pform" class="btn-chunky bg-[#19DC7E] text-black px-8 py-3 hover:scale-105 border-none shadow-xl transform transition">
+             <button type="submit" form="pform" class="btn-chunky bg-[#24B25D] text-black px-8 py-3 hover:scale-105 border-none shadow-xl transform transition">
                   <i class="fas fa-save mr-2"></i> Save Product
              </button>
         </div>
@@ -175,11 +175,11 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Product Name</label>
-                        <input type="text" name="name" value="<?php echo htmlspecialchars($product['name']); ?>" required class="w-full text-xl font-bold border-b-2 border-gray-100 focus:border-[#19DC7E] outline-none py-2" placeholder="e.g. Kashmiri Apple Rings">
+                        <input type="text" name="name" value="<?php echo htmlspecialchars($product['name']); ?>" required class="w-full text-xl font-bold border-b-2 border-gray-100 focus:border-[#24B25D] outline-none py-2" placeholder="e.g. Kashmiri Apple Rings">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Description</label>
-                        <textarea name="description" rows="5" class="w-full bg-gray-50 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#19DC7E]"><?php echo htmlspecialchars($product['description']); ?></textarea>
+                        <textarea name="description" rows="5" class="w-full bg-gray-50 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#24B25D]"><?php echo htmlspecialchars($product['description']); ?></textarea>
                     </div>
                 </div>
             </div>
@@ -190,8 +190,8 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-2">Ingredients</label>
                     <div id="ingredient-manager" class="space-y-3">
                         <div class="flex gap-2">
-                            <input type="text" id="ing-input" placeholder="Add ingredient..." class="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#19DC7E]">
-                            <button type="button" onclick="addIngredient()" class="bg-black text-white px-4 py-3 rounded-xl transition hover:bg-[#19DC7E] hover:text-black">
+                            <input type="text" id="ing-input" placeholder="Add ingredient..." class="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#24B25D]">
+                            <button type="button" onclick="addIngredient()" class="bg-black text-white px-4 py-3 rounded-xl transition hover:bg-[#24B25D] hover:text-black">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
@@ -264,13 +264,13 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                         <div class="flex flex-col gap-3 bg-gray-50/50 p-4 rounded-[28px] border border-gray-100">
                             <div class="flex-1 relative">
                                 <i class="fas fa-tag absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
-                                <input type="text" id="nut-label" placeholder="Nutrient" class="w-full bg-white rounded-2xl pl-10 pr-4 py-3 text-sm font-bold border-2 border-transparent focus:border-[#19DC7E] outline-none transition-all shadow-sm">
+                                <input type="text" id="nut-label" placeholder="Nutrient" class="w-full bg-white rounded-2xl pl-10 pr-4 py-3 text-sm font-bold border-2 border-transparent focus:border-[#24B25D] outline-none transition-all shadow-sm">
                             </div>
                             <div class="flex-1 relative">
                                 <i class="fas fa-flask absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
-                                <input type="text" id="nut-value" placeholder="Value" class="w-full bg-white rounded-2xl pl-10 pr-4 py-3 text-sm font-bold border-2 border-transparent focus:border-[#19DC7E] outline-none transition-all shadow-sm">
+                                <input type="text" id="nut-value" placeholder="Value" class="w-full bg-white rounded-2xl pl-10 pr-4 py-3 text-sm font-bold border-2 border-transparent focus:border-[#24B25D] outline-none transition-all shadow-sm">
                             </div>
-                            <button type="button" onclick="addNutrition()" class="bg-black text-[#19DC7E] px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2">
+                            <button type="button" onclick="addNutrition()" class="bg-black text-[#24B25D] px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2">
                                 <i class="fas fa-plus"></i> Add
                             </button>
                         </div>
@@ -329,9 +329,9 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
 
                             Object.entries(nutrition).forEach(([label, value]) => {
                                 const el = document.createElement('div');
-                                el.className = 'group bg-white p-4 rounded-[24px] border border-gray-100 hover:border-[#19DC7E] hover:shadow-[0_20px_40px_-20px_rgba(25,220,126,0.15)] transition-all duration-300 flex items-center gap-4 anim-up';
+                                el.className = 'group bg-white p-4 rounded-[24px] border border-gray-100 hover:border-[#24B25D] hover:shadow-[0_20px_40px_-20px_rgba(25,220,126,0.15)] transition-all duration-300 flex items-center gap-4 anim-up';
                                 el.innerHTML = `
-                                    <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-[#19DC7E]/10 transition-colors">
+                                    <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-[#24B25D]/10 transition-colors">
                                         <i class="fas ${getIcon(label)} text-xs transition-transform group-hover:scale-110"></i>
                                     </div>
                                     <div class="flex-1">
@@ -413,7 +413,7 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                                     
                                     <!-- Selection Overlay -->
                                     <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
-                                        <input type="checkbox" class="gallery-checkbox w-6 h-6 rounded-lg text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" value="<?php echo $img['id']; ?>" onchange="updateBulkBar()">
+                                        <input type="checkbox" class="gallery-checkbox w-6 h-6 rounded-lg text-[#24B25D] focus:ring-[#24B25D] cursor-pointer" value="<?php echo $img['id']; ?>" onchange="updateBulkBar()">
                                     </div>
 
                                     <!-- Quick Delete -->
@@ -429,8 +429,8 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                     <div id="new-gallery-preview-grid" class="grid grid-cols-4 gap-4 mb-4 hidden"></div>
 
                     <!-- Upload New -->
-                    <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 hover:bg-gray-50 hover:border-[#19DC7E] transition cursor-pointer relative overflow-hidden group text-center">
-                        <i class="fas fa-images text-4xl text-gray-300 mb-2 group-hover:text-[#19DC7E] transition"></i>
+                    <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 hover:bg-gray-50 hover:border-[#24B25D] transition cursor-pointer relative overflow-hidden group text-center">
+                        <i class="fas fa-images text-4xl text-gray-300 mb-2 group-hover:text-[#24B25D] transition"></i>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Add Gallery Images</p>
                         <input type="file" name="gallery[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewMultipleImages(this)">
                     </div>
@@ -440,15 +440,15 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
             <div class="bg-white p-6 rounded-[20px] shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-6">
                  <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Selling Price (₹)</label>
-                    <input type="number" step="1" name="price" value="<?php echo $product['price']; ?>" required class="w-full bg-gray-50 rounded-xl px-4 py-3 font-black text-xl focus:ring-2 focus:ring-[#19DC7E] outline-none">
+                    <input type="number" step="1" name="price" value="<?php echo $product['price']; ?>" required class="w-full bg-gray-50 rounded-xl px-4 py-3 font-black text-xl focus:ring-2 focus:ring-[#24B25D] outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Original Price (₹)</label>
-                    <input type="number" step="1" name="original_price" value="<?php echo $product['original_price']; ?>" class="w-full bg-gray-50 rounded-xl px-4 py-3 text-gray-400 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none">
+                    <input type="number" step="1" name="original_price" value="<?php echo $product['original_price']; ?>" class="w-full bg-gray-50 rounded-xl px-4 py-3 text-gray-400 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none">
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Weight (KG)</label>
-                    <input type="number" step="0.001" name="weight" value="<?php echo $product['weight'] ?: '0.500'; ?>" required class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none" placeholder="e.g. 0.250">
+                    <input type="number" step="0.001" name="weight" value="<?php echo $product['weight'] ?: '0.500'; ?>" required class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none" placeholder="e.g. 0.250">
                     <p class="text-[9px] text-gray-400 mt-1 italic">Used for dynamic shipping rates.</p>
                 </div>
             </div>
@@ -461,18 +461,18 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                 <div class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Status</label>
-                        <select name="is_active" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none appearance-none">
+                        <select name="is_active" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none appearance-none">
                             <option value="1" <?php echo $product['is_active']?'selected':''; ?>>Active (Visible)</option>
                             <option value="0" <?php echo !$product['is_active']?'selected':''; ?>>Draft (Hidden)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Stock Quantity</label>
-                        <input type="number" name="stock" value="<?php echo $product['stock']; ?>" required class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none">
+                        <input type="number" name="stock" value="<?php echo $product['stock']; ?>" required class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none">
                     </div>
                     <div>
                         <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Featured Product</label>
-                        <select name="is_featured" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none appearance-none">
+                        <select name="is_featured" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none appearance-none">
                             <option value="0" <?php echo !$product['is_featured']?'selected':''; ?>>No (Normal)</option>
                             <option value="1" <?php echo $product['is_featured']?'selected':''; ?>>Yes (Show on Homepage)</option>
                         </select>
@@ -485,7 +485,7 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                 <div class="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scroll">
                     <?php foreach ($cats as $c): ?>
                     <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-gray-50 rounded-xl group transition">
-                        <input type="radio" name="category_id" value="<?php echo $c['id']; ?>" <?php echo $product['category_id']==$c['id']?'checked':''; ?> class="w-5 h-5 text-[#19DC7E] focus:ring-[#19DC7E]">
+                        <input type="radio" name="category_id" value="<?php echo $c['id']; ?>" <?php echo $product['category_id']==$c['id']?'checked':''; ?> class="w-5 h-5 text-[#24B25D] focus:ring-[#24B25D]">
                         <span class="font-bold text-sm text-gray-600 group-hover:text-black transition"><?php echo $c['name']; ?></span>
                     </label>
                     <?php endforeach; ?>
@@ -499,7 +499,7 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                     <label class="block text-[10px] font-black uppercase text-gray-300 mb-2">Background Color</label>
                     <div class="flex flex-wrap gap-2 mb-4">
                         <?php 
-                        $colors = ['#FFFBEB', '#F0FDFA', '#FEF2F2', '#F5F3FF', '#ECFDF5', '#FFF7ED', '#FDF2F8'];
+                        $colors = ['#FFFEDC', '#F0FDFA', '#FEF2F2', '#F5F3FF', '#ECFDF5', '#FFF7ED', '#FDF2F8'];
                         foreach($colors as $c): ?>
                             <button type="button" onclick="document.getElementById('bg_color_input').value='<?php echo $c; ?>'" 
                                     class="w-8 h-8 rounded-full border-2 border-white shadow-sm hover:scale-110 transition" 
@@ -507,15 +507,15 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                         <?php endforeach; ?>
                     </div>
                     <input type="text" name="bg_color" id="bg_color_input" value="<?php echo htmlspecialchars($product['bg_color']); ?>" 
-                           placeholder="Hex Code (e.g. #FFFBEB)" 
-                           class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none">
+                           placeholder="Hex Code (e.g. #FFFEDC)" 
+                           class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none">
                     <p class="text-[9px] text-gray-400 mt-2 font-medium">Leave empty for a random delightful color.</p>
                 </div>
             </div>
 
             <div class="bg-white p-8 rounded-[30px] shadow-sm border border-gray-100 text-center relative group overflow-hidden">
                 <label class="block text-xs font-bold uppercase text-gray-400 mb-6 tracking-widest">Featured Display</label>
-                <div class="relative aspect-square bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100 group-hover:border-[#19DC7E] transition-all flex items-center justify-center overflow-hidden">
+                <div class="relative aspect-square bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100 group-hover:border-[#24B25D] transition-all flex items-center justify-center overflow-hidden">
                     <img id="featured-preview" src="<?php echo $product['image'] ? '../'.$product['image'] : ''; ?>" class="w-full h-full object-contain p-4 <?php echo $product['image'] ? '' : 'hidden'; ?>">
                     
                     <div id="featured-placeholder" class="<?php echo $product['image'] ? 'hidden' : ''; ?> text-gray-300">
@@ -565,8 +565,8 @@ function previewMultipleImages(input) {
                 const div = document.createElement('div');
                 div.className = 'relative aspect-square anim-up';
                 div.innerHTML = `
-                    <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border-2 border-[#19DC7E] shadow-lg">
-                    <div class="absolute -top-2 -right-2 bg-[#19DC7E] text-black w-6 h-6 rounded-full flex items-center justify-center text-[10px] shadow-xl border-2 border-white font-black">
+                    <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border-2 border-[#24B25D] shadow-lg">
+                    <div class="absolute -top-2 -right-2 bg-[#24B25D] text-black w-6 h-6 rounded-full flex items-center justify-center text-[10px] shadow-xl border-2 border-white font-black">
                         NEW
                     </div>
                 `;

@@ -54,7 +54,7 @@ $current_page = 'settings.php';
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] font-['Inter']">
+<body class="bg-[#FFFEDC] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -64,7 +64,7 @@ $current_page = 'settings.php';
             <!-- SIDEBAR -->
             <aside class="w-full lg:w-80 space-y-6">
                 <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-center">
-                    <div class="w-24 h-24 bg-[#19DC7E] rounded-full mx-auto mb-6 flex items-center justify-center text-white text-3xl font-bold border-4 border-[#19DC7E]/20 shadow-xl">
+                    <div class="w-24 h-24 bg-[#24B25D] rounded-full mx-auto mb-6 flex items-center justify-center text-white text-3xl font-bold border-4 border-[#24B25D]/20 shadow-xl">
                         <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                     </div>
                     <h2 class="text-2xl font-['Crimson_Pro'] font-black text-gray-900"><?php echo htmlspecialchars($user['name']); ?></h2>
@@ -73,9 +73,9 @@ $current_page = 'settings.php';
 
                 <div class="bg-white rounded-[32px] p-4 shadow-sm border border-gray-100 space-y-2">
                     <a href="<?php echo get_url('account'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-black font-black transition-all group">
-                        <i class="fas fa-th-large text-gray-300 group-hover:text-[#19DC7E] transition-colors w-5"></i> Dashboard
+                        <i class="fas fa-th-large text-gray-300 group-hover:text-[#24B25D] transition-colors w-5"></i> Dashboard
                     </a>
-                    <a href="<?php echo get_url('settings'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl font-black transition-all group bg-[#19DC7E] text-black shadow-lg shadow-green-200">
+                    <a href="<?php echo get_url('settings'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl font-black transition-all group bg-[#24B25D] text-black shadow-lg shadow-green-200">
                         <i class="fas fa-cog text-black transition-colors w-5"></i> Settings
                     </a>
                     <a href="<?php echo get_url('wishlist'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-black font-black transition-all group">
@@ -91,7 +91,7 @@ $current_page = 'settings.php';
             <!-- MAIN CONTENT -->
             <main class="flex-1 space-y-8">
                 <div class="mb-2">
-                    <h1 class="text-5xl font-['Crimson_Pro'] font-black text-gray-900">Settings <span class="text-[#19DC7E]">.</span></h1>
+                    <h1 class="text-5xl font-['Crimson_Pro'] font-black text-gray-900">Settings <span class="text-[#24B25D]">.</span></h1>
                     <p class="text-gray-400 font-bold uppercase tracking-widest text-xs mt-2">Manage your account and preferences</p>
                 </div>
 
@@ -142,7 +142,7 @@ $current_page = 'settings.php';
                                 <label class="block text-gray-400 font-black uppercase tracking-widest text-[10px] mb-3">Confirm New Password</label>
                                 <input type="password" name="confirm_password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full">
                             </div>
-                            <button type="submit" class="btn-chunky bg-black text-white px-8 py-3.5 shadow-xl hover:bg-[#19DC7E] hover:text-black transition-all">Update Password</button>
+                            <button type="submit" class="btn-chunky bg-black text-white px-8 py-3.5 shadow-xl hover:bg-[#24B25D] hover:text-black transition-all">Update Password</button>
                         </form>
                     </div>
                 </div>

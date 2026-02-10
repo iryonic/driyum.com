@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#FFFEDC] min-h-screen flex items-center justify-center p-4">
 
     <div class="w-full max-w-md bg-white rounded-[3rem] shadow-2xl overflow-hidden p-8 md:p-12 anim-up">
         
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
             <div class="bg-red-50 text-red-500 p-6 rounded-2xl mb-8 border border-red-100 text-center">
                 <div class="text-4xl mb-3">⚠️</div>
                 <p class="font-bold"><?php echo $error; ?></p>
-                <a href="<?php echo get_url('forgot-password'); ?>" class="inline-block mt-4 text-[#19DC7E] font-black uppercase tracking-widest text-xs hover:underline">Request New Link</a>
+                <a href="<?php echo get_url('forgot-password'); ?>" class="inline-block mt-4 text-[#24B25D] font-black uppercase tracking-widest text-xs hover:underline">Request New Link</a>
             </div>
         <?php else: ?>
             <form method="POST" class="space-y-6">
@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
         <?php endif; ?>
 
         <div class="mt-8 text-center text-gray-500 font-['Inter']">
-            Back to <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#19DC7E] underline decoration-wavy">Log In</a>
+            Back to <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#24B25D] underline decoration-wavy">Log In</a>
         </div>
         
     </div>

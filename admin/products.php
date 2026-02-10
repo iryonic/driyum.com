@@ -167,23 +167,23 @@ $products = $pagination['records'];
     
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
         <form class="relative group flex-1 sm:w-64">
-            <input type="text" name="search" value="<?php echo $search; ?>" placeholder="Search snacks..." class="w-full bg-white border border-gray-100 focus:border-[#19DC7E] rounded-2xl pl-10 pr-4 py-2.5 text-xs font-bold transition-all outline-none shadow-sm">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#19DC7E] transition-colors text-[10px]"></i>
+            <input type="text" name="search" value="<?php echo $search; ?>" placeholder="Search snacks..." class="w-full bg-white border border-gray-100 focus:border-[#24B25D] rounded-2xl pl-10 pr-4 py-2.5 text-xs font-bold transition-all outline-none shadow-sm">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#24B25D] transition-colors text-[10px]"></i>
         </form>
-        <a href="product_form.php" class="bg-[#19DC7E] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
+        <a href="product_form.php" class="bg-[#24B25D] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
             <i class="fas fa-plus mr-1"></i> New Snack
         </a>
     </div>
 </div>
 
 <!-- PREMIUM BULK ACTION DOCK -->
-<div id="bulk-action-bar" class="hidden fixed bottom-8   z-[100] bg-[#111] backdrop-blur-2xl border border-white/10 px-3 py-3 rounded-[28px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] items-center gap-2 anim-up border-b-4 border-b-[#19DC7E]/20 max-w-[95vw] sm:max-w-none">
+<div id="bulk-action-bar" class="hidden fixed bottom-8   z-[100] bg-[#111] backdrop-blur-2xl border border-white/10 px-3 py-3 rounded-[28px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] items-center gap-2 anim-up border-b-4 border-b-[#24B25D]/20 max-w-[95vw] sm:max-w-none">
     
     <!-- Selection Info -->
     <div class="bg-white/5 rounded-2xl px-5 py-3 flex items-center gap-4 mr-1 border border-white/5">
         <div class="flex flex-col">
             <span class="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] leading-none mb-1 hidden sm:block">Editing</span>
-            <span class="text-xs font-black text-[#19DC7E] leading-none"><span id="selected-count">0</span><span class="hidden sm:inline ml-1">Items</span></span>
+            <span class="text-xs font-black text-[#24B25D] leading-none"><span id="selected-count">0</span><span class="hidden sm:inline ml-1">Items</span></span>
         </div>
         <button onclick="document.querySelectorAll('.product-checkbox').forEach(cb => {cb.checked = false; updateBulkBar();})" class="w-7 h-7 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all text-gray-400 hover:text-white">
             <i class="fas fa-times text-[10px]"></i>
@@ -193,7 +193,7 @@ $products = $pagination['records'];
     <!-- Group: Status -->
     <div class="flex items-center p-0.5 bg-white/5 rounded-2xl border border-white/5">
         <button onclick="bulkUpdateAction('bulk_status', {status: 1})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
-            <i class="fas fa-eye text-[10px] text-[#19DC7E] group-hover:scale-110 transition-transform"></i>
+            <i class="fas fa-eye text-[10px] text-[#24B25D] group-hover:scale-110 transition-transform"></i>
             <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Active</span>
         </button>
         <button onclick="bulkUpdateAction('bulk_status', {status: 0})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
@@ -215,10 +215,10 @@ $products = $pagination['records'];
     </div>
 
     <!-- Group: Weight -->
-    <div class="flex items-center pl-3 sm:pl-4 pr-1 py-1 bg-white/10 rounded-2xl border border-white/10 ring-2 ring-transparent focus-within:ring-[#19DC7E]/30 transition-all">
+    <div class="flex items-center pl-3 sm:pl-4 pr-1 py-1 bg-white/10 rounded-2xl border border-white/10 ring-2 ring-transparent focus-within:ring-[#24B25D]/30 transition-all">
         <i class="fas fa-weight-hanging text-[10px] text-gray-400 mr-2 sm:mr-3"></i>
         <input type="number" step="0.001" id="bulk-weight-input" placeholder="0.5" class="w-10 sm:w-16 bg-transparent border-none p-0 text-xs font-black text-white outline-none placeholder:text-white/20">
-        <button onclick="bulkUpdateAction('bulk_weight', {weight: document.getElementById('bulk-weight-input').value})" class="bg-[#19DC7E] text-black w-8 h-8 rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all ml-1 sm:ml-2 shadow-lg shadow-[#19DC7E]/20">
+        <button onclick="bulkUpdateAction('bulk_weight', {weight: document.getElementById('bulk-weight-input').value})" class="bg-[#24B25D] text-black w-8 h-8 rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all ml-1 sm:ml-2 shadow-lg shadow-[#24B25D]/20">
             <i class="fas fa-check text-[10px]"></i>
         </button>
     </div>
@@ -242,7 +242,7 @@ $products = $pagination['records'];
             
             <!-- Badges Over Image -->
             <div class="absolute top-3 right-3 flex flex-col gap-2 scale-90 origin-top-right">
-                <input type="checkbox" class="product-checkbox w-5 h-5 rounded-lg border-2 border-white/50 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer shadow-lg" value="<?php echo $p['id']; ?>" onchange="updateBulkBar()">
+                <input type="checkbox" class="product-checkbox w-5 h-5 rounded-lg border-2 border-white/50 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer shadow-lg" value="<?php echo $p['id']; ?>" onchange="updateBulkBar()">
             </div>
             
             <?php if($p['stock'] <= 5): ?>
@@ -259,7 +259,7 @@ $products = $pagination['records'];
                         <i class="fas fa-star text-[10px]"></i>
                     </button>
                 </div>
-                <button onclick="toggleProductStatus(<?php echo $p['id']; ?>, this)" class="text-[8px] font-black uppercase tracking-widest status-badge <?php echo $p['is_active'] ? 'text-[#19DC7E]' : 'text-gray-300'; ?>">
+                <button onclick="toggleProductStatus(<?php echo $p['id']; ?>, this)" class="text-[8px] font-black uppercase tracking-widest status-badge <?php echo $p['is_active'] ? 'text-[#24B25D]' : 'text-gray-300'; ?>">
                     <?php echo $p['is_active'] ? 'Active' : 'Offline'; ?>
                 </button>
             </div>
@@ -345,9 +345,9 @@ async function toggleProductStatus(id, btn) {
             btn.innerHTML = data.label;
             if (data.new_status) {
                 btn.classList.remove('bg-gray-200', 'text-gray-500');
-                btn.classList.add('bg-[#19DC7E]', 'text-black');
+                btn.classList.add('bg-[#24B25D]', 'text-black');
             } else {
-                btn.classList.remove('bg-[#19DC7E]', 'text-black');
+                btn.classList.remove('bg-[#24B25D]', 'text-black');
                 btn.classList.add('bg-gray-200', 'text-gray-500');
             }
             // Success animation
@@ -393,7 +393,7 @@ async function bulkUpdateAction(action, extraData = {}) {
     const ids = Array.from(checked).map(cb => cb.value);
     const bar = document.getElementById('bulk-action-bar');
     const originalBar = bar.innerHTML;
-    bar.innerHTML = '<div class="flex items-center gap-3 px-10"><i class="fas fa-spinner fa-spin text-[#19DC7E] text-xl"></i> <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Applying Changes...</span></div>';
+    bar.innerHTML = '<div class="flex items-center gap-3 px-10"><i class="fas fa-spinner fa-spin text-[#24B25D] text-xl"></i> <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Applying Changes...</span></div>';
 
     try {
         const formData = new FormData();

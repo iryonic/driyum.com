@@ -42,7 +42,7 @@ $messages = $pagination['records'];
         <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Inquiries</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> customer messages</p>
     </div>
-    <a href="../contact.php" target="_blank" class="bg-black text-[#19DC7E] px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-2">
+    <a href="../contact.php" target="_blank" class="bg-black text-[#24B25D] px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-2">
         <i class="fas fa-external-link-alt"></i> View Contact Page
     </a>
 </div>
@@ -100,7 +100,7 @@ $messages = $pagination['records'];
                     <textarea name="map_iframe" rows="3" class="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-3 outline-none font-mono text-[10px] shadow-sm transition-all"><?php echo htmlspecialchars($info['map_iframe']); ?></textarea>
                 </div>
 
-                <button type="submit" class="w-full bg-black text-[#19DC7E] py-4 rounded-[20px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-black/5">Save Changes</button>
+                <button type="submit" class="w-full bg-black text-[#24B25D] py-4 rounded-[20px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-black/5">Save Changes</button>
             </form>
         </div>
     </div>
@@ -123,7 +123,7 @@ $messages = $pagination['records'];
                     <div class="bg-gray-50/50 rounded-3xl p-6 border border-gray-100 hover:border-black transition-all group">
                         <div class="flex justify-between items-start mb-4">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 bg-white rounded-xl shadow-sm border border-gray-50 flex items-center justify-center text-black font-black text-xs group-hover:bg-black group-hover:text-[#19DC7E] transition-all">
+                                <div class="w-10 h-10 bg-white rounded-xl shadow-sm border border-gray-50 flex items-center justify-center text-black font-black text-xs group-hover:bg-black group-hover:text-[#24B25D] transition-all">
                                     <?php echo strtoupper(substr($m['name'], 0, 1)); ?>
                                 </div>
                                 <div>
@@ -140,7 +140,7 @@ $messages = $pagination['records'];
                         <div class="pl-14">
                             <p class="text-[9px] font-black text-black uppercase tracking-widest mb-1 italic">Sub: <?php echo htmlspecialchars($m['subject']); ?></p>
                             <p class="text-gray-600 text-xs leading-relaxed mb-4"><?php echo nl2br(htmlspecialchars($m['message'])); ?></p>
-                            <a href="mailto:<?php echo $m['email']; ?>" class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-700 border border-gray-100 hover:bg-black hover:text-[#19DC7E] transition-all">
+                            <a href="mailto:<?php echo $m['email']; ?>" class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-gray-700 border border-gray-100 hover:bg-black hover:text-[#24B25D] transition-all">
                                 <i class="fas fa-reply"></i> Reply to <?php echo htmlspecialchars($m['email']); ?>
                             </a>
                         </div>

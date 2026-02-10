@@ -38,19 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
 <div class="max-w-4xl mx-auto">
     <div class="mb-12 flex items-center justify-between anim-up">
         <div>
-            <a href="users.php" class="text-[#19DC7E] font-black text-xs uppercase tracking-widest flex items-center gap-2 mb-4 hover:translate-x-[-5px] transition-transform">
+            <a href="users.php" class="text-[#24B25D] font-black text-xs uppercase tracking-widest flex items-center gap-2 mb-4 hover:translate-x-[-5px] transition-transform">
                 <i class="fas fa-arrow-left"></i> Back to Community
             </a>
             <h1 class="text-4xl font-black text-gray-900 crimson-pro mb-2">Summon Authority.</h1>
             <p class="text-gray-500 font-medium font-['Inter'] italic">Expanding the guard of Driyum.</p>
         </div>
-        <div class="w-20 h-20 bg-black text-[#19DC7E] rounded-[30px] flex items-center justify-center text-3xl shadow-2xl">
+        <div class="w-20 h-20 bg-black text-[#24B25D] rounded-[30px] flex items-center justify-center text-3xl shadow-2xl">
             <i class="fas fa-crown"></i>
         </div>
     </div>
 
     <?php if($success): ?>
-        <div class="mb-8 p-6 bg-[#19DC7E] text-black rounded-[30px] shadow-lg shadow-green-500/20 font-black text-sm anim-up flex items-center gap-4">
+        <div class="mb-8 p-6 bg-[#24B25D] text-black rounded-[30px] shadow-lg shadow-green-500/20 font-black text-sm anim-up flex items-center gap-4">
             <div class="w-10 h-10 bg-black/10 rounded-full flex items-center justify-center"><i class="fas fa-check"></i></div>
             <?php echo $success; ?>
         </div>
@@ -73,21 +73,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
                     <label class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Full Name</label>
                     <div class="relative">
                         <i class="fas fa-user absolute left-6 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                        <input type="text" name="name" required placeholder="John Admin" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#19DC7E] focus:bg-white transition-all font-bold text-gray-800">
+                        <input type="text" name="name" required placeholder="John Admin" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#24B25D] focus:bg-white transition-all font-bold text-gray-800">
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Direct Email</label>
                     <div class="relative">
                         <i class="fas fa-envelope absolute left-6 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                        <input type="email" name="email" required placeholder="admin@driyum.com" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#19DC7E] focus:bg-white transition-all font-bold text-gray-800">
+                        <input type="email" name="email" required placeholder="admin@driyum.com" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#24B25D] focus:bg-white transition-all font-bold text-gray-800">
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Phone (Optional)</label>
                     <div class="relative">
                         <i class="fas fa-phone absolute left-6 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                        <input type="text" name="phone" placeholder="+91 00000 00000" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#19DC7E] focus:bg-white transition-all font-bold text-gray-800">
+                        <input type="text" name="phone" placeholder="+91 00000 00000" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#24B25D] focus:bg-white transition-all font-bold text-gray-800">
                     </div>
                 </div>
                 <div class="bg-black/5 rounded-[30px] p-6 flex items-center gap-4">
@@ -108,20 +108,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
                     <label class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Master Password</label>
                     <div class="relative">
                         <i class="fas fa-lock absolute left-6 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                        <input type="password" name="password" required placeholder="••••••••" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#19DC7E] focus:bg-white transition-all font-bold text-gray-800">
+                        <input type="password" name="password" required placeholder="••••••••" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#24B25D] focus:bg-white transition-all font-bold text-gray-800">
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-4">Confirm Passcode</label>
                     <div class="relative">
                         <i class="fas fa-check-double absolute left-6 top-1/2 -translate-y-1/2 text-gray-300"></i>
-                        <input type="password" name="confirm_password" required placeholder="••••••••" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#19DC7E] focus:bg-white transition-all font-bold text-gray-800">
+                        <input type="password" name="confirm_password" required placeholder="••••••••" class="w-full bg-gray-50 border-3 border-transparent rounded-[24px] pl-14 pr-8 py-5 outline-none focus:border-[#24B25D] focus:bg-white transition-all font-bold text-gray-800">
                     </div>
                 </div>
             </div>
 
             <div class="pt-8">
-                <button type="submit" name="create_admin" class="btn-chunky w-full bg-[#19DC7E] text-black py-6 rounded-[30px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-green-500/20 hover:scale-[1.02] active:scale-95 transition-all text-sm">
+                <button type="submit" name="create_admin" class="btn-chunky w-full bg-[#24B25D] text-black py-6 rounded-[30px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-green-500/20 hover:scale-[1.02] active:scale-95 transition-all text-sm">
                     CREATE ADMIN <i class="fas fa-sparkles ml-3"></i>
                 </button>
             </div>

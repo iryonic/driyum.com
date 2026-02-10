@@ -47,12 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#FFFEDC] min-h-screen flex items-center justify-center p-4">
 
     <div class="w-full max-w-5xl bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row-reverse min-h-[600px] anim-up">
         
         <!-- RIGHT: ARTWORK -->
-        <div class="w-full md:w-1/2 bg-[#19DC7E] p-12 flex flex-col justify-between relative overflow-hidden text-gray-900">
+        <div class="w-full md:w-1/2 bg-[#24B25D] p-12 flex flex-col justify-between relative overflow-hidden text-gray-900">
             <a href="<?php echo get_url(''); ?>" class="font-['Crimson_Pro'] font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
             
             <div class="relative z-10">
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label class="block text-gray-400 font-bold mb-2 text-sm uppercase">Password</label>
                     <div class="relative">
                         <input type="password" name="password" id="register-password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-12" oninput="validatePassword(this.value)">
-                        <button type="button" onclick="togglePasswordVisibility('register-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#19DC7E] transition-colors focus:outline-none" aria-label="Toggle password visibility">
+                        <button type="button" onclick="togglePasswordVisibility('register-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#24B25D] transition-colors focus:outline-none" aria-label="Toggle password visibility">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
@@ -118,13 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                <button type="submit" class="btn-chunky btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 bg-black text-white hover:bg-[#19DC7E]">
+                <button type="submit" class="btn-chunky btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 bg-black text-white hover:bg-[#24B25D]">
                     Sign Up <i class="fas fa-user-plus ml-2 opacity-70"></i>
                 </button>
             </form>
 
             <div class="mt-8 text-center text-gray-500 font-['Inter']">
-                Already have an account? <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#19DC7E] underline decoration-wavy">Log In</a>
+                Already have an account? <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#24B25D] underline decoration-wavy">Log In</a>
             </div>
             
         </div>

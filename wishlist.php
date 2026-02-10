@@ -31,7 +31,7 @@ $products = fetch_all("
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] font-['Inter']">
+<body class="bg-[#FFFEDC] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -49,7 +49,7 @@ $products = fetch_all("
                     <div class="text-6xl md:text-8xl mb-6 md:mb-8 animate-pulse" aria-hidden="true">📦</div>
                     <h2 class="text-2xl md:text-3xl font-black font-['Crimson_Pro'] text-gray-900 mb-4">Your wishlist is empty!</h2>
                     <p class="text-gray-400 font-medium mb-8 md:mb-10 max-w-sm mx-auto text-sm md:text-base leading-relaxed">It looks like you haven't saved any snacks yet. Let's find some favorites!</p>
-                    <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white px-8 md:px-12 py-4 md:py-5 shadow-2xl hover:bg-[#19DC7E] hover:text-black transition-all inline-block text-sm md:text-base">Explore the Shop</a>
+                    <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white px-8 md:px-12 py-4 md:py-5 shadow-2xl hover:bg-[#24B25D] hover:text-black transition-all inline-block text-sm md:text-base">Explore the Shop</a>
                 </div>
                 <!-- Decor -->
                 <div class="absolute -top-10 -right-10 w-32 md:w-40 h-32 md:h-40 bg-gray-50 rounded-full" aria-hidden="true"></div>
@@ -57,7 +57,7 @@ $products = fetch_all("
         <?php else: ?>
             <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 anim-up delay-100">
                 <?php foreach ($products as $p): ?>
-                    <article class="product-card group bg-white rounded-[32px] md:rounded-[40px] p-4 md:p-6 shadow-sm border border-gray-100 relative hover:border-[#19DC7E] hover:shadow-2xl transition-all duration-500">
+                    <article class="product-card group bg-white rounded-[32px] md:rounded-[40px] p-4 md:p-6 shadow-sm border border-gray-100 relative hover:border-[#24B25D] hover:shadow-2xl transition-all duration-500">
                         
                         <!-- Actions Sidebar -->
                         <div class="absolute right-4 top-4 flex flex-col gap-3 z-10 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-0 md:translate-x-4 md:group-hover:translate-x-0">
@@ -81,8 +81,8 @@ $products = fetch_all("
                         <!-- Product Info -->
                         <div class="space-y-4">
                             <div>
-                                <span class="text-[9px] font-black uppercase text-[#19DC7E] tracking-widest"><?php echo htmlspecialchars($p['category_name']); ?></span>
-                                <h3 class="text-lg md:text-xl font-['Crimson_Pro'] font-black text-gray-900 group-hover:text-[#19DC7E] transition-colors leading-tight truncate">
+                                <span class="text-[9px] font-black uppercase text-[#24B25D] tracking-widest"><?php echo htmlspecialchars($p['category_name']); ?></span>
+                                <h3 class="text-lg md:text-xl font-['Crimson_Pro'] font-black text-gray-900 group-hover:text-[#24B25D] transition-colors leading-tight truncate">
                                     <a href="<?php echo product_url($p['slug']); ?>"><?php echo htmlspecialchars($p['name']); ?></a>
                                 </h3>
                             </div>
@@ -94,7 +94,7 @@ $products = fetch_all("
                                         <span class="text-[9px] md:text-[10px] text-gray-400 line-through font-bold">₹<?php echo number_format($p['original_price']); ?></span>
                                     <?php endif; ?>
                                 </div>
-                                <button onclick="addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 md:w-14 md:h-14 bg-black text-white rounded-xl md:rounded-[20px] flex items-center justify-center hover:bg-[#19DC7E] hover:text-black transition-all shadow-xl active:scale-90" aria-label="Add to bag">
+                                <button onclick="addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 md:w-14 md:h-14 bg-black text-white rounded-xl md:rounded-[20px] flex items-center justify-center hover:bg-[#24B25D] hover:text-black transition-all shadow-xl active:scale-90" aria-label="Add to bag">
                                     <i class="fas fa-shopping-bag text-sm md:text-lg"></i>
                                 </button>
                             </div>

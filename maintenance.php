@@ -69,7 +69,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #FFFBEB;
+            background-color: #FFFEDC;
             overflow-x: hidden;
         }
         .font-crimson-pro { font-family: 'Crimson Pro', sans-serif; }
@@ -101,15 +101,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             theme: {
                 extend: {
                     colors: {
-                        brand: '#19DC7E',
-                        accent: '#FFFBEB'
+                        brand: '#24B25D',
+                        accent: '#FFFEDC'
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="min-h-screen flex  flex-col items-center justify-center p-4 selection:bg-[#19DC7E] selection:text-black relative">
+<body class="min-h-screen flex  flex-col items-center justify-center p-4 selection:bg-[#24B25D] selection:text-black relative">
 
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3LPLX64"
@@ -139,7 +139,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- Blobs -->
         <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-yellow-300 rounded-full blur-[100px] opacity-30 animate-pulse"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#19DC7E] rounded-full blur-[120px] opacity-20 animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#24B25D] rounded-full blur-[120px] opacity-20 animate-pulse"></div>
     </div>
 
     <!-- Main Container (Centered Layout like Index) -->
@@ -151,8 +151,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <!-- Badge -->
             <div class="inline-flex items-center gap-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-full px-6 py-2.5 shadow-lg shadow-yellow-900/5 hover:scale-105 transition duration-300">
                 <span class="relative flex h-3 w-3">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#19DC7E] opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-3 w-3 bg-[#19DC7E]"></span>
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#24B25D] opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-[#24B25D]"></span>
                 </span>
                 <span class="text-xs font-black font-crimson-pro uppercase tracking-[0.2em] text-gray-800"><?php echo htmlspecialchars($badge_text); ?></span>
             </div>
@@ -165,10 +165,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     $last = array_pop($parts);
                     echo implode(' ', $parts); 
                     ?> 
-                    <span class="relative inline-block text-[#19DC7E]">
+                    <span class="relative inline-block text-[#24B25D]">
                         <?php echo $last; ?>
                         <!-- Squiggle -->
-                        <svg class="absolute w-full h-4 -bottom-1 left-0 text-[#19DC7E] opacity-40 hidden md:block" viewBox="0 0 100 10" preserveAspectRatio="none">
+                        <svg class="absolute w-full h-4 -bottom-1 left-0 text-[#24B25D] opacity-40 hidden md:block" viewBox="0 0 100 10" preserveAspectRatio="none">
                            <path d="M0 5 Q 50 15 100 5" stroke="currentColor" stroke-width="8" fill="none" class="animate-pulse"/>
                         </svg>
                     </span>
@@ -180,11 +180,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <!-- Notify Form (Centered Pill) -->
             <div class="w-full max-w-md relative group z-20">
-                <div class="absolute -inset-2 bg-gradient-to-r from-[#19DC7E] to-blue-400 rounded-full blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
-                <form id="notifyForm" class="relative flex p-2 bg-white rounded-full shadow-xl ring-4 ring-transparent hover:ring-[#19DC7E]/10 transition-all">
+                <div class="absolute -inset-2 bg-gradient-to-r from-[#24B25D] to-blue-400 rounded-full blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+                <form id="notifyForm" class="relative flex p-2 bg-white rounded-full shadow-xl ring-4 ring-transparent hover:ring-[#24B25D]/10 transition-all">
                     <input type="email" id="emailInput" placeholder="Enter email to Subscribe" 
                            class="flex-1 bg-transparent border-none outline-none pl-6 py-3 text-gray-900 placeholder-gray-400 font-bold rounded-full text-sm sm:text-base w-full min-w-0" required>
-                    <button type="submit" id="submitBtn" class="shrink-0 bg-black text-white px-6 sm:px-8 py-3 rounded-full font-black uppercase text-xs tracking-widest hover:bg-[#19DC7E] hover:text-black transition-colors shadow-md">
+                    <button type="submit" id="submitBtn" class="shrink-0 bg-black text-white px-6 sm:px-8 py-3 rounded-full font-black uppercase text-xs tracking-widest hover:bg-[#24B25D] hover:text-black transition-colors shadow-md">
                         Subscribe
                     </button>
                 </form>
@@ -216,7 +216,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                     <div class="text-2xl font-black text-gray-300 pt-2">:</div>
                     <div class="bg-black p-3 rounded-2xl min-w-[70px] shadow-lg shadow-green-400/20">
-                        <div id="seconds" class="text-2xl font-black font-crimson-pro text-[#19DC7E] leading-none">00</div>
+                        <div id="seconds" class="text-2xl font-black font-crimson-pro text-[#24B25D] leading-none">00</div>
                         <div class="text-[9px] font-bold text-white/60 uppercase">Secs</div>
                     </div>
                 </div>
@@ -237,7 +237,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     foreach($socials as $key => $s): 
                         if($s['url'] !== '#' && $s['url'] !== '' && $s['url'] !== 'https://wa.me/'):
                     ?>
-                        <a href="<?php echo htmlspecialchars($s['url']); ?>" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-800 shadow-sm hover:scale-110 hover:bg-[#19DC7E] hover:text-white transition-all duration-300 border border-gray-100">
+                        <a href="<?php echo htmlspecialchars($s['url']); ?>" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-800 shadow-sm hover:scale-110 hover:bg-[#24B25D] hover:text-white transition-all duration-300 border border-gray-100">
                             <i class="<?php echo $s['icon']; ?> text-sm"></i>
                         </a>
                     <?php endif; endforeach; ?>
@@ -293,7 +293,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (!countdownEl) return;
 
             if (distance < 0) {
-                countdownEl.innerHTML = "<div class='bg-[#19DC7E] text-white font-bold px-6 py-3 rounded-2xl w-full text-center shadow-lg'>We are launching soon!</div>";
+                countdownEl.innerHTML = "<div class='bg-[#24B25D] text-white font-bold px-6 py-3 rounded-2xl w-full text-center shadow-lg'>We are launching soon!</div>";
                 return;
             }
 
@@ -336,8 +336,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 const data = await response.json();
                 
-                msg.classList.remove('hidden', 'text-red-500', 'text-[#19DC7E]');
-                msg.classList.add(data.success ? 'text-[#19DC7E]' : 'text-red-500');
+                msg.classList.remove('hidden', 'text-red-500', 'text-[#24B25D]');
+                msg.classList.add(data.success ? 'text-[#24B25D]' : 'text-red-500');
                 msg.innerHTML = `<i class="${data.success ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} mr-1.5"></i> ${data.message}`;
                 msg.classList.remove('hidden');
 
@@ -345,7 +345,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             } catch (err) {
                 console.error(err);
-                msg.classList.remove('hidden', 'text-[#19DC7E]');
+                msg.classList.remove('hidden', 'text-[#24B25D]');
                 msg.classList.add('text-red-500');
                 msg.innerText = 'Connection error. Please try again.';
             } finally {

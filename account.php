@@ -37,7 +37,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     ?>
     <style>
         .nav-link-active {
-            background: #19DC7E !important;
+            background: #24B25D !important;
             color: #000 !important;
             box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);
         }
@@ -46,7 +46,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         }
     </style>
 </head>
-<body class="bg-[#FFFBEB] font-['Inter']">
+<body class="bg-[#FFFEDC] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -56,7 +56,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="bg-gray-900 rounded-[40px] p-8 md:p-12 text-white mb-12 relative overflow-hidden anim-up">
             <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
                 <div class="flex items-center gap-6">
-                    <div class="w-16 h-16 md:w-24 md:h-24 bg-[#19DC7E] rounded-[30px] flex items-center justify-center text-black font-black text-3xl md:text-4xl shadow-xl">
+                    <div class="w-16 h-16 md:w-24 md:h-24 bg-[#24B25D] rounded-[30px] flex items-center justify-center text-black font-black text-3xl md:text-4xl shadow-xl">
                         <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                     </div>
                     <div>
@@ -67,19 +67,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 
                 <div class="flex gap-4 md:gap-12">
                     <div class="text-center group">
-                        <div class="text-3xl md:text-4xl font-['Crimson_Pro'] font-black text-[#19DC7E] group-hover:scale-110 transition-transform">₹<?php echo number_format($total_spent); ?></div>
+                        <div class="text-3xl md:text-4xl font-['Crimson_Pro'] font-black text-[#24B25D] group-hover:scale-110 transition-transform">₹<?php echo number_format($total_spent); ?></div>
                         <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mt-1">Total Spent</div>
                     </div>
                     <div class="w-px h-12 bg-white/10 hidden md:block"></div>
                     <div class="text-center group">
-                        <div class="text-3xl md:text-4xl font-['Crimson_Pro'] font-black text-[#19DC7E] group-hover:scale-110 transition-transform"><?php echo count($all_orders); ?></div>
+                        <div class="text-3xl md:text-4xl font-['Crimson_Pro'] font-black text-[#24B25D] group-hover:scale-110 transition-transform"><?php echo count($all_orders); ?></div>
                         <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mt-1">Purchases</div>
                     </div>
                 </div>
             </div>
             
             <!-- Decor -->
-            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#19DC7E]/10 rounded-full blur-3xl"></div>
+            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#24B25D]/10 rounded-full blur-3xl"></div>
             <div class="absolute -left-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
         </div>
 
@@ -90,15 +90,15 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 
                 <!-- Profile Summary Card in Sidebar -->
                 <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-center relative overflow-hidden group">
-                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#19DC7E] to-[#14c06d]"></div>
-                    <div class="w-20 h-20 bg-gray-50 rounded-3xl mx-auto mb-4 flex items-center justify-center text-2xl group-hover:bg-[#19DC7E] group-hover:text-white transition-all duration-500">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#24B25D] to-[#14c06d]"></div>
+                    <div class="w-20 h-20 bg-gray-50 rounded-3xl mx-auto mb-4 flex items-center justify-center text-2xl group-hover:bg-[#24B25D] group-hover:text-white transition-all duration-500">
                         <i class="far fa-user"></i>
                     </div>
                     <h3 class="font-['Crimson_Pro'] font-black text-xl text-gray-900"><?php echo $user['name']; ?></h3>
                     <p class="text-sm text-gray-400 font-medium mb-6"><?php echo $user['email']; ?></p>
                     <div class="flex justify-center gap-2">
                          <span class="px-3 py-1 bg-gray-50 text-gray-400 text-[9px] font-black uppercase tracking-tighter rounded-full border border-gray-100">Classic Account</span>
-                         <?php if(is_admin()): ?><span class="px-3 py-1 bg-black text-[#19DC7E] text-[9px] font-black uppercase tracking-tighter rounded-full">Admin Access</span><?php endif; ?>
+                         <?php if(is_admin()): ?><span class="px-3 py-1 bg-black text-[#24B25D] text-[9px] font-black uppercase tracking-tighter rounded-full">Admin Access</span><?php endif; ?>
                     </div>
                 </div>
 
@@ -107,19 +107,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <p class="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-4 ml-4 mt-2 text-center lg:text-left">Navigation</p>
                     
                     <a href="<?php echo get_url('account.php'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl font-black transition-all group <?php echo $current_page == 'account.php' ? 'nav-link-active' : 'text-gray-500 hover:bg-gray-50 hover:text-black'; ?>">
-                        <i class="fas fa-th-large <?php echo $current_page == 'account.php' ? 'text-black' : 'text-gray-300 group-hover:text-[#19DC7E]'; ?> transition-colors w-5"></i> Dashboard
+                        <i class="fas fa-th-large <?php echo $current_page == 'account.php' ? 'text-black' : 'text-gray-300 group-hover:text-[#24B25D]'; ?> transition-colors w-5"></i> Dashboard
                     </a>
 
                     <a href="<?php echo get_url('settings.php'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-black font-black transition-all group">
-                        <i class="fas fa-cog text-gray-300 group-hover:text-[#19DC7E] transition-colors w-5"></i> Settings
+                        <i class="fas fa-cog text-gray-300 group-hover:text-[#24B25D] transition-colors w-5"></i> Settings
                     </a>
                     
                     <a href="<?php echo get_url('shop.php'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-black font-black transition-all group">
-                        <i class="fas fa-shopping-bag text-gray-300 group-hover:text-[#19DC7E] transition-colors w-5"></i> Shop
+                        <i class="fas fa-shopping-bag text-gray-300 group-hover:text-[#24B25D] transition-colors w-5"></i> Shop
                     </a>
                     
                     <a href="<?php echo get_url('track.php'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-black font-black transition-all group">
-                        <i class="fas fa-truck-fast text-gray-300 group-hover:text-[#19DC7E] transition-colors w-5"></i> Track Order
+                        <i class="fas fa-truck-fast text-gray-300 group-hover:text-[#24B25D] transition-colors w-5"></i> Track Order
                     </a>
 
                     <a href="<?php echo get_url('wishlist.php'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-black font-black transition-all group">
@@ -132,7 +132,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         if($is_affiliate): 
                     ?>
                     <a href="<?php echo get_url('affiliate-dashboard.php'); ?>" class="flex items-center gap-4 px-6 py-4 rounded-2xl text-gray-500 hover:bg-gray-50 hover:text-black font-black transition-all group">
-                        <i class="fas fa-bolt text-gray-300 group-hover:text-[#19DC7E] transition-colors w-5"></i> Creator Hub
+                        <i class="fas fa-bolt text-gray-300 group-hover:text-[#24B25D] transition-colors w-5"></i> Creator Hub
                     </a>
                     <?php endif; ?>
 
@@ -147,11 +147,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <?php if(is_admin()): ?>
                 <a href="<?php echo get_url('admin/'); ?>" class="block bg-gray-900 text-white rounded-[32px] shadow-2xl hover:scale-[1.03] transition-all duration-500 relative overflow-hidden group p-1">
                     <div class="bg-gray-900 border border-white/10 rounded-[30px] p-8 relative z-10">
-                         <div class="w-12 h-12 bg-[#19DC7E] text-black rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-green-500/20 group-hover:rotate-12 transition-transform">
+                         <div class="w-12 h-12 bg-[#24B25D] text-black rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-green-500/20 group-hover:rotate-12 transition-transform">
                             <i class="fas fa-crown text-xl"></i>
                          </div>
                          <h3 class="font-['Crimson_Pro'] font-black text-2xl mb-1">Store Admin</h3>
-                         <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest group-hover:text-[#19DC7E] transition-colors">Complete Management Access</p>
+                         <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest group-hover:text-[#24B25D] transition-colors">Complete Management Access</p>
                     </div>
                 </a>
                 <?php endif; ?>
@@ -178,16 +178,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 <div class="text-8xl mb-8 animate-bounce">📦</div>
                                 <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 mb-2">No Snacks Here!</h3>
                                 <p class="text-gray-500 font-medium mb-10 max-w-sm mx-auto">Your order history is currently empty. Head over to our shop to explore some dried goodness.</p>
-                                <a href="<?php echo get_url('shop.php'); ?>" class="btn-chunky bg-[#111827] text-white px-12 py-5 shadow-2xl hover:bg-[#19DC7E] hover:text-black transition-all">Start Your First Order</a>
+                                <a href="<?php echo get_url('shop.php'); ?>" class="btn-chunky bg-[#111827] text-white px-12 py-5 shadow-2xl hover:bg-[#24B25D] hover:text-black transition-all">Start Your First Order</a>
                             </div>
                         </div>
                     <?php else: ?>
                         <div class="grid gap-6">
                             <?php foreach ($orders as $order): ?>
-                            <div class="bg-white rounded-[40px] p-6 md:p-8 shadow-sm border border-gray-100 hover:border-[#19DC7E] hover:shadow-xl transition-all group anim-up">
+                            <div class="bg-white rounded-[40px] p-6 md:p-8 shadow-sm border border-gray-100 hover:border-[#24B25D] hover:shadow-xl transition-all group anim-up">
                                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                                     <div class="flex items-center gap-6">
-                                        <div class="w-18 h-18 bg-gray-50 rounded-[24px] flex items-center justify-center text-gray-300 group-hover:bg-[#19DC7E]/10 group-hover:text-[#19DC7E] transition-all duration-500 group-hover:scale-110">
+                                        <div class="w-18 h-18 bg-gray-50 rounded-[24px] flex items-center justify-center text-gray-300 group-hover:bg-[#24B25D]/10 group-hover:text-[#24B25D] transition-all duration-500 group-hover:scale-110">
                                             <i class="fas fa-box-open text-2xl"></i>
                                         </div>
                                         <div>
@@ -210,7 +210,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                             <p class="text-[10px] font-black uppercase text-gray-400 mb-0.5">Order Value</p>
                                             <p class="text-3xl font-['Crimson_Pro'] font-black text-gray-900">₹<?php echo number_format($order['total']); ?></p>
                                         </div>
-                                        <a href="<?php echo get_url('track.php?id=' . $order['order_number']); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-3.5 shadow-xl group-hover:bg-[#19DC7E] group-hover:text-black transition-all">View Details</a>
+                                        <a href="<?php echo get_url('track.php?id=' . $order['order_number']); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-3.5 shadow-xl group-hover:bg-[#24B25D] group-hover:text-black transition-all">View Details</a>
                                     </div>
                                 </div>
                             </div>
@@ -225,28 +225,28 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <!-- PROFILE INFO -->
                 <div class="bg-gray-900 rounded-[50px] p-10 md:p-16 text-white shadow-3xl shadow-green-900/10 flex flex-col md:flex-row justify-between items-center gap-12 relative overflow-hidden">
                     <div class="relative z-10 flex-1">
-                        <span class="w-12 h-1 bg-[#19DC7E] block mb-8 rounded-full"></span>
+                        <span class="w-12 h-1 bg-[#24B25D] block mb-8 rounded-full"></span>
                         <h2 class="text-4xl font-['Crimson_Pro'] font-black mb-4">Account Security.</h2>
                         <p class="text-gray-400 font-medium text-lg leading-relaxed max-w-md">We're building more tools to help you manage your profile, saved addresses, and payment methods. Stay tuned for our next platform drop!</p>
                     </div>
                     
                     <div class="relative z-10 w-full md:w-auto">
-                        <div class="bg-white/5 backdrop-blur-3xl rounded-[32px] p-8 border border-white/10 hover:border-[#19DC7E]/50 transition-colors">
+                        <div class="bg-white/5 backdrop-blur-3xl rounded-[32px] p-8 border border-white/10 hover:border-[#24B25D]/50 transition-colors">
                             <div class="text-[10px] font-black uppercase text-gray-500 mb-2 tracking-[0.2em]">Verified Identity</div>
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 bg-[#19DC7E]/10 rounded-xl flex items-center justify-center text-[#19DC7E]">
+                                <div class="w-10 h-10 bg-[#24B25D]/10 rounded-xl flex items-center justify-center text-[#24B25D]">
                                     <i class="fas fa-shield-alt"></i>
                                 </div>
                                 <div>
                                     <div class="font-bold text-lg"><?php echo $user['email']; ?></div>
-                                    <div class="text-xs text-[#19DC7E] font-bold">Standard Profile</div>
+                                    <div class="text-xs text-[#24B25D] font-bold">Standard Profile</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Decor -->
-                    <div class="absolute -right-20 -top-20 w-80 h-80 bg-[#19DC7E] rounded-full blur-[120px] opacity-10"></div>
+                    <div class="absolute -right-20 -top-20 w-80 h-80 bg-[#24B25D] rounded-full blur-[120px] opacity-10"></div>
                 </div>
 
             </div>

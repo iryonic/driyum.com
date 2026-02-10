@@ -57,7 +57,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] font-['Inter']">
+<body class="bg-[#FFFEDC] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -66,11 +66,11 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
         <!-- HEADER -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 anim-up">
             <div class="flex items-center gap-6">
-                <div class="w-20 h-20 bg-black text-[#19DC7E] rounded-[30px] flex items-center justify-center text-4xl shadow-xl">
+                <div class="w-20 h-20 bg-black text-[#24B25D] rounded-[30px] flex items-center justify-center text-4xl shadow-xl">
                     <i class="fas fa-bolt"></i>
                 </div>
                 <div>
-                    <span class="text-xs font-black uppercase tracking-widest text-[#19DC7E]">Driyum Creator</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-[#24B25D]">Driyum Creator</span>
                     <h1 class="text-4xl md:text-5xl font-['Crimson_Pro'] font-black text-gray-900">Dashboard</h1>
                 </div>
             </div>
@@ -79,7 +79,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
             <div class="bg-white p-2 pl-6 rounded-full shadow-lg border border-gray-100 flex items-center gap-4 max-w-full">
                 <div class="hidden md:block text-xs font-bold text-gray-400 uppercase tracking-widest">Your Link:</div>
                 <div class="font-mono font-bold text-gray-800 text-sm truncate max-w-[200px] md:max-w-none"><?php echo $referral_link; ?></div>
-                <button onclick="navigator.clipboard.writeText('<?php echo $referral_link; ?>'); showToast('Link Copied!', 'success')" class="w-10 h-10 bg-[#19DC7E] rounded-full flex items-center justify-center text-black hover:scale-110 transition shadow-md">
+                <button onclick="navigator.clipboard.writeText('<?php echo $referral_link; ?>'); showToast('Link Copied!', 'success')" class="w-10 h-10 bg-[#24B25D] rounded-full flex items-center justify-center text-black hover:scale-110 transition shadow-md">
                     <i class="fas fa-copy"></i>
                 </button>
             </div>
@@ -91,15 +91,15 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
             <div class="bg-black text-white p-10 rounded-[40px] shadow-2xl relative overflow-hidden group">
                 <div class="relative z-10">
                     <div class="text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Total Earnings</div>
-                    <div class="text-5xl font-['Crimson_Pro'] font-black text-[#19DC7E]">₹<?php echo number_format($total_earned); ?></div>
+                    <div class="text-5xl font-['Crimson_Pro'] font-black text-[#24B25D]">₹<?php echo number_format($total_earned); ?></div>
                     <div class="mt-4 text-xs font-bold text-gray-400">+₹<?php echo number_format($pending_comm); ?> pending</div>
                 </div>
                 <!-- Decor -->
-                <div class="absolute right-0 top-0 w-32 h-32 bg-[#19DC7E] rounded-full blur-[60px] opacity-20 -mr-10 -mt-10 group-hover:opacity-30 transition"></div>
+                <div class="absolute right-0 top-0 w-32 h-32 bg-[#24B25D] rounded-full blur-[60px] opacity-20 -mr-10 -mt-10 group-hover:opacity-30 transition"></div>
             </div>
             
             <!-- Referrals -->
-            <div class="bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 group hover:border-[#19DC7E] transition-colors">
+            <div class="bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 group hover:border-[#24B25D] transition-colors">
                 <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-users"></i>
                 </div>
@@ -108,7 +108,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
             </div>
 
             <!-- Commission Rate -->
-            <div class="bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 group hover:border-[#19DC7E] transition-colors">
+            <div class="bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 group hover:border-[#24B25D] transition-colors">
                  <div class="w-12 h-12 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center text-xl mb-6">
                     <i class="fas fa-percentage"></i>
                 </div>
@@ -139,7 +139,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
                             <td class="py-6 pl-4 text-sm"><?php echo date('M d, Y', strtotime($o['created_at'])); ?></td>
                             <td class="py-6 text-sm">#<?php echo $o['order_number']; ?></td>
                             <td class="py-6 text-gray-900">₹<?php echo number_format($o['total']); ?></td>
-                            <td class="py-6 text-[#19DC7E]">₹<?php echo number_format($o['affiliate_commission']); ?></td>
+                            <td class="py-6 text-[#24B25D]">₹<?php echo number_format($o['affiliate_commission']); ?></td>
                             <td class="py-6 text-right pr-4">
                                 <span class="px-3 py-1 rounded-full text-[10px] uppercase tracking-widest
                                     <?php echo $o['order_status'] == 'delivered' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; ?>">

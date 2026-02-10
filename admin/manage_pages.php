@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pages'])) {
 
 // Fetch Current Settings
 $p = [
-    'about_hero_title' => get_setting('about_hero_title', 'Born from <span class="text-[#19DC7E]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.'),
+    'about_hero_title' => get_setting('about_hero_title', 'Born from <span class="text-[#24B25D]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.'),
     'about_hero_subtitle' => get_setting('about_hero_subtitle', 'The Driyum Journey'),
     'about_hero_desc' => get_setting('about_hero_desc', "We're on a mission to prove that healthy snacking shouldn't cost the earth or your health."),
     
@@ -93,7 +93,7 @@ $p = [
                 <button type="button" onclick="switchTab('legal')" id="btn-legal" class="px-6 py-2 rounded-lg font-black uppercase text-[10px] tracking-widest transition-all text-gray-400 hover:text-gray-600">Legal</button>
             </div>
 
-            <button type="submit" name="update_pages" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all shadow-lg flex items-center gap-2">
+            <button type="submit" name="update_pages" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-[#24B25D] hover:text-black transition-all shadow-lg flex items-center gap-2">
                 <i class="fas fa-save"></i> Save Changes
             </button>
         </div>
@@ -144,7 +144,7 @@ $p = [
                         </div>
                         <h3 class="font-bold text-gray-900">Brand Story</h3>
                     </div>
-                    <label class="cursor-pointer bg-black text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase hover:bg-[#19DC7E] hover:text-black transition-colors">
+                    <label class="cursor-pointer bg-black text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase hover:bg-[#24B25D] hover:text-black transition-colors">
                         Change Image
                         <input type="file" name="about_story_image" class="hidden">
                     </label>
@@ -179,7 +179,7 @@ $p = [
                         </div>
                         <h3 class="font-bold text-gray-900">Tradition & Heritage</h3>
                     </div>
-                    <label class="cursor-pointer bg-black text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase hover:bg-[#19DC7E] hover:text-black transition-colors">
+                    <label class="cursor-pointer bg-black text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase hover:bg-[#24B25D] hover:text-black transition-colors">
                         Change Image
                         <input type="file" name="about_tradition_image" class="hidden">
                     </label>

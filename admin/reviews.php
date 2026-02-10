@@ -64,7 +64,7 @@ $reviews = $pagination['records'];
     
     <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
         <div id="bulk-action-bar" class="hidden items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm anim-up">
-            <span class="text-[9px] font-black text-[#19DC7E] uppercase tracking-widest px-2"><span id="selected-count">0</span> Selected</span>
+            <span class="text-[9px] font-black text-[#24B25D] uppercase tracking-widest px-2"><span id="selected-count">0</span> Selected</span>
             <button onclick="bulkReviewAction('bulk_delete_reviews')" class="bg-red-50 text-red-500 w-8 h-8 rounded-xl hover:bg-red-500 hover:text-white transition flex items-center justify-center">
                 <i class="fas fa-trash-alt text-[10px]"></i>
             </button>
@@ -112,11 +112,11 @@ $reviews = $pagination['records'];
                 <?php foreach ($reviews as $r): ?>
                 <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group review-row">
                     <td class="p-4 text-center">
-                        <input type="checkbox" class="review-checkbox w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" value="<?php echo $r['id']; ?>" onchange="updateBulkBar()">
+                        <input type="checkbox" class="review-checkbox w-4 h-4 rounded border-gray-200 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer" value="<?php echo $r['id']; ?>" onchange="updateBulkBar()">
                     </td>
                     <td class="p-4 pl-0">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-900 font-black text-xs border border-gray-50 group-hover:bg-black group-hover:text-[#19DC7E] transition-all">
+                            <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-900 font-black text-xs border border-gray-50 group-hover:bg-black group-hover:text-[#24B25D] transition-all">
                                 <?php echo strtoupper(substr($r['user_name'], 0, 1)); ?>
                             </div>
                             <div>
@@ -134,7 +134,7 @@ $reviews = $pagination['records'];
                         <span class="text-[8px] font-black text-gray-300 uppercase tracking-widest mt-1 block"><?php echo date('M d, Y', strtotime($r['created_at'])); ?></span>
                     </td>
                     <td class="p-4">
-                        <div class="flex text-[#19DC7E] text-[8px] gap-0.5">
+                        <div class="flex text-[#24B25D] text-[8px] gap-0.5">
                             <?php for($i=0; $i<$r['rating']; $i++) echo '<i class="fas fa-star"></i>'; ?>
                         </div>
                     </td>

@@ -12,15 +12,15 @@ require_once 'includes/functions.php';
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] font-['Inter']">
+<body class="bg-[#FFFEDC] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
     <!-- HERO SECTION -->
     <section class="pt-32 pb-16 px-6">
         <div class="container mx-auto max-w-4xl text-center">
-            <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up">Trust & Transparency</span>
-            <h1 class="text-5xl md:text-7xl font-['Crimson_Pro'] font-black text-gray-900 mb-6 anim-up delay-100">Legal Bits <span class="text-[#19DC7E]">.</span></h1>
+            <span class="bg-[#24B25D]/10 text-[#24B25D] text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up">Trust & Transparency</span>
+            <h1 class="text-5xl md:text-7xl font-['Crimson_Pro'] font-black text-gray-900 mb-6 anim-up delay-100">Legal Bits <span class="text-[#24B25D]">.</span></h1>
             <p class="text-xl text-gray-400 font-medium max-w-2xl mx-auto anim-up delay-200">Everything you need to know about our relationship, your data, and how we handle your crunchy boxes.</p>
         </div>
     </section>
@@ -34,7 +34,7 @@ require_once 'includes/functions.php';
                 <!-- PRIVACY POLICY -->
                 <div class="space-y-6">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-[#19DC7E]/10 rounded-2xl flex items-center justify-center text-[#19DC7E] text-xl">
+                        <div class="w-12 h-12 bg-[#24B25D]/10 rounded-2xl flex items-center justify-center text-[#24B25D] text-xl">
                             <i class="fas fa-shield-halved"></i>
                         </div>
                         <h2 class="text-3xl font-['Crimson_Pro'] font-black text-gray-900">Privacy Policy</h2>
@@ -94,7 +94,7 @@ require_once 'includes/functions.php';
             <!-- FAQ CTA -->
             <div class="mt-16 text-center anim-up delay-500">
                 <p class="text-gray-400 mb-6 font-bold uppercase tracking-widest text-xs">Still have questions?</p>
-                <a href="<?php echo get_url('contact'); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-5 shadow-2xl hover:bg-[#19DC7E] hover:text-black inline-flex items-center gap-3">
+                <a href="<?php echo get_url('contact'); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-5 shadow-2xl hover:bg-[#24B25D] hover:text-black inline-flex items-center gap-3">
                     Chat with Us <i class="fas fa-comments"></i>
                 </a>
             </div>

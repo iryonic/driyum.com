@@ -99,7 +99,7 @@ if(isset($_GET['edit'])) {
                     <textarea name="message" rows="4" required class="w-full bg-gray-50 border-2 border-transparent focus:border-black rounded-2xl px-5 py-4 text-sm font-medium shadow-sm transition-all outline-none leading-relaxed"><?php echo htmlspecialchars($edit_data['message'] ?? ''); ?></textarea>
                 </div>
 
-                <button type="submit" class="w-full bg-black text-[#19DC7E] py-4 rounded-[20px] font-black uppercase tracking-widest shadow-xl shadow-black/5 hover:scale-[1.02] active:scale-95 transition-all">
+                <button type="submit" class="w-full bg-black text-[#24B25D] py-4 rounded-[20px] font-black uppercase tracking-widest shadow-xl shadow-black/5 hover:scale-[1.02] active:scale-95 transition-all">
                     <?php echo $edit_data ? 'Save Changes' : 'Save Review'; ?>
                 </button>
             </form>
@@ -119,12 +119,12 @@ if(isset($_GET['edit'])) {
                     <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest"><?php echo date('M d, Y', strtotime($r['created_at'])); ?></span>
                 </div>
                 <h4 class="text-lg font-black text-gray-900 mb-1"><?php echo htmlspecialchars($r['name']); ?></h4>
-                <p class="text-[9px] font-black text-[#19DC7E] uppercase tracking-widest mb-4"><?php echo htmlspecialchars($r['location']); ?></p>
+                <p class="text-[9px] font-black text-[#24B25D] uppercase tracking-widest mb-4"><?php echo htmlspecialchars($r['location']); ?></p>
                 <p class="text-gray-600 text-sm leading-relaxed italic">"<?php echo htmlspecialchars($r['message']); ?>"</p>
             </div>
             
             <div class="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                <a href="manage_testimonials.php?edit=<?php echo $r['id']; ?>" class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#19DC7E] transition-all" title="Edit">
+                <a href="manage_testimonials.php?edit=<?php echo $r['id']; ?>" class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#24B25D] transition-all" title="Edit">
                     <i class="fas fa-edit text-[10px]"></i>
                 </a>
                 <form method="POST" onsubmit="return confirm('Delete this review?');">

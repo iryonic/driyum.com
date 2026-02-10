@@ -2,7 +2,7 @@
 <!-- MASTER FOOTER -->
 <footer class="bg-black text-white pt-16 md:pt-24 pb-32 md:pb-40 relative overflow-hidden mt-10 md:mt-20 rounded-t-[40px] md:rounded-t-[50px]">
     <!-- Background Gradients -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[500px] bg-[#19DC7E] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[1200px] h-[500px] bg-[#24B25D] rounded-full blur-[150px] opacity-10 pointer-events-none"></div>
 
     <div class="container mx-auto px-6 relative z-10">
         <div class="grid grid-cols-2 md:grid-cols-12 gap-y-12 gap-x-8 border-b border-white/10 pb-16">
@@ -56,7 +56,7 @@
 
             <!-- LINKS (Shop) -->
             <div class="col-span-1 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
-                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#19DC7E] uppercase tracking-widest">Shop</h4>
+                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#24B25D] uppercase tracking-widest">Shop</h4>
                 <ul class="space-y-4 font-['Inter'] text-gray-400">
                     <li><a href="<?php echo get_url('shop'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">All Snacks</a></li>
                     <li><a href="<?php echo get_url('shop?filter=new'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">New Drops</a></li>
@@ -66,7 +66,7 @@
 
             <!-- LINKS (Support) -->
             <div class="col-span-1 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
-                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#19DC7E] uppercase tracking-widest">Support</h4>
+                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#24B25D] uppercase tracking-widest">Support</h4>
                 <ul class="space-y-4 font-['Inter'] text-gray-400">
                     <li><a href="<?php echo get_url('about'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">Our Story</a></li>
                     <li><a href="<?php echo get_url('track'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">Track Order</a></li>
@@ -78,11 +78,11 @@
 
             <!-- NEWSLETTER -->
             <div class="col-span-2 md:col-span-4 xl:col-span-3 space-y-6 pt-4 text-center md:text-left">
-                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#19DC7E] uppercase tracking-widest">Stay Fresh</h4>
+                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#24B25D] uppercase tracking-widest">Stay Fresh</h4>
                 <p class="text-gray-400 font-['Inter']">Join the club for distinct drops and exclusive deals.</p>
                 <form class="relative group" id="newsletter-form" onsubmit="subscribeNewsletter(event)">
-                    <input type="email" name="email" required placeholder="Your email..." class="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-6 pr-14 text-white placeholder-gray-500 focus:outline-none focus:border-[#19DC7E] focus:bg-white/10 transition-all">
-                    <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 w-10 h-10 bg-[#19DC7E] rounded-full flex items-center justify-center text-black hover:scale-110 transition shadow-lg shadow-green-900/50" aria-label="Subscribe to newsletter">
+                    <input type="email" name="email" required placeholder="Your email..." class="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-6 pr-14 text-white placeholder-gray-500 focus:outline-none focus:border-[#24B25D] focus:bg-white/10 transition-all">
+                    <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 w-10 h-10 bg-[#24B25D] rounded-full flex items-center justify-center text-black hover:scale-110 transition shadow-lg shadow-green-900/50" aria-label="Subscribe to newsletter">
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </form>
@@ -92,7 +92,7 @@
         <!-- COPYRIGHT -->
         <div class="pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-['Inter']">
             <p>&copy; <?php echo date('Y'); ?> <?php echo get_setting('store_name', 'DRIYUM'); ?>. All rights reserved.</p>
-            <p>Powered by <a href="https://irfanmanzoor.in/" target="_blank" class="text-[#19DC7E] hover:underline transition">EXORA.DEVS</a> </p>
+            <p>Powered by <a href="https://irfanmanzoor.in/" target="_blank" class="text-[#24B25D] hover:underline transition">EXORA.DEVS</a> </p>
             <div class="flex gap-6 mt-4 md:mt-0 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
                 <i class="fab fa-cc-visa text-2xl"></i>
                 <i class="fab fa-cc-mastercard text-2xl"></i>
@@ -193,13 +193,13 @@
         }
 
         .dock-item-v2.active i {
-            color: #19DC7E;
+            color: #24B25D;
             transform: translateY(-2px) scale(1.15);
             filter: drop-shadow(0 0 12px rgba(25, 220, 126, 0.4));
         }
 
         .dock-item-v2.active .dock-label-v2 {
-            color: #19DC7E;
+            color: #24B25D;
             opacity: 1;
             transform: translateY(-1px);
         }
@@ -210,7 +210,7 @@
             bottom: 6px;
             width: 4px;
             height: 4px;
-            background: #19DC7E;
+            background: #24B25D;
             border-radius: 50%;
             box-shadow: 0 0 12px rgba(25, 220, 126, 0.8);
             animation: dot-fade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -231,7 +231,7 @@
         .dock-fab-v2 {
             width: 64px;
             height: 64px;
-            background: linear-gradient(135deg, #19DC7E 0%, #059669 100%);
+            background: linear-gradient(135deg, #24B25D 0%, #059669 100%);
             border: 6px solid #0f172a; /* Slate 900 to match background */
             border-radius: 50%;
             display: flex;

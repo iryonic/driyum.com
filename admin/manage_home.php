@@ -42,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- ANNOUNCEMENT BAR UPDATE ---
     if (isset($_POST['update_announcement'])) {
         $announcement_text = sanitize_input($_POST['announcement_text'] ?? '');
+        $announcement_bg = sanitize_input($_POST['announcement_bg_color'] ?? '#004f42');
         update_setting('announcement_text', $announcement_text);
+        update_setting('announcement_bg_color', $announcement_bg);
         $msg = "Announcement bar updated!";
     }
 
@@ -181,6 +183,7 @@ if(isset($_GET['del_anno'])) {
 $vid_sec = fetch_one("SELECT * FROM homepage_sections WHERE section_name = 'video_brand_story'");
 $sale = fetch_one("SELECT * FROM sale_countdowns LIMIT 1");
 $announcement_text = get_setting('announcement_text', '🚀 Free Shipping on All Orders Over ₹499 • 🌿 100% Organic & Natural');
+$announcement_bg = get_setting('announcement_bg_color', '#004f42');
 $hero_slides = get_hero_slides(true);
 $show_stats = get_setting('show_hero_stats', 'on');
 ?>
@@ -204,7 +207,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
 
     <!-- Stats Summary -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="bg-gradient-to-br from-[#19DC7E] to-[#10b981] p-6 rounded-3xl text-white shadow-xl shadow-green-100 relative overflow-hidden group">
+        <div class="bg-gradient-to-br from-[#24B25D] to-[#10b981] p-6 rounded-3xl text-white shadow-xl shadow-green-100 relative overflow-hidden group">
             <div class="absolute -right-4 -bottom-4 text-7xl opacity-20 transform -rotate-12 group-hover:rotate-0 transition-transform duration-500">
                 <i class="fas fa-rocket"></i>
             </div>
@@ -250,7 +253,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up mb-10">
             <div class="px-8 py-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-[#19DC7E]/10 text-[#19DC7E] rounded-full flex items-center justify-center text-sm">
+                    <div class="w-10 h-10 bg-[#24B25D]/10 text-[#24B25D] rounded-full flex items-center justify-center text-sm">
                         <i class="fas fa-layer-group"></i>
                     </div>
                     <div>
@@ -258,7 +261,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Manage multiple hero banners</p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('add-slide-modal').classList.remove('hidden')" class="bg-black text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all shadow-lg flex items-center gap-2">
+                <button onclick="document.getElementById('add-slide-modal').classList.remove('hidden')" class="bg-black text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#24B25D] hover:text-black transition-all shadow-lg flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add New Slide
                 </button>
             </div>
@@ -282,7 +285,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                                     <!-- Status Badge -->
                                     <div class="absolute top-4 left-4">
                                         <?php if($slide['is_active']): ?>
-                                            <span class="bg-[#19DC7E] text-black text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-xl flex items-center gap-1.5">
+                                            <span class="bg-[#24B25D] text-black text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-xl flex items-center gap-1.5">
                                                 <span class="w-1 h-1 bg-black rounded-full animate-pulse"></span> Active
                                             </span>
                                         <?php else: ?>
@@ -292,7 +295,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
 
                                     <!-- Actions Overlay -->
                                     <div class="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
-                                        <button onclick='openEditSlide(<?php echo json_encode($slide); ?>)' class="w-10 h-10 bg-white text-gray-900 rounded-xl flex items-center justify-center hover:bg-[#19DC7E] hover:text-white transition-all shadow-xl" title="Edit Content">
+                                        <button onclick='openEditSlide(<?php echo json_encode($slide); ?>)' class="w-10 h-10 bg-white text-gray-900 rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-xl" title="Edit Content">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <form method="POST" class="contents">
@@ -332,7 +335,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                     <div class="flex items-center gap-3">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" name="show_hero_stats" value="on" class="sr-only peer" <?php echo ($show_stats === 'on') ? 'checked' : ''; ?> onchange="this.form.submit()">
-                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#19DC7E]"></div>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#24B25D]"></div>
                         </label>
                         <span class="text-[10px] font-black text-gray-600 uppercase tracking-widest">Global Review Stats Badge</span>
                     </div>
@@ -712,9 +715,25 @@ $show_stats = get_setting('show_hero_stats', 'on');
                 <form method="POST" class="p-6 flex-1 flex flex-col">
                     <input type="hidden" name="update_announcement" value="1">
                     <div class="space-y-4 flex-1">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Marquee Content</label>
-                            <textarea name="announcement_text" rows="4" class="w-full bg-gray-50/50 border border-gray-100 focus:border-blue-500 focus:bg-white rounded-2xl px-5 py-4 outline-none transition-all font-bold shadow-inner resize-none" placeholder="Enter marquee text..."><?php echo htmlspecialchars($announcement_text); ?></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Marquee Text</label>
+                                <textarea name="announcement_text" rows="3" class="w-full bg-gray-50/50 border border-gray-100 focus:border-blue-500 focus:bg-white rounded-2xl px-5 py-3 outline-none transition-all font-bold shadow-inner resize-none text-sm" placeholder="Enter marquee text..."><?php echo htmlspecialchars($announcement_text); ?></textarea>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Bar Color</label>
+                                <div class="bg-gray-50/50 border border-gray-100 rounded-2xl p-3 flex flex-col justify-center h-[calc(100%-1.5rem)]">
+                                    <div class="flex items-center gap-4">
+                                        <div class="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-white shadow-sm">
+                                            <input type="color" name="announcement_bg_color" value="<?php echo $announcement_bg; ?>" class="absolute inset-[-10px] w-[200%] h-[200%] cursor-pointer" oninput="this.parentElement.nextElementSibling.querySelector('code').innerText = this.value">
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Background Hex</p>
+                                            <code class="text-sm font-bold text-gray-700"><?php echo $announcement_bg; ?></code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex items-center gap-2 bg-blue-50 p-3 rounded-xl border border-blue-100">
                             <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
@@ -776,7 +795,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                                 </div>
 
                                 <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                                    <label class="cursor-pointer bg-white text-black px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-[#19DC7E]">
+                                    <label class="cursor-pointer bg-white text-black px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-[#24B25D]">
                                         <i class="fas fa-image"></i> Change Cover
                                         <input type="file" name="media" id="vid-cover-input" class="hidden" onchange="previewMedia(this, 'vid-cover-preview')">
                                     </label>

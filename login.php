@@ -67,12 +67,12 @@ $error = $flash ? $flash['message'] : '';
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#FFFEDC] min-h-screen flex items-center justify-center p-4">
 
     <div class="w-full max-w-5xl bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px] anim-up">
         
         <!-- LEFT: ARTWORK -->
-        <div class="w-full md:w-1/2 bg-[#19DC7E] p-12 flex flex-col justify-between relative overflow-hidden">
+        <div class="w-full md:w-1/2 bg-[#24B25D] p-12 flex flex-col justify-between relative overflow-hidden">
             <a href="<?php echo get_url(''); ?>" class="text-white font-['Crimson_Pro'] font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
             
             <div class="relative z-10">
@@ -107,7 +107,7 @@ $error = $flash ? $flash['message'] : '';
                     <label class="block text-gray-400 font-bold mb-2 text-sm uppercase">Password</label>
                     <div class="relative">
                         <input type="password" name="password" id="login-password" required placeholder="••••••••" class="input-chunky bg-gray-50 border-transparent focus:bg-white w-full pr-12">
-                        <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#19DC7E] transition-colors focus:outline-none" aria-label="Toggle password visibility">
+                        <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#24B25D] transition-colors focus:outline-none" aria-label="Toggle password visibility">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
@@ -115,10 +115,10 @@ $error = $flash ? $flash['message'] : '';
 
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-5 h-5 rounded text-[#19DC7E]">
+                        <input type="checkbox" name="remember" class="w-5 h-5 rounded text-[#24B25D]">
                         <span class="text-sm font-bold text-gray-500">Remember Me</span>
                     </label>
-                    <a href="<?php echo get_url('forgot-password'); ?>" class="text-sm font-bold text-[#19DC7E] hover:underline">Lost Password?</a>
+                    <a href="<?php echo get_url('forgot-password'); ?>" class="text-sm font-bold text-[#24B25D] hover:underline">Lost Password?</a>
                 </div>
 
                 <button type="submit" class="btn-chunky btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1">
@@ -127,7 +127,7 @@ $error = $flash ? $flash['message'] : '';
             </form>
 
             <div class="mt-8 text-center text-gray-500 font-['Inter']">
-                New to the family? <a href="<?php echo get_url('register'); ?>" class="text-black font-bold hover:text-[#19DC7E] underline decoration-wavy">Create Account</a>
+                New to the family? <a href="<?php echo get_url('register'); ?>" class="text-black font-bold hover:text-[#24B25D] underline decoration-wavy">Create Account</a>
             </div>
             
         </div>

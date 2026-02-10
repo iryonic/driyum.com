@@ -53,7 +53,7 @@ function send_email($to, $subject, $message) {
                 <td style='padding-right: 20px;'>
                     <strong>{$s_name} Inc.</strong><br>
                     Premium Healthy Delicacies<br>
-                    <a href='{$s_url}' style='color: #19DC7E; text-decoration: none;'>{$s_url}</a>
+                    <a href='{$s_url}' style='color: #24B25D; text-decoration: none;'>{$s_url}</a>
                 </td>
                 <td style='text-align: right;'>
                     Need help? <a href='mailto:{$s_email}' style='color: #555; text-decoration: none;'>{$s_email}</a><br>
@@ -604,7 +604,7 @@ function send_order_confirmation($order_id) {
     $email_content = "
         <div style='font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);'>
             <div style='background-color: #000; padding: 40px; text-align: center;'>
-                <h1 style='color: #19DC7E; margin: 0; font-size: 32px;'>YOU'RE AWESOME!</h1>
+                <h1 style='color: #24B25D; margin: 0; font-size: 32px;'>YOU'RE AWESOME!</h1>
                 <p style='color: #fff; opacity: 0.7; margin-top: 10px;'>Your snack drop is secured.</p>
             </div>
             <div style='padding: 40px; color: #333;'>
@@ -628,8 +628,8 @@ function send_order_confirmation($order_id) {
                             <td style='padding: 10px; text-align: right;'>₹" . number_format($order['subtotal'], 2) . "</td>
                         </tr>
                         " . ($order['discount'] > 0 ? "<tr>
-                            <td style='padding: 10px; color: #19DC7E;'>Discount</td>
-                            <td style='padding: 10px; text-align: right; color: #19DC7E;'>- ₹" . number_format($order['discount'], 2) . "</td>
+                            <td style='padding: 10px; color: #24B25D;'>Discount</td>
+                            <td style='padding: 10px; text-align: right; color: #24B25D;'>- ₹" . number_format($order['discount'], 2) . "</td>
                         </tr>" : "") . "
                         <tr>
                             <td style='padding: 10px; font-weight: bold;'>Shipping</td>
@@ -637,7 +637,7 @@ function send_order_confirmation($order_id) {
                         </tr>
                         <tr style='font-size: 18px; font-weight: bold;'>
                             <td style='padding: 10px; border-top: 2px solid #000;'>Total</td>
-                            <td style='padding: 10px; text-align: right; border-top: 2px solid #000; color: #19DC7E;'>₹" . number_format($order['total'], 2) . "</td>
+                            <td style='padding: 10px; text-align: right; border-top: 2px solid #000; color: #24B25D;'>₹" . number_format($order['total'], 2) . "</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -651,7 +651,7 @@ function send_order_confirmation($order_id) {
                 </div>
 
                 <div style='text-align: center; margin-top: 40px;'>
-                    <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 15px 30px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 50px; font-weight: bold; font-family: sans-serif;'>Track Your Order</a>
+                    <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 15px 30px; background-color: #24B25D; color: #000; text-decoration: none; border-radius: 50px; font-weight: bold; font-family: sans-serif;'>Track Your Order</a>
                 </div>
             </div>
             <div style='padding: 20px; background-color: #eee; text-align: center; font-size: 12px; color: #999;'>
@@ -732,11 +732,11 @@ function send_order_status_email($order_id, $status) {
                     </tr>
                     <tr>
                         <td style='padding: 10px; border-top: 2px solid #374151; font-weight: 900; font-size: 16px;'>Grand Total</td>
-                        <td style='padding: 10px; border-top: 2px solid #374151; font-weight: 900; font-size: 16px; text-align: right; color: #19DC7E;'>₹" . number_format($order['total'], 2) . "</td>
+                        <td style='padding: 10px; border-top: 2px solid #374151; font-weight: 900; font-size: 16px; text-align: right; color: #24B25D;'>₹" . number_format($order['total'], 2) . "</td>
                     </tr>
                 </table>
                 <div style='margin-top: 20px; text-align: center;'>
-                    <a href='" . FULL_BASE_URL . "invoice.php?id={$order['order_number']}&contact={$to}' style='font-size: 11px; font-weight: 900; color: #19DC7E; text-decoration: none; text-transform: uppercase;'>View Full Professional Invoice &rarr;</a>
+                    <a href='" . FULL_BASE_URL . "invoice.php?id={$order['order_number']}&contact={$to}' style='font-size: 11px; font-weight: 900; color: #24B25D; text-decoration: none; text-transform: uppercase;'>View Full Professional Invoice &rarr;</a>
                 </div>
             </div>
         ";
@@ -745,7 +745,7 @@ function send_order_status_email($order_id, $status) {
     $email_content = "
         <div style='font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 30px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.05);'>
             <div style='background-color: #000; padding: 50px 40px; text-align: center;'>
-                <div style='display: inline-block; padding: 10px 20px; background: #19DC7E; border-radius: 12px; color: #000; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;'>Order Update</div>
+                <div style='display: inline-block; padding: 10px 20px; background: #24B25D; border-radius: 12px; color: #000; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 20px;'>Order Update</div>
                 <h1 style='color: #fff; margin: 0; font-size: 32px; font-weight: 900;'>{$status_title}</h1>
             </div>
             <div style='padding: 40px; color: #333; line-height: 1.6;'>
@@ -756,7 +756,7 @@ function send_order_status_email($order_id, $status) {
                 {$invoice_html}
 " . (strtolower($status) !== 'delivered' ? "
                 <div style='margin-top: 40px; text-align: center;'>
-                    <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 18px 35px; background-color: #19DC7E; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
+                    <a href='" . FULL_BASE_URL . "track.php?id={$order['order_number']}&contact={$to}' style='display: inline-block; padding: 18px 35px; background-color: #24B25D; color: #000; text-decoration: none; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2);'>Live Tracking</a>
                 </div>" : "") . "
 
                 <div style='margin-top: 50px; border-top: 1px solid #f0f0f0; padding-top: 30px;'>
@@ -767,7 +767,7 @@ function send_order_status_email($order_id, $status) {
                         </div>
                         <div style='text-align: right;'>
                             <p style='margin: 0; font-size: 10px; font-weight: 900; color: #999; text-transform: uppercase;'>Total Value</p>
-                            <p style='margin: 0; font-weight: bold; color: #19DC7E;'>₹" . number_format($order['total'], 2) . "</p>
+                            <p style='margin: 0; font-weight: bold; color: #24B25D;'>₹" . number_format($order['total'], 2) . "</p>
                         </div>
                     </div>
                 </div>
@@ -1303,7 +1303,7 @@ function send_abandoned_cart_reminder($cart_id) {
     $message = "
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);'>
         <div style='background: #000; padding: 40px; text-align: center;'>
-            <h1 style='color: #19DC7E; margin: 0; font-size: 28px;'>HEY " . strtoupper($cart['name']) . "!</h1>
+            <h1 style='color: #24B25D; margin: 0; font-size: 28px;'>HEY " . strtoupper($cart['name']) . "!</h1>
             <p style='color: #fff; opacity: 0.7; margin: 10px 0 0 0;'>Did you forget something delicious?</p>
         </div>
         
@@ -1324,13 +1324,13 @@ function send_abandoned_cart_reminder($cart_id) {
                 <tfoot>
                     <tr>
                         <td colspan='2' style='padding: 20px 10px; font-weight: bold; text-align: right;'>Subtotal:</td>
-                        <td style='padding: 20px 10px; font-weight: bold; text-align: right; color: #19DC7E; font-size: 18px;'>₹" . number_format($subtotal, 2) . "</td>
+                        <td style='padding: 20px 10px; font-weight: bold; text-align: right; color: #24B25D; font-size: 18px;'>₹" . number_format($subtotal, 2) . "</td>
                     </tr>
                 </tfoot>
             </table>
 
             <div style='text-align: center; margin-top: 20px;'>
-                <a href='$checkout_url' style='background: #19DC7E; color: #000; padding: 18px 35px; text-decoration: none; border-radius: 50px; font-weight: 900; display: inline-block; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;'>Secure My Snacks</a>
+                <a href='$checkout_url' style='background: #24B25D; color: #000; padding: 18px 35px; text-decoration: none; border-radius: 50px; font-weight: 900; display: inline-block; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;'>Secure My Snacks</a>
             </div>
             
             <p style='margin-top: 40px; font-size: 12px; color: #999; text-align: center; line-height: 1.6;'>
@@ -1450,14 +1450,14 @@ function render_pagination($total_pages, $current_page) {
     if ($current_page > 1) {
         $params['page'] = $current_page - 1;
         $prev_url = $url . '?' . http_build_query($params);
-        $html .= "<a href='$prev_url' class='w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#19DC7E] transition-all shadow-sm'><i class='fas fa-chevron-left'></i></a>";
+        $html .= "<a href='$prev_url' class='w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#24B25D] transition-all shadow-sm'><i class='fas fa-chevron-left'></i></a>";
     }
 
     // Pages
     for ($i = 1; $i <= $total_pages; $i++) {
         $params['page'] = $i;
         $page_url = $url . '?' . http_build_query($params);
-        $active_class = ($i == $current_page) ? 'bg-[#19DC7E] text-black border-transparent shadow-lg shadow-green-500/20 font-black' : 'bg-white text-gray-400 hover:bg-gray-50 border-gray-100';
+        $active_class = ($i == $current_page) ? 'bg-[#24B25D] text-black border-transparent shadow-lg shadow-green-500/20 font-black' : 'bg-white text-gray-400 hover:bg-gray-50 border-gray-100';
         
         $html .= "<a href='$page_url' class='w-12 h-12 rounded-2xl border flex items-center justify-center text-sm transition-all $active_class'>$i</a>";
     }
@@ -1466,7 +1466,7 @@ function render_pagination($total_pages, $current_page) {
     if ($current_page < $total_pages) {
         $params['page'] = $current_page + 1;
         $next_url = $url . '?' . http_build_query($params);
-        $html .= "<a href='$next_url' class='w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#19DC7E] transition-all shadow-sm'><i class='fas fa-chevron-right'></i></a>";
+        $html .= "<a href='$next_url' class='w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#24B25D] transition-all shadow-sm'><i class='fas fa-chevron-right'></i></a>";
     }
     
     $html .= '</div>';

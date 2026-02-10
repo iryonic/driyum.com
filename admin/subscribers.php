@@ -99,10 +99,10 @@ $subscribers = $pagination['records'];
             <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search email..." class="w-full bg-white border border-gray-100 rounded-2xl pl-10 pr-4 py-2 text-xs font-bold outline-none focus:border-black shadow-sm transition-all sm:min-w-[200px]">
         </form>
         <div class="flex gap-2">
-            <button onclick="openEmailModal()" id="bulkEmailBtn" class="flex-1 sm:flex-none bg-[#19DC7E] text-black px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-50 hidden items-center justify-center gap-2">
+            <button onclick="openEmailModal()" id="bulkEmailBtn" class="flex-1 sm:flex-none bg-[#24B25D] text-black px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-50 hidden items-center justify-center gap-2">
                 <i class="fas fa-paper-plane"></i> Send Email (<span id="selectedCountDisplay">0</span>)
             </button>
-            <button onclick="exportSubscribers()" class="flex-1 sm:flex-none bg-black text-[#19DC7E] px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-black/5 flex items-center justify-center gap-2">
+            <button onclick="exportSubscribers()" class="flex-1 sm:flex-none bg-black text-[#24B25D] px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-black/5 flex items-center justify-center gap-2">
                 <i class="fas fa-file-export"></i> Export
             </button>
         </div>
@@ -111,16 +111,16 @@ $subscribers = $pagination['records'];
 
 <div id="selectionBanner" class="hidden bg-black text-white px-6 py-4 rounded-3xl mb-6 anim-up border border-white/5 flex items-center justify-between">
     <div class="flex items-center gap-4">
-        <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-[#19DC7E]">
+        <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-[#24B25D]">
             <i class="fas fa-check-double text-xs"></i>
         </div>
         <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-[#19DC7E]">Selection Mode</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-[#24B25D]">Selection Mode</p>
             <p class="text-xs font-bold" id="selectionText">Items selected.</p>
         </div>
     </div>
     <div class="flex items-center gap-3">
-        <button onclick="selectAllMatches()" class="text-[9px] font-black text-white hover:text-[#19DC7E] bg-white/5 px-4 py-2 rounded-xl transition-all uppercase tracking-widest" id="selectAllBtn">Select all <?php echo $pagination['total_records']; ?> matches</button>
+        <button onclick="selectAllMatches()" class="text-[9px] font-black text-white hover:text-[#24B25D] bg-white/5 px-4 py-2 rounded-xl transition-all uppercase tracking-widest" id="selectAllBtn">Select all <?php echo $pagination['total_records']; ?> matches</button>
         <button onclick="resetSelection()" class="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline">Clear</button>
     </div>
 </div>
@@ -152,11 +152,11 @@ $subscribers = $pagination['records'];
                 <?php foreach ($subscribers as $s): ?>
                 <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group">
                     <td class="p-4 text-center">
-                        <input type="checkbox" value="<?php echo $s['id']; ?>" class="subscriber-checkbox w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer">
+                        <input type="checkbox" value="<?php echo $s['id']; ?>" class="subscriber-checkbox w-4 h-4 rounded border-gray-200 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer">
                     </td>
                     <td class="p-4 pl-0">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 font-black text-[10px] border border-gray-50 group-hover:bg-black group-hover:text-[#19DC7E] transition-all">
+                            <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 font-black text-[10px] border border-gray-50 group-hover:bg-black group-hover:text-[#24B25D] transition-all">
                                 #<?php echo $s['id']; ?>
                             </div>
                             <div class="font-bold text-gray-900"><?php echo $s['email']; ?></div>
@@ -218,7 +218,7 @@ $subscribers = $pagination['records'];
                 <textarea name="body" required class="w-full bg-gray-50 border-2 border-transparent rounded-[24px] px-6 py-6 text-sm font-medium h-48 resize-none shadow-sm focus:border-black focus:bg-white transition-all" placeholder="Hi there! We have some cool snacks in store for you..."></textarea>
             </div>
             
-            <button type="submit" class="w-full bg-[#19DC7E] text-black py-5 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all">
+            <button type="submit" class="w-full bg-[#24B25D] text-black py-5 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all">
                 Send Email
             </button>
         </form>

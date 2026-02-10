@@ -134,7 +134,7 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
             </div>
         </form>
 
-        <a href="create-admin.php" class="bg-black text-[#19DC7E] px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/5 whitespace-nowrap">
+        <a href="create-admin.php" class="bg-black text-[#24B25D] px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/5 whitespace-nowrap">
             <i class="fas fa-plus"></i> New Admin
         </a>
     </div>
@@ -191,18 +191,18 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
     <div id="bulk-bar" class="hidden fixed bottom-8 z-50 anim-up-static">
         <div class="bg-black text-white px-6 py-3 rounded-[30px] shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl">
             <div class="flex items-center gap-3">
-                <span id="selected-count" class="w-8 h-8 bg-[#19DC7E] text-black rounded-xl flex items-center justify-center font-black text-xs">0</span>
+                <span id="selected-count" class="w-8 h-8 bg-[#24B25D] text-black rounded-xl flex items-center justify-center font-black text-xs">0</span>
                 <span class="text-[9px] font-black uppercase tracking-widest opacity-60">Selected</span>
             </div>
             <div class="h-6 w-px bg-white/10"></div>
             <div class="flex items-center gap-3">
-                <select name="bulk_action" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-[10px] font-black outline-none focus:border-[#19DC7E] transition-all cursor-pointer">
+                <select name="bulk_action" class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-[10px] font-black outline-none focus:border-[#24B25D] transition-all cursor-pointer">
                     <option value="" class="bg-black">Choose Action</option>
                     <option value="activate" class="bg-black">Activate</option>
                     <option value="deactivate" class="bg-black">Deactivate</option>
                     <option value="delete" class="bg-black text-red-400">Delete</option>
                 </select>
-                <button type="submit" onclick="return confirm('Execute bulk action?')" class="bg-[#19DC7E] text-black px-5 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all">Apply</button>
+                <button type="submit" onclick="return confirm('Execute bulk action?')" class="bg-[#24B25D] text-black px-5 py-2 rounded-xl font-black text-[9px] uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all">Apply</button>
             </div>
             <button type="button" onclick="clearSelection()" class="text-[9px] font-black uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity">Cancel</button>
         </div>
@@ -227,11 +227,11 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
                     <?php foreach ($users as $u): ?>
                     <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group user-row">
                         <td class="p-4 text-center">
-                            <input type="checkbox" name="user_ids[]" value="<?php echo $u['id']; ?>" class="user-checkbox w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer">
+                            <input type="checkbox" name="user_ids[]" value="<?php echo $u['id']; ?>" class="user-checkbox w-4 h-4 rounded border-gray-200 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer">
                         </td>
                         <td class="p-4 pl-0">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-900 font-black text-xs border border-gray-100 group-hover:bg-black group-hover:text-[#19DC7E] transition-colors uppercase">
+                                <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-900 font-black text-xs border border-gray-100 group-hover:bg-black group-hover:text-[#24B25D] transition-colors uppercase">
                                     <?php echo substr($u['name'], 0, 1); ?>
                                 </div>
                                 <div>
@@ -241,7 +241,7 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
                                             <span class="bg-indigo-50 text-indigo-500 px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-tighter">You</span>
                                         <?php endif; ?>
                                         <?php if($u['is_admin']): ?>
-                                            <span class="bg-black text-[#19DC7E] px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-tighter">Admin</span>
+                                            <span class="bg-black text-[#24B25D] px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-tighter">Admin</span>
                                         <?php endif; ?>
                                     </div>
                                     <div class="text-[10px] text-gray-400 font-medium"><?php echo $u['email']; ?></div>
@@ -250,7 +250,7 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
                         </td>
                         <td class="p-4 hidden md:table-cell">
                             <div class="font-bold text-gray-900"><?php echo $u['order_count']; ?> <span class="text-[9px] text-gray-400 font-medium ml-1">Orders</span></div>
-                            <div class="text-[9px] font-bold text-[#19DC7E]">₹<?php echo number_format($u['total_spent'] ?? 0, 0); ?> <span class="text-[8px] text-gray-400 font-medium">Spent</span></div>
+                            <div class="text-[9px] font-bold text-[#24B25D]">₹<?php echo number_format($u['total_spent'] ?? 0, 0); ?> <span class="text-[8px] text-gray-400 font-medium">Spent</span></div>
                         </td>
                         <td class="p-4 text-[10px] font-bold text-gray-400 hidden sm:table-cell">
                             <?php echo date('M d, Y', strtotime($u['created_at'])); ?>
@@ -264,9 +264,9 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
                         </td>
                         <td class="p-4 text-right">
                             <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                <a href="orders.php?user_id=<?php echo $u['id']; ?>" title="History" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#19DC7E] rounded-lg flex items-center justify-center transition-all"><i class="fas fa-receipt text-[10px]"></i></a>
+                                <a href="orders.php?user_id=<?php echo $u['id']; ?>" title="History" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#24B25D] rounded-lg flex items-center justify-center transition-all"><i class="fas fa-receipt text-[10px]"></i></a>
                                 <?php if($u['id'] != $_SESSION['user_id']): ?>
-                                    <a href="?id=<?php echo $u['id']; ?>&action=<?php echo $u['is_active'] ? 'deactivate' : 'activate'; ?>" title="Toggle Status" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#19DC7E] rounded-lg flex items-center justify-center transition-all">
+                                    <a href="?id=<?php echo $u['id']; ?>&action=<?php echo $u['is_active'] ? 'deactivate' : 'activate'; ?>" title="Toggle Status" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#24B25D] rounded-lg flex items-center justify-center transition-all">
                                         <i class="fas <?php echo $u['is_active'] ? 'fa-user-slash' : 'fa-user-check'; ?> text-[10px]"></i>
                                     </a>
                                     <a href="?id=<?php echo $u['id']; ?>&action=delete" onclick="return confirm('Delete user?')" title="Delete" class="w-8 h-8 bg-red-50 text-red-400 hover:bg-red-500 hover:text-white rounded-lg flex items-center justify-center transition-all">

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $subject = "Reset Your Driyum Password";
         $email_content = "
             <div style='font-family: sans-serif; padding: 20px; color: #333;'>
-                <h2 style='color: #19DC7E;'>Hello, {$user['name']}!</h2>
+                <h2 style='color: #24B25D;'>Hello, {$user['name']}!</h2>
                 <p>You requested to reset your password for your Driyum account.</p>
                 <p>Click the button below to set a new password. This link will expire in 1 hour.</p>
                 <a href='{$reset_link}' style='display: inline-block; padding: 12px 24px; background-color: #000; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold;'>Reset Password</a>
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#FFFEDC] min-h-screen flex items-center justify-center p-4">
 
     <div class="w-full max-w-md bg-white rounded-[3rem] shadow-2xl overflow-hidden p-8 md:p-12 anim-up">
         
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="bg-green-50 text-green-600 p-6 rounded-2xl mb-8 border border-green-100 text-center">
                 <div class="text-4xl mb-3">📧</div>
                 <p class="font-bold"><?php echo $success; ?></p>
-                <a href="<?php echo get_url('login'); ?>" class="inline-block mt-4 text-[#19DC7E] font-black uppercase tracking-widest text-xs hover:underline">Return to Login</a>
+                <a href="<?php echo get_url('login'); ?>" class="inline-block mt-4 text-[#24B25D] font-black uppercase tracking-widest text-xs hover:underline">Return to Login</a>
             </div>
         <?php else: ?>
             <form method="POST" class="space-y-6">
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <div class="mt-8 text-center text-gray-500 font-['Inter']">
-            Remembered it? <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#19DC7E] underline decoration-wavy">Log In</a>
+            Remembered it? <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#24B25D] underline decoration-wavy">Log In</a>
         </div>
         
     </div>

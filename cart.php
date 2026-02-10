@@ -62,7 +62,7 @@ if (isset($_SESSION['coupon'])) {
     ?>
 
 </head>
-<body class="bg-[#FFFBEB]">
+<body class="bg-[#FFFEDC]">
 
     <?php include 'includes/header.php'; ?>
 
@@ -91,10 +91,10 @@ if (isset($_SESSION['coupon'])) {
                     <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm mb-4">
                         <?php if ($remaining > 0): ?>
                             <p class="font-['Crimson_Pro'] font-bold text-gray-700 mb-2">
-                                Add <span class="text-[#19DC7E]">₹<?php echo $remaining; ?></span> more for <span class="text-[#19DC7E]">FREE Shipping!</span> 🚚
+                                Add <span class="text-[#24B25D]">₹<?php echo $remaining; ?></span> more for <span class="text-[#24B25D]">FREE Shipping!</span> 🚚
                             </p>
                         <?php else: ?>
-                            <p class="font-['Crimson_Pro'] font-bold text-[#19DC7E] mb-2">
+                            <p class="font-['Crimson_Pro'] font-bold text-[#24B25D] mb-2">
                                 🎉 You've unlocked FREE Shipping!
                             </p>
                         <?php endif; ?>
@@ -108,7 +108,7 @@ if (isset($_SESSION['coupon'])) {
                         $line_total = $p['price'] * $qty;
                         $subtotal += $line_total;
                     ?>
-                    <div class="card-chunky flex flex-col sm:flex-row items-center gap-6 p-6 anim-up hover:border-[#19DC7E] transition">
+                    <div class="card-chunky flex flex-col sm:flex-row items-center gap-6 p-6 anim-up hover:border-[#24B25D] transition">
                         <!-- Image -->
                         <div class="w-full sm:w-32 h-32 bg-gray-50 rounded-2xl flex-shrink-0 relative overflow-hidden">
                             <img src="<?php echo get_url(ltrim($p['image'], './')); ?>" class="w-full h-full object-cover">
@@ -116,7 +116,7 @@ if (isset($_SESSION['coupon'])) {
 
                         <!-- Details -->
                         <div class="flex-1 text-center sm:text-left">
-                            <a href="<?php echo product_url($p['slug']); ?>" class="font-bold text-xl font-['Crimson_Pro'] text-gray-900 hover:text-[#19DC7E] transition"><?php echo $p['name']; ?></a>
+                            <a href="<?php echo product_url($p['slug']); ?>" class="font-bold text-xl font-['Crimson_Pro'] text-gray-900 hover:text-[#24B25D] transition"><?php echo $p['name']; ?></a>
                             <p class="text-gray-500 text-sm font-['Inter'] mb-2"><?php echo $p['weight']; ?></p>
                             <div class="text-gray-400 font-bold text-sm">Unit: ₹<?php echo $p['price']; ?></div>
                         </div>
@@ -180,19 +180,19 @@ if (isset($_SESSION['coupon'])) {
                             <div class="pt-4 border-t border-gray-100">
                                 <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Shipping Estimate</label>
                                 <div class="flex gap-2">
-                                    <input type="text" id="cart_pincode" placeholder="Pincode" class="flex-1 bg-gray-50 border-none rounded-xl px-4 py-2 text-sm font-bold focus:ring-1 focus:ring-[#19DC7E]">
-                                    <button onclick="checkCartShipping()" class="bg-gray-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all">Check</button>
+                                    <input type="text" id="cart_pincode" placeholder="Pincode" class="flex-1 bg-gray-50 border-none rounded-xl px-4 py-2 text-sm font-bold focus:ring-1 focus:ring-[#24B25D]">
+                                    <button onclick="checkCartShipping()" class="bg-gray-900 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#24B25D] hover:text-black transition-all">Check</button>
                                 </div>
                                 <div id="cart_shipping_result" class="mt-4 hidden space-y-2"></div>
                             </div>
                             <?php if($coupon_discount > 0): ?>
-                                <div class="flex justify-between text-[#19DC7E]">
+                                <div class="flex justify-between text-[#24B25D]">
                                     <span>Discount (<?php echo $_SESSION['coupon']['code']; ?>)</span>
                                     <span class="font-bold">- ₹<?php echo $coupon_discount; ?></span>
                                 </div>
                             <?php endif; ?>
 
-                            <div class="flex justify-between text-[#19DC7E]">
+                            <div class="flex justify-between text-[#24B25D]">
                                 <span>Shipping</span>
                                 <span class="font-bold"><?php echo $remaining <= 0 ? 'FREE' : '₹50'; ?></span>
                             </div>
@@ -221,7 +221,7 @@ if (isset($_SESSION['coupon'])) {
                         </a>
                         
                         <div class="mt-6 flex flex-col gap-3 text-center">
-                            <p class="text-xs text-gray-400"><i class="fas fa-lock text-[#19DC7E]"></i> 256-bit Secure SSL Payment</p>
+                            <p class="text-xs text-gray-400"><i class="fas fa-lock text-[#24B25D]"></i> 256-bit Secure SSL Payment</p>
                             <img src="<?php echo get_url('assets/images/razorpay-icon.png'); ?>" class="h-12 mx-auto opacity-50 grayscale hover:grayscale-0 transition">
                         </div>
                     </div>
@@ -251,7 +251,7 @@ if (isset($_SESSION['coupon'])) {
             const data = await res.json();
 
             if(data.success) {
-                messageEl.className = "text-[10px] font-bold mt-2 ml-2 text-[#19DC7E]";
+                messageEl.className = "text-[10px] font-bold mt-2 ml-2 text-[#24B25D]";
                 messageEl.textContent = data.message;
                 setTimeout(() => location.reload(), 800);
             } else {

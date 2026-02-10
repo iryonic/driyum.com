@@ -116,7 +116,7 @@ $s = [
     </div>
     <div class="flex items-center gap-3">
         <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
-            <span class="w-1.5 h-1.5 rounded-full <?php echo $s['maintenance'] == 'on' ? 'bg-red-500 animate-pulse' : 'bg-[#19DC7E]'; ?>"></span>
+            <span class="w-1.5 h-1.5 rounded-full <?php echo $s['maintenance'] == 'on' ? 'bg-red-500 animate-pulse' : 'bg-[#24B25D]'; ?>"></span>
             <span class="text-[9px] font-black uppercase tracking-widest text-gray-600"><?php echo $s['maintenance'] == 'on' ? 'Maintenance' : 'Store Live'; ?></span>
         </div>
     </div>
@@ -141,7 +141,7 @@ $s = [
     <!-- Top Action Bar -->
      <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 mb-8 -mx-4 px-4 md:px-8 flex flex-wrap gap-2 justify-between items-center">
         <h2 class="text-xl font-black font-crimson-pro">Configuration</h2>
-        <button type="submit" name="update_settings" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all shadow-lg flex items-center gap-2">
+        <button type="submit" name="update_settings" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-[#24B25D] hover:text-black transition-all shadow-lg flex items-center gap-2">
             <i class="fas fa-save"></i> Save Changes
         </button>
     </div>
@@ -256,7 +256,7 @@ $s = [
                 </div>
                 <div class="space-y-1">
                     <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-3">Meta Description</label>
-                    <textarea name="seo_description" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-gray-300 outline-none focus:border-[#19DC7E] transition-all h-28 resize-none"><?php echo htmlspecialchars($s['seo_desc']); ?></textarea>
+                    <textarea name="seo_description" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-gray-300 outline-none focus:border-[#24B25D] transition-all h-28 resize-none"><?php echo htmlspecialchars($s['seo_desc']); ?></textarea>
                 </div>
             </div>
 

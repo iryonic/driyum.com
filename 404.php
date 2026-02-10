@@ -34,8 +34,8 @@
         }
 
         .bg-pattern {
-            background-color: #FFFBEB;
-            background-image: radial-gradient(#19DC7E 0.5px, transparent 0.5px);
+            background-color: #FFFEDC;
+            background-image: radial-gradient(#24B25D 0.5px, transparent 0.5px);
             background-size: 24px 24px;
             background-position: 0 0, 12px 12px;
             opacity: 0.1;
@@ -53,12 +53,12 @@
         }
     </style>
 </head>
-<body class="bg-[#FFFBEB] min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+<body class="bg-[#FFFEDC] min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
     
     <!-- Decorative Background -->
     <div class="fixed inset-0 bg-pattern"></div>
-    <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#19DC7E]/10 rounded-full blur-[120px]"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#19DC7E]/5 rounded-full blur-[150px]"></div>
+    <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#24B25D]/10 rounded-full blur-[120px]"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#24B25D]/5 rounded-full blur-[150px]"></div>
 
     <div class="relative z-10 max-w-3xl w-full text-center">
         <!-- Brand Header (Mini) -->
@@ -80,7 +80,7 @@
         <!-- Content -->
         <div class="space-y-6">
             <h2 class="text-4xl md:text-6xl font-['Crimson_Pro'] font-black text-gray-900 leading-tight">
-                Page Not <span class="text-[#19DC7E]">Found</span>?
+                Page Not <span class="text-[#24B25D]">Found</span>?
             </h2>
             <p class="text-gray-500 font-bold text-lg md:text-xl max-w-lg mx-auto leading-relaxed">
                 Even our freshest apples can't find this page. It seems to have vanished into thin Kashmiri air.
@@ -89,7 +89,7 @@
 
         <!-- Call to Action -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-6 pt-12">
-            <a href="<?php echo get_url(''); ?>" class="btn-chunky bg-[#111827] text-white px-12 py-6 text-lg shadow-2xl flex items-center gap-3 hover:bg-[#19DC7E] hover:text-black w-full sm:w-auto">
+            <a href="<?php echo get_url(''); ?>" class="btn-chunky bg-[#111827] text-white px-12 py-6 text-lg shadow-2xl flex items-center gap-3 hover:bg-[#24B25D] hover:text-black w-full sm:w-auto">
                 <i class="fas fa-home"></i> Back to Home
             </a>
             <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-white text-gray-900 px-12 py-6 text-lg shadow-sm border-2 border-gray-100 hover:border-black w-full sm:w-auto">
@@ -106,7 +106,7 @@
     </div>
 
     <!-- Mouse Trail Spot (Optional Glow) -->
-    <div class="fixed pointer-events-none w-96 h-96 bg-[#19DC7E]/10 rounded-full blur-[100px]" id="glow"></div>
+    <div class="fixed pointer-events-none w-96 h-96 bg-[#24B25D]/10 rounded-full blur-[100px]" id="glow"></div>
 
     <script>
         document.addEventListener('mousemove', (e) => {

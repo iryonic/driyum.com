@@ -101,13 +101,13 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
 
 <!-- Tabs -->
 <div class="flex gap-2 mb-8 bg-gray-50/50 p-1.5 rounded-2xl w-fit anim-up border border-gray-100">
-    <a href="?tab=methods" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'methods' ? 'bg-black text-[#19DC7E] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
+    <a href="?tab=methods" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'methods' ? 'bg-black text-[#24B25D] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
         Methods
     </a>
-    <a href="?tab=zones" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'zones' ? 'bg-black text-[#19DC7E] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
+    <a href="?tab=zones" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'zones' ? 'bg-black text-[#24B25D] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
         Zones
     </a>
-    <a href="?tab=rates" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'rates' ? 'bg-black text-[#19DC7E] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
+    <a href="?tab=rates" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'rates' ? 'bg-black text-[#24B25D] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
         Rates
     </a>
 </div>
@@ -117,24 +117,24 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 anim-up">
         <div class="lg:col-span-1">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                <h3 class="text-sm font-black uppercase tracking-widest mb-6 py-1 border-l-4 border-[#19DC7E] pl-4">New Method</h3>
+                <h3 class="text-sm font-black uppercase tracking-widest mb-6 py-1 border-l-4 border-[#24B25D] pl-4">New Method</h3>
                 <form action="?tab=methods" method="POST" class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Carrier Name</label>
-                        <input type="text" name="carrier_name" required placeholder="e.g. India Post" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#19DC7E] transition-all">
+                        <input type="text" name="carrier_name" required placeholder="e.g. India Post" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#24B25D] transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Display Name</label>
-                        <input type="text" name="display_name" required placeholder="e.g. Speed Post" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#19DC7E] transition-all">
+                        <input type="text" name="display_name" required placeholder="e.g. Speed Post" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#24B25D] transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Charge Type</label>
-                        <select name="charge_type" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#19DC7E] transition-all">
+                        <select name="charge_type" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#24B25D] transition-all">
                             <option value="weight_based">Weight Based</option>
                             <option value="flat">Flat Rate</option>
                         </select>
                     </div>
-                    <button type="submit" name="add_method" class="w-full bg-[#19DC7E] text-black font-black py-4 rounded-xl text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-50">
+                    <button type="submit" name="add_method" class="w-full bg-[#24B25D] text-black font-black py-4 rounded-xl text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-50">
                         Create Method
                     </button>
                 </form>
@@ -205,21 +205,21 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
                 <form action="?tab=zones" method="POST" class="space-y-4">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Zone Name (e.g. Local)</label>
-                        <input type="text" name="zone_name" required placeholder="e.g. Kashmiri Region" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                        <input type="text" name="zone_name" required placeholder="e.g. Kashmiri Region" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Pincode Ranges</label>
-                        <textarea name="pincode_ranges" rows="3" placeholder="190001-190020, 201001-201010" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none"></textarea>
+                        <textarea name="pincode_ranges" rows="3" placeholder="190001-190020, 201001-201010" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none"></textarea>
                         <p class="text-xs text-gray-400 mt-2 italic font-medium">Format: 110001-110010, 110015 (Comma separated)</p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Min Days</label>
-                            <input type="number" name="min_days" required value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                            <input type="number" name="min_days" required value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Max Days</label>
-                            <input type="number" name="max_days" required value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                            <input type="number" name="max_days" required value="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                         </div>
                     </div>
                     <button type="submit" name="add_zone" class="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition shadow-lg">
@@ -281,7 +281,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
                 <form action="?tab=rates" method="POST" class="space-y-4">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Shipping Method</label>
-                        <select name="method_id" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                        <select name="method_id" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                             <?php foreach($methods as $m): ?>
                                 <option value="<?php echo $m['id']; ?>"><?php echo $m['display_name']; ?></option>
                             <?php endforeach; ?>
@@ -289,7 +289,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Zone</label>
-                        <select name="zone_id" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                        <select name="zone_id" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                             <?php foreach($zones as $z): ?>
                                 <option value="<?php echo $z['id']; ?>"><?php echo $z['zone_name']; ?></option>
                             <?php endforeach; ?>
@@ -298,16 +298,16 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Min Weight (kg)</label>
-                            <input type="number" step="0.001" name="min_weight" required value="0.000" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                            <input type="number" step="0.001" name="min_weight" required value="0.000" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Max Weight (kg)</label>
-                            <input type="number" step="0.001" name="max_weight" required value="0.500" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                            <input type="number" step="0.001" name="max_weight" required value="0.500" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Charge (₹)</label>
-                        <input type="number" step="0.01" name="charge" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                        <input type="number" step="0.01" name="charge" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#24B25D] focus:outline-none">
                     </div>
                     <button type="submit" name="add_rate" class="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition shadow-lg">
                         Add Rate
@@ -334,7 +334,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
                             <td class="px-6 py-4 text-sm font-medium"><?php echo $r['method_name']; ?></td>
                             <td class="px-6 py-4 text-sm"><?php echo $r['zone_name']; ?></td>
                             <td class="px-6 py-4 text-sm"><?php echo $r['min_weight']*1000; ?>g - <?php echo $r['max_weight']*1000; ?>g</td>
-                            <td class="px-6 py-4 font-bold text-[#19DC7E]">₹<?php echo number_format($r['charge'], 2); ?></td>
+                            <td class="px-6 py-4 font-bold text-[#24B25D]">₹<?php echo number_format($r['charge'], 2); ?></td>
                             <td class="px-6 py-4 text-right">
                                 <form action="?tab=rates" method="POST" onsubmit="return confirm('Delete this rate?')">
                                     <input type="hidden" name="rate_id" value="<?php echo $r['id']; ?>">
@@ -375,7 +375,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
                 </select>
             </div>
             <div class="flex items-center gap-2 py-2">
-                <input type="checkbox" name="status" id="edit_status" class="w-5 h-5 accent-[#19DC7E]">
+                <input type="checkbox" name="status" id="edit_status" class="w-5 h-5 accent-[#24B25D]">
                 <label class="font-bold text-sm">Status Enabled</label>
             </div>
             <div class="flex gap-4 mt-6">

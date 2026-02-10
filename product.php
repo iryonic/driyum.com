@@ -51,7 +51,7 @@ $reviews = get_product_reviews($id);
 $related = get_related_products($id, $product['category_id']);
 
 // Background Color Logic
-$bg_options = ['#FFFBEB', '#F0FDFA', '#FEF2F2', '#F5F3FF', '#ECFDF5', '#FFF7ED', '#FDF2F8'];
+$bg_options = ['#FFFEDC', '#F0FDFA', '#FEF2F2', '#F5F3FF', '#ECFDF5', '#FFF7ED', '#FDF2F8'];
 $color_base = !empty($product['bg_color']) ? $product['bg_color'] : $bg_options[array_rand($bg_options)];
 $page_bg_dark = adjust_brightness($color_base, -10); // Slightly darker for immersion
 
@@ -75,8 +75,8 @@ if (isset($_SESSION['user_id'])) {
 
     <style>
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #fffbeb; }
-        ::-webkit-scrollbar-thumb { background: #19DC7E; border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: #FFFEDC; }
+        ::-webkit-scrollbar-thumb { background: #24B25D; border-radius: 10px; }
         
         .product-gradient-bg {
             background: <?php echo $page_bg_dark; ?>;
@@ -84,7 +84,7 @@ if (isset($_SESSION['user_id'])) {
         }
 
         .thumb-active { 
-            border-color: #19DC7E !important; 
+            border-color: #24B25D !important; 
             transform: scale(1.1) rotate(2deg); 
             box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2); 
         }
@@ -136,9 +136,9 @@ if (isset($_SESSION['user_id'])) {
         
         <!-- BREADCRUMBS -->
         <nav class="flex items-center gap-2 mb-10 text-[10px] font-black tracking-[0.2em] uppercase text-gray-400">
-            <a href="<?php echo get_url(''); ?>" class="hover:text-[#19DC7E] transition-colors">Home</a>
+            <a href="<?php echo get_url(''); ?>" class="hover:text-[#24B25D] transition-colors">Home</a>
             <span class="opacity-30">/</span>
-            <a href="<?php echo get_url('shop'); ?>" class="hover:text-[#19DC7E] transition-colors">Snacks</a>
+            <a href="<?php echo get_url('shop'); ?>" class="hover:text-[#24B25D] transition-colors">Snacks</a>
             <span class="opacity-30">/</span>
             <span class="text-gray-900"><?php echo $product['name']; ?></span>
         </nav>
@@ -154,12 +154,12 @@ if (isset($_SESSION['user_id'])) {
                 <!-- Main Showcase -->
                 <div class="relative group">
                     <!-- Decor Blobs -->
-                    <div class="absolute -top-10 -left-10 w-64 h-64 bg-[#19DC7E]/10 rounded-full blur-[100px] animate-pulse"></div>
+                    <div class="absolute -top-10 -left-10 w-64 h-64 bg-[#24B25D]/10 rounded-full blur-[100px] animate-pulse"></div>
                     <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-yellow-400/10 rounded-full blur-[100px] animate-pulse delay-1000"></div>
 
                     <div class="aspect-[4/5] bg-white rounded-[40px] md:rounded-[60px] p-6 md:p-16 border border-white/40 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] flex items-center justify-center relative overflow-hidden backdrop-blur-sm">
                         <!-- Progress Indicator -->
-                        <div id="slideshow-progress" class="absolute top-0 left-0 h-1 bg-[#19DC7E]/30 w-0 z-30 transition-none"></div>
+                        <div id="slideshow-progress" class="absolute top-0 left-0 h-1 bg-[#24B25D]/30 w-0 z-30 transition-none"></div>
                         
                         <img id="mainImage" src="<?php echo get_url(ltrim($product['image'], './')); ?>" class="w-full h-full object-contain transform group-hover:scale-110 transition-all duration-[800ms] cubic-bezier(0.16, 1, 0.3, 1) z-10 drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] <?php echo $product['stock'] <= 0 ? 'grayscale' : ''; ?>">
                         
@@ -168,7 +168,7 @@ if (isset($_SESSION['user_id'])) {
                             <?php if($product['is_new']): ?>
                                 <span class="bg-black text-white px-3 md:px-5 py-1.5 md:py-2.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl floating-badge">Fresh Drop</span>
                             <?php endif; ?>
-                            <span class="bg-[#19DC7E] text-black px-3 md:px-5 py-1.5 md:py-2.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl floating-badge delay-700">100% Organic</span>
+                            <span class="bg-[#24B25D] text-black px-3 md:px-5 py-1.5 md:py-2.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl floating-badge delay-700">100% Organic</span>
                         </div>
 
                         <!-- Zoom Indicator -->
@@ -250,13 +250,13 @@ if (isset($_SESSION['user_id'])) {
                         <?php elseif($product['stock'] <= 0): ?>
                             <span class="text-[10px] font-black text-red-500">Restocking Soon</span>
                         <?php else: ?>
-                            <span class="text-[10px] font-black text-[#19DC7E]">Premium Quality Guaranteed</span>
+                            <span class="text-[10px] font-black text-[#24B25D]">Premium Quality Guaranteed</span>
                         <?php endif; ?>
                     </div>
                     <div class="h-2.5 bg-white rounded-full overflow-hidden border border-gray-100">
                         <?php 
                         $stock_perc = min(100, max(0, ($product['stock'] / 20) * 100));
-                        $bar_color = $product['stock'] < 10 ? 'from-[#FF6B6B] to-[#FF4D4D]' : 'from-[#19DC7E] to-[#16C671]';
+                        $bar_color = $product['stock'] < 10 ? 'from-[#FF6B6B] to-[#FF4D4D]' : 'from-[#24B25D] to-[#16C671]';
                         if ($product['stock'] <= 0) $stock_perc = 0;
                         ?>
                         <div class="h-full bg-gradient-to-r <?php echo $bar_color; ?> rounded-full transition-all duration-1000" style="width: <?php echo $stock_perc; ?>%"></div>
@@ -289,7 +289,7 @@ if (isset($_SESSION['user_id'])) {
                     <button 
                         onclick="quickBuy(<?php echo $id; ?>, this, document.getElementById('qty').value)" 
                         <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="w-full sm:flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-[#19DC7E] text-black shadow-[0_30px_60px_-15px_rgba(25,220,126,0.3)] hover:scale-[1.02]'; ?> text-base md:text-lg px-8 md:px-12 py-5 md:py-6 rounded-[30px] md:rounded-[40px] transition-all duration-500 font-black tracking-tight active:scale-95 group">
+                        class="w-full sm:flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-[#24B25D] text-black shadow-[0_30px_60px_-15px_rgba(25,220,126,0.3)] hover:scale-[1.02]'; ?> text-base md:text-lg px-8 md:px-12 py-5 md:py-6 rounded-[30px] md:rounded-[40px] transition-all duration-500 font-black tracking-tight active:scale-95 group">
                         <?php echo $product['stock'] <= 0 ? 'Sold Out' : 'Quick Buy — <span class="group-hover:translate-x-1 inline-block transition tracking-tighter">₹' . $product['price'] . '</span>'; ?>
                     </button>
                     
@@ -304,7 +304,7 @@ if (isset($_SESSION['user_id'])) {
                         <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Total</p>
                         <p class="text-2xl font-black text-gray-900">₹<?php echo $product['price']; ?></p>
                     </div>
-                    <button onclick="addToCart(<?php echo $id; ?>, this, 1)" class="bg-[#111827] text-white rounded-3xl font-black uppercase tracking-widest px-8 py-5 shadow-xl active:bg-[#19DC7E] active:text-black transition-all">
+                    <button onclick="addToCart(<?php echo $id; ?>, this, 1)" class="bg-[#111827] text-white rounded-3xl font-black uppercase tracking-widest px-8 py-5 shadow-xl active:bg-[#24B25D] active:text-black transition-all">
                         Quick Add
                     </button>
                 </div>
@@ -312,11 +312,11 @@ if (isset($_SESSION['user_id'])) {
                 <!-- Pincode Checker -->
                 <div class="bg-white rounded-[40px] p-8 border border-white/50 shadow-sm mb-6">
                     <h3 class="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-gray-900 mb-6 pb-4 border-b border-gray-50">
-                        <i class="fas fa-map-marker-alt text-[#19DC7E]"></i> Delivery Check
+                        <i class="fas fa-map-marker-alt text-[#24B25D]"></i> Delivery Check
                     </h3>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="text" id="pincode_check" placeholder="Enter Pincode" class="flex-1 bg-gray-50 border-none rounded-2xl px-6 py-4 font-bold focus:ring-2 focus:ring-[#19DC7E]">
-                        <button onclick="checkPincode()" class="bg-black text-white px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all">Check</button>
+                        <input type="text" id="pincode_check" placeholder="Enter Pincode" class="flex-1 bg-gray-50 border-none rounded-2xl px-6 py-4 font-bold focus:ring-2 focus:ring-[#24B25D]">
+                        <button onclick="checkPincode()" class="bg-black text-white px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#24B25D] hover:text-black transition-all">Check</button>
                     </div>
                     <div id="pincode_result" class="mt-6 hidden"></div>
                 </div>
@@ -326,14 +326,14 @@ if (isset($_SESSION['user_id'])) {
                     <!-- Ingredients Card -->
                     <div class="bg-white rounded-[40px] p-8 border border-white/50 shadow-sm hover:shadow-xl transition-all duration-500">
                         <h3 class="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-gray-900 mb-8 border-b border-gray-50 pb-6">
-                            <i class="fas fa-atom text-[#19DC7E]"></i> Composition & Nutrition
+                            <i class="fas fa-atom text-[#24B25D]"></i> Composition & Nutrition
                         </h3>
                         
                         <div class="space-y-8">
                             <?php if($product['ingredients']): ?>
                                 <div class="anim-up">
                                     <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#19DC7E]"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#24B25D]"></span>
                                         What's Inside?
                                     </h5>
                                     <?php 
@@ -345,8 +345,8 @@ if (isset($_SESSION['user_id'])) {
                                         if (json_last_error() === JSON_ERROR_NONE && is_array($ings)): ?>
                                             <div class="flex flex-wrap gap-3">
                                                 <?php foreach($ings as $ing): ?>
-                                                    <div class="px-5 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[#19DC7E] hover:shadow-md transition-all group">
-                                                        <span class="w-2 h-2 rounded-full bg-[#19DC7E]/20 group-hover:bg-[#19DC7E] transition-colors"></span>
+                                                    <div class="px-5 py-3 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[#24B25D] hover:shadow-md transition-all group">
+                                                        <span class="w-2 h-2 rounded-full bg-[#24B25D]/20 group-hover:bg-[#24B25D] transition-colors"></span>
                                                         <span class="text-xs font-black text-gray-700 crimson-pro uppercase tracking-tight"><?php echo htmlspecialchars($ing); ?></span>
                                                     </div>
                                                 <?php endforeach; ?>
@@ -360,7 +360,7 @@ if (isset($_SESSION['user_id'])) {
                             <?php if($product['nutritional_info']): ?>
                                 <div class="anim-up" style="animation-delay: 100ms">
                                     <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-8 flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#19DC7E]"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#24B25D]"></span>
                                         Nutrition Facts <span class="italic text-[8px] opacity-40 ml-1">(per 100g)</span>
                                     </h5>
                                     
@@ -386,7 +386,7 @@ if (isset($_SESSION['user_id'])) {
                                                     elseif (strpos($l, 'fiber') !== false) { $icon = 'fa-leaf'; $color = 'green-500'; $bg = 'bg-green-50'; }
                                                     elseif (strpos($l, 'sodium') !== false || strpos($l, 'salt') !== false) { $icon = 'fa-circle-dot'; $color = 'gray-400'; $bg = 'bg-gray-50'; }
                                         ?>
-                                            <div class="group bg-white p-5 rounded-[32px] border border-gray-100 hover:border-[#19DC7E] hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] transition-all duration-500 flex flex-col items-center text-center relative overflow-hidden">
+                                            <div class="group bg-white p-5 rounded-[32px] border border-gray-100 hover:border-[#24B25D] hover:shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] transition-all duration-500 flex flex-col items-center text-center relative overflow-hidden">
                                                 <div class="w-10 h-10 <?php echo $bg; ?> rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:rotate-6">
                                                     <i class="fas <?php echo $icon; ?> <?php echo strpos($color, '-') ? 'text-'.$color : 'text-'.$color.'-500'; ?> text-xs"></i>
                                                 </div>
@@ -421,7 +421,7 @@ if (isset($_SESSION['user_id'])) {
 
                     <!-- Shipping Hint -->
                     <div class="flex items-center gap-6 p-8 bg-black text-white rounded-[40px] shadow-2xl relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-[#19DC7E] rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-[#24B25D] rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
                         <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">🚚</div>
                         <div>
                             <h4 class="font-black text-lg uppercase tracking-widest leading-none mb-2">Blazing Delivery</h4>
@@ -440,18 +440,18 @@ if (isset($_SESSION['user_id'])) {
                     <!-- Sidebar Summary -->
                     <div class="lg:w-1/3 lg:sticky lg:top-32">
                         <h2 class="text-6xl sm:text-8xl font-['Crimson_Pro'] font-black text-gray-900 mb-10 leading-[0.8] tracking-tighter anim-up">
-                            THE <br><span class="text-[#19DC7E]">DRIYUM</span> <br>DEBATE.
+                            THE <br><span class="text-[#24B25D]">DRIYUM</span> <br>DEBATE.
                         </h2>
                         <div class="bg-white rounded-[60px] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.06)] border border-gray-50 relative overflow-hidden group hover:shadow-2xl transition-all duration-700 anim-up text-center">
                             <div class="inline-flex items-baseline gap-2 mb-4">
                                 <span class="text-8xl font-black text-gray-900 font-['Crimson_Pro'] tracking-tighter">4.9</span>
-                                <span class="text-2xl font-black text-[#19DC7E]">/5</span>
+                                <span class="text-2xl font-black text-[#24B25D]">/5</span>
                             </div>
                             <div class="flex justify-center text-[#FFD700] text-lg gap-1 mb-6">
                                 <?php for($i=0;$i<5;$i++) echo '<i class="fas fa-star drop-shadow-sm"></i>'; ?>
                             </div>
                             <div class="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden mb-10">
-                                <div class="h-full bg-gradient-to-r from-[#19DC7E] to-[#14c06e] w-[98%] rounded-full shadow-[0_0_10px_rgba(25,220,126,0.3)]"></div>
+                                <div class="h-full bg-gradient-to-r from-[#24B25D] to-[#14c06e] w-[98%] rounded-full shadow-[0_0_10px_rgba(25,220,126,0.3)]"></div>
                             </div>
                             <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-10">Authentic Stories</p>
 
@@ -465,7 +465,7 @@ if (isset($_SESSION['user_id'])) {
                             <div class="mb-8 flex items-center justify-between bg-white p-6 rounded-[30px] border border-gray-100 shadow-sm anim-up">
                                 <div class="flex items-center gap-4">
                                     <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="checkbox" id="selectAllReviews" class="w-5 h-5 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E]">
+                                        <input type="checkbox" id="selectAllReviews" class="w-5 h-5 rounded border-gray-300 text-[#24B25D] focus:ring-[#24B25D]">
                                         <span class="text-xs font-black uppercase tracking-widest text-gray-400">Select All</span>
                                     </label>
                                 </div>
@@ -486,13 +486,13 @@ if (isset($_SESSION['user_id'])) {
 
                             <?php foreach($reviews as $i => $r): ?>
                                 <div class="relative group anim-up" style="animation-delay: <?php echo $i * 100; ?>ms">
-                                    <div class="bg-white rounded-[50px] p-8 md:p-16 border border-gray-50 group-hover:border-[#19DC7E]/30 shadow-sm group-hover:shadow-[0_60px_100px_-30px_rgba(0,0,0,0.12)] transition-all duration-700 relative z-10">
+                                    <div class="bg-white rounded-[50px] p-8 md:p-16 border border-gray-50 group-hover:border-[#24B25D]/30 shadow-sm group-hover:shadow-[0_60px_100px_-30px_rgba(0,0,0,0.12)] transition-all duration-700 relative z-10">
                                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-12">
                                             <div class="flex items-center gap-6">
                                                 <?php if (is_admin()): ?>
-                                                    <input type="checkbox" name="review_ids[]" value="<?php echo $r['id']; ?>" class="review-selector w-6 h-6 rounded-lg border-gray-100 bg-gray-50 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer">
+                                                    <input type="checkbox" name="review_ids[]" value="<?php echo $r['id']; ?>" class="review-selector w-6 h-6 rounded-lg border-gray-100 bg-gray-50 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer">
                                                 <?php endif; ?>
-                                                <div class="w-16 h-16 md:w-20 md:h-20 rounded-[28px] bg-gradient-to-br from-[#19DC7E] to-[#14c06e] p-[2px]">
+                                                <div class="w-16 h-16 md:w-20 md:h-20 rounded-[28px] bg-gradient-to-br from-[#24B25D] to-[#14c06e] p-[2px]">
                                                     <div class="w-full h-full bg-white rounded-[26px] flex items-center justify-center font-['Crimson_Pro'] font-black text-2xl text-gray-900">
                                                         <?php echo strtoupper(substr($r['user_name'],0,1)); ?>
                                                     </div>
@@ -500,7 +500,7 @@ if (isset($_SESSION['user_id'])) {
                                                 <div>
                                                     <h4 class="font-black text-2xl md:text-3xl text-gray-900 tracking-tighter mb-1"><?php echo htmlspecialchars($r['user_name']); ?></h4>
                                                     <div class="flex items-center gap-3">
-                                                        <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-widest">Verified Taster</span>
+                                                        <span class="text-[10px] font-black text-[#24B25D] uppercase tracking-widest">Verified Taster</span>
                                                         <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest">/ <?php echo date('M d, Y', strtotime($r['created_at'])); ?></span>
                                                     </div>
                                                 </div>
@@ -537,7 +537,7 @@ if (isset($_SESSION['user_id'])) {
 
                         <!-- Review Form -->
                         <div id="review-form-container" class="mt-32 pt-32 border-t border-gray-100/50">
-                            <h3 class="text-4xl sm:text-5xl font-['Crimson_Pro'] font-black text-gray-900 mb-6 tracking-tighter">YOUR <span class="text-[#19DC7E]">VERDICT.</span></h3>
+                            <h3 class="text-4xl sm:text-5xl font-['Crimson_Pro'] font-black text-gray-900 mb-6 tracking-tighter">YOUR <span class="text-[#24B25D]">VERDICT.</span></h3>
                             <p class="text-gray-400 text-lg sm:text-xl font-medium mb-12 max-w-md">Your words echo in the valley. How was the drop?</p>
                             
                             <?php if(is_logged_in()): ?>
@@ -552,15 +552,15 @@ if (isset($_SESSION['user_id'])) {
                                             </label>
                                         <?php endfor; ?>
                                     </div>
-                                    <textarea name="comment" rows="5" placeholder="Spill the tea... What makes this snack special?" class="w-full bg-white border-none rounded-[30px] md:rounded-[40px] p-6 md:p-10 font-['Crimson_Pro'] font-medium text-lg md:text-2xl focus:ring-4 focus:ring-[#19DC7E]/10 transition-all placeholder:text-gray-200 shadow-xl"></textarea>
-                                    <button type="submit" class="w-full md:w-auto bg-black text-white px-12 md:px-20 py-6 md:py-8 hover:bg-[#19DC7E] hover:text-black font-black tracking-widest uppercase rounded-3xl md:rounded-full shadow-2xl transition-all active:scale-95">Post Verdict</button>
+                                    <textarea name="comment" rows="5" placeholder="Spill the tea... What makes this snack special?" class="w-full bg-white border-none rounded-[30px] md:rounded-[40px] p-6 md:p-10 font-['Crimson_Pro'] font-medium text-lg md:text-2xl focus:ring-4 focus:ring-[#24B25D]/10 transition-all placeholder:text-gray-200 shadow-xl"></textarea>
+                                    <button type="submit" class="w-full md:w-auto bg-black text-white px-12 md:px-20 py-6 md:py-8 hover:bg-[#24B25D] hover:text-black font-black tracking-widest uppercase rounded-3xl md:rounded-full shadow-2xl transition-all active:scale-95">Post Verdict</button>
                                 </form>
                             <?php else: ?>
                                 <div class="bg-black rounded-[50px] p-16 text-center shadow-2xl relative overflow-hidden">
-                                     <div class="absolute inset-0 bg-gradient-to-br from-[#19DC7E]/10 to-transparent"></div>
+                                     <div class="absolute inset-0 bg-gradient-to-br from-[#24B25D]/10 to-transparent"></div>
                                     <h4 class="text-3xl font-black text-white mb-6 tracking-tight italic relative z-10">Explorers Only.</h4>
                                     <p class="text-gray-400 font-medium mb-12 relative z-10">Sign in to share your snacks experience with the community.</p>
-                                    <a href="<?php echo get_url('login'); ?>" class="bg-white text-black px-12 py-5 font-black uppercase tracking-widest rounded-3xl shadow-xl hover:bg-[#19DC7E] transition-colors relative z-10">Sign In Now</a>
+                                    <a href="<?php echo get_url('login'); ?>" class="bg-white text-black px-12 py-5 font-black uppercase tracking-widest rounded-3xl shadow-xl hover:bg-[#24B25D] transition-colors relative z-10">Sign In Now</a>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -573,10 +573,10 @@ if (isset($_SESSION['user_id'])) {
         <div class="mt-40">
             <div class="flex items-end justify-between mb-16">
                 <div class="mb-10 md:mb-0">
-                    <span class="text-[#19DC7E] font-black tracking-widest uppercase text-[10px] md:text-xs mb-4 block">Wait, there's more!</span>
+                    <span class="text-[#24B25D] font-black tracking-widest uppercase text-[10px] md:text-xs mb-4 block">Wait, there's more!</span>
                     <h3 class="text-4xl sm:text-6xl font-['Crimson_Pro'] font-black text-gray-900 tracking-tighter leading-none">PEOPLE <br>ALSO GRABBED.</h3>
                 </div>
-                <a href="<?php echo get_url('shop'); ?>" class="bg-black text-white px-8 py-4 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all">Hunt All</a>
+                <a href="<?php echo get_url('shop'); ?>" class="bg-black text-white px-8 py-4 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-[#24B25D] hover:text-black transition-all">Hunt All</a>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -587,11 +587,11 @@ if (isset($_SESSION['user_id'])) {
                 ?>
                     <div class="group relative anim-up" style="animation-delay: <?php echo $i * 100; ?>ms">
                         <a href="<?php echo product_url($rp['slug']); ?>" class="block">
-                            <div class="<?php echo $current_color; ?> rounded-[40px] aspect-square mb-6 overflow-hidden relative p-8 border-2 border-transparent group-hover:border-[#19DC7E] transition-all duration-500 shadow-sm hover:shadow-2xl">
+                            <div class="<?php echo $current_color; ?> rounded-[40px] aspect-square mb-6 overflow-hidden relative p-8 border-2 border-transparent group-hover:border-[#24B25D] transition-all duration-500 shadow-sm hover:shadow-2xl">
                                 <img src="<?php echo get_url(ltrim($rp['image'], './')); ?>" class="w-full h-full object-contain group-hover:scale-110 transition duration-1000">
                                 <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
                             </div>
-                            <h4 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 mb-2 truncate group-hover:text-[#19DC7E] transition"><?php echo $rp['name']; ?></h4>
+                            <h4 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 mb-2 truncate group-hover:text-[#24B25D] transition"><?php echo $rp['name']; ?></h4>
                             <div>
                                 <span class="text-3xl font-black text-gray-900 font-['Crimson_Pro']">₹<?php echo $rp['price']; ?></span>
                             </div>

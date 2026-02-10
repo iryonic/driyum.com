@@ -31,7 +31,7 @@ $total = $subtotal + $shipping + $tax;
     <header class="bg-white border-b border-gray-100 py-4 mb-8">
         <div class="container mx-auto px-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                 <i class="fas fa-lock text-[#19DC7E] text-2xl"></i>
+                 <i class="fas fa-lock text-[#24B25D] text-2xl"></i>
                  <span class="font-bold font-['Crimson_Pro'] text-gray-800 text-lg">Secure Gateway</span>
             </div>
             <div class="text-sm text-gray-400 font-['Inter']">ID: <?php echo uniqid('TRX-'); ?></div>
@@ -50,19 +50,19 @@ $total = $subtotal + $shipping + $tax;
 
                     <div class="space-y-4">
                         <!-- UPI -->
-                        <label class="payment-option card-chunky p-6 flex items-center gap-4 cursor-pointer hover:border-[#19DC7E] active-border transition bg-white relative overflow-hidden group">
-                            <input type="radio" name="method" value="upi" class="w-5 h-5 text-[#19DC7E] focus:ring-[#19DC7E]">
+                        <label class="payment-option card-chunky p-6 flex items-center gap-4 cursor-pointer hover:border-[#24B25D] active-border transition bg-white relative overflow-hidden group">
+                            <input type="radio" name="method" value="upi" class="w-5 h-5 text-[#24B25D] focus:ring-[#24B25D]">
                             <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-xl"><i class="fas fa-mobile-alt"></i></div>
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-900">UPI / QR Code</h3>
                                 <p class="text-xs text-gray-500">GooglePay, PhonePe, Paytm</p>
                             </div>
-                            <i class="fas fa-check-circle text-[#19DC7E] opacity-0 group-hover:opacity-100 transition"></i>
+                            <i class="fas fa-check-circle text-[#24B25D] opacity-0 group-hover:opacity-100 transition"></i>
                         </label>
 
                         <!-- CARD -->
-                        <label class="payment-option card-chunky p-6 flex items-center gap-4 cursor-pointer hover:border-[#19DC7E] transition bg-white relative overflow-hidden group">
-                            <input type="radio" name="method" value="card" class="w-5 h-5 text-[#19DC7E] focus:ring-[#19DC7E]">
+                        <label class="payment-option card-chunky p-6 flex items-center gap-4 cursor-pointer hover:border-[#24B25D] transition bg-white relative overflow-hidden group">
+                            <input type="radio" name="method" value="card" class="w-5 h-5 text-[#24B25D] focus:ring-[#24B25D]">
                             <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-xl"><i class="fas fa-credit-card"></i></div>
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-900">Credit / Debit Card</h3>
@@ -71,9 +71,9 @@ $total = $subtotal + $shipping + $tax;
                         </label>
 
                         <!-- COD -->
-                        <label class="payment-option card-chunky p-6 flex items-center gap-4 cursor-pointer hover:border-[#19DC7E] transition bg-white relative overflow-hidden group">
-                            <input type="radio" name="method" value="cod" checked class="w-5 h-5 text-[#19DC7E] focus:ring-[#19DC7E]">
-                            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-xl text-[#19DC7E]"><i class="fas fa-money-bill-wave"></i></div>
+                        <label class="payment-option card-chunky p-6 flex items-center gap-4 cursor-pointer hover:border-[#24B25D] transition bg-white relative overflow-hidden group">
+                            <input type="radio" name="method" value="cod" checked class="w-5 h-5 text-[#24B25D] focus:ring-[#24B25D]">
+                            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-xl text-[#24B25D]"><i class="fas fa-money-bill-wave"></i></div>
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-900">Cash on Delivery</h3>
                                 <p class="text-xs text-gray-500">Pay when you receive</p>
@@ -117,7 +117,7 @@ $total = $subtotal + $shipping + $tax;
 
     <!-- Processing Modal -->
     <div id="processing-modal" class="fixed inset-0 bg-white/95 z-[100] hidden flex-col items-center justify-center text-center">
-        <div class="w-24 h-24 border-4 border-[#19DC7E] border-t-transparent rounded-full animate-spin mb-8"></div>
+        <div class="w-24 h-24 border-4 border-[#24B25D] border-t-transparent rounded-full animate-spin mb-8"></div>
         <h2 class="text-3xl font-bold font-['Crimson_Pro'] text-gray-900 mb-2">Processing Payment</h2>
         <p class="text-gray-500">Please do not close this window...</p>
     </div>

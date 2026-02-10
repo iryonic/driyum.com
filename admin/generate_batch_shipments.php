@@ -168,7 +168,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="no-print">
         <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 bg-[#19DC7E] rounded-2xl flex items-center justify-center text-black">
+            <div class="w-12 h-12 bg-[#24B25D] rounded-2xl flex items-center justify-center text-black">
                 <i class="fas fa-shipping-fast text-xl"></i>
             </div>
             <div>
@@ -178,7 +178,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="window.print()" style="padding: 16px; cursor: pointer; background: #000; border: none; border-radius: 18px; font-weight: 900; color: #19DC7E; width: 100%; display: flex; items-center; justify-content: center; gap: 10px; transition: all 0.2s;">
+            <button onclick="window.print()" style="padding: 16px; cursor: pointer; background: #000; border: none; border-radius: 18px; font-weight: 900; color: #24B25D; width: 100%; display: flex; items-center; justify-content: center; gap: 10px; transition: all 0.2s;">
                 <i class="fas fa-print"></i> PRINT BATCH
             </button>
             

@@ -39,7 +39,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Live store performance and insights</p>
     </div>
     <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
-        <span class="w-2 h-2 rounded-full bg-[#19DC7E] animate-pulse"></span>
+        <span class="w-2 h-2 rounded-full bg-[#24B25D] animate-pulse"></span>
         <span class="text-[9px] font-black uppercase tracking-widest text-gray-500">System Ready</span>
     </div>
 </div>
@@ -48,7 +48,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
     <!-- Revenue -->
     <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up">
         <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-green-50 text-[#19DC7E] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+            <div class="w-12 h-12 rounded-2xl bg-green-50 text-[#24B25D] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-indian-rupee-sign"></i>
             </div>
             <div>
@@ -148,7 +148,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                 <div class="flex items-center gap-4">
                     <h3 class="font-black text-xl crimson-pro text-gray-900">Recent Orders</h3>
                     <div id="bulk-actions" class="hidden flex items-center gap-2 animate-fade-in-right">
-                        <select id="bulk-status-select" class="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-[#19DC7E]">
+                        <select id="bulk-status-select" class="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-[#24B25D]">
                             <option value="">Status...</option>
                             <option value="pending">Pending</option>
                             <option value="confirmed">Confirmed</option>
@@ -156,18 +156,18 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                             <option value="delivered">Delivered</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
-                        <button onclick="applyBulkStatus()" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all shadow-sm">
+                        <button onclick="applyBulkStatus()" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#24B25D] hover:text-black transition-all shadow-sm">
                             Apply
                         </button>
                     </div>
                 </div>
-                <a href="orders.php" class="bg-gray-50 text-gray-400 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black hover:text-[#19DC7E] transition-all">View All</a>
+                <a href="orders.php" class="bg-gray-50 text-gray-400 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black hover:text-[#24B25D] transition-all">View All</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="text-gray-400 text-[9px] font-black uppercase tracking-widest bg-gray-50/50 border-b border-gray-50">
-                            <th class="p-4 w-10 text-center"><input type="checkbox" id="select-all" class="w-4 h-4 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" onclick="toggleSelectAll()"></th>
+                            <th class="p-4 w-10 text-center"><input type="checkbox" id="select-all" class="w-4 h-4 rounded border-gray-300 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer" onclick="toggleSelectAll()"></th>
                             <th class="p-4">ID</th>
                             <th class="p-4">Customer</th>
                             <th class="p-4">Amount</th>
@@ -179,7 +179,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                         <?php foreach ($recent_orders as $o): ?>
                         <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
                             <td class="p-4 text-center">
-                                <input type="checkbox" name="selected_orders[]" value="<?php echo $o['id']; ?>" class="order-checkbox w-4 h-4 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" onclick="updateBulkState()">
+                                <input type="checkbox" name="selected_orders[]" value="<?php echo $o['id']; ?>" class="order-checkbox w-4 h-4 rounded border-gray-300 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer" onclick="updateBulkState()">
                             </td>
                             <td class="p-4">
                                 <span class="font-bold text-gray-900">#<?php echo $o['order_number'] ?: $o['id']; ?></span>
@@ -240,7 +240,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
 
                 <div class="space-y-6">
                     <!-- Sales Today Indicator -->
-                    <div class="p-6 bg-gradient-to-r from-green-600 to-[#19DC7E] rounded-[30px] text-white shadow-lg relative overflow-hidden group mb-2">
+                    <div class="p-6 bg-gradient-to-r from-green-600 to-[#24B25D] rounded-[30px] text-white shadow-lg relative overflow-hidden group mb-2">
                         <div class="relative z-10">
                             <div class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Market Velocity</div>
                             <div class="text-3xl font-black crimson-pro">₹<?php echo number_format($sales_today); ?></div>
@@ -269,12 +269,12 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Top Performers</h4>
                     <?php foreach($top_selling as $ts): ?>
                     <div class="flex items-center gap-4 group cursor-default">
-                        <div class="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden border border-gray-100 p-1 group-hover:border-[#19DC7E] transition-colors">
+                        <div class="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden border border-gray-100 p-1 group-hover:border-[#24B25D] transition-colors">
                             <img src="<?php echo get_url($ts['image']); ?>" class="w-full h-full object-cover rounded-lg">
                         </div>
                         <div class="flex-1">
                             <div class="text-xs font-bold text-gray-900 leading-tight"><?php echo $ts['name']; ?></div>
-                            <div class="text-[10px] text-gray-400 font-medium">₹<?php echo number_format($ts['price']); ?> • <span class="text-[#19DC7E] font-black"><?php echo $ts['total_sold']; ?> Sold</span></div>
+                            <div class="text-[10px] text-gray-400 font-medium">₹<?php echo number_format($ts['price']); ?> • <span class="text-[#24B25D] font-black"><?php echo $ts['total_sold']; ?> Sold</span></div>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -323,7 +323,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
         </div>
 
         <!-- Quick Links Card -->
-        <div class="bg-gradient-to-br from-[#19DC7E] to-[#0ea5e9] p-8 rounded-[35px] text-white shadow-xl shadow-green-200 anim-up" style="animation-delay: 200ms">
+        <div class="bg-gradient-to-br from-[#24B25D] to-[#0ea5e9] p-8 rounded-[35px] text-white shadow-xl shadow-green-200 anim-up" style="animation-delay: 200ms">
             <h4 class="font-black crimson-pro text-2xl mb-4">Grow Driyum.</h4>
             <p class="text-white/80 text-sm font-medium mb-8 leading-relaxed">Launch a new snack drop or update your regional rates to keep customers happy.</p>
             <div class="space-y-3">
@@ -354,17 +354,17 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
             
             <div class="space-y-2">
                 <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Tracking Number</label>
-                <input type="text" name="tracking_number" required placeholder="Paste tracking ID here..." class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                <input type="text" name="tracking_number" required placeholder="Paste tracking ID here..." class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
             </div>
             
             <div class="space-y-2">
                 <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Dispatch Date</label>
-                <input type="date" name="dispatch_date" required value="<?php echo date('Y-m-d'); ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                <input type="date" name="dispatch_date" required value="<?php echo date('Y-m-d'); ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
             </div>
 
             <div class="flex gap-4 pt-4">
                 <button type="button" onclick="closeDispatchModal()" class="flex-1 bg-gray-100 text-gray-500 py-5 rounded-[24px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all">Cancel</button>
-                <button type="submit" class="flex-1 bg-black text-white py-5 rounded-[24px] font-black uppercase tracking-widest shadow-xl hover:bg-[#19DC7E] hover:text-black transition-all" id="dispatch-btn">Dispatch Now</button>
+                <button type="submit" class="flex-1 bg-black text-white py-5 rounded-[24px] font-black uppercase tracking-widest shadow-xl hover:bg-[#24B25D] hover:text-black transition-all" id="dispatch-btn">Dispatch Now</button>
             </div>
         </form>
     </div>
@@ -478,7 +478,7 @@ function getStatusColor(status) {
         case 'pending': return 'bg-yellow-400 text-black';
         case 'confirmed': return 'bg-indigo-600 text-white';
         case 'shipped': return 'bg-blue-600 text-white';
-        case 'delivered': return 'bg-[#19DC7E] text-black';
+        case 'delivered': return 'bg-[#24B25D] text-black';
         case 'cancelled': return 'bg-red-600 text-white';
         default: return 'bg-gray-100 text-gray-800';
     }
@@ -548,13 +548,13 @@ document.addEventListener('DOMContentLoaded', () => {
             datasets: [{
                 label: 'Revenue',
                 data: salesData.map(d => d.value),
-                borderColor: '#19DC7E',
+                borderColor: '#24B25D',
                 backgroundColor: 'rgba(25, 220, 126, 0.1)',
                 borderWidth: 4,
                 tension: 0.4,
                 fill: true,
                 pointBackgroundColor: '#fff',
-                pointBorderColor: '#19DC7E',
+                pointBorderColor: '#24B25D',
                 pointBorderWidth: 3,
                 pointRadius: 6,
                 pointHoverRadius: 8
@@ -603,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
             datasets: [{
                 data: catData.map(d => d.count),
                 backgroundColor: [
-                    '#19DC7E', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1'
+                    '#24B25D', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1'
                 ],
                 borderWidth: 0,
                 cutout: '75%'

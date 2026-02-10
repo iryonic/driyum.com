@@ -146,7 +146,7 @@ $affiliates = $pagination['records'];
         <h1 class="text-3xl font-['Crimson_Pro'] font-bold text-gray-900">Creator Partnerships</h1>
         <p class="text-gray-500 text-sm">Manage influencers and affiliate partners.</p>
     </div>
-    <button onclick="document.getElementById('add-modal').classList.remove('hidden')" class="btn-chunky bg-black text-white px-6 py-3 shadow-lg hover:bg-[#19DC7E] hover:text-black transition">
+    <button onclick="document.getElementById('add-modal').classList.remove('hidden')" class="btn-chunky bg-black text-white px-6 py-3 shadow-lg hover:bg-[#24B25D] hover:text-black transition">
         <i class="fas fa-plus-circle mr-2"></i> Add Influencer
     </button>
 </div>
@@ -165,32 +165,32 @@ $affiliates = $pagination['records'];
             
             <div>
                 <label class="text-xs font-bold uppercase text-gray-400 ml-3">Full Name</label>
-                <input type="text" name="name" required placeholder="Ex: Rahul Sharma" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                <input type="text" name="name" required placeholder="Ex: Rahul Sharma" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
             </div>
             
             <div>
                  <label class="text-xs font-bold uppercase text-gray-400 ml-3">Email Address</label>
-                 <input type="email" name="email" required placeholder="influencer@gmail.com" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                 <input type="email" name="email" required placeholder="influencer@gmail.com" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
             </div>
 
             <div>
                  <label class="text-xs font-bold uppercase text-gray-400 ml-3">Phone</label>
-                 <input type="text" name="phone" required placeholder="9876543210" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                 <input type="text" name="phone" required placeholder="9876543210" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                      <label class="text-xs font-bold uppercase text-gray-400 ml-3">Handle / Code</label>
-                     <input type="text" name="code" required placeholder="rahul10" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                     <input type="text" name="code" required placeholder="rahul10" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
                 </div>
                 <div>
                      <label class="text-xs font-bold uppercase text-gray-400 ml-3">Commission %</label>
-                     <input type="number" name="commission" value="10" min="0" max="100" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                     <input type="number" name="commission" value="10" min="0" max="100" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
                 </div>
             </div>
 
             <div class="pt-4">
-                <button type="submit" class="w-full btn-chunky bg-[#19DC7E] text-black py-4 shadow-lg hover:scale-[1.02]">Create Partner Account</button>
+                <button type="submit" class="w-full btn-chunky bg-[#24B25D] text-black py-4 shadow-lg hover:scale-[1.02]">Create Partner Account</button>
             </div>
             <p class="text-[10px] text-gray-400 text-center">If user exists, they will be linked. If not, a new account is created with default password.</p>
         </form>
@@ -213,27 +213,27 @@ $affiliates = $pagination['records'];
             
             <div>
                 <label class="text-xs font-bold uppercase text-gray-400 ml-3">Full Name</label>
-                <input type="text" name="name" id="edit_name" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                <input type="text" name="name" id="edit_name" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
             </div>
             
             <div>
                  <label class="text-xs font-bold uppercase text-gray-400 ml-3">Email Address</label>
-                 <input type="email" name="email" id="edit_email" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                 <input type="email" name="email" id="edit_email" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
             </div>
 
             <div>
                  <label class="text-xs font-bold uppercase text-gray-400 ml-3">Phone</label>
-                 <input type="text" name="phone" id="edit_phone" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                 <input type="text" name="phone" id="edit_phone" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                      <label class="text-xs font-bold uppercase text-gray-400 ml-3">Handle / Code</label>
-                     <input type="text" name="code" id="edit_code" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                     <input type="text" name="code" id="edit_code" required class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
                 </div>
                 <div>
                      <label class="text-xs font-bold uppercase text-gray-400 ml-3">Commission %</label>
-                     <input type="number" name="commission" id="edit_commission" min="0" max="100" step="0.01" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
+                     <input type="number" name="commission" id="edit_commission" min="0" max="100" step="0.01" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] px-5 py-3 font-bold outline-none">
                 </div>
             </div>
 
@@ -250,7 +250,7 @@ $affiliates = $pagination['records'];
         <!-- Bulk Action Header -->
         <div class="p-6 border-b border-gray-50 flex items-center gap-4 bg-gray-50/30">
             <div class="flex items-center gap-3">
-                <select name="bulk_action" id="bulk_action_select" onchange="toggleBulkInput()" class="bg-white border text-sm font-bold border-gray-200 rounded-xl px-4 py-2 outline-none focus:border-[#19DC7E]">
+                <select name="bulk_action" id="bulk_action_select" onchange="toggleBulkInput()" class="bg-white border text-sm font-bold border-gray-200 rounded-xl px-4 py-2 outline-none focus:border-[#24B25D]">
                     <option value="">Bulk Actions</option>
                     <option value="delete">Delete Selected</option>
                     <option value="approve">Approve Selected</option>
@@ -258,9 +258,9 @@ $affiliates = $pagination['records'];
                     <option value="update_commission">Update Commission %</option>
                 </select>
                 
-                <input type="number" name="bulk_commission" id="bulk_commission_input" placeholder="%" min="0" max="100" step="0.1" class="hidden w-20 bg-white border border-gray-200 rounded-xl px-3 py-2 outline-none focus:border-[#19DC7E] text-sm font-bold transition-all">
+                <input type="number" name="bulk_commission" id="bulk_commission_input" placeholder="%" min="0" max="100" step="0.1" class="hidden w-20 bg-white border border-gray-200 rounded-xl px-3 py-2 outline-none focus:border-[#24B25D] text-sm font-bold transition-all">
                 
-                <button type="submit" onclick="return confirm('Are you sure you want to perform this action?')" class="bg-black text-white text-xs font-bold uppercase px-4 py-2.5 rounded-xl hover:bg-[#19DC7E] hover:text-black transition">Apply</button>
+                <button type="submit" onclick="return confirm('Are you sure you want to perform this action?')" class="bg-black text-white text-xs font-bold uppercase px-4 py-2.5 rounded-xl hover:bg-[#24B25D] hover:text-black transition">Apply</button>
             </div>
         </div>
 
@@ -269,7 +269,7 @@ $affiliates = $pagination['records'];
                 <thead>
                     <tr class="text-gray-400 text-[10px] font-black uppercase tracking-widest bg-gray-50/50 border-b border-gray-50">
                         <th class="p-6 w-10">
-                            <input type="checkbox" onclick="toggleAll(this)" class="w-4 h-4 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E]">
+                            <input type="checkbox" onclick="toggleAll(this)" class="w-4 h-4 rounded border-gray-300 text-[#24B25D] focus:ring-[#24B25D]">
                         </th>
                         <th class="p-6">Partner</th>
                         <th class="p-6">Handle / Code</th>
@@ -283,7 +283,7 @@ $affiliates = $pagination['records'];
                     <?php foreach ($affiliates as $aff): ?>
                     <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
                         <td class="p-6">
-                            <input type="checkbox" name="selected_ids[]" value="<?php echo $aff['id']; ?>" class="w-4 h-4 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E]">
+                            <input type="checkbox" name="selected_ids[]" value="<?php echo $aff['id']; ?>" class="w-4 h-4 rounded border-gray-300 text-[#24B25D] focus:ring-[#24B25D]">
                         </td>
                         <td class="p-6">
                             <div class="font-bold text-gray-900"><?php echo htmlspecialchars($aff['name']); ?></div>
@@ -291,7 +291,7 @@ $affiliates = $pagination['records'];
                             <div class="text-[10px] bg-gray-100 rounded px-2 py-0.5 mt-1 inline-block" title="Bank Details"><?php echo !empty($aff['bank_details']) ? htmlspecialchars(substr($aff['bank_details'], 0, 20)).'...' : 'No Bank Info'; ?></div>
                         </td>
                         <td class="p-6">
-                            <span class="font-mono text-xs bg-black text-[#19DC7E] px-2 py-1 rounded">@<?php echo htmlspecialchars($aff['code']); ?></span>
+                            <span class="font-mono text-xs bg-black text-[#24B25D] px-2 py-1 rounded">@<?php echo htmlspecialchars($aff['code']); ?></span>
                         </td>
                         <td class="p-6 font-bold">
                             <?php echo floatval($aff['commission_rate']); ?>%
@@ -314,7 +314,7 @@ $affiliates = $pagination['records'];
                              </button>
 
                              <?php if(!$aff['is_approved']): ?>
-                                <a href="?approve=<?php echo $aff['id']; ?>" class="btn-chunky bg-[#19DC7E] text-black px-4 py-2 text-xs mr-2">Approve</a>
+                                <a href="?approve=<?php echo $aff['id']; ?>" class="btn-chunky bg-[#24B25D] text-black px-4 py-2 text-xs mr-2">Approve</a>
                              <?php endif; ?>
                              
                              <?php if($aff['status'] == 'active' && $aff['is_approved']): ?>

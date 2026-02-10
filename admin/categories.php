@@ -18,7 +18,7 @@ $cats = $pagination['records'];
         <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Category Hub</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> departments in the vault</p>
     </div>
-    <a href="category_form.php" class="bg-[#19DC7E] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
+    <a href="category_form.php" class="bg-[#24B25D] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
         <i class="fas fa-plus mr-1"></i> New Category
     </a>
 </div>
@@ -31,7 +31,7 @@ $cats = $pagination['records'];
         <div class="absolute -right-4 -top-4 w-16 h-16 bg-gray-50 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
 
         <div class="flex items-start justify-between mb-4 relative z-10">
-            <div class="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center p-2 border border-gray-50 group-hover:border-[#19DC7E] transition-all overflow-hidden">
+            <div class="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center p-2 border border-gray-50 group-hover:border-[#24B25D] transition-all overflow-hidden">
                 <?php if($c['image']): ?>
                     <img src="../<?php echo $c['image']; ?>" class="w-full h-full object-contain group-hover:scale-110 transition duration-500">
                 <?php else: ?>
@@ -39,13 +39,13 @@ $cats = $pagination['records'];
                 <?php endif; ?>
             </div>
             <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
-                <a href="category_form.php?id=<?php echo $c['id']; ?>" class="w-8 h-8 flex items-center justify-center bg-black text-[#19DC7E] rounded-xl hover:scale-105 transition active:scale-95"><i class="fas fa-edit text-[10px]"></i></a>
+                <a href="category_form.php?id=<?php echo $c['id']; ?>" class="w-8 h-8 flex items-center justify-center bg-black text-[#24B25D] rounded-xl hover:scale-105 transition active:scale-95"><i class="fas fa-edit text-[10px]"></i></a>
                 <button onclick="if(confirm('Delete category?')) window.location='?delete=<?php echo $c['id']; ?>'" class="w-8 h-8 flex items-center justify-center bg-red-50 text-red-400 rounded-xl hover:bg-red-500 hover:text-white transition active:scale-95"><i class="fas fa-trash-alt text-[10px]"></i></button>
             </div>
         </div>
 
         <div class="flex-1 relative z-10">
-            <h3 class="font-bold text-lg crimson-pro text-gray-900 mb-1 group-hover:text-[#19DC7E] transition-colors leading-tight"><?php echo $c['name']; ?></h3>
+            <h3 class="font-bold text-lg crimson-pro text-gray-900 mb-1 group-hover:text-[#24B25D] transition-colors leading-tight"><?php echo $c['name']; ?></h3>
             <p class="text-gray-400 font-medium text-xs mb-4 line-clamp-2"><?php echo $c['description'] ?: 'No description provided.'; ?></p>
         </div>
         
@@ -56,7 +56,7 @@ $cats = $pagination['records'];
             </div>
             <div class="flex items-center gap-2">
                 <span class="text-[8px] font-black text-gray-300">#<?php echo $c['sort_order']; ?></span>
-                <div class="h-2 w-2 rounded-full <?php echo $c['is_active'] ? 'bg-[#19DC7E]' : 'bg-gray-200'; ?>"></div>
+                <div class="h-2 w-2 rounded-full <?php echo $c['is_active'] ? 'bg-[#24B25D]' : 'bg-gray-200'; ?>"></div>
             </div>
         </div>
     </div>
@@ -69,15 +69,15 @@ $cats = $pagination['records'];
 
 <div class="mt-12 bg-[#0f172a] p-6 rounded-3xl shadow-xl relative overflow-hidden group anim-up border border-white/5">
     <div class="relative z-10 flex flex-col md:flex-row gap-5 items-center text-center md:text-left">
-        <div class="w-12 h-12 rounded-xl bg-[#19DC7E]/10 flex items-center justify-center text-[#19DC7E] text-xl group-hover:scale-110 transition-transform">
+        <div class="w-12 h-12 rounded-xl bg-[#24B25D]/10 flex items-center justify-center text-[#24B25D] text-xl group-hover:scale-110 transition-transform">
             <i class="fas fa-magic"></i>
         </div>
         <div>
             <h4 class="text-white text-sm font-bold crimson-pro mb-0.5">Visual Tip</h4>
-            <p class="text-gray-500 text-[11px] font-medium leading-relaxed">The <span class="text-[#19DC7E]">"Browse by Vibe"</span> section on your homepage pulls from these categories. Vibrant icons make it pop!</p>
+            <p class="text-gray-500 text-[11px] font-medium leading-relaxed">The <span class="text-[#24B25D]">"Browse by Vibe"</span> section on your homepage pulls from these categories. Vibrant icons make it pop!</p>
         </div>
     </div>
-    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[#19DC7E]/5 rounded-full blur-2xl"></div>
+    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[#24B25D]/5 rounded-full blur-2xl"></div>
 </div>
 
 <?php include 'includes/footer.php'; ?>

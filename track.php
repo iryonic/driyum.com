@@ -75,7 +75,7 @@ if ($query) {
         }
     </style>
 </head>
-<body class="bg-[#FFFBEB] font-['Inter']">
+<body class="bg-[#FFFEDC] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -90,17 +90,17 @@ if ($query) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2 text-left">
                         <label class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 ml-5 md:ml-6">Order ID / Number</label>
-                        <input type="text" name="id" value="<?php echo htmlspecialchars($query); ?>" required placeholder="e.g. ORD-123" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] md:rounded-[24px] px-6 md:px-8 py-4 md:py-5 outline-none transition-all font-black text-base md:text-lg">
+                        <input type="text" name="id" value="<?php echo htmlspecialchars($query); ?>" required placeholder="e.g. ORD-123" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] md:rounded-[24px] px-6 md:px-8 py-4 md:py-5 outline-none transition-all font-black text-base md:text-lg">
                     </div>
                     <div class="space-y-2 text-left">
-                        <label class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#19DC7E] ml-5 md:ml-6">Email / Phone (Verification)</label>
-                        <input type="text" name="contact" value="<?php echo htmlspecialchars($contact); ?>" required placeholder="Verify identity..." class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[20px] md:rounded-[24px] px-6 md:px-8 py-4 md:py-5 outline-none transition-all font-black text-base md:text-lg">
+                        <label class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#24B25D] ml-5 md:ml-6">Email / Phone (Verification)</label>
+                        <input type="text" name="contact" value="<?php echo htmlspecialchars($contact); ?>" required placeholder="Verify identity..." class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[20px] md:rounded-[24px] px-6 md:px-8 py-4 md:py-5 outline-none transition-all font-black text-base md:text-lg">
                     </div>
                 </div>
                 <?php if(isset($error)): ?>
                     <p class="text-red-500 font-bold text-xs"><?php echo $error; ?></p>
                 <?php endif; ?>
-                <button type="submit" class="btn-chunky bg-[#111827] text-white w-full py-5 text-xl shadow-xl hover:bg-[#19DC7E] hover:text-black">Locate My Package</button>
+                <button type="submit" class="btn-chunky bg-[#111827] text-white w-full py-5 text-xl shadow-xl hover:bg-[#24B25D] hover:text-black">Locate My Package</button>
             </form>
         </div>
 
@@ -114,7 +114,7 @@ if ($query) {
                     <div class="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 anim-up">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
                             <div>
-                                <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest mb-3 inline-block">Order #<?php echo $order['order_number']; ?></span>
+                                <span class="bg-[#24B25D]/10 text-[#24B25D] text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest mb-3 inline-block">Order #<?php echo $order['order_number']; ?></span>
                                 <h2 class="text-3xl font-['Crimson_Pro'] font-black text-gray-900">Current Status: <span class="capitalize"><?php echo str_replace('_', ' ', $order['order_status']); ?></span></h2>
                             </div>
                             <?php 
@@ -123,7 +123,7 @@ if ($query) {
                             if ($contact) $invoice_url .= '&contact=' . urlencode($contact);
                             
                             if($invoice_allowed): ?>
-                            <a href="<?php echo $invoice_url; ?>" target="_blank" class="btn-chunky bg-[#19DC7E] text-black border-none text-xs px-6 py-3 hover:scale-105 active:scale-95 transition-all">
+                            <a href="<?php echo $invoice_url; ?>" target="_blank" class="btn-chunky bg-[#24B25D] text-black border-none text-xs px-6 py-3 hover:scale-105 active:scale-95 transition-all">
                                 <i class="fas fa-file-invoice mr-2"></i> Get Invoice
                             </a>
                             <?php else: ?>
@@ -165,23 +165,23 @@ if ($query) {
                                 $steps = ['pending' => 10, 'confirmed' => 35, 'shipped' => 65, 'out_for_delivery' => 85, 'delivered' => 100];
                                 $w = $steps[$order['order_status']] ?? 10;
                             ?>
-                            <div class="absolute top-1/2 left-0 h-1 bg-[#19DC7E] -translate-y-1/2 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(25,220,126,0.5)]" style="width: <?php echo $w; ?>%"></div>
+                            <div class="absolute top-1/2 left-0 h-1 bg-[#24B25D] -translate-y-1/2 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(25,220,126,0.5)]" style="width: <?php echo $w; ?>%"></div>
                             
                             <div class="relative flex justify-between z-10">
                                 <div class="group relative">
-                                    <div class="w-8 h-8 rounded-full bg-[#19DC7E] border-4 border-white shadow-md flex items-center justify-center text-white text-[10px]"><i class="fas fa-check"></i></div>
+                                    <div class="w-8 h-8 rounded-full bg-[#24B25D] border-4 border-white shadow-md flex items-center justify-center text-white text-[10px]"><i class="fas fa-check"></i></div>
                                     <span class="absolute top-10 left-1/2 -translate-x-1/2 text-[8px] font-black uppercase text-gray-400 whitespace-nowrap">Placed</span>
                                 </div>
                                 <div class="group relative">
-                                    <div class="w-8 h-8 rounded-full <?php echo $w >= 35 ? 'bg-[#19DC7E] text-white' : 'bg-white text-gray-200'; ?> border-4 border-white shadow-md flex items-center justify-center text-[10px]"><i class="fas fa-thumbs-up"></i></div>
+                                    <div class="w-8 h-8 rounded-full <?php echo $w >= 35 ? 'bg-[#24B25D] text-white' : 'bg-white text-gray-200'; ?> border-4 border-white shadow-md flex items-center justify-center text-[10px]"><i class="fas fa-thumbs-up"></i></div>
                                     <span class="absolute top-10 left-1/2 -translate-x-1/2 text-[8px] font-black uppercase <?php echo $w >= 35 ? 'text-gray-900' : 'text-gray-400'; ?> whitespace-nowrap">Confirmed</span>
                                 </div>
                                 <div class="group relative">
-                                    <div class="w-8 h-8 rounded-full <?php echo $w >= 65 ? 'bg-[#19DC7E] text-white' : 'bg-white text-gray-200'; ?> border-4 border-white shadow-md flex items-center justify-center text-[10px]"><i class="fas fa-truck-fast"></i></div>
+                                    <div class="w-8 h-8 rounded-full <?php echo $w >= 65 ? 'bg-[#24B25D] text-white' : 'bg-white text-gray-200'; ?> border-4 border-white shadow-md flex items-center justify-center text-[10px]"><i class="fas fa-truck-fast"></i></div>
                                     <span class="absolute top-10 left-1/2 -translate-x-1/2 text-[8px] font-black uppercase <?php echo $w >= 65 ? 'text-gray-900' : 'text-gray-400'; ?> whitespace-nowrap">Shipped</span>
                                 </div>
                                 <div class="group relative">
-                                    <div class="w-8 h-8 rounded-full <?php echo $w >= 100 ? 'bg-[#19DC7E] text-white' : 'bg-white text-gray-200'; ?> border-4 border-white shadow-md flex items-center justify-center text-[10px]"><i class="fas fa-house-chimney-user"></i></div>
+                                    <div class="w-8 h-8 rounded-full <?php echo $w >= 100 ? 'bg-[#24B25D] text-white' : 'bg-white text-gray-200'; ?> border-4 border-white shadow-md flex items-center justify-center text-[10px]"><i class="fas fa-house-chimney-user"></i></div>
                                     <span class="absolute top-10 left-1/2 -translate-x-1/2 text-[8px] font-black uppercase <?php echo $w >= 100 ? 'text-gray-900' : 'text-gray-400'; ?> whitespace-nowrap">Delivered</span>
                                 </div>
                             </div>
@@ -244,7 +244,7 @@ if ($query) {
                                 <span>₹<?php echo $order['subtotal']; ?></span>
                             </div>
                             <?php if($order['discount'] > 0): ?>
-                            <div class="flex justify-between text-[#19DC7E]">
+                            <div class="flex justify-between text-[#24B25D]">
                                 <span>Discount</span>
                                 <span>- ₹<?php echo $order['discount']; ?></span>
                             </div>
@@ -255,7 +255,7 @@ if ($query) {
                             </div>
                             <div class="flex justify-between pt-4 border-t border-white/10 text-xl font-['Crimson_Pro'] font-black">
                                 <span class="text-gray-400">Total</span>
-                                <span class="text-[#19DC7E]">₹<?php echo $order['total']; ?></span>
+                                <span class="text-[#24B25D]">₹<?php echo $order['total']; ?></span>
                             </div>
                         </div>
                         <div class="mt-8 pt-6 border-t border-white/10 flex items-center gap-3">
@@ -270,7 +270,7 @@ if ($query) {
                     <!-- SHIPPING INFO -->
                     <div class="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100">
                         <h3 class="font-black text-gray-900 mb-6 flex items-center gap-2">
-                            <i class="fas fa-location-dot text-[#19DC7E] text-sm"></i> Shipping To
+                            <i class="fas fa-location-dot text-[#24B25D] text-sm"></i> Shipping To
                         </h3>
                         <div class="space-y-4">
                             <div>
@@ -317,7 +317,7 @@ if ($query) {
                 <div class="text-8xl mb-6">🍿</div>
                 <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900">Order Missing in Action!</h3>
                 <?php if(isset($needs_verify)): ?>
-                    <p class="text-gray-500 font-medium mb-8">For security, please provide the <span class="bg-[#19DC7E]/10 text-[#19DC7E] px-2 py-1 rounded">Email or Phone</span> used during checkout.</p>
+                    <p class="text-gray-500 font-medium mb-8">For security, please provide the <span class="bg-[#24B25D]/10 text-[#24B25D] px-2 py-1 rounded">Email or Phone</span> used during checkout.</p>
                 <?php else: ?>
                     <p class="text-gray-500 font-medium mb-8">We couldn't find an order with <span class="bg-yellow-100 text-gray-900 px-2 py-1 rounded">"<?php echo htmlspecialchars($query); ?>"</span>.</p>
                 <?php endif; ?>

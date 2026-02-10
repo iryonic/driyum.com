@@ -84,7 +84,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         .nav-link-active {
             background: rgba(25, 220, 126, 0.1) !important;
-            color: #19DC7E !important;
+            color: #24B25D !important;
             font-weight: 700;
         }
         .nav-link-active::before {
@@ -94,7 +94,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             top: 20%;
             bottom: 20%;
             width: 3px;
-            background: #19DC7E;
+            background: #24B25D;
             border-radius: 0 4px 4px 0;
         }
         
@@ -148,10 +148,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <aside class="admin-sidebar bg-[#004f42] text-white p-5 flex flex-col">
         <div class="mb-8 flex items-center justify-between px-2">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-[#19DC7E] rounded-xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(25,220,126,0.3)]">
+                <div class="w-9 h-9 bg-[#24B25D] rounded-xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(25,220,126,0.3)]">
                     <i class="fas fa-bolt text-xs"></i>
                 </div>
-                <span class="font-['Crimson_Pro'] font-bold text-xl tracking-tight">Driyum<span class="text-[#19DC7E]">.</span></span>
+                <span class="font-['Crimson_Pro'] font-bold text-xl tracking-tight">Driyum<span class="text-[#24B25D]">.</span></span>
             </div>
             <button onclick="toggleSidebar(false)" class="lg:hidden text-gray-500 hover:text-white">
                 <i class="fas fa-times"></i>
@@ -171,7 +171,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <i class="fas fa-box w-5 text-sm"></i> 
                         <span>Orders</span>
                         <?php if($total_orders_today > 0): ?>
-                            <span class="ml-auto bg-[#19DC7E] text-black text-[9px] font-black px-1.5 py-0.5 rounded-full"><?php echo $total_orders_today; ?></span>
+                            <span class="ml-auto bg-[#24B25D] text-black text-[9px] font-black px-1.5 py-0.5 rounded-full"><?php echo $total_orders_today; ?></span>
                         <?php endif; ?>
                     </a>
                     <a href="abandoned_carts.php" class="nav-link <?php echo $p=='abandoned_carts.php'?'nav-link-active':'text-white'; ?>">
@@ -307,7 +307,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest mt-1">
                         <span class="hover:text-black transition-colors cursor-pointer">Home</span>
                         <i class="fas fa-chevron-right text-[8px] opacity-50"></i>
-                        <span class="text-[#19DC7E]"><?php echo $page_titles[$curr_page] ?? 'Page'; ?></span>
+                        <span class="text-[#24B25D]"><?php echo $page_titles[$curr_page] ?? 'Page'; ?></span>
                     </div>
                 </div>
             </div>
@@ -316,8 +316,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 <!-- SEARCH -->
                 <div class="relative group w-full md:w-64" id="omni-search-container">
-                    <input type="text" id="omni-search-input" placeholder="Search..." class="w-full bg-gray-50/50 border border-gray-100 focus:border-[#19DC7E] focus:bg-white rounded-xl pl-10 pr-12 py-2.5 text-xs font-bold transition-all outline-none shadow-sm group-hover:shadow-md">
-                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#19DC7E] transition-colors text-xs"></i>
+                    <input type="text" id="omni-search-input" placeholder="Search..." class="w-full bg-gray-50/50 border border-gray-100 focus:border-[#24B25D] focus:bg-white rounded-xl pl-10 pr-12 py-2.5 text-xs font-bold transition-all outline-none shadow-sm group-hover:shadow-md">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#24B25D] transition-colors text-xs"></i>
                     <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                         <span class="bg-white border border-gray-200 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">/</span>
                     </div>
@@ -327,7 +327,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
 
                 <div class="hidden sm:flex items-center gap-2 bg-white border border-gray-100 px-3 py-1.5 rounded-xl shadow-sm">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#19DC7E] animate-pulse"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#24B25D] animate-pulse"></span>
                     <div id="header-clock" class="text-[10px] font-black text-gray-900 tracking-widest tabular-nums">--:--</div>
                 </div>
                 
@@ -367,7 +367,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- USER PROFILE MENU -->
                 <div class="relative group" id="user-menu-dropdown">
                     <button onclick="document.getElementById('user-menu-content').classList.toggle('hidden')" class="flex items-center gap-3 bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-1 pr-4 transition-all shadow-sm">
-                        <div class="w-8 h-8 rounded-lg bg-black text-[#19DC7E] flex items-center justify-center font-black text-xs">
+                        <div class="w-8 h-8 rounded-lg bg-black text-[#24B25D] flex items-center justify-center font-black text-xs">
                             A
                         </div>
                         <div class="text-left hidden md:block">
@@ -469,11 +469,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <a href="${res.url}" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl transition-all group/item">
                             ${icon}
                             <div>
-                                <p class="text-xs font-black text-gray-900 group-hover/item:text-[#19DC7E] transition-colors">${res.title}</p>
+                                <p class="text-xs font-black text-gray-900 group-hover/item:text-[#24B25D] transition-colors">${res.title}</p>
                                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${res.subtitle}</p>
                             </div>
                             <div class="ml-auto opacity-0 group-hover/item:opacity-100 transition-all translate-x-2 group-hover/item:translate-x-0">
-                                <i class="fas fa-arrow-right text-[10px] text-[#19DC7E]"></i>
+                                <i class="fas fa-arrow-right text-[10px] text-[#24B25D]"></i>
                             </div>
                         </a>
                     `;

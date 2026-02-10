@@ -301,13 +301,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     ?>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
-        .step-active { color: #19DC7E; }
-        .step-done { color: #19DC7E; }
+        .step-active { color: #24B25D; }
+        .step-done { color: #24B25D; }
         .checkout-step { display: none; }
         .checkout-step.active { display: block; }
         
         .payment-radio:checked + .payment-card {
-            border-color: #19DC7E;
+            border-color: #24B25D;
             background-color: #f0fdf4;
             transform: scale(1.02);
         }
@@ -319,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         .anim-slide { animation: slideIn 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="bg-[#FFFBEB] font-['Inter']">
+<body class="bg-[#FFFEDC] font-['Inter']">
 
     <!-- Premium Minimal Header -->
     <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-100">
@@ -328,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 <img src="<?php echo get_url('./assets/images/logo.svg'); ?>" alt="Logo" class="w-20">
             </a>
             <div class="flex items-center gap-3 text-gray-400 font-bold text-xs uppercase tracking-widest">
-                <i class="fas fa-lock text-[#19DC7E]"></i> 
+                <i class="fas fa-lock text-[#24B25D]"></i> 
                 <span class="hidden sm:inline">Secure 256-bit SSL Checkout</span>
             </div>
         </div>
@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 <!-- Progress Indicators -->
                 <div class="flex items-center gap-4 mb-10 px-2 overflow-x-auto pb-4 no-scrollbar">
                     <div class="flex items-center gap-3 shrink-0" id="indicator-1">
-                        <div class="w-10 h-10 rounded-full bg-[#19DC7E] text-white flex items-center justify-center font-black shadow-lg shadow-green-100">1</div>
+                        <div class="w-10 h-10 rounded-full bg-[#24B25D] text-white flex items-center justify-center font-black shadow-lg shadow-green-100">1</div>
                         <span class="font-black text-gray-900 uppercase tracking-widest text-[10px]">Shipping</span>
                     </div>
                     <div class="h-0.5 w-12 bg-gray-200 rounded-full shrink-0" id="line-1"></div>
@@ -377,35 +377,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Email Address</label>
-                                    <input type="email" name="email" required placeholder="your@email.com" value="<?php echo $form['email']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="email" name="email" required placeholder="your@email.com" value="<?php echo $form['email']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Phone Number</label>
-                                    <input type="text" name="phone" required placeholder="+91 00000 00000" value="<?php echo $form['phone']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="phone" required placeholder="+91 00000 00000" value="<?php echo $form['phone']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">First Name</label>
-                                    <input type="text" name="first_name" required placeholder="John" value="<?php echo $form['first_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="first_name" required placeholder="John" value="<?php echo $form['first_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Last Name</label>
-                                    <input type="text" name="last_name" required placeholder="Doe" value="<?php echo $form['last_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="last_name" required placeholder="Doe" value="<?php echo $form['last_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2 md:col-span-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Delivery Address</label>
-                                    <input type="text" name="address" required placeholder="House No, Street, Locality" value="<?php echo $form['address']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="address" required placeholder="House No, Street, Locality" value="<?php echo $form['address']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">City</label>
-                                    <input type="text" name="city" required placeholder="Srinagar" value="<?php echo $form['city']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="city" required placeholder="Srinagar" value="<?php echo $form['city']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">State</label>
-                                    <input type="text" name="state" required placeholder="J&K" value="<?php echo $form['state']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="state" required placeholder="J&K" value="<?php echo $form['state']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">PIN Code</label>
-                                    <input type="text" name="zip" id="zip_input" required placeholder="190001" value="<?php echo $form['zip']; ?>" maxlength="6" oninput="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="zip" id="zip_input" required placeholder="190001" value="<?php echo $form['zip']; ?>" maxlength="6" oninput="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
 
                                 <div class="md:col-span-2 mt-4 hidden" id="shipping-methods-container">
@@ -419,7 +419,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 </div>
                             </div>
 
-                            <button type="button" onclick="goToStep(2)" class="btn-chunky bg-[#111827] text-white w-full mt-10 py-5 text-lg shadow-xl hover:bg-[#19DC7E] hover:text-black">
+                            <button type="button" onclick="goToStep(2)" class="btn-chunky bg-[#111827] text-white w-full mt-10 py-5 text-lg shadow-xl hover:bg-[#24B25D] hover:text-black">
                                 Continue to Payment <i class="fas fa-arrow-right ml-2"></i>
                             </button>
                         </div>
@@ -435,14 +435,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 <!-- COD -->
                                 <div class="relative">
                                     <input type="radio" name="payment_method" value="cod" id="pay-cod" checked class="hidden payment-radio">
-                                    <label for="pay-cod" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#19DC7E]">
+                                    <label for="pay-cod" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#24B25D]">
                                         <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">🚚</div>
                                         <div class="flex-1">
                                             <h4 class="font-black text-gray-900 text-xl font-['Crimson_Pro']">Cash on Delivery</h4>
                                             <p class="text-xs text-gray-500 font-medium">Pay when your snacks arrive.</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
-                                            <div class="w-3 h-3 bg-[#19DC7E] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
+                                            <div class="w-3 h-3 bg-[#24B25D] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
                                         </div>
                                     </label>
                                 </div>
@@ -450,14 +450,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 <!-- Razorpay -->
                                 <div class="relative">
                                     <input type="radio" name="payment_method" value="razorpay" id="pay-razorpay" class="hidden payment-radio">
-                                    <label for="pay-razorpay" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#19DC7E]">
+                                    <label for="pay-razorpay" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#24B25D]">
                                         <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">💳</div>
                                         <div class="flex-1">
                                             <h4 class="font-black text-gray-900 text-xl font-['Crimson_Pro']">Online Payment</h4>
                                             <p class="text-xs text-gray-500 font-medium">Credit/Debit Card, UPI, Netbanking.</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
-                                            <div class="w-3 h-3 bg-[#19DC7E] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
+                                            <div class="w-3 h-3 bg-[#24B25D] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
                                         </div>
                                     </label>
                                 </div>
@@ -469,7 +469,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 <button type="button" onclick="goToStep(1)" class="btn-chunky border-gray-100 text-gray-500 hover:text-black hover:border-black py-4 px-8">
                                     <i class="fas fa-arrow-left mr-2"></i> Back
                                 </button>
-                                <button type="submit" class="btn-chunky bg-[#111827] text-white flex-1 py-5 text-lg shadow-xl hover:bg-[#19DC7E] hover:text-black">
+                                <button type="submit" class="btn-chunky bg-[#111827] text-white flex-1 py-5 text-lg shadow-xl hover:bg-[#24B25D] hover:text-black">
                                     Finish & Place Order <i class="fas fa-check-circle ml-2"></i>
                                 </button>
                             </div>
@@ -482,13 +482,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             <div class="w-full lg:w-[380px] sticky top-28">
                 <div class="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 overflow-hidden relative">
                     <!-- Subtle Decor -->
-                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#19DC7E]/5 rounded-full blur-3xl"></div>
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#24B25D]/5 rounded-full blur-3xl"></div>
                     
                     <div class="flex items-center justify-between mb-8">
                         <h3 class="font-black text-xl font-['Crimson_Pro'] text-gray-900">Order Items</h3>
-                        <button type="button" onclick="openBrowseMoreModal()" id="btn-browse-more" class="group relative flex items-center justify-center gap-2 bg-[#19DC7E]/10 hover:bg-[#19DC7E] px-4 py-2.5 rounded-2xl transition-all duration-300 active:scale-95 cursor-pointer z-20">
-                            <i class="fas fa-plus text-[10px] text-[#19DC7E] group-hover:text-black pointer-events-none"></i>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-[#19DC7E] group-hover:text-black pointer-events-none">Browse More</span>
+                        <button type="button" onclick="openBrowseMoreModal()" id="btn-browse-more" class="group relative flex items-center justify-center gap-2 bg-[#24B25D]/10 hover:bg-[#24B25D] px-4 py-2.5 rounded-2xl transition-all duration-300 active:scale-95 cursor-pointer z-20">
+                            <i class="fas fa-plus text-[10px] text-[#24B25D] group-hover:text-black pointer-events-none"></i>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-[#24B25D] group-hover:text-black pointer-events-none">Browse More</span>
                         </button>
                     </div>
                     
@@ -522,7 +522,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <!-- COUPON SECTION -->
                     <div class="pt-6 border-t border-gray-100 mb-6">
                         <div class="flex sm:flex-row flex-col gap-2">
-                            <input type="text" id="coupon-code" placeholder="Have a code?" class="flex-1 bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-2xl px-4 py-3 outline-none transition-all font-bold text-sm">
+                            <input type="text" id="coupon-code" placeholder="Have a code?" class="flex-1 bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-2xl px-4 py-3 outline-none transition-all font-bold text-sm">
                             <button type="button" onclick="applyCoupon()" class="btn-chunky bg-gray-900 text-white px-6 text-xs py-3">Apply</button>
                         </div>
                         <div id="coupon-message" class="text-[10px] font-bold mt-2 ml-2"></div>
@@ -535,14 +535,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         </div>
                         <div id="discounts-container">
                             <?php if($coupon_discount > 0): ?>
-                                <div class="flex justify-between items-center text-sm font-medium text-[#19DC7E]">
+                                <div class="flex justify-between items-center text-sm font-medium text-[#24B25D]">
                                     <span>Coupon Discount (<?php echo $_SESSION['coupon']['code']; ?>)</span>
                                     <span class="font-bold">- ₹<?php echo $coupon_discount; ?></span>
                                 </div>
                             <?php endif; ?>
                             
                             <?php if($affiliate_discount > 0): ?>
-                                <div class="flex justify-between items-center text-sm font-medium text-[#19DC7E]">
+                                <div class="flex justify-between items-center text-sm font-medium text-[#24B25D]">
                                     <span class="flex items-center gap-1"><i class="fas fa-bolt text-[10px]"></i> Creator Discount (@<?php echo $_SESSION['affiliate']['code']; ?>)</span>
                                     <span class="font-bold">- ₹<?php echo $affiliate_discount; ?></span>
                                 </div>
@@ -572,7 +572,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     </div>
 
                     <div class="mt-8 p-4 bg-green-50 rounded-[24px] border border-green-100 flex items-start gap-3">
-                        <i class="fas fa-shield-alt text-[#19DC7E] mt-1 text-sm"></i>
+                        <i class="fas fa-shield-alt text-[#24B25D] mt-1 text-sm"></i>
                         <p class="text-[10px] text-green-700 font-bold leading-relaxed">
                             Your payment is protected by safe browsing technology and our Freshness Guarantee.
                         </p>
@@ -604,7 +604,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 
                 <!-- Section 1: Member Benefit -->
                 <div class="flex-1 p-6 sm:p-10 md:p-14 bg-gray-50 flex flex-col justify-center border-b md:border-b-0 md:border-r border-gray-100 text-center md:text-left">
-                    <div class="w-12 h-12 sm:w-16 sm:h-16 bg-[#19DC7E] rounded-2xl md:rounded-3xl flex items-center justify-center text-white text-xl sm:text-3xl shadow-lg mb-4 sm:mb-8 rotate-3 mx-auto md:mx-0">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 bg-[#24B25D] rounded-2xl md:rounded-3xl flex items-center justify-center text-white text-xl sm:text-3xl shadow-lg mb-4 sm:mb-8 rotate-3 mx-auto md:mx-0">
                         <i class="fas fa-user-check"></i>
                     </div>
                     <h2 class="text-2xl sm:text-4xl font-['Crimson_Pro'] font-black text-gray-900 mb-2 sm:mb-4 uppercase tracking-tight leading-none">The Member<br>Club.</h2>
@@ -635,7 +635,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         In a hurry? Checkout as a guest. You can always create an account later.
                     </p>
                     
-                    <a href="?mode=guest" class="btn-chunky bg-[#19DC7E] text-white w-full py-4 sm:py-6 text-center block shadow-xl hover:rotate-2 hover:scale-105 transition-all text-xs sm:text-lg border-none">
+                    <a href="?mode=guest" class="btn-chunky bg-[#24B25D] text-white w-full py-4 sm:py-6 text-center block shadow-xl hover:rotate-2 hover:scale-105 transition-all text-xs sm:text-lg border-none">
                         Continue as Guest <i class="fas fa-arrow-right ml-2 text-sm opacity-50"></i>
                     </a>
                 </div>
@@ -652,7 +652,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     <!-- PROCESSING OVERLAY -->
     <div id="processing-overlay" class="fixed inset-0 bg-white/95 backdrop-blur-md z-[100] hidden flex-col items-center justify-center text-center">
         <div class="relative mb-10">
-            <div class="w-32 h-32 border-4 border-gray-100 border-t-[#19DC7E] rounded-full animate-spin"></div>
+            <div class="w-32 h-32 border-4 border-gray-100 border-t-[#24B25D] rounded-full animate-spin"></div>
             <div class="absolute inset-0 flex items-center justify-center text-4xl">🍿</div>
         </div>
         <h2 class="text-4xl font-black font-['Crimson_Pro'] text-gray-900 mb-4 anim-slide">Securing Your Snacks...</h2>
@@ -674,8 +674,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 <div class="p-6 md:p-12 border-b border-gray-100 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                     <div>
                         <div class="flex items-center gap-3 mb-2">
-                            <span class="w-10 h-1 bg-[#19DC7E] rounded-full"></span>
-                            <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-[0.3em]">Cravings Await</span>
+                            <span class="w-10 h-1 bg-[#24B25D] rounded-full"></span>
+                            <span class="text-[10px] font-black text-[#24B25D] uppercase tracking-[0.3em]">Cravings Await</span>
                         </div>
                         <h2 class="text-3xl md:text-5xl font-['Crimson_Pro'] font-black text-gray-900 leading-none">Add More Snacks 🍿</h2>
                         <p class="text-gray-400 font-bold text-xs md:text-sm mt-3 md:mt-4">Don't forget these fan favorites for your journey!</p>
@@ -686,7 +686,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         <button onclick="scrollSuggestions('left')" class="w-14 h-14 rounded-2xl bg-gray-50 border-2 border-transparent hover:border-black flex items-center justify-center text-gray-400 hover:text-black transition-all">
                             <i class="fas fa-arrow-left"></i>
                         </button>
-                        <button onclick="scrollSuggestions('right')" class="w-14 h-14 rounded-2xl bg-black text-[#19DC7E] flex items-center justify-center hover:scale-105 hover:rotate-3 transition-all">
+                        <button onclick="scrollSuggestions('right')" class="w-14 h-14 rounded-2xl bg-black text-[#24B25D] flex items-center justify-center hover:scale-105 hover:rotate-3 transition-all">
                             <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
@@ -702,12 +702,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 <!-- Footer -->
                 <div class="p-6 md:p-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between bg-white gap-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 md:w-10 md:h-10 bg-green-50 rounded-lg md:rounded-xl flex items-center justify-center text-[#19DC7E]">
+                        <div class="w-8 h-8 md:w-10 md:h-10 bg-green-50 rounded-lg md:rounded-xl flex items-center justify-center text-[#24B25D]">
                             <i class="fas fa-info-circle text-sm"></i>
                         </div>
                         <p class="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">Adding items will automatically<br class="hidden md:block">update your order total.</p>
                     </div>
-                    <button onclick="closeBrowseMoreModal()" class="btn-chunky bg-[#19DC7E] text-white py-4 md:py-5 px-8 md:px-12 text-sm shadow-xl shadow-green-100 hover:rotate-2 w-full sm:w-auto">
+                    <button onclick="closeBrowseMoreModal()" class="btn-chunky bg-[#24B25D] text-white py-4 md:py-5 px-8 md:px-12 text-sm shadow-xl shadow-green-100 hover:rotate-2 w-full sm:w-auto">
                         Back to Checkout <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
@@ -722,7 +722,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             const colors = {
-                success: 'bg-[#19DC7E] text-black',
+                success: 'bg-[#24B25D] text-black',
                 error: 'bg-red-500 text-white',
                 warning: 'bg-amber-500 text-white',
                 info: 'bg-black text-white'
@@ -793,17 +793,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
             // Update Progress Bar
             if (n === 2) {
-                document.getElementById('indicator-2').querySelector('.w-10').classList.replace('bg-gray-100', 'bg-[#19DC7E]');
+                document.getElementById('indicator-2').querySelector('.w-10').classList.replace('bg-gray-100', 'bg-[#24B25D]');
                 document.getElementById('indicator-2').querySelector('.w-10').classList.replace('text-gray-400', 'text-white');
                 document.getElementById('indicator-2').querySelector('.w-10').classList.add('shadow-lg', 'shadow-green-100');
                 document.getElementById('indicator-2').querySelector('span').classList.replace('text-gray-400', 'text-gray-900');
-                document.getElementById('line-1').classList.replace('bg-gray-200', 'bg-[#19DC7E]');
+                document.getElementById('line-1').classList.replace('bg-gray-200', 'bg-[#24B25D]');
             } else {
-                document.getElementById('indicator-2').querySelector('.w-10').classList.replace('bg-[#19DC7E]', 'bg-gray-100');
+                document.getElementById('indicator-2').querySelector('.w-10').classList.replace('bg-[#24B25D]', 'bg-gray-100');
                 document.getElementById('indicator-2').querySelector('.w-10').classList.replace('text-white', 'text-gray-400');
                 document.getElementById('indicator-2').querySelector('.w-10').classList.remove('shadow-lg', 'shadow-green-100');
                 document.getElementById('indicator-2').querySelector('span').classList.replace('text-gray-900', 'text-gray-400');
-                document.getElementById('line-1').classList.replace('bg-[#19DC7E]', 'bg-gray-200');
+                document.getElementById('line-1').classList.replace('bg-[#24B25D]', 'bg-gray-200');
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -933,7 +933,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             <div class="relative">
                                 <input type="radio" name="ship_method_radio" value="${m.id}" id="ship-${m.id}" ${idx === 0 ? 'checked' : ''} 
                                     onchange="selectShippingMethod(${m.id}, ${m.cost})" class="hidden peer">
-                                <label for="ship-${m.id}" class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border-2 border-transparent peer-checked:border-[#19DC7E] peer-checked:bg-green-50 transition-all cursor-pointer hover:bg-gray-100">
+                                <label for="ship-${m.id}" class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border-2 border-transparent peer-checked:border-[#24B25D] peer-checked:bg-green-50 transition-all cursor-pointer hover:bg-gray-100">
                                     <div>
                                         <p class="font-black text-xs uppercase tracking-widest text-gray-900">${m.display_name}</p>
                                         <p class="text-[10px] text-gray-500 font-medium">Estimated arrival in ${m.min_days}-${m.max_days} days</p>
@@ -1018,14 +1018,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     let discountsHtml = '';
                     if (d.coupon_discount > 0) {
                         discountsHtml += `
-                            <div class="flex justify-between items-center text-sm font-medium text-[#19DC7E]">
+                            <div class="flex justify-between items-center text-sm font-medium text-[#24B25D]">
                                 <span>Coupon Discount (${d.coupon_code})</span>
                                 <span class="font-bold">- ₹${d.coupon_discount}</span>
                             </div>`;
                     }
                     if (d.affiliate_discount > 0) {
                         discountsHtml += `
-                            <div class="flex justify-between items-center text-sm font-medium text-[#19DC7E]">
+                            <div class="flex justify-between items-center text-sm font-medium text-[#24B25D]">
                                 <span class="flex items-center gap-1"><i class="fas fa-bolt text-[10px]"></i> Creator Discount (@${d.affiliate_code})</span>
                                 <span class="font-bold">- ₹${d.affiliate_discount}</span>
                             </div>`;
@@ -1071,7 +1071,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         async function fetchSuggestions() {
             const slider = document.getElementById('suggestions-slider');
             if(!slider) return;
-            slider.innerHTML = '<div class="w-full py-20 text-center"><i class="fas fa-spinner fa-spin text-4xl text-[#19DC7E]"></i></div>';
+            slider.innerHTML = '<div class="w-full py-20 text-center"><i class="fas fa-spinner fa-spin text-4xl text-[#24B25D]"></i></div>';
             
             try {
                 const res = await fetch(BASE_URL + 'api/get_suggestions.php');
@@ -1086,7 +1086,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         const productUrl = `${BASE_URL}product/${p.slug || p.id}`;
                         
                         html += `
-                            <div class="flex-none w-[180px] md:w-[220px] snap-start bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-5 shadow-sm border-2 border-white hover:border-[#19DC7E] hover:shadow-xl transition-all duration-300 group">
+                            <div class="flex-none w-[180px] md:w-[220px] snap-start bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-5 shadow-sm border-2 border-white hover:border-[#24B25D] hover:shadow-xl transition-all duration-300 group">
                                 <div class="aspect-square bg-gray-50 rounded-xl md:rounded-2xl mb-4 md:mb-5 overflow-hidden relative ${isOutOfStock ? 'grayscale' : ''}">
                                     <img src="${BASE_URL}${p.image.replace(/^(\.\/|\/)/, '')}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23d1d5db%22 font-family=%22sans-serif%22 font-size=%2224%22%3ENo Image%3C/text%3E%3C/svg%3E'">
                                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors"></div>
@@ -1102,7 +1102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                     <button 
                                         onclick="addToCartFromModal(${p.id}, this)" 
                                         ${isOutOfStock ? 'disabled' : ''}
-                                        class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl ${isOutOfStock ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:rotate-6'} transition-all shadow-lg flex items-center justify-center">
+                                        class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl ${isOutOfStock ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#24B25D] hover:bg-[#24B25D] hover:text-black hover:rotate-6'} transition-all shadow-lg flex items-center justify-center">
                                         <i class="fas fa-plus text-xs md:text-base"></i>
                                     </button>
                                 </div>
@@ -1136,7 +1136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 if (data.success) {
                     icon.className = 'fas fa-check';
                     btn.classList.replace('bg-black', 'bg-green-500');
-                    btn.classList.replace('text-[#19DC7E]', 'text-white');
+                    btn.classList.replace('text-[#24B25D]', 'text-white');
                     
                     // Refresh summary dynamically without closing modal
                     refreshCheckoutSummary();
@@ -1145,7 +1145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     setTimeout(() => {
                         icon.className = 'fas fa-plus';
                         btn.classList.replace('bg-green-500', 'bg-black');
-                        btn.classList.replace('text-white', 'text-[#19DC7E]');
+                        btn.classList.replace('text-white', 'text-[#24B25D]');
                         btn.disabled = false;
                     }, 2000);
                 } else {

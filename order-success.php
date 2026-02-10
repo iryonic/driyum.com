@@ -21,13 +21,13 @@ if ($order && !empty($order['shipping_method_id'])) {
     ?>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-<body class="bg-[#FFFBEB] flex items-center justify-center min-h-screen p-4 overflow-hidden">
+<body class="bg-[#FFFEDC] flex items-center justify-center min-h-screen p-4 overflow-hidden">
 
     <div class="max-w-xl w-full text-center relative z-10">
         
         <!-- Success Card -->
         <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-2xl border-2 border-green-50 relative anim-up">
-            <div class="w-24 h-24 bg-[#19DC7E] rounded-full flex items-center justify-center text-white text-5xl mx-auto mb-8 shadow-lg animate-[bounce_1s_infinite]">
+            <div class="w-24 h-24 bg-[#24B25D] rounded-full flex items-center justify-center text-white text-5xl mx-auto mb-8 shadow-lg animate-[bounce_1s_infinite]">
                 <i class="fas fa-check"></i>
             </div>
 
@@ -49,7 +49,7 @@ if ($order && !empty($order['shipping_method_id'])) {
                     </span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-[#19DC7E] h-2 rounded-full w-[20%]"></div>
+                    <div class="bg-[#24B25D] h-2 rounded-full w-[20%]"></div>
                 </div>
                 <div class="flex justify-between text-xs text-gray-400 mt-2">
                     <span>Ordered</span>
@@ -73,7 +73,7 @@ if ($order && !empty($order['shipping_method_id'])) {
 
     <!-- Background Decor -->
     <div class="fixed top-20 left-20 w-32 h-32 bg-[#FFD700] rounded-full blur-3xl opacity-20 animate-pulse"></div>
-    <div class="fixed bottom-20 right-20 w-40 h-40 bg-[#19DC7E] rounded-full blur-3xl opacity-20 animate-pulse"></div>
+    <div class="fixed bottom-20 right-20 w-40 h-40 bg-[#24B25D] rounded-full blur-3xl opacity-20 animate-pulse"></div>
 
     <script>
         // Trigger Massive Confetti
@@ -87,14 +87,14 @@ if ($order && !empty($order['shipping_method_id'])) {
                     angle: 60,
                     spread: 55,
                     origin: { x: 0 },
-                    colors: ['#19DC7E', '#FFD700', '#FF6B6B']
+                    colors: ['#24B25D', '#FFD700', '#FF6B6B']
                 });
                 confetti({
                     particleCount: 5,
                     angle: 120,
                     spread: 55,
                     origin: { x: 1 },
-                    colors: ['#19DC7E', '#FFD700', '#FF6B6B']
+                    colors: ['#24B25D', '#FFD700', '#FF6B6B']
                 });
 
                 if (Date.now() < end) {

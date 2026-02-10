@@ -45,7 +45,7 @@ $coupons = $pagination['records'];
         <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Snack Codes</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Managing <span class="text-black"><?php echo $pagination['total_records']; ?></span> high-impact discount vouchers</p>
     </div>
-    <button onclick="openModal()" class="bg-[#19DC7E] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
+    <button onclick="openModal()" class="bg-[#24B25D] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
         <i class="fas fa-plus mr-1"></i> Create Coupon
     </button>
 </div>
@@ -62,7 +62,7 @@ $coupons = $pagination['records'];
     <div class="coupon-card bg-white rounded-3xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-xl transition-all duration-300 anim-up overflow-hidden">
         
         <div class="flex justify-between items-start mb-6">
-            <div class="bg-gray-50 text-gray-900 px-4 py-1.5 rounded-xl font-black text-xs tracking-widest border border-gray-100 group-hover:bg-black group-hover:text-[#19DC7E] transition-colors"><?php echo $c['code']; ?></div>
+            <div class="bg-gray-50 text-gray-900 px-4 py-1.5 rounded-xl font-black text-xs tracking-widest border border-gray-100 group-hover:bg-black group-hover:text-[#24B25D] transition-colors"><?php echo $c['code']; ?></div>
             <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-all">
                 <button onclick='editCoupon(<?php echo json_encode($c); ?>)' class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-black hover:text-white flex items-center justify-center transition-all"><i class="fas fa-pen text-[10px]"></i></button>
                 <a href="?delete=<?php echo $c['id']; ?>" onclick="return confirm('Delete coupon?')" class="w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all"><i class="fas fa-trash text-[10px]"></i></a>
@@ -71,7 +71,7 @@ $coupons = $pagination['records'];
 
         <div class="mb-6">
             <div class="text-[8px] font-black uppercase text-gray-400 tracking-widest mb-1">Discount Magnitude</div>
-            <h3 class="text-3xl font-black crimson-pro text-gray-900 group-hover:text-[#19DC7E] transition-colors">
+            <h3 class="text-3xl font-black crimson-pro text-gray-900 group-hover:text-[#24B25D] transition-colors">
                 <?php echo $c['type'] === 'percentage' ? $c['value'].'%' : '₹'.number_format($c['value']); ?> <span class="text-xs opacity-30">OFF</span>
             </h3>
         </div>
@@ -89,14 +89,14 @@ $coupons = $pagination['records'];
             </div>
             <?php if($c['usage_limit']): ?>
             <div class="mt-3 h-1 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full bg-[#19DC7E] transition-all duration-1000" style="width: <?php echo ($c['usage_count'] / $c['usage_limit']) * 100; ?>%"></div>
+                <div class="h-full bg-[#24B25D] transition-all duration-1000" style="width: <?php echo ($c['usage_count'] / $c['usage_limit']) * 100; ?>%"></div>
             </div>
             <?php endif; ?>
         </div>
 
         <div class="flex items-center justify-between border-t border-gray-50 pt-4">
             <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full <?php echo $c['is_active'] ? 'bg-[#19DC7E]' : 'bg-gray-200'; ?>"></div>
+                <div class="w-2 h-2 rounded-full <?php echo $c['is_active'] ? 'bg-[#24B25D]' : 'bg-gray-200'; ?>"></div>
                 <span class="text-[8px] font-black uppercase tracking-widest <?php echo $c['is_active'] ? 'text-gray-900' : 'text-gray-400'; ?>">
                     <?php echo $c['is_active'] ? 'Active' : 'Paused'; ?>
                 </span>
@@ -175,7 +175,7 @@ $coupons = $pagination['records'];
 
             <div class="flex gap-3 mt-10">
                 <button type="button" onclick="closeModal()" class="flex-1 py-4 rounded-2xl font-black text-gray-400 hover:text-black transition-colors uppercase tracking-widest text-[10px]">Back</button>
-                <button type="submit" name="save_coupon" class="flex-1 bg-black text-[#19DC7E] py-4 rounded-2xl font-black shadow-lg uppercase tracking-widest text-[10px] hover:scale-[1.02] active:scale-95 transition-all">Save Code</button>
+                <button type="submit" name="save_coupon" class="flex-1 bg-black text-[#24B25D] py-4 rounded-2xl font-black shadow-lg uppercase tracking-widest text-[10px] hover:scale-[1.02] active:scale-95 transition-all">Save Code</button>
             </div>
         </form>
     </div>

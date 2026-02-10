@@ -47,17 +47,17 @@ window.validatePassword = function (val) {
     Object.keys(criteria).forEach(key => {
         const el = document.getElementById(`crit-${key}`);
         if (criteria[key]) {
-            el.classList.replace('text-gray-400', 'text-[#19DC7E]');
+            el.classList.replace('text-gray-400', 'text-[#24B25D]');
             el.querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
             score++;
         } else {
-            el.classList.replace('text-[#19DC7E]', 'text-gray-400');
+            el.classList.replace('text-[#24B25D]', 'text-gray-400');
             el.querySelector('i').classList.replace('fa-check-circle', 'fa-circle');
         }
     });
 
     // Update Strength Bar
-    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-[#19DC7E]'];
+    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-[#24B25D]'];
     bar.className = `h-full transition-all duration-500 ${colors[score]}`;
     bar.style.width = `${(score / 4) * 100}%`;
 };
@@ -107,14 +107,14 @@ function renderSearchResults(results, container) {
             </div>
             
             <div class="flex-1 min-w-0">
-                <h4 class="text-white font-['Fredoka'] font-bold text-xl truncate group-hover:text-[#19DC7E] transition-colors">${product.name}</h4>
+                <h4 class="text-white font-['Fredoka'] font-bold text-xl truncate group-hover:text-[#24B25D] transition-colors">${product.name}</h4>
                 <div class="flex items-center gap-2 mt-1">
-                    <span class="text-[#19DC7E] font-black text-lg">₹${product.price}</span>
+                    <span class="text-[#24B25D] font-black text-lg">₹${product.price}</span>
                     <span class="text-white/40 text-xs uppercase font-bold tracking-widest hidden sm:inline-block">View Product</span>
                 </div>
             </div>
             
-            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-[#19DC7E] group-hover:text-black transition-all">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white group-hover:bg-[#24B25D] group-hover:text-black transition-all">
                 <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300"></i>
             </div>
         </a>
@@ -176,7 +176,7 @@ window.toggleSearch = function () {
 function fireConfetti(element) {
     if (!element) return;
     const rect = element.getBoundingClientRect();
-    const colors = ['#19DC7E', '#FFD700', '#FF6B6B', '#4F46E5'];
+    const colors = ['#24B25D', '#FFD700', '#FF6B6B', '#4F46E5'];
     for (let i = 0; i < 12; i++) {
         const particle = document.createElement('div');
         particle.style.position = 'fixed';
@@ -226,7 +226,7 @@ window.addToCart = async function (productId, btnElement, quantity = 1) {
 
         if (data.success) {
             btnElement.innerHTML = '<i class="fas fa-check"></i>';
-            btnElement.classList.add('bg-[#19DC7E]', 'text-white', 'border-transparent', 'scale-110');
+            btnElement.classList.add('bg-[#24B25D]', 'text-white', 'border-transparent', 'scale-110');
             fireConfetti(btnElement);
 
             // Update all UI components
@@ -237,7 +237,7 @@ window.addToCart = async function (productId, btnElement, quantity = 1) {
 
             setTimeout(() => {
                 btnElement.innerHTML = originalText;
-                btnElement.classList.remove('bg-[#19DC7E]', 'text-white', 'border-transparent', 'scale-110');
+                btnElement.classList.remove('bg-[#24B25D]', 'text-white', 'border-transparent', 'scale-110');
                 btnElement.disabled = false;
             }, 2000);
         } else {
@@ -386,14 +386,14 @@ window.loadCartItems = async function (isUpdate = false) {
                     const threshold = typeof FREE_SHIPPING_THRESHOLD !== 'undefined' ? FREE_SHIPPING_THRESHOLD : 499;
 
                     if (subtotal >= threshold) {
-                        fsMsg.innerHTML = '<span class="text-[#19DC7E] font-black">Booyah! You unlocked FREE SHIPPING! 🚀</span>';
+                        fsMsg.innerHTML = '<span class="text-[#24B25D] font-black">Booyah! You unlocked FREE SHIPPING! 🚀</span>';
                         fsBar.style.width = '100%';
                         fsBar.classList.add('progress-shimmer');
                         document.getElementById('free-shipping-icon').textContent = '🎉';
                     } else {
                         const remaining = threshold - subtotal;
                         const percentage = (subtotal / threshold) * 100;
-                        fsMsg.innerHTML = `Add <span class="text-black font-black">₹${remaining}</span> more for <span class="text-[#19DC7E]">FREE SHIPPING</span>`;
+                        fsMsg.innerHTML = `Add <span class="text-black font-black">₹${remaining}</span> more for <span class="text-[#24B25D]">FREE SHIPPING</span>`;
                         fsBar.style.width = `${percentage}%`;
                         fsBar.classList.remove('progress-shimmer');
                         document.getElementById('free-shipping-icon').textContent = '🚚';
@@ -408,7 +408,7 @@ window.loadCartItems = async function (isUpdate = false) {
                         <div class="w-32 h-32 bg-white rounded-[40px] shadow-2xl flex items-center justify-center text-5xl mb-8">🛍️</div>
                         <h3 class="text-3xl font-['Fredoka'] font-black text-gray-900 mb-4">Bag is empty!</h3>
                         <p class="text-gray-400 font-medium mb-10 leading-relaxed">It seems your snack vault is empty.</p>
-                        <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop'" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#19DC7E] hover:text-black transition-all shadow-xl active:scale-95">Explore Snacks</button>
+                        <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop'" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#24B25D] hover:text-black transition-all shadow-xl active:scale-95">Explore Snacks</button>
                     </div>`;
             } else {
                 container.innerHTML = data.items.map((item, index) => {
@@ -424,7 +424,7 @@ window.loadCartItems = async function (isUpdate = false) {
                         
                         <div class="flex-1 min-w-0 pr-6">
                             <a href="${BASE_URL}product/${item.id}" class="block">
-                                <h4 class="font-black text-gray-900 truncate font-['Fredoka'] text-lg mb-0.5 leading-tight group-hover:text-[#19DC7E] transition-colors">${item.name}</h4>
+                                <h4 class="font-black text-gray-900 truncate font-['Fredoka'] text-lg mb-0.5 leading-tight group-hover:text-[#24B25D] transition-colors">${item.name}</h4>
                                 <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-3">500g Pack</p>
                             </a>
                             
@@ -432,7 +432,7 @@ window.loadCartItems = async function (isUpdate = false) {
                                 <div class="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-100">
                                     <button onclick="updateCartQty(${item.id}, ${item.quantity - 1})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-gray-400 hover:text-black shadow-sm transition-all hover:scale-110 active:scale-95"><i class="fas fa-minus text-[10px]"></i></button>
                                     <span class="text-sm font-black w-8 text-center">${item.quantity}</span>
-                                    <button onclick="updateCartQty(${item.id}, ${item.quantity + 1})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-black hover:bg-[#19DC7E] shadow-sm transition-all hover:scale-110 active:scale-95"><i class="fas fa-plus text-[10px]"></i></button>
+                                    <button onclick="updateCartQty(${item.id}, ${item.quantity + 1})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-black hover:bg-[#24B25D] shadow-sm transition-all hover:scale-110 active:scale-95"><i class="fas fa-plus text-[10px]"></i></button>
                                 </div>
                                 <span class="font-black text-gray-900 text-lg">₹${item.total}</span>
                             </div>

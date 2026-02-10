@@ -6,11 +6,11 @@
 
 :root {
     /* Chunky Palette */
-    --color-bg: #FFFBEB;
+    --color-bg: #FFFEDC;
     /* Warm Cream */
-    --color-primary: #19DC7E;
+    --color-primary: #24B25D;
     /* Pop Green */
-    --color-primary-dark: #12C06A;
+    --color-primary-dark: #17775D;
     --color-text: #111827;
     /* Deep Navy */
     --color-bg-card: #ffffff;
@@ -257,7 +257,7 @@ h6 {
 }
 
 .toast-premium.success {
-    border-left: 4px solid #19DC7E;
+    border-left: 4px solid #24B25D;
 }
 
 .toast-premium.error {
@@ -537,8 +537,7 @@ input#header-search-input.search-input-premium:focus {
 }
 
 .progress-shimmer {
-    background: linear-gradient(90deg, #19DC7E 0%, #12C06A 30%, #4ade80 50%, #12C06A 70%, #19DC7E 100%);
+    background: linear-gradient(90deg, #24B25D 0%, #17775D 30%, #4ade80 50%, #17775D 70%, #24B25D 100%);
     background-size: 200% 100%;
     animation: progress-shimmer 2s infinite linear;
 }
-

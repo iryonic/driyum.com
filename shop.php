@@ -108,9 +108,9 @@ if (isset($_SESSION['user_id'])) {
         <div class="container mx-auto relative z-10">
             <h1 class="text-5xl md:text-7xl font-['Crimson_Pro'] font-black text-gray-900 mb-4 tracking-tight">
                 <?php 
-                    if ($search) echo "Searching: <span class='text-[#19DC7E]'>'$search'</span>";
-                    elseif ($cat_slug) echo str_replace('-', ' ', $cat_slug) . "<span class='text-[#19DC7E]'>.</span>";
-                    else echo "The <span class='text-[#19DC7E]'>Snack</span> Shop";
+                    if ($search) echo "Searching: <span class='text-[#24B25D]'>'$search'</span>";
+                    elseif ($cat_slug) echo str_replace('-', ' ', $cat_slug) . "<span class='text-[#24B25D]'>.</span>";
+                    else echo "The <span class='text-[#24B25D]'>Snack</span> Shop";
                 ?>
             </h1>
             <p class="text-lg md:text-xl text-gray-400 font-['Inter'] font-medium max-w-2xl mx-auto">
@@ -126,18 +126,18 @@ if (isset($_SESSION['user_id'])) {
             <div class="sticky top-24 space-y-8">
                 <div class="card-chunky p-6 bg-white/50 backdrop-blur-xl border-white/40">
                     <h3 class="font-bold text-xl mb-5 font-['Crimson_Pro'] flex items-center gap-2 text-gray-900">
-                        <i class="fas fa-filter text-[#19DC7E] text-sm"></i> Categories
+                        <i class="fas fa-filter text-[#24B25D] text-sm"></i> Categories
                     </h3>
                     <ul class="space-y-2">
                         <li>
-                            <a href="<?php echo get_url('shop'); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Inter'] transition-all <?php echo !$cat_slug ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#19DC7E] hover:translate-x-1'; ?>">
+                            <a href="<?php echo get_url('shop'); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Inter'] transition-all <?php echo !$cat_slug ? 'bg-[#24B25D] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#24B25D] hover:translate-x-1'; ?>">
                                 <span>All Packs</span>
                                 <?php if(!$cat_slug): ?> <i class="fas fa-check-circle"></i> <?php endif; ?>
                             </a>
                         </li>
                         <?php foreach ($categories as $c): ?>
                         <li>
-                            <a href="<?php echo category_url($c['slug']); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Inter'] transition-all <?php echo $cat_slug === $c['slug'] ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#19DC7E] hover:translate-x-1'; ?>">
+                            <a href="<?php echo category_url($c['slug']); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Inter'] transition-all <?php echo $cat_slug === $c['slug'] ? 'bg-[#24B25D] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#24B25D] hover:translate-x-1'; ?>">
                                 <span><?php echo $c['name']; ?></span>
                                 <?php if($cat_slug === $c['slug']): ?> <i class="fas fa-check-circle"></i> <?php endif; ?>
                             </a>
@@ -154,7 +154,7 @@ if (isset($_SESSION['user_id'])) {
                             <option value="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'price_asc'])); ?>" <?php echo $sort == 'price_asc' ? 'selected' : ''; ?>>Price: Low to High</option>
                             <option value="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'price_desc'])); ?>" <?php echo $sort == 'price_desc' ? 'selected' : ''; ?>>Price: High to Low</option>
                         </select>
-                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-hover:text-[#19DC7E] transition"></i>
+                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-hover:text-[#24B25D] transition"></i>
                     </div>
                 </div>
             </div>
@@ -205,7 +205,7 @@ if (isset($_SESSION['user_id'])) {
                                     <!-- Badges -->
                                     <div class="absolute top-6 left-6 flex flex-col gap-2 z-20 items-start">
                                         <?php if(isset($p['is_new']) && $p['is_new']): ?>
-                                            <span class="bg-[#19DC7E] text-black text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-green-200 uppercase tracking-widest backdrop-blur-md transform group-hover:scale-110 transition-transform">NEW ✨</span>
+                                            <span class="bg-[#24B25D] text-black text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-green-200 uppercase tracking-widest backdrop-blur-md transform group-hover:scale-110 transition-transform">NEW ✨</span>
                                         <?php endif; ?>
                                         <?php if(isset($p['discount_percentage']) && $p['discount_percentage'] > 0): ?>
                                             <span class="bg-black text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg h-8 flex items-center justify-center uppercase tracking-widest transform group-hover:rotate-12 transition-transform">-<?php echo $p['discount_percentage']; ?>% OFF</span>
@@ -230,7 +230,7 @@ if (isset($_SESSION['user_id'])) {
                                 <div class="px-6 pb-2 relative">
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center gap-2">
-                                            <span class="w-2 h-2 rounded-full bg-[#19DC7E] opacity-50"></span>
+                                            <span class="w-2 h-2 rounded-full bg-[#24B25D] opacity-50"></span>
                                             <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Inter']"><?php echo htmlspecialchars($p['category_name'] ?: 'Kashmir Special'); ?></p>
                                         </div>
                                         <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
@@ -265,7 +265,7 @@ if (isset($_SESSION['user_id'])) {
                                         <!-- Add Cart -->
                                         <button onclick="event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" 
                                             <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                            class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#19DC7E] hover:bg-[#19DC7E] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
+                                            class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#24B25D] hover:bg-[#24B25D] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
                                             <i class="fas fa-shopping-bag text-sm md:text-xl group-hover/btn:rotate-12 transition-transform"></i>
                                         </button>
                                      </div>
@@ -280,7 +280,7 @@ if (isset($_SESSION['user_id'])) {
                 <?php if ($total_pages > 1): ?>
                     <div class="mt-16 flex justify-center items-center gap-3">
                         <?php if ($page > 1): ?>
-                            <a href="?<?php echo http_build_query(array_merge($_GET, ['p' => $page - 1])); ?>" class="w-12 h-12 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-900 hover:border-[#19DC7E] hover:text-[#19DC7E] transition-all">
+                            <a href="?<?php echo http_build_query(array_merge($_GET, ['p' => $page - 1])); ?>" class="w-12 h-12 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-900 hover:border-[#24B25D] hover:text-[#24B25D] transition-all">
                                 <i class="fas fa-chevron-left"></i>
                             </a>
                         <?php endif; ?>
@@ -288,13 +288,13 @@ if (isset($_SESSION['user_id'])) {
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                             <a href="?<?php echo http_build_query(array_merge($_GET, ['p' => $i])); ?>" 
                                class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold font-['Crimson_Pro'] transition-all
-                               <?php echo $page == $i ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-200 scale-110' : 'bg-white border-2 border-gray-100 text-gray-500 hover:border-[#19DC7E] hover:text-[#19DC7E]'; ?>">
+                               <?php echo $page == $i ? 'bg-[#24B25D] text-black shadow-lg shadow-green-200 scale-110' : 'bg-white border-2 border-gray-100 text-gray-500 hover:border-[#24B25D] hover:text-[#24B25D]'; ?>">
                                 <?php echo $i; ?>
                             </a>
                         <?php endfor; ?>
 
                         <?php if ($page < $total_pages): ?>
-                            <a href="?<?php echo http_build_query(array_merge($_GET, ['p' => $page + 1])); ?>" class="w-12 h-12 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-900 hover:border-[#19DC7E] hover:text-[#19DC7E] transition-all">
+                            <a href="?<?php echo http_build_query(array_merge($_GET, ['p' => $page + 1])); ?>" class="w-12 h-12 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-900 hover:border-[#24B25D] hover:text-[#24B25D] transition-all">
                                 <i class="fas fa-chevron-right"></i>
                             </a>
                         <?php endif; ?>

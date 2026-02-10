@@ -240,10 +240,10 @@ $orders = $pagination['records'];
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
         <form class="flex flex-col sm:flex-row gap-3 w-full">
             <div class="relative group flex-1 md:w-64">
-                <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search orders..." class="w-full bg-white border border-gray-100 focus:border-[#19DC7E] rounded-2xl pl-10 pr-4 py-2.5 text-xs font-bold transition-all outline-none shadow-sm">
-                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#19DC7E] transition-colors text-[10px]"></i>
+                <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search orders..." class="w-full bg-white border border-gray-100 focus:border-[#24B25D] rounded-2xl pl-10 pr-4 py-2.5 text-xs font-bold transition-all outline-none shadow-sm">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#24B25D] transition-colors text-[10px]"></i>
             </div>
-            <select name="status_filter" onchange="this.form.submit()" class="bg-white border border-gray-100 rounded-2xl px-4 py-2.5 text-[10px] font-black uppercase tracking-widest outline-none focus:border-[#19DC7E] shadow-sm">
+            <select name="status_filter" onchange="this.form.submit()" class="bg-white border border-gray-100 rounded-2xl px-4 py-2.5 text-[10px] font-black uppercase tracking-widest outline-none focus:border-[#24B25D] shadow-sm">
                 <option value="">All Statuses</option>
                 <option value="pending" <?php echo $status_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
                 <option value="confirmed" <?php echo $status_filter == 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
@@ -258,14 +258,14 @@ $orders = $pagination['records'];
 <!-- Bulk Bar -->
 <div id="bulk-action-bar" class="hidden fixed bottom-10 z-50 bg-black backdrop-blur-xl border border-white/10 px-8 py-5 rounded-[2rem] shadow-2xl shadow-blue-900/20 items-center gap-8 anim-up ring-1 ring-white/10">
     <div class="flex items-center gap-3 border-r border-white/10 pr-8">
-        <div class="w-8 h-8 rounded-full bg-[#19DC7E] text-black flex items-center justify-center font-black text-xs shadow-lg shadow-green-500/20" id="selected-count-circle">0</div>
+        <div class="w-8 h-8 rounded-full bg-[#24B25D] text-black flex items-center justify-center font-black text-xs shadow-lg shadow-green-500/20" id="selected-count-circle">0</div>
         <div class="flex flex-col">
             <span class="text-[9px] font-black text-white/50 uppercase tracking-widest">Selection</span>
             <span class="text-xs font-bold text-white">Orders Active</span>
         </div>
 
         <div id="all-pages-notice" class="hidden">
-            <button onclick="selectAllPages()" class="text-[9px] font-black text-white hover:text-[#19DC7E] uppercase tracking-[0.15em] border border-white/10 px-2 py-1 rounded-lg transition-all ml-2">Select all <?php echo $pagination['total_records']; ?> orders</button>
+            <button onclick="selectAllPages()" class="text-[9px] font-black text-white hover:text-[#24B25D] uppercase tracking-[0.15em] border border-white/10 px-2 py-1 rounded-lg transition-all ml-2">Select all <?php echo $pagination['total_records']; ?> orders</button>
         </div>
         <div id="all-pages-active" class="hidden">
             <span class="text-[9px] font-black text-white uppercase tracking-[0.15em] ml-2">All <?php echo $pagination['total_records']; ?> orders selected</span>
@@ -277,7 +277,7 @@ $orders = $pagination['records'];
         <div class="flex items-center gap-2">
             <div class="relative group">
                 <i class="fas fa-bolt absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs"></i>
-                <select id="bulk-status-select" class="pl-8 bg-black border border-white/10 rounded-xl pr-8 py-2.5 text-[10px] font-bold text-white outline-none focus:border-[#19DC7E] focus:bg-white/10 transition-all hover:border-white/20 appearance-none cursor-pointer min-w-[140px]">
+                <select id="bulk-status-select" class="pl-8 bg-black border border-white/10 rounded-xl pr-8 py-2.5 text-[10px] font-bold text-white outline-none focus:border-[#24B25D] focus:bg-white/10 transition-all hover:border-white/20 appearance-none cursor-pointer min-w-[140px]">
                     <option value="" class="bg-black">Choose Action...</option>
                     <option value="confirmed" class="bg-black">Mark Confirmed</option>
                     <option value="shipped" class="bg-black">Mark Shipped</option>
@@ -286,7 +286,7 @@ $orders = $pagination['records'];
                 </select>
                 <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-[10px] pointer-events-none"></i>
             </div>
-            <button id="bulk-apply-btn" onclick="applyBulkStatus()" class="bg-[#19DC7E] hover:bg-[#15bd6b] text-black text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all transform active:scale-95 flex items-center gap-2">
+            <button id="bulk-apply-btn" onclick="applyBulkStatus()" class="bg-[#24B25D] hover:bg-[#15bd6b] text-black text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all transform active:scale-95 flex items-center gap-2">
                 Apply <i class="fas fa-check"></i>
             </button>
         </div>
@@ -313,7 +313,7 @@ $orders = $pagination['records'];
             <thead>
                 <tr class="text-gray-400 text-[9px] uppercase font-black bg-gray-50/50 border-b border-gray-100 tracking-widest">
                     <th class="p-4 w-12 text-center">
-                        <input type="checkbox" id="select-all" class="w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer shadow-sm">
+                        <input type="checkbox" id="select-all" class="w-4 h-4 rounded border-gray-200 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer shadow-sm">
                     </th>
                     <th class="p-4">Order</th>
                     <th class="p-4">Customer</th>
@@ -326,11 +326,11 @@ $orders = $pagination['records'];
                 <?php foreach ($orders as $o): ?>
                 <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group">
                     <td class="p-4 text-center">
-                        <input type="checkbox" class="order-checkbox w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" value="<?php echo $o['id']; ?>">
+                        <input type="checkbox" class="order-checkbox w-4 h-4 rounded border-gray-200 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer" value="<?php echo $o['id']; ?>">
                     </td>
                     <td class="p-4">
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-900 font-black text-xs border border-gray-100 group-hover:bg-black group-hover:text-[#19DC7E] transition-colors">
+                            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-900 font-black text-xs border border-gray-100 group-hover:bg-black group-hover:text-[#24B25D] transition-colors">
                                 <?php echo $o['id']; ?>
                             </div>
                             <div>
@@ -344,7 +344,7 @@ $orders = $pagination['records'];
                         <div class="flex items-center gap-2">
                             <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest px-1.5 py-0.5 bg-gray-50 rounded border border-gray-100"><?php echo $o['payment_method']; ?></span>
                             <?php if(!empty($o['razorpay_payment_id'])): ?>
-                                <span class="text-[7px] font-bold text-[#19DC7E]">PayID: <?php echo substr($o['razorpay_payment_id'], -8); ?></span>
+                                <span class="text-[7px] font-bold text-[#24B25D]">PayID: <?php echo substr($o['razorpay_payment_id'], -8); ?></span>
                             <?php endif; ?>
                         </div>
                     </td>
@@ -373,8 +373,8 @@ $orders = $pagination['records'];
                     </td>
                     <td class="p-4 text-right">
                         <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                            <a href="../invoice.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Invoice" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#19DC7E] flex items-center justify-center rounded-lg transition-all"><i class="fas fa-file-invoice text-xs"></i></a>
-                            <a href="generate_label.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Shipping Label" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#19DC7E] flex items-center justify-center rounded-lg transition-all"><i class="fas fa-barcode text-xs"></i></a>
+                            <a href="../invoice.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Invoice" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#24B25D] flex items-center justify-center rounded-lg transition-all"><i class="fas fa-file-invoice text-xs"></i></a>
+                            <a href="generate_label.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Shipping Label" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#24B25D] flex items-center justify-center rounded-lg transition-all"><i class="fas fa-barcode text-xs"></i></a>
                             <a href="../track.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Track Live" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-indigo-500 hover:text-white flex items-center justify-center rounded-lg transition-all"><i class="fas fa-location-arrow text-[10px]"></i></a>
                         </div>
                     </td>
@@ -620,7 +620,7 @@ async function performBulkAction(action, extraParams = {}) {
     const ids = Array.from(tracked);
     const originalContent = bulkBar.innerHTML;
     
-    bulkBar.innerHTML = `<div class="flex items-center gap-3 px-10"><i class="fas fa-check-circle text-[#19DC7E] text-xl"></i> <span class="text-[10px] font-black text-white uppercase tracking-widest">${isAllSelectedAcrossPages ? 'Updating all records...' : 'Update Started...'}</span></div>`;
+    bulkBar.innerHTML = `<div class="flex items-center gap-3 px-10"><i class="fas fa-check-circle text-[#24B25D] text-xl"></i> <span class="text-[10px] font-black text-white uppercase tracking-widest">${isAllSelectedAcrossPages ? 'Updating all records...' : 'Update Started...'}</span></div>`;
 
     // Visual Update for current page (Optional)
     if(action === 'bulk_status' && extraParams.status) {
@@ -694,7 +694,7 @@ async function updateOrderStatus(id, status, el) {
             btn.innerHTML = `${data.label} <i class="fas fa-chevron-down opacity-50 text-[10px] transition-transform duration-300"></i>`;
             
             // Remove all possible status classes
-            btn.classList.remove('bg-yellow-400', 'bg-indigo-600', 'bg-blue-600', 'bg-[#19DC7E]', 'bg-red-600', 'text-black', 'text-white');
+            btn.classList.remove('bg-yellow-400', 'bg-indigo-600', 'bg-blue-600', 'bg-[#24B25D]', 'bg-red-600', 'text-black', 'text-white');
             
             // Add new class
             let newClasses = [];
@@ -702,7 +702,7 @@ async function updateOrderStatus(id, status, el) {
                 case 'pending': newClasses = ['bg-yellow-400', 'text-black']; break;
                 case 'confirmed': newClasses = ['bg-indigo-600', 'text-white']; break;
                 case 'shipped': newClasses = ['bg-blue-600', 'text-white']; break;
-                case 'delivered': newClasses = ['bg-[#19DC7E]', 'text-black']; break;
+                case 'delivered': newClasses = ['bg-[#24B25D]', 'text-black']; break;
                 case 'cancelled': newClasses = ['bg-red-600', 'text-white']; break;
             }
             btn.classList.add(...newClasses);
@@ -786,7 +786,7 @@ document.getElementById('dispatch-form').addEventListener('submit', async functi
             
             if (statusBtn) {
                 statusBtn.innerHTML = `Shipped <i class="fas fa-chevron-down opacity-50 text-[10px] transition-transform duration-300"></i>`;
-                statusBtn.classList.remove('bg-yellow-400', 'bg-indigo-600', 'bg-blue-600', 'bg-[#19DC7E]', 'bg-red-600', 'text-black', 'text-white');
+                statusBtn.classList.remove('bg-yellow-400', 'bg-indigo-600', 'bg-blue-600', 'bg-[#24B25D]', 'bg-red-600', 'text-black', 'text-white');
                 statusBtn.classList.add('bg-blue-600', 'text-white');
             }
 

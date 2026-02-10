@@ -35,6 +35,24 @@ if (function_exists('render_seo_tags')) {
 
 <!-- Optimized Asset Loading -->
 <script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    brand: {
+                        dark: '#004F42',
+                        soft: '#17775D',
+                        vibrant: '#24B25D',
+                        orange: '#F67E42',
+                        cream: '#FFFEDC',
+                        yellow: '#EDB02C',
+                    }
+                }
+            }
+        }
+    }
+</script>
 <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
