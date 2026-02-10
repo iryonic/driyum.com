@@ -103,27 +103,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // --- HERO SLIDES MANAGEMENT ---
-    if (isset($_POST['add_slide'])) {
+    if (isset($_POST['add_slide']) || isset($_POST['edit_slide'])) {
         $title = $_POST['slide_title'] ?? '';
         $subtitle = $_POST['slide_subtitle'] ?? '';
+        $badge_text = $_POST['badge_text'] ?? '';
         $cta_text = $_POST['slide_cta_text'] ?? '';
         $cta_link = $_POST['slide_cta_link'] ?? '';
         $sort_order = intval($_POST['slide_sort_order'] ?? 0);
-        $image_url = 'assets/images/hero.jpg';
+        
+        $show_title = isset($_POST['show_title']) ? 1 : 0;
+        $show_subtitle = isset($_POST['show_subtitle']) ? 1 : 0;
+        $show_badge = isset($_POST['show_badge']) ? 1 : 0;
+        $show_cta = isset($_POST['show_cta']) ? 1 : 0;
 
-        if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
-            $target_dir = "../assets/images/uploads/";
-            if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-            $filename = "slide_" . uniqid() . "_" . basename($_FILES["slide_image"]["name"]);
-            if (move_uploaded_file($_FILES["slide_image"]["tmp_name"], $target_dir . $filename)) {
-                $image_url = "assets/images/uploads/" . $filename;
+        if (isset($_POST['add_slide'])) {
+            $image_url = 'assets/images/hero.jpg';
+            if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
+                $target_dir = "../assets/images/uploads/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+                $filename = "slide_" . uniqid() . "_" . basename($_FILES["slide_image"]["name"]);
+                if (move_uploaded_file($_FILES["slide_image"]["tmp_name"], $target_dir . $filename)) {
+                    $image_url = "assets/images/uploads/" . $filename;
+                }
             }
+            $stmt = $conn->prepare("INSERT INTO hero_slides (title, show_title, subtitle, show_subtitle, image, cta_text, cta_link, show_cta, sort_order, is_active, badge_text, show_badge) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)");
+            $stmt->bind_param("sisssssiisi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge);
+            if ($stmt->execute()) $msg = "New slide added!";
+            else $error = "Failed to add slide: " . $conn->error;
+        } else {
+            $id = intval($_POST['slide_id']);
+            $image_url = $_POST['current_image'] ?? '';
+            if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
+                $target_dir = "../assets/images/uploads/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+                $filename = "slide_" . uniqid() . "_" . basename($_FILES["slide_image"]["name"]);
+                if (move_uploaded_file($_FILES["slide_image"]["tmp_name"], $target_dir . $filename)) {
+                    $image_url = "assets/images/uploads/" . $filename;
+                    // Delete old image if it's an upload
+                    $old_slide = fetch_one("SELECT image FROM hero_slides WHERE id = $id");
+                    if ($old_slide && strpos($old_slide['image'], 'assets/images/uploads/') === 0) {
+                        @unlink("../" . $old_slide['image']);
+                    }
+                }
+            }
+            $stmt = $conn->prepare("UPDATE hero_slides SET title=?, show_title=?, subtitle=?, show_subtitle=?, image=?, cta_text=?, cta_link=?, show_cta=?, sort_order=?, badge_text=?, show_badge=? WHERE id=?");
+            $stmt->bind_param("sisssssiisii", $title, $show_title, $subtitle, $show_subtitle, $image_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $id);
+            if ($stmt->execute()) $msg = "Slide updated!";
+            else $error = "Failed to update slide: " . $conn->error;
         }
-
-        $stmt = $conn->prepare("INSERT INTO hero_slides (title, subtitle, image, cta_text, cta_link, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, 1)");
-        $stmt->bind_param("sssssi", $title, $subtitle, $image_url, $cta_text, $cta_link, $sort_order);
-        if ($stmt->execute()) $msg = "New slide added!";
-        else $error = "Failed to add slide.";
     }
 
     if (isset($_POST['delete_slide'])) {
@@ -154,7 +181,7 @@ if(isset($_GET['del_anno'])) {
 $vid_sec = fetch_one("SELECT * FROM homepage_sections WHERE section_name = 'video_brand_story'");
 $sale = fetch_one("SELECT * FROM sale_countdowns LIMIT 1");
 $announcement_text = get_setting('announcement_text', '🚀 Free Shipping on All Orders Over ₹499 • 🌿 100% Organic & Natural');
-$hero_slides = get_hero_slides();
+$hero_slides = get_hero_slides(true);
 $show_stats = get_setting('show_hero_stats', 'on');
 ?>
 
@@ -265,6 +292,9 @@ $show_stats = get_setting('show_hero_stats', 'on');
 
                                     <!-- Actions Overlay -->
                                     <div class="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-sm">
+                                        <button onclick='openEditSlide(<?php echo json_encode($slide); ?>)' class="w-10 h-10 bg-white text-gray-900 rounded-xl flex items-center justify-center hover:bg-[#19DC7E] hover:text-white transition-all shadow-xl" title="Edit Content">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
                                         <form method="POST" class="contents">
                                             <input type="hidden" name="slide_id" value="<?php echo $slide['id']; ?>">
                                             <button type="submit" name="toggle_slide" class="w-10 h-10 bg-white text-gray-900 rounded-xl flex items-center justify-center hover:bg-amber-400 transition-all shadow-xl" title="Toggle Visibility">
@@ -278,8 +308,11 @@ $show_stats = get_setting('show_hero_stats', 'on');
 
                                     <!-- Content Preview -->
                                     <div class="absolute bottom-4 left-4 right-4 pointer-events-none">
-                                        <h4 class="text-white font-black fredoka text-sm leading-tight line-clamp-2"><?php echo htmlspecialchars($slide['title']); ?></h4>
-                                        <p class="text-white/60 text-[9px] font-bold uppercase tracking-wider mt-1 truncate"><?php echo htmlspecialchars($slide['subtitle']); ?></p>
+                                        <h4 class="text-white font-black fredoka text-sm leading-tight line-clamp-2 <?php echo !$slide['show_title'] ? 'opacity-30 line-through' : ''; ?>"><?php echo htmlspecialchars($slide['title']); ?></h4>
+                                        <p class="text-white/60 text-[9px] font-bold uppercase tracking-wider mt-1 truncate <?php echo !$slide['show_subtitle'] ? 'opacity-30 line-through' : ''; ?>"><?php echo htmlspecialchars($slide['subtitle']); ?></p>
+                                        <?php if(!$slide['show_cta']): ?>
+                                            <span class="inline-block mt-2 px-2 py-0.5 bg-red-500/50 text-[7px] text-white font-bold rounded uppercase">CTA HIDDEN</span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="p-4 flex items-center justify-between text-[9px] font-black text-gray-400 uppercase tracking-widest bg-gray-50/50">
@@ -321,12 +354,28 @@ $show_stats = get_setting('show_hero_stats', 'on');
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="space-y-6">
                             <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Floating Badge Text</label>
+                                <input type="text" name="badge_text" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold" placeholder="The Purest Taste of Kashmir">
+                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
+                                    <input type="checkbox" name="show_badge" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
+                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Main Headline</label>
-                                <textarea name="slide_title" rows="3" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-2xl px-5 py-4 outline-none font-bold text-gray-900 transition-all resize-none" placeholder="PURE KASHMIRI CRUNCH" required></textarea>
+                                <textarea name="slide_title" rows="2" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-2xl px-5 py-3 outline-none font-bold text-gray-900 transition-all resize-none" placeholder="PURE KASHMIRI CRUNCH" required></textarea>
+                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
+                                    <input type="checkbox" name="show_title" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
+                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                                </label>
                             </div>
                             <div class="space-y-1">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Tagline Subtitle</label>
                                 <input type="text" name="slide_subtitle" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold" placeholder="Taste the mountains.">
+                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
+                                    <input type="checkbox" name="show_subtitle" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
+                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                                </label>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="space-y-1">
@@ -336,6 +385,12 @@ $show_stats = get_setting('show_hero_stats', 'on');
                                 <div class="space-y-1">
                                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Target Link</label>
                                     <input type="text" name="slide_cta_link" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 outline-none font-black text-[10px]" placeholder="shop.php">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="flex items-center gap-2 ml-2 cursor-pointer">
+                                        <input type="checkbox" name="show_cta" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
+                                        <span class="text-[8px] font-black text-gray-400 uppercase">Show Button Group</span>
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -364,6 +419,88 @@ $show_stats = get_setting('show_hero_stats', 'on');
             </div>
         </div>
 
+        <!-- EDIT SLIDE MODAL -->
+        <div id="edit-slide-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
+            <div class="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden anim-up">
+                <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                    <h3 class="text-xl font-black text-gray-900 fredoka">Refine Slide Canvas</h3>
+                    <button onclick="document.getElementById('edit-slide-modal').classList.add('hidden')" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-all">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form method="POST" enctype="multipart/form-data" class="p-8">
+                    <input type="hidden" name="edit_slide" value="1">
+                    <input type="hidden" name="slide_id" id="edit-slide-id">
+                    <input type="hidden" name="current_image" id="edit-current-image">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Floating Badge Text</label>
+                                <input type="text" name="badge_text" id="edit-badge-text" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold">
+                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
+                                    <input type="checkbox" name="show_badge" id="edit-show-badge" value="1" class="rounded border-gray-300 text-black focus:ring-black">
+                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Main Headline</label>
+                                <textarea name="slide_title" id="edit-slide-title" rows="2" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-2xl px-5 py-3 outline-none font-bold text-gray-900 transition-all resize-none" required></textarea>
+                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
+                                    <input type="checkbox" name="show_title" id="edit-show-title" value="1" class="rounded border-gray-300 text-black focus:ring-black">
+                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Tagline Subtitle</label>
+                                <input type="text" name="slide_subtitle" id="edit-slide-subtitle" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold">
+                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
+                                    <input type="checkbox" name="show_subtitle" id="edit-show-subtitle" value="1" class="rounded border-gray-300 text-black focus:ring-black">
+                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">CTA Label</label>
+                                    <input type="text" name="slide_cta_text" id="edit-slide-cta-text" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 outline-none font-black text-[10px]">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Target Link</label>
+                                    <input type="text" name="slide_cta_link" id="edit-slide-cta-link" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 outline-none font-black text-[10px]">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="flex items-center gap-2 ml-2 cursor-pointer">
+                                        <input type="checkbox" name="show_cta" id="edit-show-cta" value="1" class="rounded border-gray-300 text-black focus:ring-black">
+                                        <span class="text-[8px] font-black text-gray-400 uppercase">Show Button Group</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Banner Image</label>
+                                <div class="relative group aspect-video rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 hover:border-black transition-all">
+                                    <img id="edit-slide-preview" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i class="fas fa-camera text-2xl mb-2"></i>
+                                        <span class="text-[9px] font-black uppercase tracking-widest">Update Image</span>
+                                    </div>
+                                    <input type="file" name="slide_image" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewEditSlide(this)">
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Display Rank (Order)</label>
+                                <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-5 py-3 outline-none font-bold">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex gap-4">
+                        <button type="submit" class="flex-1 bg-[#19DC7E] text-black py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-black hover:text-white transition-all shadow-xl">Update Slide</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <script>
         function previewNewSlide(input) {
             if (input.files && input.files[0]) {
@@ -376,6 +513,35 @@ $show_stats = get_setting('show_hero_stats', 'on');
                 }
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        function previewEditSlide(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('edit-slide-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function openEditSlide(slide) {
+            document.getElementById('edit-slide-id').value = slide.id;
+            document.getElementById('edit-current-image').value = slide.image;
+            document.getElementById('edit-badge-text').value = slide.badge_text;
+            document.getElementById('edit-slide-title').value = slide.title;
+            document.getElementById('edit-slide-subtitle').value = slide.subtitle;
+            document.getElementById('edit-slide-cta-text').value = slide.cta_text;
+            document.getElementById('edit-slide-cta-link').value = slide.cta_link;
+            document.getElementById('edit-slide-sort').value = slide.sort_order;
+            document.getElementById('edit-slide-preview').src = '../' + slide.image;
+            
+            document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
+            document.getElementById('edit-show-title').checked = slide.show_title == 1;
+            document.getElementById('edit-show-subtitle').checked = slide.show_subtitle == 1;
+            document.getElementById('edit-show-cta').checked = slide.show_cta == 1;
+            
+            document.getElementById('edit-slide-modal').classList.remove('hidden');
         }
         </script>
 

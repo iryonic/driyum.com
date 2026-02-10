@@ -79,22 +79,29 @@ if (isset($_SESSION['user_id'])) {
                         <div class="container mx-auto px-4 relative z-10">
                             <div class="max-w-5xl mx-auto">
                                 <!-- Badge -->
+                                <?php if($slide['show_badge'] ?? 1): ?>
                                 <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-5 py-2 shadow-2xl mb-8 transform swiper-badge-anim opacity-0">
                                     <span class="w-2 h-2 rounded-full bg-[#19DC7E] animate-pulse"></span>
-                                    <span class="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-white">The Purest Taste of Kashmir</span>
+                                    <span class="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-white"><?php echo htmlspecialchars($slide['badge_text'] ?? 'The Purest Taste of Kashmir'); ?></span>
                                 </div>
+                                <?php endif; ?>
 
                                 <!-- Title -->
+                                <?php if($slide['show_title'] ?? 1): ?>
                                 <h1 class="text-5xl md:text-8xl lg:text-9xl font-['Fredoka'] font-black leading-[0.85] text-white mb-8 drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform swiper-title-anim opacity-0 tracking-tighter">
                                     <?php echo nl2br(htmlspecialchars($slide['title'] ?? '')); ?>
                                 </h1>
+                                <?php endif; ?>
 
                                 <!-- Subtitle -->
+                                <?php if($slide['show_subtitle'] ?? 1): ?>
                                 <p class="text-base md:text-2xl text-white/80 font-medium mb-12 max-w-2xl mx-auto drop-shadow-xl swiper-subtitle-anim opacity-0">
                                     <?php echo htmlspecialchars($slide['subtitle'] ?? ''); ?>
                                 </p>
+                                <?php endif; ?>
 
                                 <!-- CTA Group -->
+                                <?php if($slide['show_cta'] ?? 1): ?>
                                 <div class="flex flex-col md:flex-row items-center justify-center gap-6 swiper-cta-anim opacity-0">
                                     <?php if (!empty($slide['cta_text'])): ?>
                                     <a href="<?php echo get_url($slide['cta_link']); ?>" 
@@ -104,6 +111,7 @@ if (isset($_SESSION['user_id'])) {
                                     </a>
                                     <?php endif; ?>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

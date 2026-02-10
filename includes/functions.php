@@ -256,8 +256,9 @@ function require_admin() {
 }
 
 // Homepage Functions
-function get_hero_slides() {
-    $sql = "SELECT * FROM hero_slides WHERE is_active = 1 ORDER BY sort_order ASC";
+function get_hero_slides($include_inactive = false) {
+    $where = $include_inactive ? "" : "WHERE is_active = 1";
+    $sql = "SELECT * FROM hero_slides $where ORDER BY sort_order ASC";
     return fetch_all($sql);
 }
 
