@@ -106,14 +106,14 @@ if (isset($_SESSION['user_id'])) {
         <div class="absolute inset-0 bg-gradient-to-b from-green-50/30 to-transparent -z-10"></div>
 
         <div class="container mx-auto relative z-10">
-            <h1 class="text-5xl md:text-7xl font-['Fredoka'] font-black text-gray-900 mb-4 tracking-tight">
+            <h1 class="text-5xl md:text-7xl font-['Crimson_Pro'] font-black text-gray-900 mb-4 tracking-tight">
                 <?php 
                     if ($search) echo "Searching: <span class='text-[#19DC7E]'>'$search'</span>";
                     elseif ($cat_slug) echo str_replace('-', ' ', $cat_slug) . "<span class='text-[#19DC7E]'>.</span>";
                     else echo "The <span class='text-[#19DC7E]'>Snack</span> Shop";
                 ?>
             </h1>
-            <p class="text-lg md:text-xl text-gray-400 font-['Outfit'] font-medium max-w-2xl mx-auto">
+            <p class="text-lg md:text-xl text-gray-400 font-['Inter'] font-medium max-w-2xl mx-auto">
                 Discover the pure taste of nature. Hand-picked and delivered fresh from the valley.
             </p>
         </div>
@@ -125,19 +125,19 @@ if (isset($_SESSION['user_id'])) {
         <aside class="w-full lg:w-72 flex-shrink-0 hidden lg:block">
             <div class="sticky top-24 space-y-8">
                 <div class="card-chunky p-6 bg-white/50 backdrop-blur-xl border-white/40">
-                    <h3 class="font-bold text-xl mb-5 font-['Fredoka'] flex items-center gap-2 text-gray-900">
+                    <h3 class="font-bold text-xl mb-5 font-['Crimson_Pro'] flex items-center gap-2 text-gray-900">
                         <i class="fas fa-filter text-[#19DC7E] text-sm"></i> Categories
                     </h3>
                     <ul class="space-y-2">
                         <li>
-                            <a href="<?php echo get_url('shop'); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Outfit'] transition-all <?php echo !$cat_slug ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#19DC7E] hover:translate-x-1'; ?>">
+                            <a href="<?php echo get_url('shop'); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Inter'] transition-all <?php echo !$cat_slug ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#19DC7E] hover:translate-x-1'; ?>">
                                 <span>All Packs</span>
                                 <?php if(!$cat_slug): ?> <i class="fas fa-check-circle"></i> <?php endif; ?>
                             </a>
                         </li>
                         <?php foreach ($categories as $c): ?>
                         <li>
-                            <a href="<?php echo category_url($c['slug']); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Outfit'] transition-all <?php echo $cat_slug === $c['slug'] ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#19DC7E] hover:translate-x-1'; ?>">
+                            <a href="<?php echo category_url($c['slug']); ?>" class="flex items-center justify-between py-3 px-4 rounded-2xl font-bold font-['Inter'] transition-all <?php echo $cat_slug === $c['slug'] ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/20 scale-105' : 'text-gray-500 hover:bg-white hover:text-[#19DC7E] hover:translate-x-1'; ?>">
                                 <span><?php echo $c['name']; ?></span>
                                 <?php if($cat_slug === $c['slug']): ?> <i class="fas fa-check-circle"></i> <?php endif; ?>
                             </a>
@@ -147,7 +147,7 @@ if (isset($_SESSION['user_id'])) {
                 </div>
 
                 <div class="card-chunky p-6">
-                    <h3 class="font-bold text-xl mb-4 font-['Fredoka']">Sort Collection</h3>
+                    <h3 class="font-bold text-xl mb-4 font-['Crimson_Pro']">Sort Collection</h3>
                     <div class="relative group">
                         <select onchange="window.location.href=this.value" class="input-chunky text-sm p-4 bg-gray-50 border-gray-100 appearance-none cursor-pointer">
                             <option value="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'newest'])); ?>" <?php echo $sort == 'newest' ? 'selected' : ''; ?>>Newest Arrival</option>
@@ -231,10 +231,10 @@ if (isset($_SESSION['user_id'])) {
                                     <div class="flex flex-col gap-1">
                                         <div class="flex items-center gap-2">
                                             <span class="w-2 h-2 rounded-full bg-[#19DC7E] opacity-50"></span>
-                                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Outfit']"><?php echo htmlspecialchars($p['category_name'] ?: 'Kashmir Special'); ?></p>
+                                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Inter']"><?php echo htmlspecialchars($p['category_name'] ?: 'Kashmir Special'); ?></p>
                                         </div>
-                                        <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
-                                        <p class="text-gray-400 text-xs mb-4 font-['Outfit'] line-clamp-2 min-h-[32px] font-medium"><?php echo $p['description']; ?></p>
+                                        <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
+                                        <p class="text-gray-400 text-xs mb-4 font-['Inter'] line-clamp-2 min-h-[32px] font-medium"><?php echo $p['description']; ?></p>
                                         <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
                                             <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
                                             <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest ml-1">(4.9)</span>
@@ -252,7 +252,7 @@ if (isset($_SESSION['user_id'])) {
                                         <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
                                             <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
                                         <?php endif; ?>
-                                        <span class="text-xl md:text-3xl font-black text-gray-900 font-['Fredoka'] tracking-tighter">₹<?php echo $p['price']; ?></span>
+                                        <span class="text-xl md:text-3xl font-black text-gray-900 font-['Crimson_Pro'] tracking-tighter">₹<?php echo $p['price']; ?></span>
                                      </div>
 
                                      <div class="flex gap-1 md:gap-2">
@@ -287,7 +287,7 @@ if (isset($_SESSION['user_id'])) {
 
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                             <a href="?<?php echo http_build_query(array_merge($_GET, ['p' => $i])); ?>" 
-                               class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold font-['Fredoka'] transition-all
+                               class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold font-['Crimson_Pro'] transition-all
                                <?php echo $page == $i ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-200 scale-110' : 'bg-white border-2 border-gray-100 text-gray-500 hover:border-[#19DC7E] hover:text-[#19DC7E]'; ?>">
                                 <?php echo $i; ?>
                             </a>
@@ -304,7 +304,7 @@ if (isset($_SESSION['user_id'])) {
             <?php else: ?>
                 <div class="text-center py-20 bg-white rounded-[30px] border-2 border-gray-100">
                     <div class="text-6xl mb-4">🥝</div>
-                    <h3 class="text-2xl font-bold font-['Fredoka'] text-gray-900">No snacks found here.</h3>
+                    <h3 class="text-2xl font-bold font-['Crimson_Pro'] text-gray-900">No snacks found here.</h3>
                     <p class="text-gray-500 mb-6">Try a different category or search term.</p>
                     <a href="<?php echo get_url('shop'); ?>" class="btn-chunky btn-primary">View All Products</a>
                 </div>
@@ -317,3 +317,5 @@ if (isset($_SESSION['user_id'])) {
 
 </body>
 </html>
+
+

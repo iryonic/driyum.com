@@ -31,3 +31,5 @@ foreach ($abandoned_carts as $cart) {
         echo "[" . date('Y-m-d H:i:s') . "] Failed to send email to " . $cart['email'] . "\n";
     }
 }
+
+

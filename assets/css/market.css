@@ -13,7 +13,7 @@
     --color-sand: #ffffff;
     --color-white: #ffffff;
 
-    --font-main: 'Outfit', sans-serif;
+    --font-main: 'Inter', sans-serif;
 
     --radius-sm: 8px;
     --radius-lg: 24px;
@@ -376,3 +376,4 @@ p {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
 }
+

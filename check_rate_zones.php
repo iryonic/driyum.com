@@ -5,3 +5,5 @@ while($row = mysqli_fetch_assoc($res)) {
     echo "Zone ID: {$row['zone_id']}\n";
 }
 ?>
+
+

@@ -50,3 +50,5 @@ if (mysqli_num_rows($checkCol) == 0) {
 
 echo "Migration Complete!";
 ?>
+
+

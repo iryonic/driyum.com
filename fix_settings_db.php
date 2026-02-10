@@ -42,3 +42,5 @@ echo "Restored " . count($all_settings) . " settings.\n";
 
 echo "Database Repair Complete.\n";
 ?>
+
+

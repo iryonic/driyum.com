@@ -128,7 +128,7 @@ $products = $pagination['records'];
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Snack Vault</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Snack Vault</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> items in inventory</p>
     </div>
     
@@ -196,7 +196,7 @@ $products = $pagination['records'];
                 </button>
             </div>
             
-            <h3 class="font-bold text-sm fredoka text-gray-900 leading-tight mb-3"><?php echo $p['name']; ?></h3>
+            <h3 class="font-bold text-sm crimson-pro text-gray-900 leading-tight mb-3"><?php echo $p['name']; ?></h3>
             
             <div class="mt-auto flex items-center justify-between pt-2 border-t border-gray-50">
                 <div>
@@ -329,3 +329,5 @@ async function bulkDeleteProducts() {
 }
 </script>
 <?php include 'includes/footer.php'; ?>
+
+

@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta charset="UTF-8">
     <title>Batch_<?php echo ucfirst($type); ?>_<?php echo date('Ymd_His'); ?></title>
     <style>
-        body { font-family: 'Outfit', sans-serif; margin: 0; padding: 0; background: #f4f7f6; color: #1e293b; }
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background: #f4f7f6; color: #1e293b; }
         .no-print { 
             position: fixed; 
             top: 20px; 
@@ -331,3 +331,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 </body>
 </html>
+
+

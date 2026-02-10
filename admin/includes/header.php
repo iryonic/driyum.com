@@ -41,10 +41,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/chunky.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
-        body { font-family: 'Outfit', sans-serif; background-color: #fcfdfe; color: #1e293b; }
-        .fredoka { font-family: 'Fredoka', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #fcfdfe; color: #1e293b; }
+        .crimson-pro { font-family: 'Crimson Pro', sans-serif; }
         
         .admin-sidebar { 
             height: 100vh; 
@@ -146,14 +146,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="w-9 h-9 bg-[#19DC7E] rounded-xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(25,220,126,0.3)]">
                     <i class="fas fa-bolt text-xs"></i>
                 </div>
-                <span class="font-['Fredoka'] font-bold text-xl tracking-tight">Driyum<span class="text-[#19DC7E]">.</span></span>
+                <span class="font-['Crimson_Pro'] font-bold text-xl tracking-tight">Driyum<span class="text-[#19DC7E]">.</span></span>
             </div>
             <button onclick="toggleSidebar(false)" class="lg:hidden text-gray-500 hover:text-white">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <nav class="space-y-6 flex-1 font-['Outfit']">
+        <nav class="space-y-6 flex-1 font-['Inter']">
             
             <div>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Main</h4>
@@ -283,7 +283,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 
                 <!-- BREADCRUMBS -->
                 <div class="hidden md:flex flex-col">
-                    <h2 class="text-xl font-black text-gray-900 fredoka leading-none flex items-center gap-2">
+                    <h2 class="text-xl font-black text-gray-900 crimson-pro leading-none flex items-center gap-2">
                         <?php 
                         $page_titles = [
                             'index.php' => 'Dashboard',
@@ -484,3 +484,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (!document.getElementById('user-menu-dropdown').contains(e.target)) document.getElementById('user-menu-content').classList.add('hidden');
         });
         </script>
+
+

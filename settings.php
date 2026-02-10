@@ -54,7 +54,7 @@ $current_page = 'settings.php';
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] font-['Outfit']">
+<body class="bg-[#FFFBEB] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -67,7 +67,7 @@ $current_page = 'settings.php';
                     <div class="w-24 h-24 bg-[#19DC7E] rounded-full mx-auto mb-6 flex items-center justify-center text-white text-3xl font-bold border-4 border-[#19DC7E]/20 shadow-xl">
                         <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                     </div>
-                    <h2 class="text-2xl font-['Fredoka'] font-black text-gray-900"><?php echo htmlspecialchars($user['name']); ?></h2>
+                    <h2 class="text-2xl font-['Crimson_Pro'] font-black text-gray-900"><?php echo htmlspecialchars($user['name']); ?></h2>
                     <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-1">Driyum Member</p>
                 </div>
 
@@ -91,7 +91,7 @@ $current_page = 'settings.php';
             <!-- MAIN CONTENT -->
             <main class="flex-1 space-y-8">
                 <div class="mb-2">
-                    <h1 class="text-5xl font-['Fredoka'] font-black text-gray-900">Settings <span class="text-[#19DC7E]">.</span></h1>
+                    <h1 class="text-5xl font-['Crimson_Pro'] font-black text-gray-900">Settings <span class="text-[#19DC7E]">.</span></h1>
                     <p class="text-gray-400 font-bold uppercase tracking-widest text-xs mt-2">Manage your account and preferences</p>
                 </div>
 
@@ -110,7 +110,7 @@ $current_page = 'settings.php';
                 <div class="grid lg:grid-cols-2 gap-8 anim-up">
                     <!-- PROFILE FORM -->
                     <div class="bg-white rounded-[40px] p-10 border border-gray-100 shadow-sm transition-all hover:shadow-xl">
-                        <h3 class="text-2xl font-['Fredoka'] font-black text-gray-900 mb-8 border-b border-gray-50 pb-4">Personal Info</h3>
+                        <h3 class="text-2xl font-['Crimson_Pro'] font-black text-gray-900 mb-8 border-b border-gray-50 pb-4">Personal Info</h3>
                         <form method="POST" class="space-y-6">
                             <input type="hidden" name="action" value="update_profile">
                             <div>
@@ -127,7 +127,7 @@ $current_page = 'settings.php';
 
                     <!-- PASSWORD FORM -->
                     <div class="bg-white rounded-[40px] p-10 border border-gray-100 shadow-sm transition-all hover:shadow-xl">
-                        <h3 class="text-2xl font-['Fredoka'] font-black text-gray-900 mb-8 border-b border-gray-50 pb-4">Security</h3>
+                        <h3 class="text-2xl font-['Crimson_Pro'] font-black text-gray-900 mb-8 border-b border-gray-50 pb-4">Security</h3>
                         <form method="POST" class="space-y-6">
                             <input type="hidden" name="action" value="change_password">
                             <div>
@@ -154,3 +154,5 @@ $current_page = 'settings.php';
     <?php include 'includes/footer.php'; ?>
 </body>
 </html>
+
+

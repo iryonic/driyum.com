@@ -48,7 +48,7 @@ if(isset($_GET['edit'])) {
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Reviews</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Reviews</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> customer testimonials</p>
     </div>
     <?php if($edit_data): ?>
@@ -67,7 +67,7 @@ if(isset($_GET['edit'])) {
     <!-- Editor -->
     <div class="lg:col-span-4">
         <div class="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8 sticky top-10 anim-up">
-            <h3 class="text-lg font-black fredoka mb-6 text-gray-900"><?php echo $edit_data ? 'Update Review' : 'New Review'; ?></h3>
+            <h3 class="text-lg font-black crimson-pro mb-6 text-gray-900"><?php echo $edit_data ? 'Update Review' : 'New Review'; ?></h3>
             <form method="POST" class="space-y-6">
                 <input type="hidden" name="save_testimonial" value="1">
                 <?php if($edit_data): ?>
@@ -152,3 +152,5 @@ if(isset($_GET['edit'])) {
 </div>
 
 <?php include 'includes/footer.php'; ?>
+
+

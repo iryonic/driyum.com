@@ -11,3 +11,5 @@ $id = (int)$_GET['id'];
 mark_notification_read($id);
 echo json_encode(['success' => true]);
 ?>
+
+

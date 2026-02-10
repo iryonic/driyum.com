@@ -42,7 +42,7 @@ $coupons = $pagination['records'];
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Snack Codes</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Snack Codes</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Managing <span class="text-black"><?php echo $pagination['total_records']; ?></span> high-impact discount vouchers</p>
     </div>
     <button onclick="openModal()" class="bg-[#19DC7E] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
@@ -71,7 +71,7 @@ $coupons = $pagination['records'];
 
         <div class="mb-6">
             <div class="text-[8px] font-black uppercase text-gray-400 tracking-widest mb-1">Discount Magnitude</div>
-            <h3 class="text-3xl font-black fredoka text-gray-900 group-hover:text-[#19DC7E] transition-colors">
+            <h3 class="text-3xl font-black crimson-pro text-gray-900 group-hover:text-[#19DC7E] transition-colors">
                 <?php echo $c['type'] === 'percentage' ? $c['value'].'%' : '₹'.number_format($c['value']); ?> <span class="text-xs opacity-30">OFF</span>
             </h3>
         </div>
@@ -101,7 +101,7 @@ $coupons = $pagination['records'];
                     <?php echo $c['is_active'] ? 'Active' : 'Paused'; ?>
                 </span>
             </div>
-            <div class="text-[8px] font-black uppercase text-gray-300 font-['Outfit']">Min. Order: ₹<?php echo $c['min_order_value']; ?></div>
+            <div class="text-[8px] font-black uppercase text-gray-300 font-['Inter']">Min. Order: ₹<?php echo $c['min_order_value']; ?></div>
         </div>
     </div>
     <?php endforeach; ?>
@@ -119,7 +119,7 @@ $coupons = $pagination['records'];
                     <i class="fas fa-ticket-alt"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-gray-900 fredoka" id="modal-title">New Coupon</h2>
+                    <h2 class="text-2xl font-black text-gray-900 crimson-pro" id="modal-title">New Coupon</h2>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Craft a new discount code</p>
                 </div>
             </div>
@@ -213,3 +213,5 @@ $coupons = $pagination['records'];
 </script>
 </body>
 </html>
+
+

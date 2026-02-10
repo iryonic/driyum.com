@@ -13,3 +13,5 @@ if (mysqli_num_rows($result) > 0) {
     echo "Table 'settings' DOES NOT EXIST.\n";
 }
 ?>
+
+

@@ -75,7 +75,7 @@ if ($query) {
         }
     </style>
 </head>
-<body class="bg-[#FFFBEB] font-['Outfit']">
+<body class="bg-[#FFFBEB] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -83,7 +83,7 @@ if ($query) {
         
         <!-- SEARCH BOX -->
         <div class="bg-white rounded-[40px] p-6 md:p-12 shadow-sm border border-gray-100 mb-12 text-center anim-up">
-            <h1 class="text-[clamp(2rem,6vw,4rem)] font-['Fredoka'] font-black text-gray-900 mb-4 leading-tight">Track Order.</h1>
+            <h1 class="text-[clamp(2rem,6vw,4rem)] font-['Crimson_Pro'] font-black text-gray-900 mb-4 leading-tight">Track Order.</h1>
             <p class="text-gray-400 font-bold mb-8 md:mb-10 uppercase tracking-[0.2em] text-[8px] md:text-[10px]">Verify your order details</p>
             
             <form class="flex flex-col gap-5 md:gap-6 max-w-2xl mx-auto">
@@ -115,7 +115,7 @@ if ($query) {
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
                             <div>
                                 <span class="bg-[#19DC7E]/10 text-[#19DC7E] text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest mb-3 inline-block">Order #<?php echo $order['order_number']; ?></span>
-                                <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900">Current Status: <span class="capitalize"><?php echo str_replace('_', ' ', $order['order_status']); ?></span></h2>
+                                <h2 class="text-3xl font-['Crimson_Pro'] font-black text-gray-900">Current Status: <span class="capitalize"><?php echo str_replace('_', ' ', $order['order_status']); ?></span></h2>
                             </div>
                             <?php 
                             $invoice_allowed = is_admin() || in_array($order['order_status'], ['confirmed', 'shipped', 'delivered']);
@@ -142,7 +142,7 @@ if ($query) {
                         <div class="mb-10 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 flex items-center justify-between">
                             <div>
                                 <p class="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-1">Expected Arrival</p>
-                                <p class="text-xl font-black text-gray-900 fredoka">
+                                <p class="text-xl font-black text-gray-900 crimson-pro">
                                     <?php 
                                         $created_at = strtotime($order['created_at']);
                                         $min_arrival = date('M d', strtotime("+{$shipping_method['min_days']} days", $created_at));
@@ -253,7 +253,7 @@ if ($query) {
                                 <span class="text-gray-500">Shipping</span>
                                 <span><?php echo $order['shipping_cost'] == 0 ? 'FREE' : '₹' . $order['shipping_cost']; ?></span>
                             </div>
-                            <div class="flex justify-between pt-4 border-t border-white/10 text-xl font-['Fredoka'] font-black">
+                            <div class="flex justify-between pt-4 border-t border-white/10 text-xl font-['Crimson_Pro'] font-black">
                                 <span class="text-gray-400">Total</span>
                                 <span class="text-[#19DC7E]">₹<?php echo $order['total']; ?></span>
                             </div>
@@ -292,7 +292,7 @@ if ($query) {
                         <h3 class="font-black text-green-700 mb-2 flex items-center gap-2">
                             <i class="fas fa-barcode"></i> AWB Number
                         </h3>
-                        <p class="text-2xl font-black font-['Fredoka'] text-green-900"><?php echo $order['tracking_number']; ?></p>
+                        <p class="text-2xl font-black font-['Crimson_Pro'] text-green-900"><?php echo $order['tracking_number']; ?></p>
                         <p class="text-xs text-green-600 font-medium mt-2 uppercase tracking-widest">Shipped via <?php echo $shipping_method['carrier_name'] ?? 'India Post'; ?></p>
                         
                         <?php if(!empty($order['tracking_note'])): ?>
@@ -315,7 +315,7 @@ if ($query) {
         <?php elseif($query): ?>
              <div class="text-center py-20 bg-white rounded-[40px] border border-gray-100 anim-up">
                 <div class="text-8xl mb-6">🍿</div>
-                <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900">Order Missing in Action!</h3>
+                <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900">Order Missing in Action!</h3>
                 <?php if(isset($needs_verify)): ?>
                     <p class="text-gray-500 font-medium mb-8">For security, please provide the <span class="bg-[#19DC7E]/10 text-[#19DC7E] px-2 py-1 rounded">Email or Phone</span> used during checkout.</p>
                 <?php else: ?>
@@ -330,3 +330,5 @@ if ($query) {
     <?php include 'includes/footer.php'; ?>
 </body>
 </html>
+
+

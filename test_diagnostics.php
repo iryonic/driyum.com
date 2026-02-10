@@ -46,3 +46,5 @@ require_once 'includes/functions.php';
 echo "<p>Calculated BASE_URL: " . (defined('BASE_URL') ? BASE_URL : 'NotDefined') . "</p>";
 echo "<p>Example URL (shop): " . get_url('shop') . "</p>";
 ?>
+
+

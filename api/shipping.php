@@ -50,3 +50,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['pincode']) && isset($_G
 }
 
 echo json_encode(['success' => false, 'message' => 'Invalid request']);
+
+

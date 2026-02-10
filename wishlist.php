@@ -31,7 +31,7 @@ $products = fetch_all("
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFBEB] font-['Outfit']">
+<body class="bg-[#FFFBEB] font-['Inter']">
 
     <?php include 'includes/header.php'; ?>
 
@@ -39,7 +39,7 @@ $products = fetch_all("
         
         <!-- HEADER -->
         <header class="mb-10 md:mb-12 anim-up text-center md:text-left">
-            <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-['Fredoka'] font-black text-gray-900 mb-2 leading-tight">My Wishlist <span class="text-red-500" aria-hidden="true">❤️</span></h1>
+            <h1 class="text-[clamp(2.5rem,6vw,4rem)] font-['Crimson_Pro'] font-black text-gray-900 mb-2 leading-tight">My Wishlist <span class="text-red-500" aria-hidden="true">❤️</span></h1>
             <p class="text-gray-500 font-bold uppercase tracking-widest text-[9px] md:text-[10px]">Your saved mountain treats</p>
         </header>
 
@@ -47,7 +47,7 @@ $products = fetch_all("
             <section class="bg-white rounded-[40px] md:rounded-[50px] p-10 md:p-20 text-center border-2 border-dashed border-gray-100 anim-up relative overflow-hidden">
                 <div class="relative z-10 px-4">
                     <div class="text-6xl md:text-8xl mb-6 md:mb-8 animate-pulse" aria-hidden="true">📦</div>
-                    <h2 class="text-2xl md:text-3xl font-black font-['Fredoka'] text-gray-900 mb-4">Your wishlist is empty!</h2>
+                    <h2 class="text-2xl md:text-3xl font-black font-['Crimson_Pro'] text-gray-900 mb-4">Your wishlist is empty!</h2>
                     <p class="text-gray-400 font-medium mb-8 md:mb-10 max-w-sm mx-auto text-sm md:text-base leading-relaxed">It looks like you haven't saved any snacks yet. Let's find some favorites!</p>
                     <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white px-8 md:px-12 py-4 md:py-5 shadow-2xl hover:bg-[#19DC7E] hover:text-black transition-all inline-block text-sm md:text-base">Explore the Shop</a>
                 </div>
@@ -82,14 +82,14 @@ $products = fetch_all("
                         <div class="space-y-4">
                             <div>
                                 <span class="text-[9px] font-black uppercase text-[#19DC7E] tracking-widest"><?php echo htmlspecialchars($p['category_name']); ?></span>
-                                <h3 class="text-lg md:text-xl font-['Fredoka'] font-black text-gray-900 group-hover:text-[#19DC7E] transition-colors leading-tight truncate">
+                                <h3 class="text-lg md:text-xl font-['Crimson_Pro'] font-black text-gray-900 group-hover:text-[#19DC7E] transition-colors leading-tight truncate">
                                     <a href="<?php echo product_url($p['slug']); ?>"><?php echo htmlspecialchars($p['name']); ?></a>
                                 </h3>
                             </div>
 
                             <div class="flex items-center justify-between pt-1 md:pt-2">
                                 <div class="flex flex-col">
-                                    <span class="text-xl md:text-2xl font-['Fredoka'] font-black text-gray-900">₹<?php echo number_format($p['price']); ?></span>
+                                    <span class="text-xl md:text-2xl font-['Crimson_Pro'] font-black text-gray-900">₹<?php echo number_format($p['price']); ?></span>
                                     <?php if ($p['original_price'] > $p['price']): ?>
                                         <span class="text-[9px] md:text-[10px] text-gray-400 line-through font-bold">₹<?php echo number_format($p['original_price']); ?></span>
                                     <?php endif; ?>
@@ -110,3 +110,5 @@ $products = fetch_all("
 
 </body>
 </html>
+
+

@@ -163,3 +163,5 @@ function escape_string($string) {
     $conn = get_db_connection();
     return mysqli_real_escape_string($conn, $string);
 }
+
+

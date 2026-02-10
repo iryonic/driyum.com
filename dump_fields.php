@@ -12,3 +12,5 @@ function dump_table($table) {
 
 dump_table('products');
 dump_table('categories');
+
+

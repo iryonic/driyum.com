@@ -191,7 +191,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
     <!-- Top Action Bar -->
     <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 mb-8 -mx-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-            <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Homepage Architect</h1>
+            <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Homepage Architect</h1>
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Design your storefront experience</p>
         </div>
 
@@ -209,7 +209,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                 <i class="fas fa-rocket"></i>
             </div>
             <p class="text-white/80 font-bold uppercase text-[10px] tracking-widest mb-1">Current Active Sale</p>
-            <h3 class="text-2xl font-black font-['Fredoka']"><?php echo ($sale['is_active'] ?? 0) ? htmlspecialchars($sale['title']) : 'No Active Sale'; ?></h3>
+            <h3 class="text-2xl font-black font-['Crimson_Pro']"><?php echo ($sale['is_active'] ?? 0) ? htmlspecialchars($sale['title']) : 'No Active Sale'; ?></h3>
         </div>
         <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-5 group hover:shadow-md transition-shadow">
             <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
@@ -217,7 +217,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
             </div>
             <div>
                 <p class="text-gray-400 font-bold text-[10px] tracking-widest uppercase">Bar Status</p>
-                <h3 class="text-xl font-black font-['Fredoka'] text-gray-900"><?php echo !empty($announcement_text) ? 'Active' : 'Empty'; ?></h3>
+                <h3 class="text-xl font-black font-['Crimson_Pro'] text-gray-900"><?php echo !empty($announcement_text) ? 'Active' : 'Empty'; ?></h3>
             </div>
         </div>
         <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-5 group hover:shadow-md transition-shadow">
@@ -254,7 +254,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                         <i class="fas fa-layer-group"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 font-['Fredoka'] leading-tight">Slider Master</h3>
+                        <h3 class="text-lg font-bold text-gray-900 font-['Crimson_Pro'] leading-tight">Slider Master</h3>
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Manage multiple hero banners</p>
                     </div>
                 </div>
@@ -308,7 +308,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
 
                                     <!-- Content Preview -->
                                     <div class="absolute bottom-4 left-4 right-4 pointer-events-none">
-                                        <h4 class="text-white font-black fredoka text-sm leading-tight line-clamp-2 <?php echo !$slide['show_title'] ? 'opacity-30 line-through' : ''; ?>"><?php echo htmlspecialchars($slide['title']); ?></h4>
+                                        <h4 class="text-white font-black crimson-pro text-sm leading-tight line-clamp-2 <?php echo !$slide['show_title'] ? 'opacity-30 line-through' : ''; ?>"><?php echo htmlspecialchars($slide['title']); ?></h4>
                                         <p class="text-white/60 text-[9px] font-bold uppercase tracking-wider mt-1 truncate <?php echo !$slide['show_subtitle'] ? 'opacity-30 line-through' : ''; ?>"><?php echo htmlspecialchars($slide['subtitle']); ?></p>
                                         <?php if(!$slide['show_cta']): ?>
                                             <span class="inline-block mt-2 px-2 py-0.5 bg-red-500/50 text-[7px] text-white font-bold rounded uppercase">CTA HIDDEN</span>
@@ -344,7 +344,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
         <div id="add-slide-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
             <div class="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden anim-up">
                 <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-                    <h3 class="text-xl font-black text-gray-900 fredoka">New Slide Canvas</h3>
+                    <h3 class="text-xl font-black text-gray-900 crimson-pro">New Slide Canvas</h3>
                     <button onclick="document.getElementById('add-slide-modal').classList.add('hidden')" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-all">
                         <i class="fas fa-times"></i>
                     </button>
@@ -423,7 +423,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
         <div id="edit-slide-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
             <div class="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden anim-up">
                 <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-                    <h3 class="text-xl font-black text-gray-900 fredoka">Refine Slide Canvas</h3>
+                    <h3 class="text-xl font-black text-gray-900 crimson-pro">Refine Slide Canvas</h3>
                     <button onclick="document.getElementById('edit-slide-modal').classList.add('hidden')" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-all">
                         <i class="fas fa-times"></i>
                     </button>
@@ -555,7 +555,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                         <i class="fas fa-bolt"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 font-['Fredoka'] leading-tight">Flash Sale</h3>
+                        <h3 class="text-lg font-bold text-gray-900 font-['Crimson_Pro'] leading-tight">Flash Sale</h3>
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Countdown timer</p>
                     </div>
                 </div>
@@ -592,7 +592,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                         <i class="fas fa-bullhorn"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 font-['Fredoka'] leading-tight">Marquee</h3>
+                        <h3 class="text-lg font-bold text-gray-900 font-['Crimson_Pro'] leading-tight">Marquee</h3>
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Header notification bar</p>
                     </div>
                 </div>
@@ -621,7 +621,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                     <i class="fas fa-play"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900 font-['Fredoka'] leading-tight">Brand Story</h3>
+                    <h3 class="text-lg font-bold text-gray-900 font-['Crimson_Pro'] leading-tight">Brand Story</h3>
                     <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Cinematic video section</p>
                 </div>
             </div>
@@ -659,7 +659,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                                 <video id="vid-file-preview" class="absolute inset-0 w-full h-full object-cover hidden z-10" autoplay muted loop></video>
                                 
                                 <div class="absolute inset-0 flex flex-col justify-end p-6 z-20 pointer-events-none bg-gradient-to-t from-black/60 to-transparent">
-                                    <h2 id="vid-head-preview" class="text-white font-black font-['Fredoka'] text-lg drop-shadow-lg leading-tight"><?php echo nl2br(htmlspecialchars($vid_sec['heading'])); ?></h2>
+                                    <h2 id="vid-head-preview" class="text-white font-black font-['Crimson_Pro'] text-lg drop-shadow-lg leading-tight"><?php echo nl2br(htmlspecialchars($vid_sec['heading'])); ?></h2>
                                 </div>
 
                                 <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-30">
@@ -744,3 +744,5 @@ function previewMedia(input, previewId) {
 
 </body>
 </html>
+
+

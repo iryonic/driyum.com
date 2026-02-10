@@ -39,3 +39,5 @@ if (class_exists('PHPMailer\PHPMailer\PHPMailer')) {
 
 echo "<hr>";
 echo "<b>Note:</b> If you are on localhost, this will log to mail_log.txt even if it fails to actually send an email to the internet.";
+
+

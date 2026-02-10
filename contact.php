@@ -49,8 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
         <div class="container mx-auto max-w-6xl relative z-10 px-4">
             <div class="text-center mb-12 md:mb-16">
                 <span class="inline-block bg-white border border-gray-100 px-4 py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest text-[#19DC7E] mb-4 shadow-sm transform -rotate-1 md:-rotate-2">Say Hello 🍑</span>
-                <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-['Fredoka'] font-black text-gray-900 mb-6 leading-tight">Let's Get <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#19DC7E] to-[#0ea5e9]">Crunching.</span></h1>
-                <p class="text-gray-500 font-['Outfit'] text-base md:text-xl max-w-2xl mx-auto px-4">Have a question or just want to tell us how much you love our chunky snacks? We're all ears!</p>
+                <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-['Crimson_Pro'] font-black text-gray-900 mb-6 leading-tight">Let's Get <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#19DC7E] to-[#0ea5e9]">Crunching.</span></h1>
+                <p class="text-gray-500 font-['Inter'] text-base md:text-xl max-w-2xl mx-auto px-4">Have a question or just want to tell us how much you love our chunky snacks? We're all ears!</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         <div class="w-12 h-12 md:w-14 md:h-14 bg-green-50 rounded-2xl flex items-center justify-center text-[#19DC7E] mb-6 group-hover:bg-[#19DC7E] group-hover:text-white transition-colors">
                             <i class="fas fa-map-marker-alt text-xl md:text-2xl"></i>
                         </div>
-                        <h3 class="text-lg md:text-xl font-black font-['Fredoka'] text-gray-900 mb-2">Our Valley</h3>
+                        <h3 class="text-lg md:text-xl font-black font-['Crimson_Pro'] text-gray-900 mb-2">Our Valley</h3>
                         <p class="text-gray-500 font-medium text-sm md:text-base leading-relaxed"><?php echo htmlspecialchars($info['address']); ?></p>
                     </div>
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                         <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-500 mb-6 group-hover:bg-blue-500 group-hover:text-white transition-colors">
                             <i class="fas fa-phone-alt text-xl md:text-2xl"></i>
                         </div>
-                        <h3 class="text-lg md:text-xl font-black font-['Fredoka'] text-gray-900 mb-2">Direct Line</h3>
+                        <h3 class="text-lg md:text-xl font-black font-['Crimson_Pro'] text-gray-900 mb-2">Direct Line</h3>
                         <p class="text-gray-900 font-bold mb-1 text-sm md:text-base"><?php echo htmlspecialchars($info['phone']); ?></p>
                         <p class="text-gray-500 font-medium text-sm md:text-base"><?php echo htmlspecialchars($info['email']); ?></p>
                     </div>
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
                     <!-- Card 3: Socials -->
                     <div class="bg-black p-6 md:p-8 rounded-[32px] md:rounded-[40px] shadow-2xl text-white relative overflow-hidden group">
                         <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[#19DC7E] rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                        <h3 class="text-lg md:text-xl font-black font-['Fredoka'] mb-6 relative z-10">Join the Fam</h3>
+                        <h3 class="text-lg md:text-xl font-black font-['Crimson_Pro'] mb-6 relative z-10">Join the Fam</h3>
                         <div class="flex gap-4 relative z-10">
                             <a href="https://wa.me/<?php echo $info['whatsapp']; ?>" class="w-11 h-11 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-[#19DC7E] hover:text-black transition-all"><i class="fab fa-whatsapp text-lg md:text-xl"></i></a>
                             <a href="https://instagram.com/<?php echo $info['instagram']; ?>" class="w-11 h-11 md:w-12 md:h-12 bg-white/10 rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-[#E1306C] transition-all"><i class="fab fa-instagram text-lg md:text-xl"></i></a>
@@ -153,3 +153,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
 
 </body>
 </html>
+
+

@@ -81,7 +81,7 @@ $out_of_stock_count = count(array_filter($all_products, fn($p) => $p['stock'] <=
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Inventory</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Inventory</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Managing <span class="text-black"><?php echo $pagination['total_records']; ?></span> products</p>
     </div>
     <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
@@ -403,3 +403,5 @@ async function saveStock(pid) {
 <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 
 <?php include 'includes/footer.php'; ?>
+
+

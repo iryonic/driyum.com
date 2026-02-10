@@ -88,7 +88,7 @@ if (isset($_SESSION['user_id'])) {
 
                                 <!-- Title -->
                                 <?php if($slide['show_title'] ?? 1): ?>
-                                <h1 class="text-5xl md:text-8xl lg:text-9xl font-['Fredoka'] font-black leading-[0.85] text-white mb-8 drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform swiper-title-anim opacity-0 tracking-tighter">
+                                <h1 class="text-5xl md:text-8xl lg:text-9xl font-['Crimson_Pro'] font-black leading-[0.85] text-white mb-8 drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform swiper-title-anim opacity-0 tracking-tighter">
                                     <?php echo nl2br(htmlspecialchars($slide['title'] ?? '')); ?>
                                 </h1>
                                 <?php endif; ?>
@@ -375,8 +375,8 @@ if (isset($_SESSION['user_id'])) {
                              <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-xs md:text-base"></i>
                         </div>
                     </div>
-                    <h3 class="text-xl md:text-4xl font-['Fredoka'] font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
-                    <p class="<?php echo $s['text']; ?>/80 font-['Outfit'] font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
+                    <h3 class="text-xl md:text-4xl font-['Crimson_Pro'] font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
+                    <p class="<?php echo $s['text']; ?>/80 font-['Inter'] font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
                         <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current animate-pulse"></span>
                         <?php echo $c['product_count']; ?> Varieties
                     </p>
@@ -409,8 +409,8 @@ if (isset($_SESSION['user_id'])) {
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
                 <div>
-                    <span class="text-[#19DC7E] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-['Outfit']">Fresh From The Farm</span>
-                    <h2 class="text-4xl md:text-7xl font-['Fredoka'] font-black text-gray-900 leading-none">New Drops <span class="text-[#19DC7E]">🔥</span></h2>
+                    <span class="text-[#19DC7E] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-['Inter']">Fresh From The Farm</span>
+                    <h2 class="text-4xl md:text-7xl font-['Crimson_Pro'] font-black text-gray-900 leading-none">New Drops <span class="text-[#19DC7E]">🔥</span></h2>
                 </div>
                 <!-- Slider Controls -->
                 <div class="flex gap-3">
@@ -488,9 +488,9 @@ if (isset($_SESSION['user_id'])) {
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-[#19DC7E] opacity-50"></span>
-                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Outfit']">Premium Select</p>
+                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Inter']">Premium Select</p>
                                     </div>
-                                    <h3 class="text-2xl font-black font-['Fredoka'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
+                                    <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
                                     <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
                                         <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
                                         <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest ml-1">(4.9)</span>
@@ -508,7 +508,7 @@ if (isset($_SESSION['user_id'])) {
                                     <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
                                         <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
                                     <?php endif; ?>
-                                    <span class="text-xl md:text-3xl font-black text-gray-900 font-['Fredoka'] tracking-tighter">₹<?php echo $p['price']; ?></span>
+                                    <span class="text-xl md:text-3xl font-black text-gray-900 font-['Crimson_Pro'] tracking-tighter">₹<?php echo $p['price']; ?></span>
                                  </div>
 
                                  <div class="flex gap-1 md:gap-2">
@@ -572,10 +572,10 @@ if (isset($_SESSION['user_id'])) {
                         <div class="inline-block bg-[#19DC7E] text-black text-[10px] md:text-xs font-bold px-3 py-1 rounded-full mb-3 md:mb-4 uppercase tracking-widest transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">
                             Watch Brand Story
                         </div>
-                        <h2 class="text-2xl md:text-5xl font-['Fredoka'] font-bold text-white mb-2 md:mb-4 leading-tight transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-200">
+                        <h2 class="text-2xl md:text-5xl font-['Crimson_Pro'] font-bold text-white mb-2 md:mb-4 leading-tight transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-200">
                             <?php echo nl2br(htmlspecialchars($vid_sec['heading'])); ?>
                         </h2>
-                        <p class="text-gray-200 font-['Outfit'] text-sm md:text-xl max-w-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-300 hidden md:block">
+                        <p class="text-gray-200 font-['Inter'] text-sm md:text-xl max-w-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-300 hidden md:block">
                             <?php echo nl2br(htmlspecialchars($vid_sec['subheading'])); ?>
                         </p>
                     </div>
@@ -631,12 +631,12 @@ if (isset($_SESSION['user_id'])) {
                          <?php for($i=0; $i<$t['rating']; $i++) echo '<i class="fas fa-star"></i>'; ?>
                     </div>
                     
-                    <h2 class="text-xl md:text-5xl lg:text-6xl font-['Fredoka'] font-bold leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center p-4">
+                    <h2 class="text-xl md:text-5xl lg:text-6xl font-['Crimson_Pro'] font-bold leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center p-4">
                         "<?php echo $t['message']; ?>"
                     </h2>
                     
                     <div class="flex flex-col items-center">
-                        <h4 class="text-lg md:text-xl font-bold font-['Outfit']"><?php echo $t['name']; ?></h4>
+                        <h4 class="text-lg md:text-xl font-bold font-['Inter']"><?php echo $t['name']; ?></h4>
                         <?php if(!empty($t['location'])): ?>
                             <span class="text-gray-500 text-xs md:text-sm font-bold uppercase tracking-widest mt-1"><?php echo $t['location']; ?></span>
                         <?php endif; ?>
@@ -744,3 +744,5 @@ if (isset($_SESSION['user_id'])) {
     </script>
 </body>
 </html>
+
+

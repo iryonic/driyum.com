@@ -65,14 +65,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="shortcut icon" href="<?php echo get_url('assets/images/favicon_io/favicon.ico'); ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { 
-            font-family: 'Outfit', sans-serif; 
+            font-family: 'Inter', sans-serif; 
             background-color: #FFFBEB;
             overflow-x: hidden;
         }
-        .font-fredoka { font-family: 'Fredoka', sans-serif; }
+        .font-crimson-pro { font-family: 'Crimson Pro', sans-serif; }
         
         /* Floating Emojis Animation */
         @keyframes float-slow {
@@ -154,12 +154,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#19DC7E] opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-3 w-3 bg-[#19DC7E]"></span>
                 </span>
-                <span class="text-xs font-black font-fredoka uppercase tracking-[0.2em] text-gray-800"><?php echo htmlspecialchars($badge_text); ?></span>
+                <span class="text-xs font-black font-crimson-pro uppercase tracking-[0.2em] text-gray-800"><?php echo htmlspecialchars($badge_text); ?></span>
             </div>
 
             <!-- Headline -->
             <div class="space-y-6 max-w-4xl">
-                <h1 class="text-5xl sm:text-7xl md:text-8xl font-fredoka font-black leading-[0.9] text-gray-900 tracking-tight drop-shadow-sm">
+                <h1 class="text-5xl sm:text-7xl md:text-8xl font-crimson-pro font-black leading-[0.9] text-gray-900 tracking-tight drop-shadow-sm">
                     <?php 
                     $parts = explode(' ', $headline);
                     $last = array_pop($parts);
@@ -201,22 +201,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400"><?php echo htmlspecialchars($countdown_label); ?></span>
                 <div id="countdown" class="flex gap-3">
                     <div class="bg-white/80 p-3 rounded-2xl min-w-[70px] border border-gray-100 shadow-sm backdrop-blur-sm">
-                        <div id="days" class="text-2xl font-black font-fredoka text-gray-900 leading-none">00</div>
+                        <div id="days" class="text-2xl font-black font-crimson-pro text-gray-900 leading-none">00</div>
                         <div class="text-[9px] font-bold text-gray-400 uppercase">Days</div>
                     </div>
                     <div class="text-2xl font-black text-gray-300 pt-2">:</div>
                     <div class="bg-white/80 p-3 rounded-2xl min-w-[70px] border border-gray-100 shadow-sm backdrop-blur-sm">
-                        <div id="hours" class="text-2xl font-black font-fredoka text-gray-900 leading-none">00</div>
+                        <div id="hours" class="text-2xl font-black font-crimson-pro text-gray-900 leading-none">00</div>
                         <div class="text-[9px] font-bold text-gray-400 uppercase">Hrs</div>
                     </div>
                     <div class="text-2xl font-black text-gray-300 pt-2">:</div>
                     <div class="bg-white/80 p-3 rounded-2xl min-w-[70px] border border-gray-100 shadow-sm backdrop-blur-sm">
-                        <div id="minutes" class="text-2xl font-black font-fredoka text-gray-900 leading-none">00</div>
+                        <div id="minutes" class="text-2xl font-black font-crimson-pro text-gray-900 leading-none">00</div>
                         <div class="text-[9px] font-bold text-gray-400 uppercase">Mins</div>
                     </div>
                     <div class="text-2xl font-black text-gray-300 pt-2">:</div>
                     <div class="bg-black p-3 rounded-2xl min-w-[70px] shadow-lg shadow-green-400/20">
-                        <div id="seconds" class="text-2xl font-black font-fredoka text-[#19DC7E] leading-none">00</div>
+                        <div id="seconds" class="text-2xl font-black font-crimson-pro text-[#19DC7E] leading-none">00</div>
                         <div class="text-[9px] font-bold text-white/60 uppercase">Secs</div>
                     </div>
                 </div>
@@ -261,7 +261,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
 
                 <!-- Sticker -->
-                <div class="absolute -top-6 -right-6 bg-[#FFD700] text-black font-black font-fredoka px-6 py-3 rounded-full shadow-xl transform rotate-12 border-4 border-white animate-float hidden md:block">
+                <div class="absolute -top-6 -right-6 bg-[#FFD700] text-black font-black font-crimson-pro px-6 py-3 rounded-full shadow-xl transform rotate-12 border-4 border-white animate-float hidden md:block">
                     <span class="text-sm uppercase tracking-wide flex items-center gap-2">
                         🚧 <?php echo htmlspecialchars($sticker_text); ?>
                     </span>
@@ -356,3 +356,5 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </script>
 </body>
 </html>
+
+

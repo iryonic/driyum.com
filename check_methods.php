@@ -5,3 +5,5 @@ while($row = mysqli_fetch_assoc($res)) {
     echo "ID: {$row['id']} | Carrier: {$row['carrier_name']} | Status: {$row['status']}\n";
 }
 ?>
+
+

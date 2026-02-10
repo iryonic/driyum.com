@@ -2,8 +2,8 @@
    DRIYUM ORIGINAL - Replicating Driyum.com live site
    ========================================================================== */
 
-/* Importing Fredoka for that signature playful look */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
+/* Importing crimson-pro for that signature playful look */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600;700&display=swap');
 
 :root {
     /* Exact Palette from Analysis */
@@ -16,7 +16,7 @@
     /* Deep Navy Black */
     --color-text-light: #4b5563;
 
-    --font-heading: 'Fredoka', cursive;
+    --font-heading: 'Crimson Pro', cursive;
     --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
     --radius-pill: 9999px;
@@ -81,7 +81,7 @@ h6 {
     font-weight: 600;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     font-family: var(--font-heading);
-    /* Fredoka on buttons too */
+    /* crimson-pro on buttons too */
     font-size: 1.1rem;
     cursor: pointer;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -142,3 +142,4 @@ h6 {
     display: inline-block;
     margin-bottom: 1.5rem;
 }
+

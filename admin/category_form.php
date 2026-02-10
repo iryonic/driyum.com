@@ -58,7 +58,7 @@ if ($id) {
 <div class="max-w-2xl mx-auto">
     <div class="mb-8 flex justify-between items-center">
         <div>
-             <h1 class="text-3xl font-['Fredoka'] font-bold text-gray-900"><?php echo $id ? 'Edit Category' : 'New Category'; ?></h1>
+             <h1 class="text-3xl font-['Crimson_Pro'] font-bold text-gray-900"><?php echo $id ? 'Edit Category' : 'New Category'; ?></h1>
              <a href="categories.php" class="text-gray-500 hover:text-black mt-1 inline-block"><i class="fas fa-arrow-left"></i> Back to List</a>
         </div>
     </div>
@@ -121,3 +121,5 @@ if ($id) {
 </div>
 </body>
 </html>
+
+

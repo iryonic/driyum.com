@@ -9,3 +9,5 @@ while ($row = $result->fetch_assoc()) {
 file_put_contents('schema_dump.txt', $output);
 echo "Schema dumped to schema_dump.txt\n";
 ?>
+
+

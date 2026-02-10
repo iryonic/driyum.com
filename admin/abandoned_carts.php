@@ -65,7 +65,7 @@ include 'includes/header.php';
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Abandoned Carts</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Abandoned Carts</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> carts needing recovery</p>
     </div>
 </div>
@@ -274,3 +274,5 @@ function unselectAll() {
 
 <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 <?php include 'includes/footer.php'; ?>
+
+

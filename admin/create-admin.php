@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
             <a href="users.php" class="text-[#19DC7E] font-black text-xs uppercase tracking-widest flex items-center gap-2 mb-4 hover:translate-x-[-5px] transition-transform">
                 <i class="fas fa-arrow-left"></i> Back to Community
             </a>
-            <h1 class="text-4xl font-black text-gray-900 fredoka mb-2">Summon Authority.</h1>
-            <p class="text-gray-500 font-medium font-['Outfit'] italic">Expanding the guard of Driyum.</p>
+            <h1 class="text-4xl font-black text-gray-900 crimson-pro mb-2">Summon Authority.</h1>
+            <p class="text-gray-500 font-medium font-['Inter'] italic">Expanding the guard of Driyum.</p>
         </div>
         <div class="w-20 h-20 bg-black text-[#19DC7E] rounded-[30px] flex items-center justify-center text-3xl shadow-2xl">
             <i class="fas fa-crown"></i>
@@ -131,3 +131,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
 
 </body>
 </html>
+
+

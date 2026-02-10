@@ -18,3 +18,5 @@ $sql = "SELECT id, name, price, image, description, slug, stock FROM products $w
 $products = fetch_all($sql);
 
 echo json_encode(['success' => true, 'products' => $products]);
+
+

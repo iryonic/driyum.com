@@ -13,3 +13,5 @@ $res = $conn->query("SHOW CREATE TABLE orders");
 $row = $res->fetch_assoc();
 echo "Table Structure:\n" . $row['Create Table'] . "\n";
 ?>
+
+

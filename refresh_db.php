@@ -8,3 +8,5 @@ $conn->query("ALTER TABLE orders ADD CONSTRAINT orders_ibfk_1 FOREIGN KEY (user_
 $conn->query("SET FOREIGN_KEY_CHECKS=1");
 echo "FKeys and nullability refreshed.\n";
 ?>
+
+

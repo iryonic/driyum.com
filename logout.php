@@ -23,3 +23,5 @@ session_destroy();
 header("Location: " . get_url('login?msg=logged_out'));
 exit;
 ?>
+
+

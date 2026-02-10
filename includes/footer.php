@@ -12,7 +12,7 @@
                 <a href="<?php echo get_url(''); ?>" class="inline-block group pb-2">
                     <img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo get_setting('store_name', 'DRIYUM'); ?> Logo" loading="lazy" class="w-28 md:w-32 lg:w-40 inline-block group-hover:scale-105 transition-transform duration-300">
                 </a>
-                <p class="text-base md:text-xl text-gray-400 font-['Outfit'] max-w-2xl md:max-w-md mx-auto xl:mx-0 leading-relaxed">
+                <p class="text-base md:text-xl text-gray-400 font-['Inter'] max-w-2xl md:max-w-md mx-auto xl:mx-0 leading-relaxed">
                     <?php echo get_setting('footer_description', 'Redefining the art of snacking with premium, indulgence. Naturally sweet, unapologetically bold.'); ?>
                 </p>
                 <div class="flex flex-wrap justify-center xl:justify-start gap-3 md:gap-4 pt-4">
@@ -56,8 +56,8 @@
 
             <!-- LINKS (Shop) -->
             <div class="col-span-1 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
-                <h4 class="text-base md:text-lg font-bold font-['Fredoka'] text-[#19DC7E] uppercase tracking-widest">Shop</h4>
-                <ul class="space-y-4 font-['Outfit'] text-gray-400">
+                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#19DC7E] uppercase tracking-widest">Shop</h4>
+                <ul class="space-y-4 font-['Inter'] text-gray-400">
                     <li><a href="<?php echo get_url('shop'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">All Snacks</a></li>
                     <li><a href="<?php echo get_url('shop?filter=new'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">New Drops</a></li>
                     <li><a href="<?php echo get_url('shop?filter=best'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">Bestsellers</a></li>
@@ -66,8 +66,8 @@
 
             <!-- LINKS (Support) -->
             <div class="col-span-1 md:col-span-4 xl:col-span-2 space-y-6 pt-4 text-center md:text-left">
-                <h4 class="text-base md:text-lg font-bold font-['Fredoka'] text-[#19DC7E] uppercase tracking-widest">Support</h4>
-                <ul class="space-y-4 font-['Outfit'] text-gray-400">
+                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#19DC7E] uppercase tracking-widest">Support</h4>
+                <ul class="space-y-4 font-['Inter'] text-gray-400">
                     <li><a href="<?php echo get_url('about'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">Our Story</a></li>
                     <li><a href="<?php echo get_url('track'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">Track Order</a></li>
                     <li><a href="<?php echo get_url('contact'); ?>" class="hover:text-white hover:translate-x-2 transition-transform inline-block">Contact Us</a></li>
@@ -78,8 +78,8 @@
 
             <!-- NEWSLETTER -->
             <div class="col-span-2 md:col-span-4 xl:col-span-3 space-y-6 pt-4 text-center md:text-left">
-                <h4 class="text-base md:text-lg font-bold font-['Fredoka'] text-[#19DC7E] uppercase tracking-widest">Stay Fresh</h4>
-                <p class="text-gray-400 font-['Outfit']">Join the club for distinct drops and exclusive deals.</p>
+                <h4 class="text-base md:text-lg font-bold font-['Crimson_Pro'] text-[#19DC7E] uppercase tracking-widest">Stay Fresh</h4>
+                <p class="text-gray-400 font-['Inter']">Join the club for distinct drops and exclusive deals.</p>
                 <form class="relative group" id="newsletter-form" onsubmit="subscribeNewsletter(event)">
                     <input type="email" name="email" required placeholder="Your email..." class="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-6 pr-14 text-white placeholder-gray-500 focus:outline-none focus:border-[#19DC7E] focus:bg-white/10 transition-all">
                     <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 w-10 h-10 bg-[#19DC7E] rounded-full flex items-center justify-center text-black hover:scale-110 transition shadow-lg shadow-green-900/50" aria-label="Subscribe to newsletter">
@@ -90,7 +90,7 @@
         </div>
 
         <!-- COPYRIGHT -->
-        <div class="pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-['Outfit']">
+        <div class="pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-['Inter']">
             <p>&copy; <?php echo date('Y'); ?> <?php echo get_setting('store_name', 'DRIYUM'); ?>. All rights reserved.</p>
             <p>Powered by <a href="https://irfanmanzoor.in/" target="_blank" class="text-[#19DC7E] hover:underline transition">EXORA.DEVS</a> </p>
             <div class="flex gap-6 mt-4 md:mt-0 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
@@ -179,7 +179,7 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Inter', sans-serif;
             opacity: 0.7;
             transition: all 0.3s ease;
             pointer-events: none;
@@ -386,3 +386,5 @@ function subscribeNewsletter(e) {
     .finally(() => { icon.className = 'fas fa-arrow-right'; });
 }
 </script>
+
+

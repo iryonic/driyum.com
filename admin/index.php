@@ -35,7 +35,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Dashboard Overview</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Dashboard Overview</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Live store performance and insights</p>
     </div>
     <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
@@ -53,7 +53,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
             </div>
             <div>
                 <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Revenue</div>
-                <div class="text-xl font-black text-gray-900 fredoka">₹<?php echo number_format($revenue, 0); ?></div>
+                <div class="text-xl font-black text-gray-900 crimson-pro">₹<?php echo number_format($revenue, 0); ?></div>
             </div>
         </div>
     </div>
@@ -66,7 +66,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
             </div>
             <div>
                 <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Orders</div>
-                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $orders_count; ?></div>
+                <div class="text-xl font-black text-gray-900 crimson-pro"><?php echo $orders_count; ?></div>
             </div>
         </div>
     </div>
@@ -79,7 +79,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
             </div>
             <div>
                 <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Pending</div>
-                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $pending_orders; ?></div>
+                <div class="text-xl font-black text-gray-900 crimson-pro"><?php echo $pending_orders; ?></div>
             </div>
         </div>
         <?php if($pending_orders > 0): ?>
@@ -95,7 +95,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
             </div>
             <div>
                 <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Snacks</div>
-                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $products_count; ?></div>
+                <div class="text-xl font-black text-gray-900 crimson-pro"><?php echo $products_count; ?></div>
             </div>
         </div>
     </div>
@@ -108,7 +108,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
             </div>
             <div>
                 <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Subscribers</div>
-                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $subscribers_count; ?></div>
+                <div class="text-xl font-black text-gray-900 crimson-pro"><?php echo $subscribers_count; ?></div>
             </div>
         </div>
     </div>
@@ -119,7 +119,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
     <div class="xl:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100 anim-up">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h3 class="font-black text-xl fredoka text-gray-900">Revenue Stream</h3>
+                <h3 class="font-black text-xl crimson-pro text-gray-900">Revenue Stream</h3>
                 <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Performance over the last 7 days</p>
             </div>
         </div>
@@ -130,7 +130,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
 
     <!-- Category Performance -->
     <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
-        <h3 class="font-black text-xl fredoka text-gray-900 mb-1">Inventory Split</h3>
+        <h3 class="font-black text-xl crimson-pro text-gray-900 mb-1">Inventory Split</h3>
         <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-6">Product distribution by Category</p>
         <div class="h-56">
             <canvas id="categoryChart"></canvas>
@@ -146,7 +146,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
             <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div class="flex items-center gap-4">
-                    <h3 class="font-black text-xl fredoka text-gray-900">Recent Orders</h3>
+                    <h3 class="font-black text-xl crimson-pro text-gray-900">Recent Orders</h3>
                     <div id="bulk-actions" class="hidden flex items-center gap-2 animate-fade-in-right">
                         <select id="bulk-status-select" class="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-[#19DC7E]">
                             <option value="">Status...</option>
@@ -230,7 +230,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
         
         <!-- Live Pulse & Intelligence -->
         <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
-                <h3 class="font-bold text-xl font-['Fredoka'] text-gray-900 mb-6 flex items-center gap-2">
+                <h3 class="font-bold text-xl font-['Crimson_Pro'] text-gray-900 mb-6 flex items-center gap-2">
                     <span class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
@@ -243,7 +243,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                     <div class="p-6 bg-gradient-to-r from-green-600 to-[#19DC7E] rounded-[30px] text-white shadow-lg relative overflow-hidden group mb-2">
                         <div class="relative z-10">
                             <div class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Market Velocity</div>
-                            <div class="text-3xl font-black fredoka">₹<?php echo number_format($sales_today); ?></div>
+                            <div class="text-3xl font-black crimson-pro">₹<?php echo number_format($sales_today); ?></div>
                             <p class="text-[10px] font-bold opacity-80 mt-1 italic">Today's Revenue</p>
                         </div>
                         <i class="fas fa-bolt absolute -right-2 -bottom-2 text-white/10 text-6xl group-hover:scale-125 transition-all duration-500"></i>
@@ -324,7 +324,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
 
         <!-- Quick Links Card -->
         <div class="bg-gradient-to-br from-[#19DC7E] to-[#0ea5e9] p-8 rounded-[35px] text-white shadow-xl shadow-green-200 anim-up" style="animation-delay: 200ms">
-            <h4 class="font-black fredoka text-2xl mb-4">Grow Driyum.</h4>
+            <h4 class="font-black crimson-pro text-2xl mb-4">Grow Driyum.</h4>
             <p class="text-white/80 text-sm font-medium mb-8 leading-relaxed">Launch a new snack drop or update your regional rates to keep customers happy.</p>
             <div class="space-y-3">
                 <a href="product_form.php" class="flex items-center justify-between bg-white text-black p-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition active:scale-95 shadow-lg"> New Snack <i class="fas fa-plus"></i></a>
@@ -343,7 +343,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                 <i class="fas fa-shipping-fast"></i>
             </div>
             <div>
-                <h3 class="text-3xl font-black fredoka text-gray-900">Dispatch Order</h3>
+                <h3 class="text-3xl font-black crimson-pro text-gray-900">Dispatch Order</h3>
                 <p class="text-gray-400 font-medium" id="dispatch-order-number">ORD-000000</p>
             </div>
         </div>
@@ -627,3 +627,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <?php include 'includes/footer.php'; ?>
+
+

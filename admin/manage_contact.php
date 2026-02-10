@@ -39,7 +39,7 @@ $messages = $pagination['records'];
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Inquiries</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Inquiries</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> customer messages</p>
     </div>
     <a href="../contact.php" target="_blank" class="bg-black text-[#19DC7E] px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-2">
@@ -156,3 +156,5 @@ $messages = $pagination['records'];
 </div>
 
 <?php include 'includes/footer.php'; ?>
+
+

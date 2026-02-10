@@ -32,9 +32,9 @@ $total = $subtotal + $shipping + $tax;
         <div class="container mx-auto px-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
                  <i class="fas fa-lock text-[#19DC7E] text-2xl"></i>
-                 <span class="font-bold font-['Fredoka'] text-gray-800 text-lg">Secure Gateway</span>
+                 <span class="font-bold font-['Crimson_Pro'] text-gray-800 text-lg">Secure Gateway</span>
             </div>
-            <div class="text-sm text-gray-400 font-['Outfit']">ID: <?php echo uniqid('TRX-'); ?></div>
+            <div class="text-sm text-gray-400 font-['Inter']">ID: <?php echo uniqid('TRX-'); ?></div>
         </div>
     </header>
 
@@ -43,7 +43,7 @@ $total = $subtotal + $shipping + $tax;
             
             <!-- LEFT: PAYMENT METHODS -->
             <div class="flex-1 space-y-6">
-                <h1 class="text-2xl font-bold font-['Fredoka'] mb-6">Select Payment Method</h1>
+                <h1 class="text-2xl font-bold font-['Crimson_Pro'] mb-6">Select Payment Method</h1>
                 
                 <form action="<?php echo get_url('place-order'); ?>" method="POST" id="payment-form">
                     <input type="hidden" name="total" value="<?php echo $total; ?>">
@@ -93,7 +93,7 @@ $total = $subtotal + $shipping + $tax;
             <div class="w-full md:w-80">
                 <div class="bg-gray-100 rounded-[2rem] p-6 sticky top-24">
                     <h3 class="font-bold text-gray-500 uppercase text-xs tracking-wider mb-4">Amount to Pay</h3>
-                    <div class="text-4xl font-black font-['Fredoka'] text-gray-900 mb-6">₹<?php echo $total; ?></div>
+                    <div class="text-4xl font-black font-['Crimson_Pro'] text-gray-900 mb-6">₹<?php echo $total; ?></div>
                     
                     <div class="space-y-4 border-t border-gray-200 pt-4">
                         <div class="flex justify-between text-sm text-gray-600">
@@ -118,7 +118,7 @@ $total = $subtotal + $shipping + $tax;
     <!-- Processing Modal -->
     <div id="processing-modal" class="fixed inset-0 bg-white/95 z-[100] hidden flex-col items-center justify-center text-center">
         <div class="w-24 h-24 border-4 border-[#19DC7E] border-t-transparent rounded-full animate-spin mb-8"></div>
-        <h2 class="text-3xl font-bold font-['Fredoka'] text-gray-900 mb-2">Processing Payment</h2>
+        <h2 class="text-3xl font-bold font-['Crimson_Pro'] text-gray-900 mb-2">Processing Payment</h2>
         <p class="text-gray-500">Please do not close this window...</p>
     </div>
 
@@ -138,3 +138,5 @@ $total = $subtotal + $shipping + $tax;
 
 </body>
 </html>
+
+

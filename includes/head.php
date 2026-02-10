@@ -22,7 +22,7 @@ if (!isset($page_description) && isset($description)) $page_description = $descr
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
 <?php 
 if (function_exists('render_seo_tags')) {
@@ -48,3 +48,5 @@ if (function_exists('render_seo_tags')) {
     const FREE_SHIPPING_THRESHOLD = <?php echo get_setting('free_shipping_threshold', 499); ?>;
 </script>
 <script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=1.0.3" defer></script>
+
+

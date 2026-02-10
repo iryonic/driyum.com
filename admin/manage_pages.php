@@ -82,7 +82,7 @@ $p = [
     <!-- Top Action Bar -->
     <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 mb-8 -mx-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-            <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Page Content</h1>
+            <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Page Content</h1>
             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Manage About & Legal Pages</p>
         </div>
 
@@ -309,3 +309,5 @@ function switchTab(tab) {
 </script>
 
 <?php include 'includes/footer.php'; ?>
+
+

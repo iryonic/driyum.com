@@ -5,3 +5,5 @@ while($row = mysqli_fetch_assoc($res)) {
     echo "ID: {$row['id']} | Name: {$row['zone_name']} | Ranges: {$row['pincode_ranges']}\n";
 }
 ?>
+
+

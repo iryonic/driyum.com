@@ -8,3 +8,5 @@ while ($row = $res->fetch_assoc()) {
 }
 echo json_encode($triggers, JSON_PRETTY_PRINT);
 ?>
+
+

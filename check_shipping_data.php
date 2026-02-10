@@ -15,3 +15,5 @@ $res = execute_query('SELECT COUNT(*) as count FROM shipping_rates');
 $row = mysqli_fetch_assoc($res);
 echo $row['count'] . "\n";
 ?>
+
+

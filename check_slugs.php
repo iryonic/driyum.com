@@ -6,3 +6,5 @@ print_r(fetch_all("DESCRIBE products"));
 
 echo "\nTable: categories\n";
 print_r(fetch_all("DESCRIBE categories"));
+
+

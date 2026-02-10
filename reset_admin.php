@@ -34,3 +34,5 @@ if ($result->num_rows > 0) {
 
 echo "<br><a href='login.php'>Go to Login</a>";
 ?>
+
+

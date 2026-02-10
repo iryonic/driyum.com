@@ -8,3 +8,5 @@ Disallow: /vendor/
 Disallow: /temp/
 
 Sitemap: <?php echo FULL_BASE_URL; ?>sitemap.xml
+
+

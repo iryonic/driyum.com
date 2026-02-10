@@ -15,3 +15,5 @@ if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 $result = subscribe_newsletter($email);
 echo json_encode($result);
+
+

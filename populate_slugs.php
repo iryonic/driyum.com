@@ -43,3 +43,5 @@ foreach ($categories as $c) {
 }
 
 echo "\nDone!\n";
+
+

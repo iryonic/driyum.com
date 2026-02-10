@@ -6,15 +6,15 @@
     <title>500 - System Overheated | DRIYUM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Outfit:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;900&display=swap" rel="stylesheet">
     <?php
     require_once 'config/database.php';
     require_once 'includes/functions.php';
     ?>
     <base href="<?php echo get_url(''); ?>">
     <style>
-        body { font-family: 'Outfit', sans-serif; cursor: none; }
-        .fredoka { font-family: 'Fredoka', sans-serif; }
+        body { font-family: 'Inter', sans-serif; cursor: none; }
+        .crimson-pro { font-family: 'Crimson Pro', sans-serif; }
         
         .btn-chunky {
             border-bottom: 6px solid rgba(0,0,0,0.2);
@@ -74,12 +74,12 @@
     <div class="relative z-10 max-w-3xl w-full text-center">
         <!-- Brand Header (Mini) -->
         <a href="<?php echo get_url(''); ?>" class="inline-flex items-center gap-3 mb-12 group">
-            <span class="text-2xl font-['Fredoka'] font-black text-gray-900 tracking-tight"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="logo" height="100px" width="100px"></span>
+            <span class="text-2xl font-['Crimson_Pro'] font-black text-gray-900 tracking-tight"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="logo" height="100px" width="100px"></span>
         </a>
 
         <!-- 500 Visual -->
         <div class="relative mb-12">
-            <h1 class="text-[150px] md:text-[220px] font-['Outfit'] font-black text-red-500/5 leading-none select-none tracking-tighter vibrate">500</h1>
+            <h1 class="text-[150px] md:text-[220px] font-['Inter'] font-black text-red-500/5 leading-none select-none tracking-tighter vibrate">500</h1>
             <div class="absolute inset-0 flex items-center justify-center">
                 <div class="text-[100px] md:text-[140px] vibrate">🔥</div>
             </div>
@@ -90,7 +90,7 @@
 
         <!-- Content -->
         <div class="space-y-6">
-            <h2 class="text-4xl md:text-6xl font-['Fredoka'] font-black text-gray-900 leading-tight">
+            <h2 class="text-4xl md:text-6xl font-['Crimson_Pro'] font-black text-gray-900 leading-tight">
                 Server <span class="text-red-500">Overload</span>!
             </h2>
             <p class="text-gray-500 font-bold text-lg md:text-xl max-w-lg mx-auto leading-relaxed">
@@ -150,3 +150,5 @@
     </script>
 </body>
 </html>
+
+

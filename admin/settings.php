@@ -111,7 +111,7 @@ $s = [
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Settings</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Settings</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Manage global website configuration</p>
     </div>
     <div class="flex items-center gap-3">
@@ -140,7 +140,7 @@ $s = [
     
     <!-- Top Action Bar -->
      <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 mb-8 -mx-4 px-4 md:px-8 flex flex-wrap gap-2 justify-between items-center">
-        <h2 class="text-xl font-black font-fredoka">Configuration</h2>
+        <h2 class="text-xl font-black font-crimson-pro">Configuration</h2>
         <button type="submit" name="update_settings" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all shadow-lg flex items-center gap-2">
             <i class="fas fa-save"></i> Save Changes
         </button>
@@ -359,3 +359,5 @@ $s = [
 </script>
 
 <?php include 'includes/footer.php'; ?>
+
+

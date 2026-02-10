@@ -7,3 +7,5 @@ define('RAZORPAY_COMPANY_NAME', 'DRIYUM');
 define('RAZORPAY_DESCRIPTION', 'Order Payment');
 define('RAZORPAY_THEME_COLOR', '#19DC7E');
 ?>
+
+

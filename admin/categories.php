@@ -15,7 +15,7 @@ $cats = $pagination['records'];
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Category Hub</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Category Hub</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> departments in the vault</p>
     </div>
     <a href="category_form.php" class="bg-[#19DC7E] text-black font-black px-6 py-2.5 rounded-2xl text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-105 active:scale-95 transition-all text-center">
@@ -45,7 +45,7 @@ $cats = $pagination['records'];
         </div>
 
         <div class="flex-1 relative z-10">
-            <h3 class="font-bold text-lg fredoka text-gray-900 mb-1 group-hover:text-[#19DC7E] transition-colors leading-tight"><?php echo $c['name']; ?></h3>
+            <h3 class="font-bold text-lg crimson-pro text-gray-900 mb-1 group-hover:text-[#19DC7E] transition-colors leading-tight"><?php echo $c['name']; ?></h3>
             <p class="text-gray-400 font-medium text-xs mb-4 line-clamp-2"><?php echo $c['description'] ?: 'No description provided.'; ?></p>
         </div>
         
@@ -73,7 +73,7 @@ $cats = $pagination['records'];
             <i class="fas fa-magic"></i>
         </div>
         <div>
-            <h4 class="text-white text-sm font-bold fredoka mb-0.5">Visual Tip</h4>
+            <h4 class="text-white text-sm font-bold crimson-pro mb-0.5">Visual Tip</h4>
             <p class="text-gray-500 text-[11px] font-medium leading-relaxed">The <span class="text-[#19DC7E]">"Browse by Vibe"</span> section on your homepage pulls from these categories. Vibrant icons make it pop!</p>
         </div>
     </div>
@@ -81,3 +81,5 @@ $cats = $pagination['records'];
 </div>
 
 <?php include 'includes/footer.php'; ?>
+
+

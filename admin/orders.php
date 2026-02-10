@@ -233,7 +233,7 @@ $orders = $pagination['records'];
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <!-- Header Content Remained Same -->
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Orders</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Orders</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> orders</p>
     </div>
     
@@ -386,7 +386,7 @@ $orders = $pagination['records'];
                         <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-inbox text-gray-200 text-2xl"></i>
                         </div>
-                        <h3 class="text-lg font-black text-gray-400 fredoka">No Orders Found</h3>
+                        <h3 class="text-lg font-black text-gray-400 crimson-pro">No Orders Found</h3>
                         <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest mt-1">Check back later or adjust filters</p>
                     </td>
                 </tr>
@@ -404,7 +404,7 @@ $orders = $pagination['records'];
                 <i class="fas fa-shipping-fast"></i>
             </div>
             <div>
-                <h3 class="text-3xl font-black fredoka text-gray-900">Send Order</h3>
+                <h3 class="text-3xl font-black crimson-pro text-gray-900">Send Order</h3>
                 <p class="text-gray-400 font-medium" id="dispatch-order-number">ORD-000000</p>
             </div>
         </div>
@@ -834,3 +834,5 @@ document.addEventListener('click', () => {
 
 <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 <?php include 'includes/footer.php'; ?>
+
+

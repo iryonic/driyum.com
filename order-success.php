@@ -31,8 +31,8 @@ if ($order && !empty($order['shipping_method_id'])) {
                 <i class="fas fa-check"></i>
             </div>
 
-            <h1 class="text-4xl md:text-5xl font-['Fredoka'] font-bold text-gray-900 mb-4">You're Awesome!</h1>
-            <p class="text-xl text-gray-500 font-['Outfit'] mb-8">Your order <span class="text-black font-bold">#<?php echo $order_num; ?></span> has been placed successfully.</p>
+            <h1 class="text-4xl md:text-5xl font-['Crimson_Pro'] font-bold text-gray-900 mb-4">You're Awesome!</h1>
+            <p class="text-xl text-gray-500 font-['Inter'] mb-8">Your order <span class="text-black font-bold">#<?php echo $order_num; ?></span> has been placed successfully.</p>
 
             <div class="bg-gray-50 rounded-2xl p-6 mb-8 text-left">
                 <div class="flex justify-between items-center mb-4">
@@ -106,3 +106,5 @@ if ($order && !empty($order['shipping_method_id'])) {
 
 </body>
 </html>
+
+

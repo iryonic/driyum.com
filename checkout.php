@@ -319,7 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         .anim-slide { animation: slideIn 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="bg-[#FFFBEB] font-['Outfit']">
+<body class="bg-[#FFFBEB] font-['Inter']">
 
     <!-- Premium Minimal Header -->
     <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-100">
@@ -372,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <!-- STEP 1: SHIPPING -->
                     <div id="step-1" class="checkout-step active anim-slide">
                         <div class="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-gray-100">
-                            <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900 mb-8">Shipping Address</h2>
+                            <h2 class="text-3xl font-['Crimson_Pro'] font-black text-gray-900 mb-8">Shipping Address</h2>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
@@ -428,7 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <!-- STEP 2: PAYMENT -->
                     <div id="step-2" class="checkout-step anim-slide">
                         <div class="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-gray-100">
-                            <h2 class="text-3xl font-['Fredoka'] font-black text-gray-900 mb-2">Payment Method</h2>
+                            <h2 class="text-3xl font-['Crimson_Pro'] font-black text-gray-900 mb-2">Payment Method</h2>
                             <p class="text-gray-400 text-sm mb-10">All transactions are secure and encrypted.</p>
                             
                             <div class="space-y-4">
@@ -438,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                     <label for="pay-cod" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#19DC7E]">
                                         <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">🚚</div>
                                         <div class="flex-1">
-                                            <h4 class="font-black text-gray-900 text-xl font-['Fredoka']">Cash on Delivery</h4>
+                                            <h4 class="font-black text-gray-900 text-xl font-['Crimson_Pro']">Cash on Delivery</h4>
                                             <p class="text-xs text-gray-500 font-medium">Pay when your snacks arrive.</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
@@ -453,7 +453,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                     <label for="pay-razorpay" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#19DC7E]">
                                         <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">💳</div>
                                         <div class="flex-1">
-                                            <h4 class="font-black text-gray-900 text-xl font-['Fredoka']">Online Payment</h4>
+                                            <h4 class="font-black text-gray-900 text-xl font-['Crimson_Pro']">Online Payment</h4>
                                             <p class="text-xs text-gray-500 font-medium">Credit/Debit Card, UPI, Netbanking.</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
@@ -485,7 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#19DC7E]/5 rounded-full blur-3xl"></div>
                     
                     <div class="flex items-center justify-between mb-8">
-                        <h3 class="font-black text-xl font-['Fredoka'] text-gray-900">Order Items</h3>
+                        <h3 class="font-black text-xl font-['Crimson_Pro'] text-gray-900">Order Items</h3>
                         <button type="button" onclick="openBrowseMoreModal()" id="btn-browse-more" class="group relative flex items-center justify-center gap-2 bg-[#19DC7E]/10 hover:bg-[#19DC7E] px-4 py-2.5 rounded-2xl transition-all duration-300 active:scale-95 cursor-pointer z-20">
                             <i class="fas fa-plus text-[10px] text-[#19DC7E] group-hover:text-black pointer-events-none"></i>
                             <span class="text-[10px] font-black uppercase tracking-widest text-[#19DC7E] group-hover:text-black pointer-events-none">Browse More</span>
@@ -501,7 +501,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 <img src="<?php echo $p['image']; ?>" class="w-full h-full object-contain rounded-xl group-hover:scale-110 transition">
                             </div>
                             <div class="flex-1">
-                                <h4 class="font-bold text-sm text-gray-800 line-clamp-1 font-['Fredoka']"><?php echo $p['name']; ?></h4>
+                                <h4 class="font-bold text-sm text-gray-800 line-clamp-1 font-['Crimson_Pro']"><?php echo $p['name']; ?></h4>
                                 <div class="flex items-center gap-2 mt-1">
                                     <div class="flex items-center bg-gray-50 rounded-lg p-0.5 border border-gray-100">
                                         <button onclick="updateCheckoutQty(<?php echo $id; ?>, <?php echo $qty - 1; ?>)" class="w-5 h-5 flex items-center justify-center text-[8px] text-gray-400 hover:text-black transition">-</button>
@@ -568,7 +568,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
                     <div class="flex justify-between items-center pt-8 mt-8 border-t-2 border-dashed border-gray-100">
                         <span class="text-gray-500 font-black uppercase text-[10px] tracking-widest">Grand Total</span>
-                        <span class="text-4xl font-black font-['Fredoka'] text-gray-900" id="grand_total_display">₹<?php echo $total; ?></span>
+                        <span class="text-4xl font-black font-['Crimson_Pro'] text-gray-900" id="grand_total_display">₹<?php echo $total; ?></span>
                     </div>
 
                     <div class="mt-8 p-4 bg-green-50 rounded-[24px] border border-green-100 flex items-start gap-3">
@@ -607,7 +607,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <div class="w-12 h-12 sm:w-16 sm:h-16 bg-[#19DC7E] rounded-2xl md:rounded-3xl flex items-center justify-center text-white text-xl sm:text-3xl shadow-lg mb-4 sm:mb-8 rotate-3 mx-auto md:mx-0">
                         <i class="fas fa-user-check"></i>
                     </div>
-                    <h2 class="text-2xl sm:text-4xl font-['Fredoka'] font-black text-gray-900 mb-2 sm:mb-4 uppercase tracking-tight leading-none">The Member<br>Club.</h2>
+                    <h2 class="text-2xl sm:text-4xl font-['Crimson_Pro'] font-black text-gray-900 mb-2 sm:mb-4 uppercase tracking-tight leading-none">The Member<br>Club.</h2>
                     <p class="text-gray-500 font-bold text-[10px] sm:text-sm mb-6 sm:mb-10 leading-relaxed max-w-[280px] mx-auto md:mx-0">
                         Save addresses, track every crunch, and earn 10% cash-back on every order.
                     </p>
@@ -630,7 +630,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white border-2 border-gray-100 rounded-2xl md:rounded-3xl flex items-center justify-center text-gray-400 text-xl sm:text-3xl shadow-sm mb-4 sm:mb-8 -rotate-3 mx-auto md:mx-0">
                         <i class="fas fa-ghost"></i>
                     </div>
-                    <h2 class="text-2xl sm:text-4xl font-['Fredoka'] font-black text-gray-900 mb-2 sm:mb-4 uppercase tracking-tight leading-none">Ghost<br>Checkout.</h2>
+                    <h2 class="text-2xl sm:text-4xl font-['Crimson_Pro'] font-black text-gray-900 mb-2 sm:mb-4 uppercase tracking-tight leading-none">Ghost<br>Checkout.</h2>
                     <p class="text-gray-500 font-bold text-[10px] sm:text-sm mb-6 sm:mb-10 leading-relaxed max-w-[280px] mx-auto md:mx-0">
                         In a hurry? Checkout as a guest. You can always create an account later.
                     </p>
@@ -655,7 +655,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             <div class="w-32 h-32 border-4 border-gray-100 border-t-[#19DC7E] rounded-full animate-spin"></div>
             <div class="absolute inset-0 flex items-center justify-center text-4xl">🍿</div>
         </div>
-        <h2 class="text-4xl font-black font-['Fredoka'] text-gray-900 mb-4 anim-slide">Securing Your Snacks...</h2>
+        <h2 class="text-4xl font-black font-['Crimson_Pro'] text-gray-900 mb-4 anim-slide">Securing Your Snacks...</h2>
         <p class="text-gray-500 font-bold tracking-widest uppercase text-xs animate-pulse">Communicating with vault</p>
     </div>
 
@@ -677,7 +677,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             <span class="w-10 h-1 bg-[#19DC7E] rounded-full"></span>
                             <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-[0.3em]">Cravings Await</span>
                         </div>
-                        <h2 class="text-3xl md:text-5xl font-['Fredoka'] font-black text-gray-900 leading-none">Add More Snacks 🍿</h2>
+                        <h2 class="text-3xl md:text-5xl font-['Crimson_Pro'] font-black text-gray-900 leading-none">Add More Snacks 🍿</h2>
                         <p class="text-gray-400 font-bold text-xs md:text-sm mt-3 md:mt-4">Don't forget these fan favorites for your journey!</p>
                     </div>
                     
@@ -1093,7 +1093,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                     ${isOutOfStock ? '<div class="absolute inset-0 bg-white/60 flex items-center justify-center font-black text-xs text-red-500 uppercase tracking-widest">Sold Out</div>' : ''}
                                     ${isLowStock ? '<div class="absolute top-3 left-3 bg-amber-500 text-white text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Only ' + p.stock + ' Left</div>' : ''}
                                 </div>
-                                <h4 class="font-black text-base md:text-lg text-gray-900 mb-1 line-clamp-1 font-[\'Fredoka\'] ${isOutOfStock ? 'opacity-50' : ''}">${p.name}</h4>
+                                <h4 class="font-black text-base md:text-lg text-gray-900 mb-1 line-clamp-1 font-[\'crimson-pro\'] ${isOutOfStock ? 'opacity-50' : ''}">${p.name}</h4>
                                 <div class="flex items-center justify-between mt-3 md:mt-4">
                                     <div class="flex flex-col">
                                         <span class="text-[9px] md:text-[10px] font-black text-gray-300 uppercase tracking-widest">Price</span>
@@ -1173,3 +1173,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
 </body>
 </html>
+
+

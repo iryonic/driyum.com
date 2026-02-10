@@ -87,7 +87,7 @@ $subscribers = $pagination['records'];
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Subscribers</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Subscribers</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> subscribers</p>
     </div>
     
@@ -193,7 +193,7 @@ $subscribers = $pagination['records'];
     <div class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl p-10 relative">
         <div class="flex justify-between items-center mb-10">
             <div>
-                <h3 class="text-2xl font-black text-gray-900 fredoka">Email</h3>
+                <h3 class="text-2xl font-black text-gray-900 crimson-pro">Email</h3>
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-emerald-500">Sending to <span id="modalTargetCount">0</span> people</p>
             </div>
             <button onclick="closeEmailModal()" class="w-10 h-10 rounded-2xl bg-gray-50 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all">
@@ -366,3 +366,5 @@ init();
 
 <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 <?php include 'includes/footer.php'; ?>
+
+

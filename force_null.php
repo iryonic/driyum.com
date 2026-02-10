@@ -6,3 +6,5 @@ $conn->query("ALTER TABLE orders MODIFY user_id INT NULL");
 $conn->query("SET FOREIGN_KEY_CHECKS=1");
 echo "Done ensuring user_id is nullable.\n";
 ?>
+
+

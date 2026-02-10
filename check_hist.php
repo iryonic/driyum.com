@@ -10,3 +10,5 @@ while ($row = $result->fetch_assoc()) {
     echo $row['Field'] . " | " . $row['Null'] . "\n";
 }
 ?>
+
+

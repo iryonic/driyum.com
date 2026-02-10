@@ -16,3 +16,5 @@ foreach ($tables as $table) {
     }
     echo "\n\n";
 }
+
+

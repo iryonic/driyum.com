@@ -12,3 +12,5 @@ $categories = fetch_all("SELECT id, name, slug FROM categories LIMIT 5");
 foreach($categories as $c) {
     echo "- ID: {$c['id']}, Name: {$c['name']}, Slug: {$c['slug']}\n";
 }
+
+

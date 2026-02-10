@@ -113,7 +113,7 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
 
 <div class="mb-8 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">User Base</h1>
+        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">User Base</h1>
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Managing <span class="text-black"><?php echo $total_users; ?></span> profiles in the system</p>
     </div>
     
@@ -319,3 +319,5 @@ function clearSelection() {
 </script>
 
 <?php include 'includes/footer.php'; ?>
+
+
