@@ -10,9 +10,9 @@ if ($host == 'localhost' || $host == '127.0.0.1') {
 } else {
     // PRODUCTION
     define('DB_HOST', 'localhost');
-    define('DB_USER', 'u167160735_driyum');
-    define('DB_PASS', 'DriyuM@1234');
-    define('DB_NAME', 'u167160735_driyum');
+    define('DB_USER', 'u167160735_newdry');
+    define('DB_PASS', 'NewDry@123');
+    define('DB_NAME', 'u167160735_newdry');
     
     // Security: Hide errors in production
     error_reporting(0);

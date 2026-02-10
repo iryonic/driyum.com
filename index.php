@@ -153,10 +153,6 @@ if (isset($_SESSION['user_id'])) {
                 </div>
                 <?php endif; ?>
 
-                <!-- Floating Sticker (Top-Right) -->
-                <div class="absolute top-[15%] right-[10%] w-40 animate-bounce-slow hidden md:block">
-                    <img src="<?php echo get_url('assets/images/stickers/healthy.png'); ?>" class="w-full drop-shadow-2xl rotate-12" onerror="this.style.display='none'">
-                </div>
 
                 <!-- Stats Card (Bottom-Left) -->
                 <?php if($show_stats === 'on'): ?>
@@ -175,9 +171,6 @@ if (isset($_SESSION['user_id'])) {
                 </div>
                 <?php endif; ?>
                 
-                <!-- Floating Fruits Overlays -->
-                <div class="absolute top-[20%] left-[10%] text-7xl opacity-20 animate-bounce-slow hidden md:block">🍎</div>
-                <div class="absolute bottom-[30%] right-[12%] text-8xl opacity-20 animate-bounce-slow hidden md:block" style="animation-delay: 1.5s;">🥝</div>
             </div>
 
             <!-- Bottom Floating Trust Marquee Overlay -->
@@ -185,19 +178,19 @@ if (isset($_SESSION['user_id'])) {
                 <div class="flex animate-marquee whitespace-nowrap group-hover/marquee:[animation-play-state:paused]">
                     <?php 
                     $badges = [
-                        ['icon' => '🌱', 'text' => '100% Organic'],
-                        ['icon' => '🏔️', 'text' => 'Mountain Fresh'],
-                        ['icon' => '🚫', 'text' => 'No Added Sugar'],
-                        ['icon' => '💎', 'text' => 'Handpicked Quality'],
-                        ['icon' => '🌍', 'text' => 'Ethically Sourced'],
-                        ['icon' => '🌾', 'text' => 'Gluten Free'],
-                        ['icon' => '📦', 'text' => 'Eco Friendly']
+                        ['icon' => 'fas fa-leaf', 'text' => '100% Organic'],
+                        ['icon' => 'fas fa-mountain', 'text' => 'Mountain Fresh'],
+                        ['icon' => 'fas fa-ban', 'text' => 'No Added Sugar'],
+                        ['icon' => 'fas fa-gem', 'text' => 'Handpicked Quality'],
+                        ['icon' => 'fas fa-globe-asia', 'text' => 'Ethically Sourced'],
+                        ['icon' => 'fas fa-seedling', 'text' => 'Gluten Free'],
+                        ['icon' => 'fas fa-recycle', 'text' => 'Eco Friendly']
                     ];
                     $display_badges = array_merge($badges, $badges, $badges);
                     foreach($display_badges as $badge):
                     ?>
                     <div class="flex items-center gap-3 mx-10">
-                        <span class="text-xl"><?php echo $badge['icon']; ?></span>
+                        <i class="<?php echo $badge['icon']; ?> text-[#19DC7E] text-lg"></i>
                         <span class="text-[11px] font-black text-white/80 uppercase tracking-[0.2em]"><?php echo $badge['text']; ?></span>
                     </div>
                     <?php endforeach; ?>
@@ -401,13 +394,6 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                 <?php endif; ?>
 
-                <!-- Floating Background Particles (Drifting) -->
-                 <div class="absolute top-10 right-10 text-4xl opacity-20 transform animate-bounce duration-[3000ms] z-0 select-none pointer-events-none mix-blend-multiply">
-                    <?php echo $s['emoji']; ?>
-                 </div>
-                 <div class="absolute top-1/2 left-4 text-2xl opacity-10 transform animate-ping duration-[2000ms] z-0 select-none pointer-events-none">
-                    ⚪
-                 </div>
 
                 <!-- Background Abstract Blob -->
                 <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
