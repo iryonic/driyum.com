@@ -776,7 +776,7 @@ CREATE TABLE `settings` (
 INSERT INTO `settings` (`key`, `value`, `updated_at`) VALUES
 ('announcement_text', '🍎FREE SHIPPING ON ORDERS ABOVE 500  🍌 SUBSCRIBE TO DRIYUM 🥝', '2026-01-23 09:35:54'),
 ('facebook_url', 'https://www.facebook.com/people/Driyum-Foods/61585416636650/?mibextid=wwXIfr&amp;rdid=BDRmnaJ3qy4ccL3W&amp;share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DPT8KEgt7%2F%3Fmibextid%3DwwXIfr', '2026-01-23 09:46:25'),
-('footer_description', 'Redefining the art of snacking with premium, sun-dried indulgence. Naturally sweet, unapologetically bold.', '2026-01-19 10:55:09'),
+('footer_description', 'Redefining the art of snacking with premium, mountain-fresh indulgence. Naturally sweet, unapologetically bold.', '2026-01-19 10:55:09'),
 ('free_shipping_threshold', '500', '2026-01-19 10:41:25'),
 ('instagram_url', 'https://www.instagram.com/driyumfoods?utm_source=ig_web_button_share_sheet&amp;igsh=ZDNlZDc0MzIxNw%3D%3D', '2026-01-23 09:46:25'),
 ('last_cron_run', '1769191233', '2026-01-23 18:00:33'),

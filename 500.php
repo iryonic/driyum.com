@@ -74,7 +74,7 @@
     <div class="relative z-10 max-w-3xl w-full text-center">
         <!-- Brand Header (Mini) -->
         <a href="<?php echo get_url(''); ?>" class="inline-flex items-center gap-3 mb-12 group">
-            <span class="text-2xl font-['Fredoka'] font-black text-gray-900 tracking-tight"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="logo" height="100px" width="100px"></span>
+            <span class="text-2xl font-['Fredoka'] font-black text-gray-900 tracking-tight"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="logo" height="100px" width="100px"></span>
         </a>
 
         <!-- 500 Visual -->

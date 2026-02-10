@@ -81,7 +81,7 @@ $address = json_decode($order['shipping_address'], true);
     <div class="invoice-box">
         <div class="header">
             <div>
-                <h1><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="DRIYUM" width="100" ></h1>
+                <h1><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="DRIYUM" width="100" ></h1>
                 <p style="font-size: 12px; color: #666; margin-top: 5px;">
                     Srinagar, Jammu & Kashmir 190001<br>
                     GSTIN: 01ABCDE1234F1Z5

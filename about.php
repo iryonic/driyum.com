@@ -8,7 +8,7 @@ require_once 'includes/functions.php';
 <head>
     <?php 
     $page_title = 'Our Sacred Story';
-    $page_description = "Discover the heritage of Kashmiri Hokh Suin and our mission to redefine snacking. Real ingredients, sun-dried perfection, and a modern twist on ancient Kashmiri traditions.";
+    $page_description = "Discover the heritage of Kashmiri Hokh Suin and our mission to redefine snacking. Real ingredients, mountain-fresh perfection, and a modern twist on ancient Kashmiri traditions.";
     include 'includes/head.php'; 
     ?>
 </head>
@@ -70,7 +70,7 @@ require_once 'includes/functions.php';
                         ?>
                         <div class="bg-[#FFFBEB] p-8 rounded-[40px] border border-amber-100">
                             <h4 class="font-black text-gray-900 mb-2 font-['Fredoka']"><?php echo get_setting('about_twist_title', 'Modern Twist on Ancient Traditions'); ?></h4>
-                            <p class="text-sm"><?php echo get_setting('about_twist_text', 'Prepared from fresh vegetables, Hokh suin is traditionally sun-dried, but unlike earlier times, it is handled with modern hygiene standards and packed carefully to ensure safety, quality, and convenience.'); ?></p>
+                            <p class="text-sm"><?php echo get_setting('about_twist_text', 'Prepared from fresh vegetables, Hokh suin is traditionally dehydrated, but unlike earlier times, it is handled with modern hygiene standards and packed carefully to ensure safety, quality, and convenience.'); ?></p>
                         </div>
                     </div>
                 </div>

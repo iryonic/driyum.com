@@ -76,7 +76,7 @@
     <div class="relative z-10 max-w-3xl w-full text-center">
         <!-- Brand Header (Mini) -->
         <a href="<?php echo get_url(''); ?>" class="inline-flex items-center gap-3 mb-12 group">
-            <span class="text-2xl font-['Fredoka'] font-black text-gray-900 tracking-tight"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="logo" height="100px" width="100px"></span>
+            <span class="text-2xl font-['Fredoka'] font-black text-gray-900 tracking-tight"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="logo" height="100px" width="100px"></span>
         </a>
 
         <!-- 505 Visual -->
@@ -103,7 +103,7 @@
                 Version <span class="text-[#14B8A6]">Not Supported</span>.
             </h2>
             <p class="text-gray-500 font-bold text-lg md:text-2xl max-w-lg mx-auto leading-relaxed">
-                Your browser is using a vintage protocol. We only serve our premium sun-dried treats using the latest digital standards.
+                Your browser is using a vintage protocol. We only serve our premium mountain-fresh treats using the latest digital standards.
             </p>
         </div>
 

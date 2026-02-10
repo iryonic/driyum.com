@@ -40,7 +40,8 @@ if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_statu
             foreach ($ids as $id) {
                 $notes = "Order status updated to $status via bulk action by admin";
                 execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)", [$id, $status, $notes]);
-                send_order_status_email($id, $status);
+                // Pass true for $queue to avoid waiting for SMTP
+                send_order_status_email($id, $status, true);
             }
         }
         
@@ -72,8 +73,8 @@ if ((isset($_GET['status']) || isset($_POST['ajax_action'])) && isset($_REQUEST[
         $notes = "Order status updated to $status by admin via " . (isset($_POST['ajax_action']) ? 'AJAX' : 'Direct Link');
         execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)", [$id, $status, $notes]);
         
-        // Send email notification to customer
-        send_order_status_email($id, $status);
+        // Send email notification to customer (Immediate, not queued)
+        send_order_status_email($id, $status, false); 
         
         if (isset($_POST['ajax_action'])) {
             header('Content-Type: application/json');
@@ -108,8 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dispatch_order'])) {
         $notes = "Order dispatched via India Post. Tracking Number: $tracking_number. Note: $tracking_note";
         execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, 'shipped', ?)", [$order_id, $notes]);
         
-        // Send email notification to customer
-        send_order_status_email($order_id, 'shipped');
+        // Send email notification to customer (queued for speed)
+        send_order_status_email($order_id, 'shipped', true); 
         
         if (isset($_POST['is_ajax'])) {
             header('Content-Type: application/json');
@@ -161,64 +162,88 @@ $orders = $pagination['records'];
 <style>
     @media (max-width: 768px) {
         #bulk-action-bar {
-            position: fixed;
-            bottom: 2rem;
-            left: 1.5rem;
-            right: 1.5rem;
-            z-index: 9999;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            transform: none !important;
+            width: 100% !important;
             flex-direction: column;
+            gap: 1rem;
             align-items: stretch;
-            border-style: solid;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            border-radius: 30px;
+            padding: 1.5rem 1.25rem 2rem 1.25rem; /* Increased bottom padding for safe area */
+            border-radius: 24px 24px 0 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-left: none;
+            border-right: none;
+            border-bottom: none;
+           
+        }
+
+        /* 1. Selection Info Section */
+        #bulk-action-bar > div:first-child {
+            border-right: none !important;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-right: 0 !important;
+            padding-bottom: 1rem;
+            margin-bottom: 0px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* 2. Actions Container (Flex Col -> Stack items) */
+        #bulk-action-bar > div:last-child {
+            flex-direction: column;
+            width: 100%;
+            gap: 12px;
+            align-items: stretch;
+        }
+
+        /* 3. Dropdown Group */
+        #bulk-action-bar .group {
+            width: 100%;
+        }
+        #bulk-status-select {
+            width: 100%;
+            min-width: 0; /* Allow shrinking if needed */
+        }
+        
+        /* 4. Separators */
+        .desktop-separator,
+        .h-8.w-px { display: none !important; }
+
+        /* 5. Buttons */
+        #bulk-apply-btn { 
+            width: 100%; 
+            justify-content: center;
+        }
+
+        /* 6. Grid for Secondary Actions */
+        .bulk-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            width: 100%;
         }
     }
 </style>
 
-<div class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 anim-up">
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
+    <!-- Header Content Remained Same -->
     <div>
-        <h1 class="text-4xl font-black text-gray-900 fredoka mb-2">Order Desk.</h1>
-        <div class="flex items-center gap-4">
-            <p class="text-gray-500 font-medium font-['Outfit'] italic">The logistics nerve-center of Driyum.</p>
-            <div class="h-4 w-px bg-gray-200"></div>
-            <span class="text-[10px] font-black uppercase tracking-widest text-[#19DC7E] bg-[#19DC7E]/10 px-3 py-1 rounded-full"><?php echo $pagination['total_records']; ?> Total Shipments</span>
-        </div>
+        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Orders</h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> orders</p>
     </div>
-    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full md:w-auto">
-        <!-- Bulk Actions Bar -->
-        <div id="bulk-action-bar" class="hidden flex-wrap items-center gap-4 bg-white px-6 py-3 rounded-[30px] border-2 border-dashed border-[#19DC7E] anim-up shadow-2xl">
-            <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-widest border-r border-gray-100 pr-4"><span id="selected-count">0</span> Selected</span>
-            
-            <div class="flex items-center gap-2">
-                <select id="bulk-status-select" class="bg-gray-50 border-none rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-1 focus:ring-[#19DC7E]">
-                    <option value="">Change Status</option>
-                    <option value="confirmed">Confirm</option>
-                    <option value="shipped">Ship</option>
-                    <option value="delivered">Deliver</option>
-                    <option value="cancelled">Cancel</option>
-                </select>
-                <button onclick="applyBulkStatus()" class="px-4 py-2 bg-black text-[#19DC7E] rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition">Update</button>
+    
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+        <form class="flex flex-col sm:flex-row gap-3 w-full">
+            <div class="relative group flex-1 md:w-64">
+                <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search orders..." class="w-full bg-white border border-gray-100 focus:border-[#19DC7E] rounded-2xl pl-10 pr-4 py-2.5 text-xs font-bold transition-all outline-none shadow-sm">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#19DC7E] transition-colors text-[10px]"></i>
             </div>
-
-            <div class="h-6 w-px bg-gray-100 hidden sm:block"></div>
-
-            <button onclick="applyBulkShipments()" class="bg-gray-50 text-gray-900 border border-gray-100 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black hover:border-[#19DC7E] transition flex items-center gap-2">
-                <i class="fas fa-shipping-fast"></i> Shipping Desk
-            </button>
-
-            <button onclick="applyBulkDelete()" class="bg-red-50 text-red-500 p-3 rounded-xl hover:bg-red-500 hover:text-white transition w-10 h-10 flex items-center justify-center">
-                <i class="fas fa-trash-alt text-xs"></i>
-            </button>
-        </div>
-        <form class="flex flex-col sm:flex-row gap-4 w-full">
-            <div class="relative group flex-1">
-                <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search orders, customers..." 
-                    class="bg-white border-2 border-gray-100 rounded-2xl px-6 py-4 pl-12 outline-none focus:border-[#19DC7E] transition-all font-bold text-xs w-full shadow-sm">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-            </div>
-            <select name="status_filter" onchange="this.form.submit()" class="bg-white border-2 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-[#19DC7E] transition-all font-bold text-xs shadow-sm">
+            <select name="status_filter" onchange="this.form.submit()" class="bg-white border border-gray-100 rounded-2xl px-4 py-2.5 text-[10px] font-black uppercase tracking-widest outline-none focus:border-[#19DC7E] shadow-sm">
                 <option value="">All Statuses</option>
                 <option value="pending" <?php echo $status_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
                 <option value="confirmed" <?php echo $status_filter == 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
@@ -230,104 +255,139 @@ $orders = $pagination['records'];
     </div>
 </div>
 
-<div class="bg-white rounded-[45px] shadow-2xl border border-gray-100 overflow-hidden anim-up">
+<!-- Bulk Bar -->
+<div id="bulk-action-bar" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black backdrop-blur-xl border border-white/10 px-8 py-5 rounded-[2rem] shadow-2xl shadow-blue-900/20 items-center gap-8 anim-up ring-1 ring-white/10">
+    <div class="flex items-center gap-3 border-r border-white/10 pr-8">
+        <div class="w-8 h-8 rounded-full bg-[#19DC7E] text-black flex items-center justify-center font-black text-xs shadow-lg shadow-green-500/20" id="selected-count-circle">0</div>
+        <div class="flex flex-col">
+            <span class="text-[9px] font-black text-white/50 uppercase tracking-widest">Selection</span>
+            <span class="text-xs font-bold text-white">Orders Active</span>
+        </div>
+
+        <div id="all-pages-notice" class="hidden">
+            <button onclick="selectAllPages()" class="text-[9px] font-black text-white hover:text-[#19DC7E] uppercase tracking-[0.15em] border border-white/10 px-2 py-1 rounded-lg transition-all ml-2">Select all <?php echo $pagination['total_records']; ?> orders</button>
+        </div>
+        <div id="all-pages-active" class="hidden">
+            <span class="text-[9px] font-black text-white uppercase tracking-[0.15em] ml-2">All <?php echo $pagination['total_records']; ?> orders selected</span>
+            <button onclick="resetSelection()" class="text-[9px] font-bold text-red-400 hover:underline ml-2">Clear</button>
+        </div>
+    </div>
+    
+    <div class="flex flex-col md:flex-row items-center gap-4">
+        <div class="flex items-center gap-2">
+            <div class="relative group">
+                <i class="fas fa-bolt absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs"></i>
+                <select id="bulk-status-select" class="pl-8 bg-black border border-white/10 rounded-xl pr-8 py-2.5 text-[10px] font-bold text-white outline-none focus:border-[#19DC7E] focus:bg-white/10 transition-all hover:border-white/20 appearance-none cursor-pointer min-w-[140px]">
+                    <option value="" class="bg-black">Choose Action...</option>
+                    <option value="confirmed" class="bg-black">Mark Confirmed</option>
+                    <option value="shipped" class="bg-black">Mark Shipped</option>
+                    <option value="delivered" class="bg-black">Mark Delivered</option>
+                    <option value="cancelled" class="bg-black">Mark Cancelled</option>
+                </select>
+                <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-white/30 text-[10px] pointer-events-none"></i>
+            </div>
+            <button id="bulk-apply-btn" onclick="applyBulkStatus()" class="bg-[#19DC7E] hover:bg-[#15bd6b] text-black text-[10px] font-black uppercase tracking-widest px-5 py-2.5 rounded-xl shadow-lg shadow-green-500/20 hover:shadow-green-500/40 transition-all transform active:scale-95 flex items-center gap-2">
+                Apply <i class="fas fa-check"></i>
+            </button>
+        </div>
+
+        <div class="h-8 w-px bg-white/10 desktop-separator"></div>
+
+        <div class="bulk-actions-grid flex items-center gap-2">
+             <button onclick="applyBulkShipments()" class="flex-1 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 text-white px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 group">
+                <i class="fas fa-shipping-fast text-blue-400 group-hover:scale-110 transition-transform"></i> <span class="hidden md:inline">Print</span> Label
+            </button>
+
+            <button onclick="applyBulkDelete()" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-500 p-2.5 rounded-xl transition-all flex items-center justify-center group" title="Delete Selected">
+                <i class="fas fa-trash-alt text-xs group-hover:rotate-12 transition-transform"></i>
+            </button>
+        </div>
+    </div>
+        <i class="fas fa-trash-alt text-xs"></i>
+    </button>
+</div>
+
+<div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead>
-                <tr class="text-gray-400 text-[10px] uppercase bg-gray-50/30 border-b border-gray-100 font-['Outfit']">
-                    <th class="p-10 w-20">
-                        <input type="checkbox" id="select-all" class="w-6 h-6 rounded-lg border-2 border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer transition-all">
+                <tr class="text-gray-400 text-[9px] uppercase font-black bg-gray-50/50 border-b border-gray-100 tracking-widest">
+                    <th class="p-4 w-12 text-center">
+                        <input type="checkbox" id="select-all" class="w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer shadow-sm">
                     </th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40 whitespace-nowrap">Shipment Details</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40 whitespace-nowrap">Recipient Info</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40 text-center whitespace-nowrap">Revenue</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40 whitespace-nowrap">Order Status</th>
-                    <th class="p-10 font-black tracking-[0.2em] opacity-40 text-right whitespace-nowrap">Utility</th>
+                    <th class="p-4">Order</th>
+                    <th class="p-4">Customer</th>
+                    <th class="p-4 text-center">Total</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4 text-right">Manage</th>
                 </tr>
             </thead>
-            <tbody class="text-sm font-['Outfit'] text-gray-600">
+            <tbody class="text-xs text-gray-600">
                 <?php foreach ($orders as $o): ?>
-                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all duration-300 group">
-                    <td class="p-10">
-                        <input type="checkbox" class="order-checkbox w-6 h-6 rounded-lg border-2 border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer transition-all hover:scale-110" value="<?php echo $o['id']; ?>">
+                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group">
+                    <td class="p-4 text-center">
+                        <input type="checkbox" class="order-checkbox w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" value="<?php echo $o['id']; ?>">
                     </td>
-                    <td class="p-10">
-                        <div class="flex items-center gap-5">
-                            <div class="w-16 h-16 bg-white border-2 border-dashed border-gray-100 rounded-[24px] flex flex-col items-center justify-center text-gray-500 group-hover:border-[#19DC7E] group-hover:text-[#19DC7E] transition-colors shadow-sm">
-                                <span class="text-[10px] font-black uppercase">ID</span>
-                                <span class="font-black text-lg leading-none">#<?php echo $o['id']; ?></span>
+                    <td class="p-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-900 font-black text-xs border border-gray-100 group-hover:bg-black group-hover:text-[#19DC7E] transition-colors">
+                                <?php echo $o['id']; ?>
                             </div>
                             <div>
-                                <span class="font-black text-xl text-gray-900 block mb-1"><?php echo $o['order_number']; ?></span>
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded-md"><?php echo date('M d, Y • h:i A', strtotime($o['created_at'])); ?></span>
+                                <span class="font-bold text-gray-900 block leading-tight mb-0.5"><?php echo $o['order_number']; ?></span>
+                                <span class="text-[8px] font-black text-gray-400 uppercase"><?php echo date('M d, H:i', strtotime($o['created_at'])); ?></span>
                             </div>
                         </div>
                     </td>
-                    <td class="p-10">
-                        <div class="font-black text-lg text-gray-800 mb-1"><?php echo $o['user_name'] ?? 'Guest Customer'; ?></div>
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800 leading-tight mb-0.5"><?php echo $o['user_name'] ?: 'Guest'; ?></div>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest border border-gray-200 px-2 py-0.5 rounded-md"><?php echo $o['payment_method']; ?></span>
+                            <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest px-1.5 py-0.5 bg-gray-50 rounded border border-gray-100"><?php echo $o['payment_method']; ?></span>
                             <?php if(!empty($o['razorpay_payment_id'])): ?>
-                                <span class="text-[8px] font-bold text-[#19DC7E] bg-[#19DC7E]/10 px-2 py-0.5 rounded-md ml-1">ID: <?php echo $o['razorpay_payment_id']; ?></span>
-                            <?php endif; ?>
-                            <?php if($o['payment_method'] == 'COD'): ?>
-                                <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
+                                <span class="text-[7px] font-bold text-[#19DC7E]">PayID: <?php echo substr($o['razorpay_payment_id'], -8); ?></span>
                             <?php endif; ?>
                         </div>
                     </td>
-                    <td class="p-10 text-center">
-                        <div class="inline-block px-5 py-3 bg-gray-50 rounded-2xl border border-gray-100 font-black text-gray-900 text-xl group-hover:bg-[#19DC7E] group-hover:text-black group-hover:border-transparent transition-all">
-                            ₹<?php echo number_format($o['total'], 0); ?>
-                        </div>
+                    <td class="p-4 text-center font-black text-gray-900">
+                        ₹<?php echo number_format($o['total'], 0); ?>
                     </td>
-                    <td class="p-10">
+                    <td class="p-4">
                         <div class="relative inline-block status-dropdown-container">
-                            <button onclick="toggleStatusDropdown(this, event)" class="status-btn px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] flex items-center gap-3 shadow-sm transition-all hover:scale-105 active:scale-95
+                            <button onclick="toggleStatusDropdown(this, event)" class="status-btn px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 border-b-2
                                 <?php echo get_status_color($o['order_status']); ?>
                             ">
                                 <?php echo str_replace('_', ' ', $o['order_status']); ?> 
-                                <i class="fas fa-chevron-down opacity-50 text-[10px] transition-transform duration-300"></i>
+                                <i class="fas fa-chevron-down opacity-50 text-[8px] transition-transform duration-300"></i>
                             </button>
                             
-                            <!-- Dropdown -->
-                            <div class="status-menu absolute left-0 top-full mt-4 w-56 bg-white rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-gray-100 py-4 hidden z-50 overflow-hidden transform origin-top-left transition-all">
-                                <div class="px-6 py-2 mb-2 text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-50">Workflow Status</div>
-                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'pending', this)" class="block px-6 py-3 hover:bg-yellow-400 hover:text-black text-yellow-600 font-black text-[10px] uppercase tracking-widest transition-colors">Mark Pending</a>
-                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'confirmed', this)" class="block px-6 py-3 hover:bg-indigo-600 hover:text-white text-indigo-600 font-black text-[10px] uppercase tracking-widest transition-colors">Confirm Order</a>
-                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'shipped', this)" class="block px-6 py-3 hover:bg-blue-600 hover:text-white text-blue-600 font-black text-[10px] uppercase tracking-widest transition-colors">Ship Parcel</a>
-                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'delivered', this)" class="block px-6 py-3 hover:bg-[#19DC7E] hover:text-black text-green-600 font-black text-[10px] uppercase tracking-widest transition-colors">Deliver Item</a>
-                                <div class="border-t border-gray-50 my-2"></div>
-                                <a href="javascript:void(0)" onclick="openDispatchModal(<?php echo $o['id']; ?>, '<?php echo $o['order_number']; ?>')" class="block px-6 py-3 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-600 font-black text-[10px] uppercase tracking-widest transition-colors">🚀 Dispatch Parcel</a>
-                                <div class="border-t border-gray-50 my-2"></div>
-                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'cancelled', this)" class="block px-6 py-3 hover:bg-red-600 hover:text-white text-red-600 font-black text-[10px] uppercase tracking-widest transition-colors">Void / Cancel</a>
-                                <div class="border-t border-gray-50 my-2"></div>
-                                <a href="javascript:void(0)" onclick="openDispatchModal(<?php echo $o['id']; ?>, '<?php echo $o['order_number']; ?>', '<?php echo addslashes($o['tracking_number']); ?>', '<?php echo addslashes($o['tracking_note']); ?>')" class="block px-6 py-3 bg-[#19DC7E]/10 hover:bg-[#19DC7E] hover:text-black text-[#19DC7E] font-black text-[10px] uppercase tracking-widest transition-colors">📝 Update Tracking Info</a>
+                            <div class="status-menu absolute left-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 hidden z-50 overflow-hidden transform origin-top-left transition-all">
+                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'pending', this)" class="block px-4 py-2 hover:bg-yellow-50 text-yellow-600 font-bold text-[9px] uppercase tracking-widest transition-colors">Pending</a>
+                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'confirmed', this)" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600 font-bold text-[9px] uppercase tracking-widest transition-colors">Confirm</a>
+                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'shipped', this)" class="block px-4 py-2 hover:bg-blue-50 text-blue-600 font-bold text-[9px] uppercase tracking-widest transition-colors">Ship</a>
+                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'delivered', this)" class="block px-4 py-2 hover:bg-green-50 text-green-600 font-bold text-[9px] uppercase tracking-widest transition-colors">Deliver</a>
+                                <div class="border-t border-gray-50 my-1"></div>
+                                <a href="javascript:void(0)" onclick="openDispatchModal(<?php echo $o['id']; ?>, '<?php echo $o['order_number']; ?>')" class="block px-4 py-2 hover:bg-blue-50 text-blue-700 font-black text-[9px] uppercase tracking-widest transition-colors">🚀 Send Order</a>
+                                <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'cancelled', this)" class="block px-4 py-2 hover:bg-red-50 text-red-600 font-bold text-[9px] uppercase tracking-widest transition-colors">Cancel</a>
                             </div>
                         </div>
                     </td>
-                    <td class="p-10 text-right">
-                        <div class="flex justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500">
-                            <a href="../invoice.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Invoice" class="w-14 h-14 bg-gray-50 text-gray-400 hover:bg-black hover:text-white flex items-center justify-center rounded-[20px] transition-all shadow-sm active:scale-95">
-                                <i class="fas fa-file-invoice-dollar text-lg"></i>
-                            </a>
-                            <a href="generate_label.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Thermal Label" class="w-14 h-14 bg-gray-50 text-gray-400 hover:bg-[#19DC7E] hover:text-black flex items-center justify-center rounded-[20px] transition-all shadow-sm active:scale-95">
-                                <i class="fas fa-barcode text-lg"></i>
-                            </a>
-                            <a href="../track.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Track Live" class="w-14 h-14 bg-gray-50 text-gray-400 hover:bg-indigo-500 hover:text-white flex items-center justify-center rounded-[20px] transition-all shadow-sm active:scale-95">
-                                <i class="fas fa-location-arrow text-lg"></i>
-                            </a>
+                    <td class="p-4 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <a href="../invoice.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Invoice" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#19DC7E] flex items-center justify-center rounded-lg transition-all"><i class="fas fa-file-invoice text-xs"></i></a>
+                            <a href="generate_label.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Shipping Label" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-black hover:text-[#19DC7E] flex items-center justify-center rounded-lg transition-all"><i class="fas fa-barcode text-xs"></i></a>
+                            <a href="../track.php?id=<?php echo $o['order_number']; ?>" target="_blank" title="Track Live" class="w-8 h-8 bg-gray-50 text-gray-400 hover:bg-indigo-500 hover:text-white flex items-center justify-center rounded-lg transition-all"><i class="fas fa-location-arrow text-[10px]"></i></a>
                         </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>
                 <?php if(empty($orders)): ?>
                 <tr>
-                    <td colspan="5" class="p-20 text-center">
-                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i class="fas fa-inbox text-gray-200 text-3xl"></i>
+                    <td colspan="6" class="p-20 text-center">
+                        <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-inbox text-gray-200 text-2xl"></i>
                         </div>
-                        <h3 class="text-xl font-black text-gray-500 fredoka uppercase tracking-widest">No Shipments Found</h3>
-                        <p class="text-gray-400 font-medium font-['Outfit'] mt-2">Orders will appear here once customers start buying snacks!</p>
+                        <h3 class="text-lg font-black text-gray-400 fredoka">No Orders Found</h3>
+                        <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest mt-1">Check back later or adjust filters</p>
                     </td>
                 </tr>
                 <?php endif; ?>
@@ -344,7 +404,7 @@ $orders = $pagination['records'];
                 <i class="fas fa-shipping-fast"></i>
             </div>
             <div>
-                <h3 class="text-3xl font-black fredoka text-gray-900">Dispatch Order</h3>
+                <h3 class="text-3xl font-black fredoka text-gray-900">Send Order</h3>
                 <p class="text-gray-400 font-medium" id="dispatch-order-number">ORD-000000</p>
             </div>
         </div>
@@ -378,91 +438,231 @@ $orders = $pagination['records'];
 
 <script>
 // Bulk Actions Logic
+const STORAGE_KEY = 'driyum_selected_orders';
 const selectAll = document.getElementById('select-all');
 const orderCheckboxes = document.querySelectorAll('.order-checkbox');
 const bulkBar = document.getElementById('bulk-action-bar');
 const selectedCountText = document.getElementById('selected-count');
+const allPagesNotice = document.getElementById('all-pages-notice');
+const allPagesActive = document.getElementById('all-pages-active');
+
+let isAllSelectedAcrossPages = (sessionStorage.getItem('driyum_all_pages_selected') === 'true');
+const PAGE_SIZE = 10;
+const TOTAL_RECORDS = <?php echo (int)$pagination['total_records']; ?>;
+const FILTERS = {
+    q: '<?php echo addslashes($search); ?>',
+    status_filter: '<?php echo addslashes($status_filter); ?>',
+    user_id: '<?php echo (int)$user_filter; ?>'
+};
+
+// Selection State Management
+function getTracked() {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+}
+
+function syncTracked(set) {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+    updateBulkBar();
+}
+
+function selectAllPages() {
+    isAllSelectedAcrossPages = true;
+    sessionStorage.setItem('driyum_all_pages_selected', 'true');
+    allPagesNotice.classList.add('hidden');
+    allPagesActive.classList.remove('hidden');
+    updateBulkBar();
+}
+
+function resetSelection() {
+    isAllSelectedAcrossPages = false;
+    sessionStorage.removeItem('driyum_all_pages_selected');
+    sessionStorage.removeItem(STORAGE_KEY);
+    if(selectAll) selectAll.checked = false;
+    orderCheckboxes.forEach(cb => cb.checked = false);
+    updateBulkBar();
+}
 
 function updateBulkBar() {
-    const checked = document.querySelectorAll('.order-checkbox:checked');
-    if (checked.length > 0) {
+    const tracked = getTracked();
+    const onPage = document.querySelectorAll('.order-checkbox').length;
+    
+    // Check/Uncheck the "Select All" header checkbox based on current page state
+    const onPageCheckedCount = Array.from(orderCheckboxes).filter(cb => cb.checked).length;
+    if(selectAll) selectAll.checked = (onPage > 0 && onPageCheckedCount === onPage);
+
+    if (tracked.size > 0 || isAllSelectedAcrossPages) {
         bulkBar.classList.remove('hidden');
         bulkBar.classList.add('flex');
-        selectedCountText.textContent = checked.length;
+        
+        if (isAllSelectedAcrossPages) {
+            selectedCountText.textContent = TOTAL_RECORDS;
+            allPagesNotice.classList.add('hidden');
+            allPagesActive.classList.remove('hidden');
+        } else {
+            selectedCountText.textContent = tracked.size;
+            
+            // If all on current page are selected, show "Select All Across Pages" alert
+            if (onPageCheckedCount === onPage && TOTAL_RECORDS > onPage && !isAllSelectedAcrossPages) {
+                allPagesNotice.classList.remove('hidden');
+            } else {
+                allPagesNotice.classList.add('hidden');
+            }
+            allPagesActive.classList.add('hidden');
+        }
     } else {
         bulkBar.classList.add('hidden');
         bulkBar.classList.remove('flex');
+        allPagesNotice.classList.add('hidden');
+        allPagesActive.classList.add('hidden');
+    }
+}
+
+// Initial Sync
+function initSelection() {
+    const tracked = getTracked();
+    orderCheckboxes.forEach(cb => {
+        if (tracked.has(cb.value)) cb.checked = true;
+    });
+    updateBulkBar();
+}
+
+function updateBulkBar() {
+    const tracked = getTracked();
+    const count = isAllSelectedAcrossPages ? TOTAL_RECORDS : tracked.size;
+    const bulkBar = document.getElementById('bulk-action-bar');
+    
+    // Update count
+    const countCircle = document.getElementById('selected-count-circle');
+    if(countCircle) countCircle.textContent = count;
+    
+    // Show/Hide Bar
+    if (count > 0) {
+        bulkBar.classList.remove('hidden');
+        bulkBar.classList.add('flex');
+    } else {
+        bulkBar.classList.add('hidden');
+        bulkBar.classList.remove('flex');
+    }
+
+    // "Select All" Logic across pages
+    const notice = document.getElementById('all-pages-notice');
+    const active = document.getElementById('all-pages-active');
+    
+    if (tracked.size === PAGE_SIZE && TOTAL_RECORDS > PAGE_SIZE && !isAllSelectedAcrossPages) {
+        if(notice) notice.classList.remove('hidden');
+    } else {
+        if(notice) notice.classList.add('hidden');
+    }
+
+    if (isAllSelectedAcrossPages) {
+        if(active) active.classList.remove('hidden');
+    } else {
+        if(active) active.classList.add('hidden');
     }
 }
 
 if(selectAll) {
     selectAll.addEventListener('change', () => {
+        const tracked = getTracked();
         orderCheckboxes.forEach(cb => {
             cb.checked = selectAll.checked;
+            if (selectAll.checked) tracked.add(cb.value);
+            else tracked.delete(cb.value);
         });
-        updateBulkBar();
+        syncTracked(tracked);
     });
 }
 
 orderCheckboxes.forEach(cb => {
-    cb.addEventListener('change', updateBulkBar);
+    cb.addEventListener('change', () => {
+        const tracked = getTracked();
+        if (cb.checked) tracked.add(cb.value);
+        else {
+            tracked.delete(cb.value);
+            isAllSelectedAcrossPages = false; // Breaking "All" mode if someone deselects 1
+            sessionStorage.setItem('driyum_all_pages_selected', 'false');
+        }
+        syncTracked(tracked);
+    });
 });
+
+initSelection();
 
 async function applyBulkStatus() {
     const status = document.getElementById('bulk-status-select').value;
     if (!status) return alert('Select a status first');
     
-    const checked = document.querySelectorAll('.order-checkbox:checked');
-    const ids = Array.from(checked).map(cb => cb.value);
-    
-    if(!confirm(`Update ${ids.length} orders to ${status}?`)) return;
+    const count = isAllSelectedAcrossPages ? TOTAL_RECORDS : getTracked().size;
+    if(!confirm(`Update ${count} orders to ${status}?`)) return;
     
     await performBulkAction('bulk_status', { status });
 }
 
 async function applyBulkDelete() {
-    const checked = document.querySelectorAll('.order-checkbox:checked');
-    const ids = Array.from(checked).map(cb => cb.value);
-    
-    if(!confirm(`DANGER! Delete ${ids.length} orders forever? This cannot be undone.`)) return;
+    const count = isAllSelectedAcrossPages ? TOTAL_RECORDS : getTracked().size;
+    if(!confirm(`DANGER! Delete ${count} orders forever? This cannot be undone.`)) return;
     
     await performBulkAction('bulk_delete');
 }
 
 function applyBulkShipments() {
-    const checked = document.querySelectorAll('.order-checkbox:checked');
-    if (checked.length === 0) return alert('Select at least one order');
+    const tracked = getTracked();
+    if (tracked.size === 0 && !isAllSelectedAcrossPages) return alert('Select at least one order');
     
-    const ids = Array.from(checked).map(cb => cb.value).join(',');
+    // For shipping labels, we usually need the actual IDs unless we have a filter-based generator
+    const ids = Array.from(tracked).join(',');
     window.open(`generate_batch_shipments.php?ids=${ids}`, '_blank');
 }
 
 async function performBulkAction(action, extraParams = {}) {
-    const checked = document.querySelectorAll('.order-checkbox:checked');
-    const ids = Array.from(checked).map(cb => cb.value);
+    const tracked = getTracked();
+    const ids = Array.from(tracked);
     const originalContent = bulkBar.innerHTML;
     
-    bulkBar.innerHTML = `<div class="flex items-center gap-3 px-10"><i class="fas fa-spinner fa-spin text-[#19DC7E] text-xl"></i> <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Processing...</span></div>`;
+    bulkBar.innerHTML = `<div class="flex items-center gap-3 px-10"><i class="fas fa-check-circle text-[#19DC7E] text-xl"></i> <span class="text-[10px] font-black text-white uppercase tracking-widest">${isAllSelectedAcrossPages ? 'Updating all records...' : 'Update Started...'}</span></div>`;
+
+    // Visual Update for current page (Optional)
+    if(action === 'bulk_status' && extraParams.status) {
+        ids.forEach(id => {
+            const btn = document.querySelector(`button[onclick*="updateOrderStatus(${id}"]`) || 
+                        document.querySelector(`a[onclick*="updateOrderStatus(${id}"]`)?.closest('.status-dropdown-container')?.querySelector('.status-btn');
+            if(btn) btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Updating...`;
+        });
+    }
 
     try {
         const formData = new FormData();
-        formData.append('ajax_action', action);
-        ids.forEach(id => formData.append('ids[]', id));
+        formData.append('action', action);
+        formData.append('all_selected', isAllSelectedAcrossPages);
+        
+        if (isAllSelectedAcrossPages) {
+            formData.append('q', FILTERS.q);
+            formData.append('status_filter', FILTERS.status_filter);
+            formData.append('user_id', FILTERS.user_id);
+        } else {
+            ids.forEach(id => formData.append('ids[]', id));
+        }
+
         for (const [key, value] of Object.entries(extraParams)) {
             formData.append(key, value);
         }
 
-        const response = await fetch('orders.php', { method: 'POST', body: formData });
+        // Use the new dedicated API for background processing
+        const response = await fetch('api/bulk_action.php', { method: 'POST', body: formData });
         const data = await response.json();
 
         if (data.success) {
-            window.location.reload();
+            resetSelection(); // Important to clear after success
+            // Wait 500ms for user to see the "Update Started" then reload
+            setTimeout(() => window.location.reload(), 800);
         } else {
             alert('Error: ' + data.message);
             bulkBar.innerHTML = originalContent;
         }
     } catch (e) {
-        alert('Operation failed');
+        console.error('Bulk Action Failed:', e);
+        alert('Operation failed: ' + e.message);
         bulkBar.innerHTML = originalContent;
     }
 }

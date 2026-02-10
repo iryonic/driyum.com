@@ -27,7 +27,7 @@ $products = fetch_all("
 <head>
     <?php 
     $page_title = 'My Snack Vault';
-    $page_description = "Your personal collection of saved mountain treats. Keep track of your favorite Kashmiri sun-dried snacks and hokh suin in one place.";
+    $page_description = "Your personal collection of saved mountain treats. Keep track of your favorite Kashmiri mountain snacks and hokh suin in one place.";
     include 'includes/head.php'; 
     ?>
 </head>

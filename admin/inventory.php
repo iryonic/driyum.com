@@ -1,13 +1,6 @@
 <?php
-session_start();
 require_once '../config/database.php';
 require_once '../includes/functions.php';
-
-// Simple Auth Check (assuming is_admin() is available or just checking log-in)
-if (!is_logged_in()) {
-    header("Location: ../login.php");
-    exit;
-}
 
 $conn = get_db_connection();
 
@@ -27,180 +20,386 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_stock') {
     exit;
 }
 
-$query = "SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.stock ASC";
-$pagination = get_pagination_data($query, [], 15);
+$search = sanitize_input($_GET['q'] ?? '');
+$category_filter = (int)($_GET['category_id'] ?? 0);
+
+// Bulk Action Handler
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
+    $action = $_POST['bulk_action'];
+    $ids = $_POST['ids'] ?? [];
+    $all_selected = ($_POST['all_selected'] ?? 'false') === 'true';
+    
+    if ($all_selected) {
+        $where = "WHERE 1=1";
+        $p = [];
+        if ($search) { $where .= " AND (name LIKE ? OR sku LIKE ?)"; $p[] = "%$search%"; $p[] = "%$search%"; }
+        if ($category_filter) { $where .= " AND category_id = ?"; $p[] = $category_filter; }
+        $res = fetch_all("SELECT id FROM products $where", $p);
+        $ids = array_column($res, 'id');
+    }
+    
+    if (!empty($ids)) {
+        if ($action === 'set_stock') {
+            $val = (int)$_POST['bulk_stock_val'];
+            $ids_str = implode(',', array_map('intval', $ids));
+            $conn->query("UPDATE products SET stock = $val WHERE id IN ($ids_str)");
+            $_SESSION['success'] = "Updated stock for " . count($ids) . " products";
+        } elseif ($action === 'delete') {
+            $ids_str = implode(',', array_map('intval', $ids));
+            $conn->query("DELETE FROM products WHERE id IN ($ids_str)");
+            $_SESSION['success'] = "Deleted " . count($ids) . " products";
+        }
+    }
+    header("Location: inventory.php");
+    exit;
+}
+
+include 'includes/header.php';
+
+$where = "WHERE 1=1";
+$params = [];
+if ($search) {
+    $where .= " AND (p.name LIKE ? OR p.sku LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+}
+if ($category_filter) {
+    $where .= " AND p.category_id = ?";
+    $params[] = $category_filter;
+}
+
+$query = "SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id $where ORDER BY p.stock ASC";
+$pagination = get_pagination_data($query, $params, 15);
 $products = $pagination['records'];
 
-// Keep stats fetching separate for totals
+// Stats
 $all_products = fetch_all("SELECT stock FROM products");
+$total_count = count($all_products);
+$low_stock_count = count(array_filter($all_products, fn($p) => $p['stock'] > 0 && $p['stock'] < 10));
+$out_of_stock_count = count(array_filter($all_products, fn($p) => $p['stock'] <= 0));
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Management - DRIYUM Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Outfit', sans-serif; background: #f8fafc; }
-        .font-fredoka { font-family: 'Fredoka', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); }
-        .low-stock { background: #fff7ed; border-color: #fed7aa; }
-        .out-of-stock { background: #fef2f2; border-color: #fecaca; }
-    </style>
-</head>
-<body class="p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div>
-                <h1 class="text-3xl font-black font-fredoka text-gray-900">Inventory Management 📦</h1>
-                <p class="text-gray-500 font-medium">Monitor and update your snack stock levels in real-time.</p>
-            </div>
-            <a href="index.php" class="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 transition font-bold text-sm">
-                <i class="fas fa-arrow-left"></i> Dashboard
-            </a>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100">
-                <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Total Products</p>
-                <h2 class="text-3xl font-black font-fredoka"><?php echo count($all_products); ?></h2>
-            </div>
-            <div class="bg-amber-50 p-6 rounded-[32px] shadow-sm border border-amber-100">
-                <p class="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-1">Low Stock (< 10)</p>
-                <?php 
-                    $low = array_filter($all_products, fn($p) => $p['stock'] > 0 && $p['stock'] < 10);
-                ?>
-                <h2 class="text-3xl font-black font-fredoka text-amber-700"><?php echo count($low); ?></h2>
-            </div>
-            <div class="bg-red-50 p-6 rounded-[32px] shadow-sm border border-red-100">
-                <p class="text-[10px] font-black uppercase tracking-widest text-red-600 mb-1">Out of Stock</p>
-                <?php 
-                    $out = array_filter($all_products, fn($p) => $p['stock'] <= 0);
-                ?>
-                <h2 class="text-3xl font-black font-fredoka text-red-700"><?php echo count($out); ?></h2>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-[40px] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-gray-50/50 border-b border-gray-100">
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Product</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Category</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Current Stock</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
-                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-gray-400">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        <?php foreach($products as $p): 
-                            $status_class = '';
-                            $status_text = 'Healthy';
-                            $dot_color = 'bg-green-500';
-                            
-                            if ($p['stock'] <= 0) {
-                                $status_class = 'out-of-stock';
-                                $status_text = 'Out of Stock';
-                                $dot_color = 'bg-red-500';
-                            } elseif ($p['stock'] < 10) {
-                                $status_class = 'low-stock';
-                                $status_text = 'Low Stock';
-                                $dot_color = 'bg-amber-500';
-                            }
-                        ?>
-                        <tr class="hover:bg-gray-50/50 transition-colors <?php echo $status_class; ?>">
-                            <td class="px-8 py-6">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-white rounded-xl border border-gray-100 p-1">
-                                        <img src="../<?php echo $p['image']; ?>" class="w-full h-full object-contain">
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-gray-900 line-clamp-1"><?php echo $p['name']; ?></p>
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">SKU: <?php echo $p['sku']; ?></p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-8 py-6">
-                                <span class="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-black uppercase tracking-widest text-gray-500"><?php echo $p['category_name']; ?></span>
-                            </td>
-                            <td class="px-8 py-6">
-                                <div class="flex items-center gap-3">
-                                    <input type="number" id="stock-<?php echo $p['id']; ?>" value="<?php echo $p['stock']; ?>" 
-                                        class="w-20 bg-white border-2 border-gray-100 rounded-xl px-3 py-2 text-center font-black focus:border-black outline-none transition uppercase">
-                                </div>
-                            </td>
-                            <td class="px-8 py-6">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full <?php echo $dot_color; ?>"></div>
-                                    <span class="text-xs font-bold text-gray-700"><?php echo $status_text; ?></span>
-                                </div>
-                            </td>
-                            <td class="px-8 py-6">
-                                <button onclick="saveStock(<?php echo $p['id']; ?>)" id="btn-<?php echo $p['id']; ?>" class="bg-black text-white px-5 py-2.5 rounded-xl font-bold text-xs hover:scale-105 transition active:scale-95">
-                                    Update
-                                </button>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
+    <div>
+        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Inventory</h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Managing <span class="text-black"><?php echo $pagination['total_records']; ?></span> products</p>
     </div>
-
-    <div id="toast" class="fixed bottom-10 right-10 z-50 flex flex-col gap-2 translate-y-20 opacity-0 transition-all duration-500 pointer-events-none">
-        <div id="toast-content" class="bg-black text-white px-8 py-4 rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-3">
-            <i class="fas fa-check-circle text-[#19DC7E]"></i>
-            <span id="toast-text">Stock updated successfully!</span>
+    <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+        <form class="flex flex-col sm:flex-row gap-3 w-full">
+            <div class="relative group flex-1 md:w-64">
+                <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search products..." class="w-full bg-white border border-gray-100 focus:border-black rounded-2xl pl-10 pr-4 py-2 text-xs font-bold transition-all outline-none shadow-sm">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-black transition-colors text-[10px]"></i>
+            </div>
+            <select name="category_id" onchange="this.form.submit()" class="bg-white border border-gray-100 rounded-2xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none focus:border-black shadow-sm">
+                <option value="">All Categories</option>
+                <?php 
+                $cats = fetch_all("SELECT * FROM categories ORDER BY name ASC");
+                foreach($cats as $c): ?>
+                    <option value="<?php echo $c['id']; ?>" <?php echo $category_filter == $c['id'] ? 'selected' : ''; ?>><?php echo $c['name']; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+        <div class="flex gap-2">
+            <div class="bg-amber-50 px-4 py-2 rounded-2xl border border-amber-100 flex items-center gap-2">
+                <span class="text-[9px] font-black uppercase text-amber-600">Low: <?php echo $low_stock_count; ?></span>
+            </div>
+            <div class="bg-red-50 px-4 py-2 rounded-2xl border border-red-100 flex items-center gap-2">
+                <span class="text-[9px] font-black uppercase text-red-600">Out: <?php echo $out_of_stock_count; ?></span>
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-text').innerText = msg;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+<!-- Bulk Action Bar -->
+<style>
+    @media (max-width: 768px) {
+        #bulk-bar {
+            left: 1rem;
+            right: 1rem;
+            bottom: 1.5rem;
+            transform: none !important;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1.25rem;
+            gap: 1rem;
+            width: auto;
+            border-radius: 24px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(16px);
         }
-
-        async function saveStock(pid) {
-            const stock = document.getElementById('stock-' + pid).value;
-            const btn = document.getElementById('btn-' + pid);
-            const originalText = btn.innerHTML;
-            
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            btn.disabled = true;
-
-            const formData = new FormData();
-            formData.append('action', 'update_stock');
-            formData.append('product_id', pid);
-            formData.append('stock', stock);
-
-            try {
-                const res = await fetch('inventory.php', { method: 'POST', body: formData });
-                const data = await res.json();
-                
-                if (data.success) {
-                    showToast("Stock updated for item #" + pid);
-                    // Reload to update status labels or just reload data
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    alert("Error: " + data.message);
-                }
-            } catch (e) {
-                console.error(e);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
+        #bulk-bar > div:first-child {
+            border-right: none;
+            padding-right: 0;
+            justify-content: space-between;
+            width: 100%;
         }
-    </script>
-</body>
-</html>
+        #bulk-bar form {
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            width: 100%;
+            justify-content: space-between;
+        }
+        #bulk-bar .w-px.h-6 {
+            display: none;
+        }
+        #bulk-bar input[name="bulk_stock_val"] {
+            width: 80px;
+        }
+    }
+</style>
+<div id="bulk-bar" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black text-white px-8 py-5 rounded-[32px] shadow-2xl items-center gap-8 anim-up border border-white/10">
+    <div class="flex items-center gap-4 pr-8 border-r border-white/10">
+        <div class="w-10 h-10 rounded-2xl bg-[#19DC7E] flex items-center justify-center text-black">
+            <i class="fas fa-boxes text-lg"></i>
+        </div>
+        <div>
+            <p class="text-[10px] font-black text-[#19DC7E] uppercase tracking-widest"><span id="selected-count">0</span> Selected</p>
+            <div id="all-pages-notice" class="hidden">
+                <button onclick="selectAllPages()" class="text-[9px] font-bold text-white hover:underline">Select all matching <?php echo $pagination['total_records']; ?></button>
+            </div>
+            <p id="all-pages-active" class="hidden text-[9px] font-bold text-white">All matching records selected</p>
+        </div>
+    </div>
+    
+    <form method="POST" class="flex items-center gap-4">
+        <input type="hidden" name="bulk_action" id="bulk-action-type">
+        <input type="hidden" name="all_selected" id="bulk-all-selected" value="false">
+        <div id="bulk-ids-container"></div>
+        
+        <div class="flex items-center gap-3">
+            <input type="number" name="bulk_stock_val" placeholder="Stock" class="w-24 bg-white/10 border border-white/10 rounded-xl px-4 py-2 text-xs font-bold text-white outline-none focus:border-[#19DC7E]">
+            <button type="submit" onclick="document.getElementById('bulk-action-type').value='set_stock'" class="bg-[#19DC7E] text-black px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all">Set Stock</button>
+        </div>
+        
+        <div class="w-px h-6 bg-white/10 mx-2"></div>
+        
+        <button type="submit" onclick="document.getElementById('bulk-action-type').value='delete'; return confirm('Delete selected products?')" class="text-red-400 hover:text-red-500 transition-colors">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+        
+        <button type="button" onclick="resetSelection()" class="text-[9px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors ml-4">Cancel</button>
+    </form>
+</div>
+
+<div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-gray-400 text-[8px] uppercase bg-gray-50/50 border-b border-gray-100 font-black tracking-widest">
+                    <th class="p-5 w-16 text-center">
+                        <input type="checkbox" id="select-all" class="w-4 h-4 rounded border-gray-200 text-black focus:ring-black cursor-pointer">
+                    </th>
+                    <th class="p-5">Product</th>
+                    <th class="p-5 font-black">Category</th>
+                    <th class="p-5">Stock</th>
+                    <th class="p-5">Status</th>
+                    <th class="p-5 text-right">Action</th>
+                </tr>
+            </thead>
+            <tbody class="text-xs text-gray-600">
+                <?php foreach($products as $p): 
+                    $status_text = 'Healthy';
+                    $color_class = 'bg-green-50 text-green-600 border-green-100';
+                    $dot_color = 'bg-green-500';
+                    
+                    if ($p['stock'] <= 0) {
+                        $status_text = 'Out of Stock';
+                        $color_class = 'bg-red-50 text-red-600 border-red-100';
+                        $dot_color = 'bg-red-500';
+                    } elseif ($p['stock'] < 10) {
+                        $status_text = 'Low Stock';
+                        $color_class = 'bg-amber-50 text-amber-600 border-amber-100';
+                        $dot_color = 'bg-amber-500';
+                    }
+                ?>
+                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group">
+                    <td class="p-4 text-center">
+                        <input type="checkbox" value="<?php echo $p['id']; ?>" class="product-checkbox w-4 h-4 rounded border-gray-200 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer">
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-white border border-gray-100 p-1">
+                                <img src="../<?php echo $p['image']; ?>" class="w-full h-full object-contain">
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-900"><?php echo $p['name']; ?></p>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">SKU: <?php echo $p['sku']; ?></p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400"><?php echo $p['category_name']; ?></span>
+                    </td>
+                    <td class="p-4">
+                        <input type="number" id="stock-<?php echo $p['id']; ?>" value="<?php echo $p['stock']; ?>" 
+                            class="w-20 bg-gray-50 border-none rounded-xl px-3 py-2 text-center text-xs font-black focus:ring-1 focus:ring-black outline-none transition uppercase">
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border <?php echo $color_class; ?> flex items-center gap-1.5 w-fit">
+                            <span class="w-1 h-1 rounded-full <?php echo $dot_color; ?>"></span>
+                            <?php echo $status_text; ?>
+                        </span>
+                    </td>
+                    <td class="p-4 text-right">
+                        <button onclick="saveStock(<?php echo $p['id']; ?>)" id="btn-<?php echo $p['id']; ?>" class="bg-black text-[#19DC7E] px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-sm">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="toast" class="fixed bottom-10 right-10 z-[200] translate-y-20 opacity-0 transition-all duration-500 pointer-events-none">
+    <div class="bg-black text-white px-6 py-3 rounded-2xl shadow-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3">
+        <i class="fas fa-check-circle text-[#19DC7E]"></i>
+        <span id="toast-text">Updated!</span>
+    </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'driyum_inventory_selection';
+const selectAll = document.getElementById('select-all');
+const productCheckboxes = document.querySelectorAll('.product-checkbox');
+const bulkBar = document.getElementById('bulk-bar');
+const selectedCountText = document.getElementById('selected-count');
+const allPagesNotice = document.getElementById('all-pages-notice');
+const allPagesActive = document.getElementById('all-pages-active');
+
+let isAllSelectedAcrossPages = (sessionStorage.getItem('inv_all_pages') === 'true');
+const TOTAL_RECORDS = <?php echo (int)$pagination['total_records']; ?>;
+
+function getStored() { return new Set(JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '[]')); }
+function syncStored(set) {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...set]));
+    updateUI();
+}
+
+function selectAllPages() {
+    isAllSelectedAcrossPages = true;
+    sessionStorage.setItem('inv_all_pages', 'true');
+    updateUI();
+}
+
+function resetSelection() {
+    isAllSelectedAcrossPages = false;
+    sessionStorage.removeItem('inv_all_pages');
+    sessionStorage.removeItem(STORAGE_KEY);
+    if(selectAll) selectAll.checked = false;
+    productCheckboxes.forEach(cb => cb.checked = false);
+    updateUI();
+}
+
+function updateUI() {
+    const tracked = getStored();
+    const onPage = productCheckboxes.length;
+    const checked = Array.from(productCheckboxes).filter(cb => cb.checked).length;
+    
+    if(selectAll) selectAll.checked = (onPage > 0 && checked === onPage);
+
+    if (tracked.size > 0 || isAllSelectedAcrossPages) {
+        bulkBar.classList.remove('hidden');
+        bulkBar.classList.add('flex');
+        
+        if (isAllSelectedAcrossPages) {
+            selectedCountText.textContent = TOTAL_RECORDS;
+            allPagesNotice.classList.add('hidden');
+            allPagesActive.classList.remove('hidden');
+        } else {
+            selectedCountText.textContent = tracked.size;
+            if (checked === onPage && TOTAL_RECORDS > onPage) allPagesNotice.classList.remove('hidden');
+            else allPagesNotice.classList.add('hidden');
+            allPagesActive.classList.add('hidden');
+        }
+    } else {
+        bulkBar.classList.add('hidden');
+        bulkBar.classList.remove('flex');
+    }
+}
+
+if(selectAll) {
+    selectAll.addEventListener('change', () => {
+        const tracked = getStored();
+        productCheckboxes.forEach(cb => {
+            cb.checked = selectAll.checked;
+            if (selectAll.checked) tracked.add(cb.value);
+            else tracked.delete(cb.value);
+        });
+        syncStored(tracked);
+    });
+}
+
+productCheckboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+        const tracked = getStored();
+        if (cb.checked) tracked.add(cb.value);
+        else {
+            tracked.delete(cb.value);
+            isAllSelectedAcrossPages = false;
+            sessionStorage.setItem('inv_all_pages', 'false');
+        }
+        syncStored(tracked);
+    });
+});
+
+document.querySelector('form[method="POST"]')?.addEventListener('submit', function(e) {
+    if(this.id === 'bulkEmailForm') return; // skip for broadcast
+    const tracked = getStored();
+    document.getElementById('bulk-all-selected').value = isAllSelectedAcrossPages;
+    const container = document.getElementById('bulk-ids-container');
+    container.innerHTML = '';
+    if(!isAllSelectedAcrossPages) {
+        tracked.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden'; input.name = 'ids[]'; input.value = id;
+            container.appendChild(input);
+        });
+    }
+});
+
+function init() {
+    const tracked = getStored();
+    productCheckboxes.forEach(cb => { if (tracked.has(cb.value)) cb.checked = true; });
+    updateUI();
+}
+init();
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-text').innerText = msg;
+    toast.classList.remove('translate-y-20', 'opacity-0');
+    setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2000);
+}
+
+async function saveStock(pid) {
+    const stock = document.getElementById('stock-' + pid).value;
+    const btn = document.getElementById('btn-' + pid);
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('action', 'update_stock');
+    formData.append('product_id', pid);
+    formData.append('stock', stock);
+
+    try {
+        const res = await fetch('inventory.php', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.success) {
+            showToast("STOCK UPDATED");
+        }
+    } catch (e) { console.error(e); }
+    finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+</script>
+
+<?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
+
+<?php include 'includes/footer.php'; ?>

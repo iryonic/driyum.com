@@ -49,8 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stock = (int)$_POST['stock'];
     $cat_id = (int)$_POST['category_id'];
     $active = (int)$_POST['is_active'];
-    $bg_color = $_POST['bg_color'] ?? '';
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
+    $is_featured = isset($_POST['is_featured']) ? (int)$_POST['is_featured'] : 0;
+    $bg_color = $_POST['bg_color'] ?? '';
+
 
     // 1. Featured Image
     $image_path = $_POST['current_image'] ?? '';
@@ -63,6 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
             $image_path = 'assets/images/products/' . $filename;
+            // Optimize the uploaded image
+            if (function_exists('optimize_image')) {
+                $optimized = optimize_image($upload_dir . $filename, $upload_dir . $filename);
+                if ($optimized) $image_path = $optimized;
+            }
         }
     }
 
@@ -72,13 +79,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // SAVE PRODUCT META
     if ($id > 0) {
-        $sql = "UPDATE products SET category_id=?, name=?, description=?, ingredients=?, nutritional_info=?, price=?, original_price=?, stock=?, is_active=?, image=?, bg_color=?, weight=? WHERE id=?";
+        $sql = "UPDATE products SET category_id=?, name=?, description=?, ingredients=?, nutritional_info=?, price=?, original_price=?, stock=?, is_active=?, is_featured=?, image=?, bg_color=?, weight=? WHERE id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("issssddiisssi", $cat_id, $name, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $image_path, $bg_color, $weight, $id);
+        $stmt->bind_param("issssddiiisssi", $cat_id, $name, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $is_featured, $image_path, $bg_color, $weight, $id);
     } else {
-        $sql = "INSERT INTO products (category_id, name, slug, description, ingredients, nutritional_info, price, original_price, stock, is_active, image, bg_color, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO products (category_id, name, slug, description, ingredients, nutritional_info, price, original_price, stock, is_active, is_featured, image, bg_color, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssssddiisss", $cat_id, $name, $slug, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $image_path, $bg_color, $weight);
+        $stmt->bind_param("isssssddiiisss", $cat_id, $name, $slug, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $is_featured, $image_path, $bg_color, $weight);
     }
 
     if ($stmt->execute()) {
@@ -110,6 +117,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
+        // Clear Frontend Cache
+        if (function_exists('clear_all_cache')) clear_all_cache();
+
         // Redirect to products list
         echo "<script>window.location='products.php';</script>";
         exit;
@@ -122,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $product = [
     'name' => '', 'category_id' => 1, 'price' => '', 'original_price' => '', 
     'description' => '', 'ingredients' => '', 'nutritional_info' => '', 
-    'image' => '', 'stock' => 10, 'is_active' => 1, 'bg_color' => '', 'weight' => '0.500'
+    'image' => '', 'stock' => 10, 'is_active' => 1, 'is_featured' => 0, 'bg_color' => '', 'weight' => '0.500'
 ];
 $gallery_images = [];
 
@@ -454,8 +464,15 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Stock Level</label>
-                        <input type="number" name="stock" value="<?php echo $product['stock']; ?>" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none">
+                        <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Stock Quantity</label>
+                        <input type="number" name="stock" value="<?php echo $product['stock']; ?>" required class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Featured Product</label>
+                        <select name="is_featured" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#19DC7E] outline-none appearance-none">
+                            <option value="0" <?php echo !$product['is_featured']?'selected':''; ?>>No (Normal)</option>
+                            <option value="1" <?php echo $product['is_featured']?'selected':''; ?>>Yes (Show on Homepage)</option>
+                        </select>
                     </div>
                 </div>
             </div>

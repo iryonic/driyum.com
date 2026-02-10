@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
         
         <div class="text-center mb-8">
             <a href="<?php echo get_url('index'); ?>" class="inline-block mb-6">
-                <img src="assets/images/logo.png" alt="Driyum Logo" class="w-24 mx-auto">
+                <img src="assets/images/logo.svg" alt="Driyum Logo" class="w-24 mx-auto">
             </a>
             <h1 class="text-3xl font-['Fredoka'] font-bold text-gray-900">Set New Password</h1>
             <p class="text-gray-500 font-['Outfit'] mt-2">Almost there! Choose a strong password.</p>

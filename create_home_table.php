@@ -23,7 +23,7 @@ if ($conn->query($sql)) {
         $stmt = $conn->prepare("INSERT INTO homepage_sections (section_name, heading, subheading, media_url, video_url) VALUES (?, ?, ?, ?, ?)");
         $name = 'video_brand_story';
         $head = "FROM KASHMIR \nWITH LOVE.";
-        $sub = "Experience the journey of our sun-dried treats. No machines, just sunshine and mountain air.";
+        $sub = "Experience the journey of our premium treats. No machines, just mountain air and traditional processing.";
         $img = "assets/images/hero.jpg";
         $vid = "#";
         $stmt->bind_param("sssss", $name, $head, $sub, $img, $vid);

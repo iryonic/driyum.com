@@ -24,6 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             $sql = "INSERT INTO users (name, email, phone, password, is_admin, is_active, created_at) VALUES (?, ?, ?, ?, 1, 1, NOW())";
             if (execute_query($sql, [$name, $email, $phone, $hashed])) {
+                // Automatically subscribe to newsletter
+                subscribe_newsletter($email);
                 $success = "New administrator account created successfully!";
             } else {
                 $error = "Failed to create administrator account.";

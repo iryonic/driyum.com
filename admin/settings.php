@@ -26,51 +26,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         'maintenance_progress',
         'maintenance_status_label',
         'maintenance_mode_text',
-		'maintenance_image'
+        'maintenance_sticker_text',
+        'maintenance_overlay_text',
+        'maintenance_show_timer',
+        'maintenance_end_date',
+        'maintenance_countdown_label'
     ];
 
     $error_found = false;
     foreach ($settings_to_update as $key) {
         $raw_val = $_POST[$key] ?? '';
-
-        // Strict Sanitization for Headline (No HTML or Tailwind classes)
         if ($key === 'maintenance_headline') {
             $raw_val = strip_tags($raw_val);
         }
-
         $val = sanitize_input($raw_val);
-        
-        // Validation for numeric fields
         if (in_array($key, ['tax_percentage', 'free_shipping_threshold']) && !empty($val) && !is_numeric($val)) {
             $error = "Field " . str_replace('_', ' ', $key) . " must be a number.";
             $error_found = true;
             break;
         }
-        
         update_setting($key, $val);
     }
 
-    // Handle File Upload for Maintenance Image
-    if (isset($_FILES['maintenance_image_file']) && $_FILES['maintenance_image_file']['error'] === UPLOAD_ERR_OK) {
-        $allowed = ['jpg', 'jpeg', 'png', 'webp'];
-        $filename = $_FILES['maintenance_image_file']['name'];
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        
-        if (in_array($ext, $allowed)) {
-            $upload_dir = '../assets/uploads/';
-            if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+    // Handle File Uploads (Logo, Favicon, Maintenance)
+    $uploads = ['maintenance_image_file' => 'maintenance_image', 'site_logo_file' => 'site_logo', 'site_favicon_file' => 'site_favicon'];
+    foreach($uploads as $file_key => $db_key) {
+        if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
+            $allowed = ['jpg', 'jpeg', 'png', 'webp', 'ico', 'svg'];
+            $filename = $_FILES[$file_key]['name'];
+            $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             
-            $new_name = 'maintenance_' . time() . '.' . $ext;
-            $dest = $upload_dir . $new_name;
-            
-            if (move_uploaded_file($_FILES['maintenance_image_file']['tmp_name'], $dest)) {
-                $db_path = 'assets/uploads/' . $new_name;
-                update_setting('maintenance_image', $db_path);
+            if (in_array($ext, $allowed)) {
+                $upload_dir = '../assets/uploads/';
+                if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+                
+                $new_name = $db_key . '_' . time() . '.' . $ext;
+                $dest = $upload_dir . $new_name;
+                
+                if (move_uploaded_file($_FILES[$file_key]['tmp_name'], $dest)) {
+                    $db_path = 'assets/uploads/' . $new_name;
+                    update_setting($db_key, $db_path);
+                } else {
+                    $error = "Failed to move uploaded file ($file_key).";
+                }
             } else {
-                $error = "Failed to move uploaded file.";
+                $error = "Invalid file type for $file_key.";
             }
-        } else {
-            $error = "Invalid file type. Only JPG, PNG, WEBP allowed.";
         }
     }
     
@@ -82,8 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
 $s = [
     'tax' => get_setting('tax_percentage', '12'),
     'name' => get_setting('store_name', 'DRIYUM'),
-    'email' => get_setting('support_email', 'hello@driyum.com'),
-    'phone' => get_setting('support_phone', '+91 91030 00000'),
+    'email' => get_setting('support_email', 'contact@driyum.com'),
+    'phone' => get_setting('support_phone', '+91 9419809801'),
     'threshold' => get_setting('free_shipping_threshold', '499'),
     'instagram' => get_setting('instagram_url', '#'),
     'whatsapp' => get_setting('whatsapp_number', ''),
@@ -92,260 +93,269 @@ $s = [
     'youtube' => get_setting('youtube_url', '#'),
     'pinterest' => get_setting('pinterest_url', '#'),
     'maintenance' => get_setting('maintenance_mode', 'off'),
-    'footer_desc' => get_setting('footer_description', 'Redefining the art of snacking with premium, sun-dried indulgence. Naturally sweet, unapologetically bold.'),
+    'footer_desc' => get_setting('footer_description', 'Redefining the art of snacking with premium, indulgence.'),
     'order_prefix' => get_setting('order_prefix', 'DRY-'),
-    'seo_desc' => get_setting('seo_description', 'Premium sun-dried snacks and organic delicacies from Kashmir.'),
-    'm_headline' => get_setting('maintenance_headline', 'System Update <br><span class="text-[#19DC7E]">In Progress.</span>'),
-    'm_desc' => get_setting('maintenance_description', "We're performing scheduled maintenance to improve your experience.\nThings will be back and better than ever very soon."),
+    'seo_desc' => get_setting('seo_description', 'Premium snacks and organic delicacies from Kashmir.'),
+    'm_headline' => get_setting('maintenance_headline', 'System Update'),
+    'm_desc' => get_setting('maintenance_description', "We're performing scheduled maintenance."),
     'm_progress' => get_setting('maintenance_progress', '80'),
     'm_status' => get_setting('maintenance_status_label', 'System Optimization'),
     'm_mode_text' => get_setting('maintenance_mode_text', 'Maintenance Mode'),
-    'm_image' => get_setting('maintenance_image', 'assets/images/hero.jpg')
+    'm_image' => get_setting('maintenance_image', 'assets/images/hero.jpg'),
+    'm_countdown_label' => get_setting('maintenance_countdown_label', 'WE WILL BE BACK SUBSCRIBE US TILL THEN'),
+    'logo' => get_setting('site_logo', ''),
+    'favicon' => get_setting('site_favicon', ''),
+    'm_show_timer' => get_setting('maintenance_show_timer', 'on')
 ];
 ?>
 
-<div class="max-w-6xl mx-auto pb-40">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-        <div>
-            <h1 class="text-5xl font-black text-gray-900 fredoka mb-2 tracking-tight">Command Center</h1>
-            <p class="text-gray-500 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
-                <span class="text-[#19DC7E]">System Settings</span>
-                <span class="opacity-20">/</span>
-                <span>Global Configuration</span>
-            </p>
-        </div>
-        <div class="flex items-center gap-4">
-            <div class="bg-white px-6 py-3 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3">
-                <div class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full <?php echo $s['maintenance'] == 'on' ? 'bg-red-400' : 'bg-green-400'; ?> opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 <?php echo $s['maintenance'] == 'on' ? 'bg-red-500' : 'bg-green-500'; ?>"></span>
-                </div>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-900"><?php echo $s['maintenance'] == 'on' ? 'Maintenance Active' : 'Store Live'; ?></span>
-            </div>
-            <div class="w-16 h-16 bg-black text-white rounded-[24px] flex items-center justify-center text-2xl shadow-2xl rotate-3">
-                <i class="fas fa-sliders-h"></i>
-            </div>
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
+    <div>
+        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Settings</h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Manage global website configuration</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full <?php echo $s['maintenance'] == 'on' ? 'bg-red-500 animate-pulse' : 'bg-[#19DC7E]'; ?>"></span>
+            <span class="text-[9px] font-black uppercase tracking-widest text-gray-600"><?php echo $s['maintenance'] == 'on' ? 'Maintenance' : 'Store Live'; ?></span>
         </div>
     </div>
-
-    <?php if($success): ?>
-        <div class="mb-10 p-2 bg-green-500 rounded-[32px] anim-up">
-            <div class="bg-white p-6 rounded-[28px] border-2 border-green-100/50 flex items-center gap-4">
-                <div class="w-12 h-12 bg-green-500 text-white rounded-2xl flex items-center justify-center shadow-lg"><i class="fas fa-check"></i></div>
-                <p class="font-black uppercase tracking-widest text-sm text-green-600"><?php echo $success; ?></p>
-            </div>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST" class="space-y-12" enctype="multipart/form-data">
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <!-- EMERGENCY SECTION -->
-            <div class="bg-white rounded-[48px] p-8 shadow-sm border border-gray-100 flex flex-col">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="w-12 h-12 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center shadow-inner"><i class="fas fa-power-off"></i></div>
-                    <div>
-                        <h3 class="font-black text-gray-900 text-lg fredoka">System Control</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Master Switch</p>
-                    </div>
-                </div>
-                <div class="flex-1">
-                    <div class="p-6 bg-red-50/50 rounded-3xl border border-red-100 text-[11px] text-red-700 font-bold leading-relaxed mb-6">
-                        <i class="fas fa-info-circle mr-2"></i> Enabling maintenance mode will lock the storefront and display a "Restocking" page to all customers.
-                    </div>
-                    <label class="flex items-center justify-between p-6 bg-gray-50 rounded-[28px] border-2 border-transparent cursor-pointer hover:border-red-200 hover:bg-red-50/20 transition-all group">
-                        <span class="text-xs font-black uppercase tracking-widest text-gray-900">Maintenance Mode</span>
-                        <div class="relative inline-block w-14 h-7">
-                            <input type="hidden" name="maintenance_mode" value="off">
-                            <input type="checkbox" name="maintenance_mode" value="on" <?php echo $s['maintenance'] == 'on' ? 'checked' : ''; ?> class="peer opacity-0 w-0 h-0">
-                            <span class="absolute cursor-pointer inset-0 bg-gray-200 rounded-full transition-all peer-checked:bg-red-500 after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-5 after:w-5 after:shadow-sm after:transition-all peer-checked:after:translate-x-7"></span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <!-- LOGISTICS & DNA -->
-            <div class="bg-white rounded-[48px] p-10 shadow-sm border border-gray-100 lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="space-y-8">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center text-xs shadow-sm"><i class="fas fa-fingerprint"></i></div>
-                        <h4 class="font-black text-xs uppercase tracking-[0.2em] text-gray-900">Brand DNA</h4>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Store Name</label>
-                            <input type="text" name="store_name" value="<?php echo $s['name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-black focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Order ID Prefix</label>
-                            <input type="text" name="order_prefix" value="<?php echo $s['order_prefix']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-black focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                        </div>
-                    </div>
-                </div>
-                <div class="space-y-8">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-amber-50 text-amber-500 rounded-lg flex items-center justify-center text-xs shadow-sm"><i class="fas fa-coins"></i></div>
-                        <h4 class="font-black text-xs uppercase tracking-[0.2em] text-gray-900">Economics</h4>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Free Shipping At (₹)</label>
-                            <input type="text" name="free_shipping_threshold" value="<?php echo $s['threshold']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-black focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Default Tax (%)</label>
-                            <input type="text" name="tax_percentage" value="<?php echo $s['tax']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-black focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUPPORT & SOCIAL -->
-            <div class="bg-white rounded-[48px] p-10 shadow-sm border border-gray-100 lg:col-span-3">
-                <div class="flex items-center gap-4 mb-10 pb-6 border-b border-gray-50">
-                    <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center shadow-inner"><i class="fas fa-share-alt"></i></div>
-                    <div>
-                        <h3 class="font-black text-gray-900 text-lg fredoka">Connectivity & Presence</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Support Channels & Social Links</p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Support Email</label>
-                        <input type="email" name="support_email" value="<?php echo $s['email']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-black focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Direct Contact/WA</label>
-                        <input type="text" name="support_phone" value="<?php echo $s['phone']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-black focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">WhatsApp (Auto-Connect)</label>
-                        <input type="text" name="whatsapp_number" value="<?php echo $s['whatsapp']; ?>" placeholder="+91..." class="w-full bg-gray-50 border-2 border-transparent focus:border-green-500 focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Instagram URL</label>
-                        <input type="text" name="instagram_url" value="<?php echo $s['instagram']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-pink-500 focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Facebook Page URL</label>
-                        <input type="text" name="facebook_url" value="<?php echo $s['facebook']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-blue-600 focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Twitter (X) URL</label>
-                        <input type="text" name="twitter_url" value="<?php echo $s['twitter']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">YouTube Channel URL</label>
-                        <input type="text" name="youtube_url" value="<?php echo $s['youtube']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-red-600 focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Pinterest URL</label>
-                        <input type="text" name="pinterest_url" value="<?php echo $s['pinterest']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-red-500 focus:bg-white rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-sm">
-                    </div>
-                </div>
-            </div>
-
-            <!-- MAINTENANCE CONFIG -->
-            <div class="bg-gray-900 rounded-[48px] p-10 shadow-xl border border-gray-800 lg:col-span-3 text-white overflow-hidden relative">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-green-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                
-                <div class="flex items-center gap-4 mb-10 pb-6 border-b border-gray-800 relative z-10">
-                    <div class="w-12 h-12 bg-gray-800 text-[#19DC7E] rounded-2xl flex items-center justify-center shadow-inner"><i class="fas fa-hammer"></i></div>
-                    <div>
-                        <h3 class="font-black text-white text-lg fredoka">Maintenance Aesthetics</h3>
-                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Customize the look of your lock screen</p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
-                    <div class="space-y-6 lg:col-span-2">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Headline</label>
-                            <input type="text" name="maintenance_headline" value="<?php echo htmlspecialchars($s['m_headline']); ?>" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white placeholder-gray-600">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Description</label>
-                            <textarea name="maintenance_description" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[32px] px-6 py-6 outline-none transition-all font-medium h-32 resize-none text-white shadow-inner placeholder-gray-600"><?php echo htmlspecialchars($s['m_desc']); ?></textarea>
-                        </div>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Progress (%)</label>
-                            <input type="number" name="maintenance_progress" value="<?php echo $s['m_progress']; ?>" min="0" max="100" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white text-center text-2xl placeholder-gray-600">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Status Label</label>
-                            <input type="text" name="maintenance_status_label" value="<?php echo htmlspecialchars($s['m_status']); ?>" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white placeholder-gray-600">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Mode Badge Text</label>
-                            <input type="text" name="maintenance_mode_text" value="<?php echo htmlspecialchars($s['m_mode_text']); ?>" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] focus:bg-gray-900 rounded-[20px] px-6 py-4 outline-none transition-all font-bold shadow-inner text-white placeholder-gray-600">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Hero Image</label>
-                            <input type="file" name="maintenance_image_file" accept=".jpg,.jpeg,.png,.webp" class="w-full bg-gray-800 border-2 border-transparent focus:border-[#19DC7E] text-white rounded-[20px] px-4 py-3 outline-none transition-all font-bold text-sm">
-                            <input type="hidden" name="maintenance_image" value="<?php echo htmlspecialchars($s['m_image']); ?>">
-                            <?php if(!empty($s['m_image'])): ?>
-                                <div class="mt-2 ml-4">
-                                     <p class="text-[9px] text-gray-400 mb-1">Current Image:</p>
-                                     <img src="../<?php echo $s['m_image']; ?>" class="h-16 w-16 object-cover rounded-lg border border-gray-600">
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SEO & CONTENT -->
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:col-span-3 gap-8">
-                <div class="bg-black rounded-[48px] p-10 shadow-sm border border-black lg:col-span-1 text-white">
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="w-12 h-12 bg-white/10 text-white rounded-2xl flex items-center justify-center shadow-inner"><i class="fas fa-search"></i></div>
-                        <div>
-                            <h3 class="font-black text-lg fredoka text-white">SEO Master</h3>
-                            <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest">Metadata Control</p>
-                        </div>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-white/40 ml-4">Global Meta Description</label>
-                            <textarea name="seo_description" class="w-full bg-white/5 border-2 border-transparent focus:border-white/20 focus:bg-white/10 rounded-[32px] px-6 py-4 outline-none transition-all font-bold h-40 resize-none text-white text-sm shadow-inner"><?php echo $s['seo_desc']; ?></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-[48px] p-10 shadow-sm border border-gray-100 md:col-span-2">
-                    <div class="flex items-center gap-4 mb-8">
-                        <div class="w-12 h-12 bg-gray-50 text-gray-900 rounded-2xl flex items-center justify-center shadow-inner"><i class="fas fa-quote-left"></i></div>
-                        <div>
-                            <h3 class="font-black text-gray-900 text-lg fredoka">Footer Story</h3>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Brand Narrative</p>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">"About Us" Fragment</label>
-                        <textarea name="footer_description" class="w-full bg-gray-50 border-2 border-transparent focus:border-black focus:bg-white rounded-[32px] px-8 py-8 outline-none transition-all font-medium h-40 resize-none leading-relaxed shadow-inner"><?php echo $s['footer_desc']; ?></textarea>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Submit -->
-        <div class="flex justify-center pt-10">
-            <button type="submit" name="update_settings" class="group relative overflow-hidden bg-black text-white px-24 py-7 rounded-[40px] font-black uppercase tracking-[0.3em] shadow-[0_25px_60px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 transition-all duration-500">
-                <span class="relative z-10 flex items-center gap-4">
-                    <i class="fas fa-rocket group-hover:rotate-12 transition-transform"></i> Propagate Update
-                </span>
-                <div class="absolute inset-0 bg-[#19DC7E] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[40px] mix-blend-difference"></div>
-            </button>
-        </div>
-    </form>
 </div>
 
-</main>
-</body>
-</html>
+<?php if($success): ?>
+    <div class="mb-6 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-100 font-bold text-xs anim-up flex items-center gap-3">
+        <i class="fas fa-check-circle"></i>
+        <?php echo $success; ?>
+    </div>
+<?php endif; ?>
+
+<?php if($error): ?>
+    <div class="mb-6 p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 font-bold text-xs anim-up flex items-center gap-3">
+        <i class="fas fa-exclamation-circle"></i>
+        <?php echo $error; ?>
+    </div>
+<?php endif; ?>
+
+<form method="POST" enctype="multipart/form-data" class="pb-20 anim-up">
+    
+    <!-- Top Action Bar -->
+     <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 mb-8 -mx-4 px-4 md:px-8 flex flex-wrap gap-2 justify-between items-center">
+        <h2 class="text-xl font-black font-fredoka">Configuration</h2>
+        <button type="submit" name="update_settings" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all shadow-lg flex items-center gap-2">
+            <i class="fas fa-save"></i> Save Changes
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        
+        <!-- COLUMN 1: BRAND & BUSINESS -->
+        <div class="space-y-8">
+            <!-- Store Identity -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900">Brand Identity</h3>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Store Name</label>
+                        <input type="text" name="store_name" value="<?php echo htmlspecialchars($s['name']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Order Prefix</label>
+                        <input type="text" name="order_prefix" value="<?php echo htmlspecialchars($s['order_prefix']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Footer Text</label>
+                        <textarea name="footer_description" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-black transition-all h-24 resize-none"><?php echo htmlspecialchars($s['footer_desc']); ?></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tax & Shipping -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                    <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900">Economics</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Tax (%)</label>
+                        <input type="number" step="0.01" name="tax_percentage" value="<?php echo $s['tax']; ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Free Ship (₹)</label>
+                        <input type="number" name="free_shipping_threshold" value="<?php echo $s['threshold']; ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Assets -->
+
+        </div>
+
+        <!-- COLUMN 2: CONTACT & SEO -->
+        <div class="space-y-8">
+            
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                    <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                        <i class="fas fa-address-book"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900">Contact & Social</h3>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1">
+                             <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Email</label>
+                             <input type="email" name="support_email" value="<?php echo htmlspecialchars($s['email']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:bg-white focus:border-black">
+                        </div>
+                        <div class="space-y-1">
+                             <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Phone</label>
+                             <input type="text" name="support_phone" value="<?php echo htmlspecialchars($s['phone']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:bg-white focus:border-black">
+                        </div>
+                    </div>
+                    
+                    <div class="h-px bg-gray-50 my-2"></div>
+
+                    <?php 
+                    $social_fields = [
+                        'instagram_url' => ['icon'=>'fab fa-instagram', 'label'=>'Instagram'],
+                        'whatsapp_number' => ['icon'=>'fab fa-whatsapp', 'label'=>'WhatsApp'],
+                        'facebook_url' => ['icon'=>'fab fa-facebook-f', 'label'=>'Facebook'],
+                        'twitter_url' => ['icon'=>'fab fa-twitter', 'label'=>'Twitter'],
+                        'youtube_url' => ['icon'=>'fab fa-youtube', 'label'=>'YouTube'],
+                        'pinterest_url' => ['icon'=>'fab fa-pinterest', 'label'=>'Pinterest'],
+                    ];
+                    foreach($social_fields as $field => $meta):
+                        $val = $field === 'whatsapp_number' ? $s['whatsapp'] : $s[str_replace('_url', '', $field)];
+                    ?>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-300">
+                            <i class="<?php echo $meta['icon']; ?>"></i>
+                        </div>
+                        <input type="text" name="<?php echo $field; ?>" value="<?php echo htmlspecialchars($val); ?>" placeholder="<?php echo $meta['label']; ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl pl-10 pr-4 py-2.5 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all">
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- SEO -->
+            <div class="bg-black text-white rounded-3xl p-6 shadow-xl">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="font-bold">SEO Metadata</h3>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-3">Meta Description</label>
+                    <textarea name="seo_description" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-gray-300 outline-none focus:border-[#19DC7E] transition-all h-28 resize-none"><?php echo htmlspecialchars($s['seo_desc']); ?></textarea>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- COLUMN 3: MAINTENANCE -->
+        <div class="space-y-8">
+             <div class="bg-gray-50 border border-gray-200 rounded-3xl p-6 relative overflow-hidden">
+                <!-- Status Indicator -->
+                <div class="absolute top-0 right-0 p-6">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="hidden" name="maintenance_mode" value="off">
+                        <input type="checkbox" name="maintenance_mode" value="on" class="sr-only peer" <?php echo $s['maintenance'] == 'on' ? 'checked' : ''; ?>>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-200/50 pt-2">
+                    <div class="w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center">
+                        <i class="fas fa-hammer"></i>
+                    </div>
+                    <a href="<?php echo get_url('maintenance'); ?>" class="font-bold text-gray-900">Maintenance Page</a>
+                </div>
+
+                <div class="space-y-5">
+                    
+                    <!-- Content -->
+                    <div class="space-y-3">
+                        <h4 class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Public Content</h4>
+                        <input type="text" name="maintenance_headline" value="<?php echo htmlspecialchars($s['m_headline']); ?>" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-black" placeholder="Headline">
+                        <textarea name="maintenance_description" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-xs font-medium outline-none focus:border-black h-20 resize-none" placeholder="Description"><?php echo htmlspecialchars($s['m_desc']); ?></textarea>
+                    </div>
+
+                    <!-- Visuals -->
+                    <div class="space-y-3">
+                        <h4 class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Visual Style</h4>
+                        <input type="text" name="maintenance_mode_text" value="<?php echo htmlspecialchars($s['m_mode_text']); ?>" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-medium focus:border-black" placeholder="Badge Text (e.g. Maintenance Mode)">
+                        <input type="text" name="maintenance_sticker_text" value="<?php echo htmlspecialchars($s['maintenance_sticker_text'] ?? 'Under Construction'); ?>" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-medium focus:border-black" placeholder="Sticker Text (e.g. Under Construction)">
+                        <input type="text" name="maintenance_overlay_text" value="<?php echo htmlspecialchars($s['maintenance_overlay_text'] ?? 'We will be back.'); ?>" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-medium focus:border-black" placeholder="Image Overlay Text">
+                        <input type="text" name="maintenance_countdown_label" value="<?php echo htmlspecialchars($s['m_countdown_label'] ?? 'WE WILL BE BACK SUBSCRIBE US TILL THEN'); ?>" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-medium focus:border-black" placeholder="Countdown Label">
+
+                    </div>
+
+                    <!-- Timer -->
+                     <div class="bg-white p-4 rounded-xl border border-gray-200">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] font-black uppercase text-gray-400">Launch Timer</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="hidden" name="maintenance_show_timer" value="off">
+                                <input type="checkbox" name="maintenance_show_timer" value="on" class="sr-only peer" <?php echo $s['m_show_timer'] == 'on' ? 'checked' : ''; ?>>
+                                <div class="w-8 h-4 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-black"></div>
+                            </label>
+                        </div>
+                        <input type="datetime-local" name="maintenance_end_date" value="<?php echo get_setting('maintenance_end_date', ''); ?>" class="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-xs font-bold">
+                    </div>
+
+                    <!-- Hero Image -->
+                    <div class="space-y-2">
+                        <h4 class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Hero Image</h4>
+                        <div class="relative group bg-white border border-dashed border-gray-300 rounded-xl p-1 hover:border-black transition-colors">
+                            <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden relative flex items-center justify-center">
+                                <img id="m_image_preview" src="<?php echo $s['m_image'] ? '../'.$s['m_image'] : ''; ?>" class="w-full h-full object-cover <?php echo $s['m_image'] ? '' : 'hidden'; ?>">
+                                <div id="m_image_placeholder" class="text-gray-300 <?php echo $s['m_image'] ? 'hidden' : ''; ?>">
+                                    <i class="fas fa-image text-3xl"></i>
+                                </div>
+                                
+                                <label class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-bold uppercase tracking-widest z-10">
+                                    Upload New
+                                    <input type="file" name="maintenance_image_file" id="m_image_input" class="hidden" accept="image/*">
+                                </label>
+                            </div>
+                        </div>
+                        <p class="text-[9px] text-gray-400 text-center">Recommended: 800x600px</p>
+                    </div>
+
+                </div>
+             </div>
+        </div>
+
+    </div>
+</form>
+
+<script>
+    document.getElementById('m_image_input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('m_image_preview');
+                const placeholder = document.getElementById('m_image_placeholder');
+                
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+</script>
+
+<?php include 'includes/footer.php'; ?>

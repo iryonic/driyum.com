@@ -26,419 +26,331 @@ if ($maintenance !== 'on' && !$is_admin) {
     exit;
 }
 
-// Dynamic Settings with Defaults
+// Dynamic Settings
 $store_name = get_setting('store_name', 'DRIYUM');
-$insta = get_setting('instagram_url', '#');
-$wa = get_setting('whatsapp_number', '');
-
-$headline = get_setting('maintenance_headline', 'System Update <br><span class="text-[#19DC7E]">In Progress.</span>');
-$description = get_setting('maintenance_description', "We're performing scheduled maintenance to improve your experience.\nThings will be back and better than ever very soon.");
-$progress = get_setting('maintenance_progress', '80');
-$status_label = get_setting('maintenance_status_label', 'System Optimization');
-$upgrade_mode_text = get_setting('maintenance_mode_text', 'Maintenance Mode');
+$headline = get_setting('maintenance_headline', 'We Are Upgrading!');
+$description = get_setting('maintenance_description', "We're currently enhancing our platform to serve you better. We'll be back online shortly with an improved experience.");
+$target_date = get_setting('maintenance_end_date', '');
+$show_timer = get_setting('maintenance_show_timer', 'on');
 $image_url = get_setting('maintenance_image', 'assets/images/hero.jpg');
+
+// Visual Texts
+$badge_text = get_setting('maintenance_mode_text', 'Maintenance Mode');
+$sticker_text = get_setting('maintenance_sticker_text', 'Under Construction');
+$overlay_text = get_setting('maintenance_overlay_text', 'Crafting Something Delicious.');
+$countdown_label = get_setting('maintenance_countdown_label', 'WE WILL BE BACK SUBSCRIBE US TILL THEN');
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3LPLX64');</script>
+<!-- End Google Tag Manager -->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Maintenance | <?php echo $store_name; ?></title>
-    <meta name="description" content="We are currently undergoing scheduled maintenance. We will be back shortly.">
-    <link rel="icon" type="image/png" href="<?php echo get_url('assets/images/logoicon.png'); ?>">
-    <link rel="apple-touch-icon" href="<?php echo get_url('assets/images/logoicon.png'); ?>">
+    <title><?php echo htmlspecialchars($badge_text); ?> • <?php echo htmlspecialchars($store_name); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($description); ?>">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_url('assets/images/favicon_io/apple-touch-icon.png'); ?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo get_url('assets/images/favicon_io/favicon-32x32.png'); ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo get_url('assets/images/favicon_io/favicon-16x16.png'); ?>">
+    <link rel="manifest" href="<?php echo get_url('assets/images/favicon_io/site.webmanifest'); ?>">
+    <link rel="shortcut icon" href="<?php echo get_url('assets/images/favicon_io/favicon.ico'); ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
-        
-        :root {
-            --primary: #19DC7E;
-            --secondary: #0F172A;
-            --accent: #FDFBF7;
-        }
-
         body { 
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--accent);
-            cursor: default;
-            overflow: hidden;
-            min-height: 100vh;
-            color: var(--secondary);
+            font-family: 'Outfit', sans-serif; 
+            background-color: #FFFBEB;
+            overflow-x: hidden;
         }
+        .font-fredoka { font-family: 'Fredoka', sans-serif; }
         
-        .fredoka { font-family: 'Fredoka', sans-serif; }
-
-        /* Animated Background Blobs */
-        .blob {
-            position: absolute;
-            background: radial-gradient(circle, rgba(25, 220, 126, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
-            border-radius: 50%;
-            z-index: -1;
-            filter: blur(60px);
-            animation: moveBlob 20s infinite alternate ease-in-out;
-            opacity: 0.8;
+        /* Floating Emojis Animation */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-20px) rotate(-5deg); }
         }
+        .animate-float { animation: float-slow 6s ease-in-out infinite; }
         
-        .blob-1 { width: 60vw; height: 60vw; top: -10%; left: -10%; animation-delay: 0s; }
-        .blob-2 { width: 50vw; height: 50vw; bottom: -10%; right: -10%; animation-delay: -5s; background: radial-gradient(circle, rgba(15, 23, 42, 0.05) 0%, rgba(255, 255, 255, 0) 70%); }
+        .animate-spin-slow { animation: spin 12s linear infinite; }
 
-        @keyframes moveBlob {
-            from { transform: translate(0, 0) scale(1); }
-            to { transform: translate(5%, 5%) scale(1.05); }
+        /* Chunky Button Style from Index */
+        .btn-chunky {
+            border: 3px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
-        /* Glassmorphism Card */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.08),
-                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
+        .btn-chunky:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
         }
-        
-        /* Custom Scrollbar override for different browsers */
-        .glass-card { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass-card::-webkit-scrollbar { display: none; }
-
-        /* Gradient Text */
-        .gradient-text {
-            background: linear-gradient(135deg, #0F172A 30%, #19DC7E 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .btn-chunky:active {
+            transform: translateY(0) scale(0.95);
         }
-
-        /* Wave Loader */
-        .wave-container { display: flex; gap: 3px; align-items: center; }
-        .wave-bar {
-            width: 3px;
-            height: 12px;
-            background: #64748B;
-            border-radius: 10px;
-            animation: wave 1s infinite ease-in-out;
-        }
-        .wave-bar:nth-child(2) { animation-delay: 0.1s; height: 16px; }
-        .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 12px; }
-        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
-        @keyframes wave {
-            0%, 100% { transform: scaleY(1); opacity: 0.5; }
-            50% { transform: scaleY(1.5); opacity: 1; }
-        }
-
-        /* Chunky Button */
-        .btn-primary {
-            background: var(--secondary);
-            color: white;
-            border-radius: 16px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 2px solid transparent;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3);
-            border-color: rgba(255,255,255,0.2);
-        }
-        .btn-primary:active { transform: translateY(0) scale(0.98); }
-        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-
-        /* Progress Bar */
-        .progress-container {
-            height: 10px;
-            background: #F1F5F9;
-            border-radius: 99px;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: <?php echo $progress; ?>%;
-            border-radius: 99px;
-            position: relative;
-            overflow: hidden;
-            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        /* Striped Pattern Overlay */
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: linear-gradient(
-                45deg,
-                rgba(255,255,255,0.3) 25%,
-                transparent 25%,
-                transparent 50%,
-                rgba(255,255,255,0.3) 50%,
-                rgba(255,255,255,0.3) 75%,
-                transparent 75%,
-                transparent
-            );
-            background-size: 20px 20px;
-            animation: moveStripes 1s linear infinite;
-        }
-        @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 20px 20px; } }
-
-        /* Floating Sticker Badges */
-        .sticker {
-            padding: 8px 14px;
-            background: #0F172A;
-            color: #19DC7E;
-            font-weight: 900;
-            border-radius: 100px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.15);
-            z-index: 10;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: transform 0.3s ease;
-            position: absolute;
-        }
-        .sticker:hover { transform: scale(1.1) rotate(0) !important; z-index: 20; }
-        
-        /* Floating Elements Animation */
-        .float-slow { animation: float 6s ease-in-out infinite; }
-        .float-medium { animation: float 5s ease-in-out infinite reverse; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(var(--rot)); }
-            50% { transform: translateY(-15px) rotate(var(--rot)); }
-        }
-
-        /* Toast */
-        #toast {
-            visibility: hidden;
-            background-color: #0F172A;
-            color: #fff;
-            text-align: center;
-            border-radius: 12px;
-            padding: 12px 24px;
-            position: fixed;
-            z-index: 100;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%) translateY(20px);
-            font-size: 14px;
-            font-weight: 600;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#19DC7E',
+                        accent: '#FFFBEB'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="flex items-center justify-center p-4 md:p-8">
-    
-    <!-- Background Elements -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
+<body class="min-h-screen flex  flex-col items-center justify-center p-4 selection:bg-[#19DC7E] selection:text-black relative">
 
-    <!-- Main Card -->
-    <main class="w-full max-w-[1240px] glass-card rounded-[40px] md:rounded-[56px] p-8 md:p-14 relative flex flex-col justify-center min-h-[500px]">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3LPLX64"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+    <!-- FLOATING FRUITS BACKGROUND (Match Index) -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none select-none z-0">
+        <!-- Top Left -->
+        <div class="absolute top-10 left-[10%] text-6xl opacity-20 animate-bounce duration-[3000ms] rotate-12 drop-shadow-lg hidden sm:block">🍎</div>
+        <div class="absolute top-40 left-[5%] text-4xl opacity-15 animate-ping duration-[4000ms] hidden sm:block">🍃</div>
+        <div class="absolute top-60 left-[20%] text-5xl opacity-20 animate-bounce duration-[3500ms] -rotate-6 hidden lg:block">🍓</div>
         
-        <!-- Decoration Stickers -->
-        <div class="sticker -rotate-6 top-6 right-6 md:top-10 md:right-10" style="--rot: -6deg;">
-            <i class="fas fa-sync-alt animate-spin"></i> System Update
-        </div>
-    
+        <!-- Bottom Left -->
+        <div class="absolute bottom-20 left-[15%] text-7xl opacity-20 animate-bounce duration-[4000ms] -rotate-12 blur-[1px] hidden sm:block">🍑</div>
+        <div class="absolute bottom-40 left-[25%] text-4xl opacity-15 animate-spin-slow duration-[12s] hidden lg:block">🥝</div>
+        
+        <!-- Top Right -->
+        <div class="absolute top-20 right-[10%] text-5xl opacity-20 animate-bounce duration-[3500ms] rotate-[20deg] hidden sm:block">🌰</div>
+        <div class="absolute top-1/2 right-[5%] text-4xl opacity-10 animate-spin-slow duration-[10s] hidden sm:block">🍇</div>
+        <div class="absolute top-32 right-[20%] text-6xl opacity-20 animate-bounce duration-[4200ms] rotate-12 hidden lg:block">🥭</div>
+        
+        <!-- Bottom Right -->
+        <div class="absolute bottom-32 right-[15%] text-6xl opacity-20 animate-bounce duration-[4500ms] -rotate-[15deg] blur-[1px] hidden sm:block">🍒</div>
+        <div class="absolute bottom-10 right-[25%] text-5xl opacity-15 animate-bounce duration-[3800ms] rotate-6 hidden sm:block">🍊</div>
 
-        <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center h-full">
+        <!-- Blobs -->
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-yellow-300 rounded-full blur-[100px] opacity-30 animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#19DC7E] rounded-full blur-[120px] opacity-20 animate-pulse"></div>
+    </div>
+
+    <!-- Main Container (Centered Layout like Index) -->
+    <main class="w-full max-w-5xl px-6 py-12 relative z-10 flex flex-col items-center text-center space-y-10 md:space-y-12">
+        
+        <!-- Header Content -->
+        <div class="flex flex-col items-center space-y-8 animate-up">
             
-            <!-- Left Content -->
-            <div class="lg:col-span-7 flex flex-col justify-center text-center lg:text-left">
-                
-                <!-- Brand Header -->
-                <div class="mb-10 flex flex-col md:flex-row items-center gap-6 justify-center lg:justify-start">
-                    <img src="<?php echo get_url('assets/images/logo.png'); ?>" class="h-10 md:h-12 w-auto object-contain drop-shadow" alt="Logo">
-                    <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
-                    <div class="flex items-center gap-3 bg-white/50 px-4 py-2 rounded-full border border-white/60 shadow-sm backdrop-blur-sm">
-                        <div class="wave-container">
-                            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-                        </div>
-                        <span class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500"><?php echo htmlspecialchars($upgrade_mode_text); ?></span>
-                    </div>
-                </div>
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-3 bg-white/60 backdrop-blur-sm border border-white/60 rounded-full px-6 py-2.5 shadow-lg shadow-yellow-900/5 hover:scale-105 transition duration-300">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#19DC7E] opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-[#19DC7E]"></span>
+                </span>
+                <span class="text-xs font-black font-fredoka uppercase tracking-[0.2em] text-gray-800"><?php echo htmlspecialchars($badge_text); ?></span>
+            </div>
 
-                <!-- Headline -->
-                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black fredoka leading-[0.95] tracking-tight mb-6 gradient-text">
-                    <?php echo $headline; ?>
+            <!-- Headline -->
+            <div class="space-y-6 max-w-4xl">
+                <h1 class="text-5xl sm:text-7xl md:text-8xl font-fredoka font-black leading-[0.9] text-gray-900 tracking-tight drop-shadow-sm">
+                    <?php 
+                    $parts = explode(' ', $headline);
+                    $last = array_pop($parts);
+                    echo implode(' ', $parts); 
+                    ?> 
+                    <span class="relative inline-block text-[#19DC7E]">
+                        <?php echo $last; ?>
+                        <!-- Squiggle -->
+                        <svg class="absolute w-full h-4 -bottom-1 left-0 text-[#19DC7E] opacity-40 hidden md:block" viewBox="0 0 100 10" preserveAspectRatio="none">
+                           <path d="M0 5 Q 50 15 100 5" stroke="currentColor" stroke-width="8" fill="none" class="animate-pulse"/>
+                        </svg>
+                    </span>
                 </h1>
-
-                <!-- Description -->
-                <p class="text-lg md:text-xl text-slate-600 font-medium leading-relaxed mb-10 max-w-2xl mx-auto lg:mx-0">
+                <p class="text-lg md:text-2xl text-gray-600 font-medium leading-relaxed max-w-2xl mx-auto">
                     <?php echo nl2br(htmlspecialchars($description)); ?>
                 </p>
-
-                <!-- Status & Progress -->
-                <div class="mb-12 max-w-md mx-auto lg:mx-0 w-full space-y-3">
-                    <div class="flex justify-between items-end px-1">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-[#19DC7E] animate-pulse"></span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-[#19DC7E]"><?php echo htmlspecialchars($status_label); ?></span>
-                        </div>
-                        <span class="text-xl font-black text-slate-900 fredoka"><?php echo $progress; ?>%</span>
-                    </div>
-                    <div class="progress-container shadow-inner">
-                        <div class="progress-bar"></div>
-                    </div>
-                </div>
-
-                <!-- Notify Input -->
-                <div class="max-w-md mx-auto lg:mx-0 w-full">
-                    <form id="notifyForm" class="relative group">
-                        <div class="absolute inset-0 bg-[#19DC7E] rounded-[24px] blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
-                        <div class="relative bg-white p-2 rounded-[24px] border border-slate-100 shadow-xl flex items-center pr-2 focus-within:ring-2 focus-within:ring-[#19DC7E]/20 transition-all">
-                            <div class="pl-4 text-slate-300"><i class="far fa-envelope text-lg"></i></div>
-                            <input type="email" id="emailInput" placeholder="Get notified when we're back..." required 
-                                   class="flex-1 bg-transparent border-none px-4 py-3 outline-none font-semibold text-slate-700 placeholder-slate-400 text-sm md:text-base">
-                            <button type="submit" id="submitBtn" class="btn-primary py-3 px-6 text-xs md:text-sm whitespace-nowrap shadow-md">
-                                Notify Me
-                            </button>
-                        </div>
-                    </form>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-3 pl-4 text-center sm:text-left">
-                        <i class="fas fa-lock text-[9px] mr-1"></i> No spam, promised.
-                    </p>
-                </div>
-
             </div>
 
-            <!-- Right Content (Visuals) -->
-            <div class="lg:col-span-5 hidden lg:block relative h-full">
-                <!-- Rotated Card Container -->
-                <div class="relative w-full aspect-[4/5] max-w-[400px] mx-auto float-slow" style="--rot: 3deg;">
-                    <div class="absolute inset-0 bg-white rounded-[40px] shadow-2xl rotate-3 transform transition hover:rotate-0 duration-500 border-4 border-white overflow-hidden">
-                        <img src="<?php echo get_url($image_url); ?>" class="w-full h-full object-cover opacity-95 group-hover:scale-110 transition duration-700" alt="Visual">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                        
-                        <div class="absolute bottom-8 left-8 text-white">
-                            <p class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Coming Soon</p>
-                            <p class="text-2xl font-black fredoka">New Experience</p>
-                        </div>
-                    </div>
-
-                    <!-- Floater 1 -->
-                    <div class="absolute -top-6 -right-6 w-24 h-24 bg-[#19DC7E] text-[#0F172A] rounded-full flex flex-col items-center justify-center border-4 border-white shadow-xl float-medium" style="--rot: 12deg;">
-                        <span class="text-[9px] font-black uppercase opacity-60">Status</span>
-                        <span class="text-lg font-black leading-none">SAFE</span>
-                    </div>
-
-                    <!-- Floater 2 -->
-                    <div class="absolute -bottom-6 -left-6 bg-white py-3 px-6 rounded-2xl flex items-center gap-3 border border-slate-100 shadow-xl float-medium" style="--rot: -5deg; animation-delay: -1s;">
-                        <i class="fas fa-shield-alt text-[#19DC7E] text-xl"></i>
-                        <div class="leading-none">
-                            <span class="block text-[8px] font-black uppercase text-slate-400">Security</span>
-                            <span class="block text-sm font-black text-slate-800">Enhanced</span>
-                        </div>
-                    </div>
-                </div>
+            <!-- Notify Form (Centered Pill) -->
+            <div class="w-full max-w-md relative group z-20">
+                <div class="absolute -inset-2 bg-gradient-to-r from-[#19DC7E] to-blue-400 rounded-full blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+                <form id="notifyForm" class="relative flex p-2 bg-white rounded-full shadow-xl ring-4 ring-transparent hover:ring-[#19DC7E]/10 transition-all">
+                    <input type="email" id="emailInput" placeholder="Enter email to Subscribe" 
+                           class="flex-1 bg-transparent border-none outline-none pl-6 py-3 text-gray-900 placeholder-gray-400 font-bold rounded-full text-sm sm:text-base w-full min-w-0" required>
+                    <button type="submit" id="submitBtn" class="shrink-0 bg-black text-white px-6 sm:px-8 py-3 rounded-full font-black uppercase text-xs tracking-widest hover:bg-[#19DC7E] hover:text-black transition-colors shadow-md">
+                        Subscribe
+                    </button>
+                </form>
+                <div id="formMsg" class="mt-3 text-sm font-bold hidden"></div>
             </div>
 
         </div>
 
-        <!-- Footer -->
-        <div class="mt-auto pt-10 border-t border-slate-200/50 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            <div class="flex items-center gap-4 justify-center md:justify-start">
-               <?php if($insta !== '#' || $wa !== ''): ?>
-                    <div class="flex gap-2">
-                        <?php if($insta !== '#'): ?><a href="<?php echo $insta; ?>" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-[#E1306C] hover:text-white transition-all"><i class="fab fa-instagram"></i></a><?php endif; ?>
-                        <?php if($wa !== ''): ?><a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', $wa); ?>" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-[#25D366] hover:text-white transition-all"><i class="fab fa-whatsapp"></i></a><?php endif; ?>
+        <!-- Middle Section: Timer & Socials -->
+         <div class="flex flex-col md:flex-row gap-8 md:gap-16 items-center justify-center w-full">
+            
+            <?php if (!empty($target_date) && $show_timer === 'on'): ?>
+            <div class="flex flex-col items-center space-y-3">
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400"><?php echo htmlspecialchars($countdown_label); ?></span>
+                <div id="countdown" class="flex gap-3">
+                    <div class="bg-white/80 p-3 rounded-2xl min-w-[70px] border border-gray-100 shadow-sm backdrop-blur-sm">
+                        <div id="days" class="text-2xl font-black font-fredoka text-gray-900 leading-none">00</div>
+                        <div class="text-[9px] font-bold text-gray-400 uppercase">Days</div>
                     </div>
-                <?php endif; ?>
+                    <div class="text-2xl font-black text-gray-300 pt-2">:</div>
+                    <div class="bg-white/80 p-3 rounded-2xl min-w-[70px] border border-gray-100 shadow-sm backdrop-blur-sm">
+                        <div id="hours" class="text-2xl font-black font-fredoka text-gray-900 leading-none">00</div>
+                        <div class="text-[9px] font-bold text-gray-400 uppercase">Hrs</div>
+                    </div>
+                    <div class="text-2xl font-black text-gray-300 pt-2">:</div>
+                    <div class="bg-white/80 p-3 rounded-2xl min-w-[70px] border border-gray-100 shadow-sm backdrop-blur-sm">
+                        <div id="minutes" class="text-2xl font-black font-fredoka text-gray-900 leading-none">00</div>
+                        <div class="text-[9px] font-bold text-gray-400 uppercase">Mins</div>
+                    </div>
+                    <div class="text-2xl font-black text-gray-300 pt-2">:</div>
+                    <div class="bg-black p-3 rounded-2xl min-w-[70px] shadow-lg shadow-green-400/20">
+                        <div id="seconds" class="text-2xl font-black font-fredoka text-[#19DC7E] leading-none">00</div>
+                        <div class="text-[9px] font-bold text-white/60 uppercase">Secs</div>
+                    </div>
+                </div>
             </div>
-            <div class="text-center md:text-right">
-                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    &copy; <?php echo date('Y'); ?> <?php echo $store_name; ?> &bull; 
-                </p>
+            <?php endif; ?>
+
+            <!-- Socials -->
+            <div class="flex flex-col items-center space-y-3">
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Follow Us</span>
+                <div class="flex gap-3">
+                    <?php 
+                    $socials = [
+                        'instagram' => ['url' => get_setting('instagram_url', '#'), 'icon' => 'fab fa-instagram'],
+                        'facebook' => ['url' => get_setting('facebook_url', '#'), 'icon' => 'fab fa-facebook-f'],
+                        'twitter' => ['url' => get_setting('twitter_url', '#'), 'icon' => 'fab fa-twitter'],
+                        'whatsapp' => ['url' => 'https://wa.me/' . preg_replace('/[^0-9]/', '', get_setting('whatsapp_number', '')), 'icon' => 'fab fa-whatsapp']
+                    ];
+                    foreach($socials as $key => $s): 
+                        if($s['url'] !== '#' && $s['url'] !== '' && $s['url'] !== 'https://wa.me/'):
+                    ?>
+                        <a href="<?php echo htmlspecialchars($s['url']); ?>" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-800 shadow-sm hover:scale-110 hover:bg-[#19DC7E] hover:text-white transition-all duration-300 border border-gray-100">
+                            <i class="<?php echo $s['icon']; ?> text-sm"></i>
+                        </a>
+                    <?php endif; endforeach; ?>
+                </div>
+            </div>
+
+         </div>
+
+        <!-- Featured Image (Centered Hero) -->
+        <div class="w-full max-w-3xl mt-12 relative group perspective-[1000px]">
+            <div class="relative bg-white p-2 rounded-[2.5rem] shadow-2xl shadow-yellow-900/10 transform transition-all hover:scale-[1.01] duration-500">
+                <div class="aspect-[16/9] overflow-hidden rounded-[2rem] relative bg-gray-100">
+                    <img src="<?php echo get_url($image_url); ?>" class="w-full h-full object-cover">
+                    
+                    <!-- Overlay Text (Subtle) -->
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                         <span class="bg-white/90 backdrop-blur text-black text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-xl">
+                            <?php echo htmlspecialchars($overlay_text); ?>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Sticker -->
+                <div class="absolute -top-6 -right-6 bg-[#FFD700] text-black font-black font-fredoka px-6 py-3 rounded-full shadow-xl transform rotate-12 border-4 border-white animate-float hidden md:block">
+                    <span class="text-sm uppercase tracking-wide flex items-center gap-2">
+                        🚧 <?php echo htmlspecialchars($sticker_text); ?>
+                    </span>
+                </div>
             </div>
         </div>
 
     </main>
+    
+    <!-- Footer -->
+    <div class="relative w-full text-center py-8 z-50">
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] opacity-40">
+            &copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($store_name); ?>
+        </p>
+        <a href="<?php echo get_url('login'); ?>" class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] opacity-40 inline-block hover:opacity-100 transition-opacity pointer-events-auto relative z-50">
+           Login
+        </a>
+    </div>
 
-    <!-- Toast Notification -->
-    <div id="toast"><i class="fas fa-check-circle text-[#19DC7E]"></i> <span>Signed Up Successfully!</span></div>
-
+    <?php if (!empty($target_date) && $show_timer === 'on'): ?>
     <script>
-        // Smooth Cursor Movement for Blobs
-        document.addEventListener('mousemove', (e) => {
-            const x = (window.innerWidth - e.pageX * 2) / 100;
-            const y = (window.innerHeight - e.pageY * 2) / 100;
-            
-            document.querySelector('.blob-1').style.transform = `translateX(${x}px) translateY(${y}px)`;
-            document.querySelector('.blob-2').style.transform = `translateX(${x * -1}px) translateY(${y * -1}px)`;
-        });
+        const targetDate = new Date("<?php echo $target_date; ?>").getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
 
-        // Form Logic
-        const form = document.getElementById('notifyForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const emailInput = document.getElementById('emailInput');
-        const toast = document.getElementById('toast');
+            const countdownEl = document.getElementById("countdown");
+            if (!countdownEl) return;
 
-        function showToast(message, isError = false) {
-            const toastContent = toast.querySelector('span');
-            const toastIcon = toast.querySelector('i');
-            
-            toastContent.textContent = message;
-            toastIcon.className = isError ? 'fas fa-exclamation-circle text-red-500' : 'fas fa-check-circle text-[#19DC7E]';
-            
-            toast.className = 'show';
-            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+            if (distance < 0) {
+                countdownEl.innerHTML = "<div class='bg-[#19DC7E] text-white font-bold px-6 py-3 rounded-2xl w-full text-center shadow-lg'>We are launching soon!</div>";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
         }
 
-        form.addEventListener('submit', async (e) => {
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+    <?php endif; ?>
+
+    <script>
+        document.getElementById('notifyForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const email = emailInput.value;
-            const originalBtnText = submitBtn.innerHTML;
+            const btn = document.getElementById('submitBtn');
+            const input = document.getElementById('emailInput');
+            const msg = document.getElementById('formMsg');
+            const originalText = btn.innerHTML;
             
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
             try {
                 const formData = new FormData();
                 formData.append('action', 'subscribe');
-                formData.append('email', email);
+                formData.append('email', input.value);
 
                 const response = await fetch(window.location.href, {
                     method: 'POST',
                     body: formData
                 });
-                
-                // Handle non-JSON responses gracefully
-                const text = await response.text();
-                try {
-                    const result = JSON.parse(text);
-                    if (result.success) {
-                        showToast(result.message);
-                        emailInput.value = '';
-                    } else {
-                        showToast(result.message, true);
-                    }
-                } catch (e) {
-                    console.error('Invalid JSON:', text);
-                    showToast('Server error. Please try again.', true);
-                }
 
-            } catch (error) {
-                showToast('Connection failed. Please check internet.', true);
-                console.error(error);
+                const data = await response.json();
+                
+                msg.classList.remove('hidden', 'text-red-500', 'text-[#19DC7E]');
+                msg.classList.add(data.success ? 'text-[#19DC7E]' : 'text-red-500');
+                msg.innerHTML = `<i class="${data.success ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'} mr-1.5"></i> ${data.message}`;
+                msg.classList.remove('hidden');
+
+                if(data.success) input.value = '';
+
+            } catch (err) {
+                console.error(err);
+                msg.classList.remove('hidden', 'text-[#19DC7E]');
+                msg.classList.add('text-red-500');
+                msg.innerText = 'Connection error. Please try again.';
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnText;
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         });
     </script>

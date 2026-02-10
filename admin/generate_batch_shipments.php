@@ -26,6 +26,15 @@ if (empty($orders)) die("No orders found.");
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3LPLX64');</script>
+<!-- End Google Tag Manager -->
+
     <meta charset="UTF-8">
     <title>Batch_<?php echo ucfirst($type); ?>_<?php echo date('Ymd_His'); ?></title>
     <style>
@@ -54,6 +63,8 @@ if (empty($orders)) die("No orders found.");
             position: relative;
             border: 1px dashed #cbd5e1;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+           
+            vertical-align: top;
         }
         .label-container { 
             width: 3.8in; 
@@ -95,15 +106,65 @@ if (empty($orders)) die("No orders found.");
         .small-text { font-size: 8px; text-transform: uppercase; color: #64748b; font-weight: 800; letter-spacing: 0.05em; }
 
         @media print { 
-            body { background: none; padding: 0; }
+            @page { 
+                size: A4; 
+                margin: 5mm; 
+            }
+            body { 
+                margin: 0; 
+                padding: 0; 
+                width: 100%;
+            }
             .no-print { display: none; } 
-            .label-page, .invoice-page { margin: 0; border: none; box-shadow: none; page-break-after: always; }
-            .label-page { width: 4in; height: 6in; }
-            .invoice-page { width: 8.27in; height: auto; }
+            
+            .print-area {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 0;
+            }
+
+            .invoice-page { 
+                width: 100%; 
+                height: auto; 
+                margin: 0; 
+                border: none; 
+                box-shadow: none; 
+                page-break-after: always;
+                clear: both;
+                display: block;
+            }
+
+            .label-page { 
+                width: 49%; 
+                height: 13.5cm; /* Reduced to fit 2 rows (4 labels) on A4 */
+                margin: 0.5mm; 
+                padding: 2mm; 
+                box-sizing: border-box;
+                border: 1px dotted #e2e8f0; 
+                page-break-inside: avoid;
+                page-break-after: auto;
+                float: none;
+            }
+            
+            .label-container {
+                width: 100%;
+                height: 100%;
+                border: 2px solid #000;
+                display: flex;
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3LPLX64"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
 
     <div class="no-print">
         <div class="flex items-center gap-3 mb-6">
@@ -134,6 +195,7 @@ if (empty($orders)) die("No orders found.");
         </div>
     </div>
 
+    <div class="print-area">
     <?php foreach ($orders as $order): ?>
         <?php 
         $address = json_decode($order['shipping_address'], true); 
@@ -145,14 +207,15 @@ if (empty($orders)) die("No orders found.");
         <div class="label-page">
             <div class="label-container">
                 <div class="label-section label-header">
-                    <span class="small-text">DRIYUM EXPRESS</span>
-                    <span class="small-text">STANDARD</span>
+                    <span class="small-text"><img src="../assets/images/logo.svg" alt="logo" width="100"></span>
+                    <span class="small-text"></span>
                 </div>
                 <div class="label-section">
                     <div class="small-text">Ship From:</div>
                     <div style="font-size: 9px; font-weight: bold;">
-                        DRIYUM PREMIUM PVT LTD<br>
-                        SRINAGAR, J&K 190001
+                        DRIYUM <br>
+                        BAGHI MEHTAB SRINAGAR, J&K 190019 <br>
+                        PHONE : 9149809801
                     </div>
                 </div>
                 <div class="label-recipient">
@@ -184,8 +247,9 @@ if (empty($orders)) die("No orders found.");
         <div class="invoice-page">
             <div class="invoice-header">
                 <div>
-                    <h1 style="margin: 0; font-size: 32px; font-weight: 900; color: #000; letter-spacing: -1px;">DRIYUM</h1>
-                    <p class="small-text" style="margin-top: 5px; font-size: 10px;">SRINAGAR, J&K 190001 • GSTIN: 01ABCDE1234F1Z5</p>
+                    <h1 style="margin: 0; font-size: 32px; font-weight: 900; color: #000; letter-spacing: -1px;"><img src="../assets/images/logo.svg" alt="logo" width="100"
+                    ></h1>
+                    <p class="small-text" style="margin-top: 5px; font-size: 10px;">BAGHI MEHTAB SRINAGAR, J&K 190019 • </p>
                 </div>
                 <div style="text-align: right;">
                     <h2 style="margin: 0; font-size: 24px; font-weight: 900;">TAX INVOICE</h2>
@@ -263,6 +327,7 @@ if (empty($orders)) die("No orders found.");
         <?php endif; ?>
 
     <?php endforeach; ?>
+    </div>
 
 </body>
 </html>

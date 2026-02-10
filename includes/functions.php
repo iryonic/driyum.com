@@ -52,7 +52,7 @@ function send_email($to, $subject, $message) {
             <tr>
                 <td style='padding-right: 20px;'>
                     <strong>{$s_name} Inc.</strong><br>
-                    Premium Sun-Dried Delicacies<br>
+                    Premium Healthy Delicacies<br>
                     <a href='{$s_url}' style='color: #19DC7E; text-decoration: none;'>{$s_url}</a>
                 </td>
                 <td style='text-align: right;'>
@@ -887,7 +887,7 @@ function get_canonical_url() {
 
 function render_seo_tags($title = '', $description = '', $image = '', $type = 'website') {
     $store_name = get_setting('store_name', 'DRIYUM');
-    $base_title = "DRIYUM - Premium Sun-Dried Healthy Snacks";
+    $base_title = "DRIYUM - Premium Healthy Snacks";
     $full_title = $title ? "$title | $store_name" : $base_title;
     
     $default_desc = get_setting('seo_description', 'Redefining the art of snacking with premium, indulgence. Naturally sweet, unapologetically bold.');

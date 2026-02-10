@@ -77,8 +77,8 @@ if (isset($_SESSION['user_id'])) {
         $page_title = ucwords($cat_display) . " Collection";
     }
     
-    $page_description = "Browse our collection of premium, sun-dried healthy snacks. Fresh from the valley, 100% organic snacks delivered to your doorstep.";
-    if($cat_slug) $page_description = "Explore our premium " . str_replace('-', ' ', $cat_slug) . " collection. Hand-picked and sun-dried organic Kashmiri delicacies.";
+    $page_description = "Browse our collection of premium, healthy snacks. Fresh from the valley, 100% organic snacks delivered to your doorstep.";
+    if($cat_slug) $page_description = "Explore our premium " . str_replace('-', ' ', $cat_slug) . " collection. Hand-picked and organic Kashmiri delicacies.";
     
     include 'includes/head.php'; 
     ?>
@@ -114,7 +114,7 @@ if (isset($_SESSION['user_id'])) {
                 ?>
             </h1>
             <p class="text-lg md:text-xl text-gray-400 font-['Outfit'] font-medium max-w-2xl mx-auto">
-                Discover the pure taste of nature. Hand-picked, sun-dried, and delivered fresh from the valley.
+                Discover the pure taste of nature. Hand-picked and delivered fresh from the valley.
             </p>
         </div>
     </header>

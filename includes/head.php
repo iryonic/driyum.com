@@ -39,6 +39,8 @@ if (function_exists('render_seo_tags')) {
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
 <link rel="stylesheet" href="<?php echo get_url('assets/css/chunky.css'); ?>?v=1.0.3">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <!-- JS Config & Core Logic -->
 <script>

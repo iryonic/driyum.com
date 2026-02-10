@@ -57,7 +57,7 @@ if (isset($_SESSION['coupon'])) {
 <head>
     <?php 
     $page_title = 'Review Your Stash';
-    $page_description = "You're just one step away from sun-dried perfection. Review your bag and get ready for the ultimate crunchy experience.";
+    $page_description = "You're just one step away from mountain-fresh perfection. Review your bag and get ready for the ultimate crunchy experience.";
     include 'includes/head.php'; 
     ?>
 

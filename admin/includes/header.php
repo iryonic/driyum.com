@@ -8,22 +8,42 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     header("Location: ../login.php");
     exit;
 }
+
+// Fetch Notifications
+$unread_notifs = fetch_all("SELECT * FROM admin_notifications WHERE is_read = 0 ORDER BY created_at DESC LIMIT 5");
+$unread_count = count($unread_notifs);
+
+// Get Store Stats for Sidebar
+$total_orders_today = fetch_one("SELECT COUNT(*) as count FROM orders WHERE DATE(created_at) = CURDATE()")['count'];
+$low_stock_count = fetch_one("SELECT COUNT(*) as count FROM products WHERE stock < 10")['count'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3LPLX64');</script>
+<!-- End Google Tag Manager -->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driyum Admin</title>
-    <link rel="icon" type="image/png" href="<?php echo get_url('assets/images/logoicon.png'); ?>">
-    <link rel="apple-touch-icon" href="<?php echo get_url('assets/images/logoicon.png'); ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_url('assets/images/favicon_io/apple-touch-icon.png'); ?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo get_url('assets/images/favicon_io/favicon-32x32.png'); ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo get_url('assets/images/favicon_io/favicon-16x16.png'); ?>">
+    <link rel="manifest" href="<?php echo get_url('assets/images/favicon_io/site.webmanifest'); ?>">
+    <link rel="shortcut icon" href="<?php echo get_url('assets/images/favicon_io/favicon.ico'); ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/chunky.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
         
-        body { font-family: 'Outfit', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        body { font-family: 'Outfit', sans-serif; background-color: #fcfdfe; color: #1e293b; }
         .fredoka { font-family: 'Fredoka', sans-serif; }
         
         .admin-sidebar { 
@@ -31,55 +51,58 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             position: fixed; 
             left: 0; 
             top: 0; 
-            width: 280px; 
+            width: 260px; 
             overflow-y: auto; 
             background: #0f172a;
             z-index: 100;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .admin-sidebar::-webkit-scrollbar { width: 4px; }
-        .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .admin-sidebar::-webkit-scrollbar { width: 3px; }
+        .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
         
-        .admin-content { margin-left: 280px; padding: 2.5rem; }
+        .admin-content { margin-left: 260px; padding: 2rem 3rem; min-height: 100vh; transition: margin-left 0.3s ease; }
         
         .nav-link {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 13px;
         }
         
-        .nav-link-active {
-            background: #19DC7E !important;
-            color: #000 !important;
-            font-weight: 800;
-            box-shadow: 0 10px 15px -3px rgba(25, 220, 126, 0.4);
-        }
-        
-        .btn-chunky {
-            border-bottom: 4px solid rgba(0,0,0,0.2);
-            transition: all 0.2s;
-        }
-        .btn-chunky:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
+        .nav-link:hover { background: rgba(255, 255, 255, 0.03); color: white; }
 
-        /* Image Preview Overlay */
-        .preview-container img {
-            transition: transform 0.3s ease;
+        .nav-link-active {
+            background: rgba(25, 220, 126, 0.1) !important;
+            color: #19DC7E !important;
+            font-weight: 700;
         }
-        .preview-container:hover img {
-            transform: scale(1.05);
+        .nav-link-active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            bottom: 20%;
+            width: 3px;
+            background: #19DC7E;
+            border-radius: 0 4px 4px 0;
         }
         
         @media (max-width: 1024px) {
-            .admin-sidebar { transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .admin-sidebar { transform: translateX(-100%); }
             .admin-sidebar.open { transform: translateX(0); }
             .admin-content { margin-left: 0; padding: 1.5rem; }
             
             .sidebar-overlay {
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(4px);
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(8px);
                 z-index: 90;
                 opacity: 0;
                 pointer-events: none;
@@ -90,135 +113,142 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                 pointer-events: auto;
             }
         }
+
+        #omni-results {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* Custom Scrollbar for sidebar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     </style>
     <script>
-        function previewImage(input, targetId) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    const target = document.getElementById(targetId);
-                    if (target.tagName === 'IMG') {
-                        target.src = e.target.result;
-                    } else {
-                        target.style.backgroundImage = `url(${e.target.result})`;
-                        target.innerHTML = ''; // Clear icon/text
-                    }
-                    target.classList.add('preview-active');
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function previewMultipleImages(input, targetContainerId) {
-            if (input.files) {
-                const container = document.getElementById(targetContainerId);
-                // Don't clear existing, just append new previews for clarity or maybe clear selected?
-                // Let's clear the specific "new previews" area
-                let previewArea = container.querySelector('.new-previews-area');
-                if(!previewArea) {
-                    previewArea = document.createElement('div');
-                    previewArea.className = 'new-previews-area grid grid-cols-4 gap-4 mt-4 w-full';
-                    container.appendChild(previewArea);
-                }
-                previewArea.innerHTML = ''; 
-
-                Array.from(input.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const div = document.createElement('div');
-                        div.className = 'relative group aspect-square';
-                        div.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border-2 border-[#19DC7E]">
-                            <span class="absolute top-1 left-1 bg-[#19DC7E] text-black text-[8px] font-black px-1.5 py-0.5 rounded-full">NEW</span>
-                        `;
-                        previewArea.appendChild(div);
-                    }
-                    reader.readAsDataURL(file);
-                });
-            }
-        }
+        const BASE_URL = "<?php echo get_url(''); ?>";
     </script>
 </head>
 <body class="bg-gray-50">
 
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3LPLX64"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
     <!-- SIDEBAR OVERLAY -->
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
 
-    <!-- MOBILE TOGGLE -->
-    <button onclick="toggleSidebar()" class="lg:hidden fixed bottom-6 right-6 z-[110] w-14 h-14 bg-black text-white rounded-full shadow-[0_15px_30px_rgba(25,220,126,0.4)] flex items-center justify-center text-xl hover:scale-110 active:scale-90 transition-all">
-        <i class="fas fa-bars"></i>
-    </button>
-
     <!-- SIDEBAR -->
-    <aside class="admin-sidebar bg-[#111827] text-white p-6 flex flex-col">
-        <div class="mb-10 flex items-center gap-3 px-2">
-            <div class="w-10 h-10 bg-[#19DC7E] rounded-full flex items-center justify-center text-black text-xl font-bold">
-                <i class="fas fa-crown"></i>
+    <aside class="admin-sidebar bg-[#0f172a] text-white p-5 flex flex-col">
+        <div class="mb-8 flex items-center justify-between px-2">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-[#19DC7E] rounded-xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(25,220,126,0.3)]">
+                    <i class="fas fa-bolt text-xs"></i>
+                </div>
+                <span class="font-['Fredoka'] font-bold text-xl tracking-tight">Driyum<span class="text-[#19DC7E]">.</span></span>
             </div>
-            <span class="font-['Fredoka'] font-bold text-2xl tracking-wide">Admin</span>
+            <button onclick="toggleSidebar(false)" class="lg:hidden text-gray-500 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
 
-        <nav class="space-y-2 flex-1 font-['Outfit']">
-            <a href="index.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='index.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-chart-pie w-6"></i> Dashboard
-            </a>
-            <a href="products.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo (basename($_SERVER['PHP_SELF'])=='products.php' || basename($_SERVER['PHP_SELF'])=='product_form.php')?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-box w-6"></i> Products
-            </a>
-            <a href="categories.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo (basename($_SERVER['PHP_SELF'])=='categories.php' || basename($_SERVER['PHP_SELF'])=='category_form.php')?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-tags w-6"></i> Categories
-            </a>
-            <a href="orders.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='orders.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-shipping-fast w-6"></i> Orders
-            </a>
-            <a href="abandoned_carts.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='abandoned_carts.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-ghost w-6"></i> Abandoned Carts
-            </a>
-            <a href="users.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='users.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-users w-6"></i> Customers
-            </a>
-            <a href="coupons.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='coupons.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-ticket-alt w-6"></i> Coupons
-            </a>
-            <a href="affiliates.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='affiliates.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-handshake w-6"></i> Creators & Affiliates
-            </a>
-            <a href="subscribers.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='subscribers.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-envelope-open-text w-6"></i> Subscribers
-            </a>
-            <a href="shipping.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='shipping.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-truck-moving w-6"></i> Shipping & Delivery
-            </a>
+        <nav class="space-y-6 flex-1 font-['Outfit']">
             
-            <div class="h-px bg-gray-800 my-4 mx-2"></div>
-            <h4 class="px-4 text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Content</h4>
-            
-            <a href="manage_home.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_home.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-home w-6"></i> Homepage
-            </a>
-            <a href="manage_pages.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_pages.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-file-alt w-6"></i> About & Legal Pages
-            </a>
-            <a href="manage_contact.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_contact.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-headset w-6"></i> Contact & Inbox
-            </a>
-            <a href="reviews.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='reviews.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-star w-6"></i> Product Reviews
-            </a>
-            <a href="manage_testimonials.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='manage_testimonials.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-quote-left w-6"></i> Testimonials
-            </a>
-            <a href="settings.php" class="nav-link flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 <?php echo basename($_SERVER['PHP_SELF'])=='settings.php'?'nav-link-active':'text-gray-400'; ?>">
-                <i class="fas fa-cog w-6"></i> Store Settings
-            </a>
+            <div>
+                <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Main</h4>
+                <div class="space-y-1">
+                    <?php $p = basename($_SERVER['PHP_SELF']); ?>
+                    <a href="index.php" class="nav-link <?php echo $p=='index.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-chart-line w-5 text-sm"></i> <span>Dashboard</span>
+                    </a>
+                    <a href="orders.php" class="nav-link <?php echo ($p=='orders.php' || $p=='generate_batch_shipments.php')?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-box w-5 text-sm"></i> 
+                        <span>Orders</span>
+                        <?php if($total_orders_today > 0): ?>
+                            <span class="ml-auto bg-[#19DC7E] text-black text-[9px] font-black px-1.5 py-0.5 rounded-full"><?php echo $total_orders_today; ?></span>
+                        <?php endif; ?>
+                    </a>
+                    <a href="abandoned_carts.php" class="nav-link <?php echo $p=='abandoned_carts.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-shopping-cart w-5 text-sm"></i> <span>Abandoned Carts</span>
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Products</h4>
+                <div class="space-y-1">
+                    <a href="products.php" class="nav-link <?php echo ($p=='products.php' || $p=='product_form.php')?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-apple-alt w-5 text-sm"></i> <span>Product List</span>
+                    </a>
+                    <a href="categories.php" class="nav-link <?php echo ($p=='categories.php' || $p=='category_form.php')?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-th-list w-5 text-sm"></i> <span>Categories</span>
+                    </a>
+                    <a href="inventory.php" class="nav-link <?php echo $p=='inventory.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-boxes w-5 text-sm"></i> <span>Stock Status</span>
+                        <?php if($low_stock_count > 0): ?>
+                            <span class="ml-auto bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full"><?php echo $low_stock_count; ?></span>
+                        <?php endif; ?>
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">People</h4>
+                <div class="space-y-1">
+                    <a href="users.php" class="nav-link <?php echo $p=='users.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-users w-5 text-sm"></i> <span>Customers</span>
+                    </a>
+                    <a href="affiliates.php" class="nav-link <?php echo $p=='affiliates.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-user-tag w-5 text-sm"></i> <span>Affiliates</span>
+                    </a>
+                    <a href="subscribers.php" class="nav-link <?php echo $p=='subscribers.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-envelope w-5 text-sm"></i> <span>Newsletter</span>
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Marketing</h4>
+                <div class="space-y-1">
+                    <a href="coupons.php" class="nav-link <?php echo $p=='coupons.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-percentage w-5 text-sm"></i> <span>Coupons</span>
+                    </a>
+                    <a href="reviews.php" class="nav-link <?php echo $p=='reviews.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-star w-5 text-sm"></i> <span>Reviews</span>
+                    </a>
+                    <a href="manage_testimonials.php" class="nav-link <?php echo $p=='manage_testimonials.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-comment w-5 text-sm"></i> <span>Testimonials</span>
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Website</h4>
+                <div class="space-y-1">
+                    <a href="manage_home.php" class="nav-link <?php echo $p=='manage_home.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-home w-5 text-sm"></i> <span>Homepage</span>
+                    </a>
+                    <a href="manage_pages.php" class="nav-link <?php echo $p=='manage_pages.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-file w-5 text-sm"></i> <span>Pages</span>
+                    </a>
+                    <a href="manage_contact.php" class="nav-link <?php echo $p=='manage_contact.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-inbox w-5 text-sm"></i> <span>Messages</span>
+                    </a>
+                    <a href="shipping.php" class="nav-link <?php echo $p=='shipping.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-truck w-5 text-sm"></i> <span>Shipping</span>
+                    </a>
+                    <a href="settings.php" class="nav-link <?php echo $p=='settings.php'?'nav-link-active':'text-gray-400'; ?>">
+                        <i class="fas fa-tools w-5 text-sm"></i> <span>Settings</span>
+                    </a>
+                </div>
+            </div>
         </nav>
 
-        <div class="pt-6 border-t border-gray-800">
-            <a href="../index.php" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-800 text-gray-400 transition mb-2">
-                <i class="fas fa-external-link-alt w-6"></i> View Store
-            </a>
-            <a href="../logout.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition">
-                <i class="fas fa-sign-out-alt w-6"></i> Logout
+        <div class="pt-6 mt-6 border-t border-white/5 pb-4">
+            <a href="../logout.php" class="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 text-gray-400 hover:text-red-400 transition group">
+                <span class="text-[10px] font-black uppercase tracking-widest">Logout</span>
+                <i class="fas fa-power-off text-xs"></i>
             </a>
         </div>
     </aside>
@@ -226,200 +256,219 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     <main class="admin-content">
         <!-- Flash Messages -->
         <?php if (isset($_SESSION['success'])): ?>
-            <div class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl font-bold flex items-center gap-3 anim-up shadow-sm">
-                <i class="fas fa-check-circle"></i>
-                <span><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></span>
+            <div id="flash-success" class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl font-bold flex items-center justify-between anim-up shadow-sm">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-check-circle"></i>
+                    <span class="text-xs"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-green-300 hover:text-green-600"><i class="fas fa-times"></i></button>
             </div>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['error'])): ?>
-            <div class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl font-bold flex items-center gap-3 anim-up shadow-sm">
-                <i class="fas fa-exclamation-circle"></i>
-                <span><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></span>
+            <div id="flash-error" class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl font-bold flex items-center justify-between anim-up shadow-sm">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span class="text-xs"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></span>
+                </div>
+                <button onclick="this.parentElement.remove()" class="text-red-300 hover:text-red-600"><i class="fas fa-times"></i></button>
             </div>
         <?php endif; ?>
 
-        <header class="mb-12 relative z-50">
-            <div class="flex flex-row  justify-between items-center gap-6 bg-white/50 backdrop-blur-md p-6 rounded-[35px] border border-gray-100 shadow-sm">
-                <!-- Global Omni-Search -->
-                <div class="relative w-full md:max-w-md group" id="omni-search-container">
-                    <div class="relative">
-                        <input type="text" id="omni-search-input" placeholder="Search orders, snacks, or people..." 
-                            class="w-full bg-gray-50 border-2 border-transparent focus:border-[#19DC7E] focus:bg-white rounded-[22px] px-6 py-3 pl-12 outline-none transition-all font-bold text-sm"
-                            autocomplete="off">
-                        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#19DC7E] transition-colors"></i>
-                        
-                        <!-- Loading Spinner -->
-                        <div id="omni-search-loading" class="absolute right-5 top-1/2 -translate-y-1/2 hidden">
-                            <i class="fas fa-circle-notch fa-spin text-[#19DC7E]"></i>
-                        </div>
+        <header class="mb-8 sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-6 py-4 -mx-6 -mt-8 mb-8 flex flex-col md:flex-row justify-between items-center transition-all duration-300">
+            <div class="flex items-center gap-6 w-full md:w-auto">
+                <button onclick="toggleSidebar(true)" class="lg:hidden w-10 h-10 flex items-center justify-center bg-black border border-gray-100 rounded-xl text-green-500 shadow-sm">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- BREADCRUMBS -->
+                <div class="hidden md:flex flex-col">
+                    <h2 class="text-xl font-black text-gray-900 fredoka leading-none flex items-center gap-2">
+                        <?php 
+                        $page_titles = [
+                            'index.php' => 'Dashboard',
+                            'orders.php' => 'Orders',
+                            'products.php' => 'Products',
+                            'inventory.php' => 'Inventory',
+                            'users.php' => 'Customers',
+                            'settings.php' => 'Settings',
+                            'shipping.php' => 'Shipping',
+                            'generate_batch_shipments.php' => 'Batch Printing'
+                        ];
+                        $curr_page = basename($_SERVER['PHP_SELF']);
+                        echo $page_titles[$curr_page] ?? 'Admin Panel';
+                        ?>
+                    </h2>
+                    <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                        <span class="hover:text-black transition-colors cursor-pointer">Home</span>
+                        <i class="fas fa-chevron-right text-[8px] opacity-50"></i>
+                        <span class="text-[#19DC7E]"><?php echo $page_titles[$curr_page] ?? 'Page'; ?></span>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Search Results Dropdown -->
-                    <div id="omni-results" class="absolute left-0 top-full mt-4 w-full bg-white rounded-[32px] shadow-[0_25px_70px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden hidden anim-up">
-                        <div id="omni-results-content" class="max-h-[60vh] overflow-y-auto p-2">
-                            <!-- Results injected here -->
-                        </div>
-                        <div class="bg-gray-50 px-6 py-3 text-[9px] font-black text-gray-400 uppercase tracking-widest border-t border-gray-100 flex justify-between">
-                            <span>Quick Find</span>
-                            <span>ESC to close</span>
-                        </div>
+            <div class="flex items-center gap-4 w-full md:w-auto mt-4 md:mt-0">
+                
+                <!-- SEARCH -->
+                <div class="relative group w-full md:w-64" id="omni-search-container">
+                    <input type="text" id="omni-search-input" placeholder="Search..." class="w-full bg-gray-50/50 border border-gray-100 focus:border-[#19DC7E] focus:bg-white rounded-xl pl-10 pr-12 py-2.5 text-xs font-bold transition-all outline-none shadow-sm group-hover:shadow-md">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#19DC7E] transition-colors text-xs"></i>
+                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <span class="bg-white border border-gray-200 text-gray-400 text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">/</span>
+                    </div>
+                    <div id="omni-results" class="absolute left-0 w-screen md:w-80 md:left-auto md:right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden hidden z-[200]">
+                        <div id="omni-results-content" class="max-h-96 overflow-y-auto p-2 custom-scrollbar"></div>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4 ml-auto md:ml-0">
-                    <?php 
-                    $unread_notifs = get_unread_notifications(); 
-                    $unread_count = count($unread_notifs);
-                    ?>
-                    <div class="relative" id="notif-dropdown">
-                        <button onclick="toggleNotifDropdown(event)" class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-50 transition-all relative">
-                            <i class="fas fa-bell text-gray-400 text-lg hover:text-black transition-colors"></i>
-                            <?php if ($unread_count > 0): ?>
-                                <span class="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white animate-pulse">
-                                    <?php echo $unread_count; ?>
-                                </span>
+                <div class="hidden sm:flex items-center gap-2 bg-white border border-gray-100 px-3 py-1.5 rounded-xl shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#19DC7E] animate-pulse"></span>
+                    <div id="header-clock" class="text-[10px] font-black text-gray-900 tracking-widest tabular-nums">--:--</div>
+                </div>
+                
+                <div class="relative" id="notif-dropdown">
+                    <button onclick="toggleNotifDropdown(event)" class="w-10 h-10 bg-white hover:bg-gray-50 rounded-xl flex items-center justify-center transition-all relative border border-gray-100 group shadow-sm">
+                        <i class="fas fa-bell text-gray-400 group-hover:text-black transition-colors text-sm"></i>
+                        <?php if ($unread_count > 0): ?>
+                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                        <?php endif; ?>
+                    </button>
+                    <!-- Notification content remains same -->
+                    <div id="notif-dropdown-content" class="fixed inset-x-4 top-40 md:absolute md:right-0 md:top-full md:mt-4 md:inset-x-auto w-auto md:w-80 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-100 hidden z-[200] overflow-hidden">
+                        <div class="p-5 border-b border-gray-50 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Notifications</span>
+                            <?php if($unread_count > 0): ?>
+                                <span class="bg-red-50 text-red-500 text-[8px] font-black px-2 py-0.5 rounded-full uppercase"><?php echo $unread_count; ?> NEW</span>
                             <?php endif; ?>
-                        </button>
-                        
-                        <!-- Dropdown -->
-                        <div id="notif-dropdown-content" class="absolute right-0 top-full mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 hidden z-[100] anim-up">
-                            <div class="px-4 py-3 border-b border-gray-50 flex justify-between items-center">
-                                <h4 class="font-bold text-gray-900">Notifications</h4>
-                                <span class="text-xs text-gray-400"><?php echo $unread_count; ?> new</span>
-                            </div>
-                            <div class="max-h-[70vh] overflow-y-auto">
-                                <?php if (empty($unread_notifs)): ?>
-                                    <div class="p-8 text-center text-gray-400 text-sm">
-                                        <i class="far fa-bell-slash text-2xl mb-2 block opacity-50"></i>
-                                        All caught up!
-                                    </div>
-                                <?php else: ?>
-                                    <?php foreach($unread_notifs as $notif): ?>
-                                        <a href="<?php echo !empty($notif['link']) ? $notif['link'] : '#'; ?>" onclick="markRead(<?php echo $notif['id']; ?>)" class="block px-4 py-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-50 last:border-0 relative group/item">
-                                            <div class="flex gap-4">
-                                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                                                     <?php if($notif['type'] == 'order'): ?>
-                                                         <i class="fas fa-shopping-bag"></i>
-                                                     <?php elseif($notif['type'] == 'alert'): ?>
-                                                         <i class="fas fa-exclamation-triangle text-amber-500"></i>
-                                                     <?php else: ?>
-                                                         <i class="fas fa-info-circle"></i>
-                                                     <?php endif; ?>
-                                                </div>
-                                                <div>
-                                                    <p class="text-sm font-medium text-gray-800 leading-tight mb-1 group-hover/item:text-blue-600 transition-colors">
-                                                        <?php echo htmlspecialchars($notif['message']); ?>
-                                                    </p>
-                                                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                                        <?php echo date('M d, H:i', strtotime($notif['created_at'])); ?>
-                                                    </p>
-                                                </div>
-                                                 <?php if(!$notif['is_read']): ?>
-                                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full"></div>
-                                                 <?php endif; ?>
-                                            </div>
-                                        </a>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </div>
                         </div>
+                        <div class="max-h-80 overflow-y-auto custom-scrollbar" id="notif-list">
+                             <?php if (empty($unread_notifs)): ?>
+                                <div class="p-10 text-center">
+                                    <i class="fas fa-check-double text-gray-100 text-3xl mb-3 block"></i>
+                                    <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">No Alerts</p>
+                                </div>
+                             <?php else: foreach($unread_notifs as $notif): ?>
+                                <a href="<?php echo htmlspecialchars($notif['link'] ?: '#'); ?>" onclick="markRead(<?php echo $notif['id']; ?>)" class="block p-5 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-all">
+                                    <p class="text-[11px] font-bold text-gray-900 leading-snug mb-1.5"><?php echo htmlspecialchars($notif['message']); ?></p>
+                                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                                        <i class="fas fa-clock text-[8px]"></i> <?php echo get_time_ago($notif['created_at']); ?>
+                                    </p>
+                                </a>
+                             <?php endforeach; endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- USER PROFILE MENU -->
+                <div class="relative group" id="user-menu-dropdown">
+                    <button onclick="document.getElementById('user-menu-content').classList.toggle('hidden')" class="flex items-center gap-3 bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-1 pr-4 transition-all shadow-sm">
+                        <div class="w-8 h-8 rounded-lg bg-black text-[#19DC7E] flex items-center justify-center font-black text-xs">
+                            A
+                        </div>
+                        <div class="text-left hidden md:block">
+                            <div class="text-[10px] font-black text-gray-900 leading-none">Admin</div>
+                            <div class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Super User</div>
+                        </div>
+                        <i class="fas fa-chevron-down text-[8px] text-gray-300 ml-2"></i>
+                    </button>
+                    
+                    <div id="user-menu-content" class="hidden absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 z-[200] overflow-hidden">
+                        <a href="settings.php" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-cog text-gray-400 text-xs"></i>
+                            <span class="text-[11px] font-bold text-gray-700">Settings</span>
+                        </a>
+                        <a href="../" target="_blank" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-t border-gray-50">
+                            <i class="fas fa-external-link-alt text-gray-400 text-xs"></i>
+                            <span class="text-[11px] font-bold text-gray-700">View Store</span>
+                        </a>
+                        <a href="../logout.php" class="flex items-center gap-3 px-4 py-3 hover:bg-red-50 transition-colors border-t border-gray-50 text-red-500 group">
+                            <i class="fas fa-power-off text-xs group-hover:text-red-600"></i>
+                            <span class="text-[11px] font-bold group-hover:text-red-600">Logout</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </header>
-        
+
         <script>
+        function updateHeaderClock() {
+            const el = document.getElementById('header-clock');
+            if(!el) return;
+            const now = new Date();
+            el.textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        setInterval(updateHeaderClock, 1000);
+        updateHeaderClock();
+
         async function markRead(id) {
-            try {
-                await fetch('mark_notification_read.php?id=' + id);
-            } catch(e) {}
+            try { await fetch('mark_notification_read.php?id=' + id); } catch(e) {}
         }
 
         function toggleSidebar(force) {
             const sidebar = document.querySelector('.admin-sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            if (force === true) {
-                sidebar.classList.add('open');
-                overlay.classList.add('active');
-            } else if (force === false) {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-            } else {
-                const isOpen = sidebar.classList.toggle('open');
-                overlay.classList.toggle('active', isOpen);
-            }
+            if (force === true) { sidebar.classList.add('open'); overlay.classList.add('active'); }
+            else if (force === false) { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+            else { const isOpen = sidebar.classList.toggle('open'); overlay.classList.toggle('active', isOpen); }
         }
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 toggleSidebar(false);
                 document.getElementById('omni-results').classList.add('hidden');
                 document.getElementById('notif-dropdown-content').classList.add('hidden');
+                document.getElementById('user-menu-content').classList.add('hidden');
+            }
+            if (e.key === '/' || (e.metaKey && e.key === 'k')) {
+                e.preventDefault();
+                document.getElementById('omni-search-input').focus();
             }
         });
 
         function toggleNotifDropdown(e) {
             e.stopPropagation();
             document.getElementById('notif-dropdown-content').classList.toggle('hidden');
+            document.getElementById('user-menu-content').classList.add('hidden');
             document.getElementById('omni-results').classList.add('hidden');
         }
 
-        // Omni-Search Logic
         const omniInput = document.getElementById('omni-search-input');
         const omniResults = document.getElementById('omni-results');
         const omniResultsContent = document.getElementById('omni-results-content');
-        const omniLoading = document.getElementById('omni-search-loading');
         let searchTimeout = null;
 
         omniInput.addEventListener('input', (e) => {
             const q = e.target.value.trim();
             clearTimeout(searchTimeout);
-
-            if (q.length < 2) {
-                omniResults.classList.add('hidden');
-                return;
-            }
-
-            omniLoading.classList.remove('hidden');
+            if (q.length < 2) { omniResults.classList.add('hidden'); return; }
 
             searchTimeout = setTimeout(async () => {
                 try {
                     const response = await fetch(`api/omni_search.php?q=${encodeURIComponent(q)}`);
                     const data = await response.json();
-                    
                     renderOmniResults(data);
-                } catch (err) {
-                    console.error('Search failed', err);
-                } finally {
-                    omniLoading.classList.add('hidden');
-                }
+                } catch (err) { console.error('Search failed', err); }
             }, 300);
         });
 
         function renderOmniResults(results) {
             if (results.length === 0) {
-                omniResultsContent.innerHTML = `
-                    <div class="p-8 text-center text-gray-400">
-                        <i class="fas fa-ghost text-2xl mb-2 block opacity-30"></i>
-                        <p class="text-xs font-bold uppercase tracking-widest">Nothing found for "${omniInput.value}"</p>
-                    </div>
-                `;
+                omniResultsContent.innerHTML = `<div class="p-10 text-center text-gray-400"><p class="text-[10px] font-black uppercase tracking-widest">No results</p></div>`;
             } else {
                 let html = '';
                 results.forEach(res => {
                     const icon = res.image 
-                        ? `<img src="../${res.image}" class="w-10 h-10 rounded-lg object-cover">`
-                        : `<div class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100"><i class="${res.icon || 'fas fa-info-circle'}"></i></div>`;
-                    
+                        ? `<img src="../${res.image}" class="w-10 h-10 rounded-xl object-cover shadow-sm">`
+                        : `<div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 text-xs"><i class="${res.icon || 'fas fa-info-circle'}"></i></div>`;
                     html += `
                         <a href="${res.url}" class="flex items-center gap-4 p-4 hover:bg-gray-50 rounded-2xl transition-all group/item">
                             ${icon}
                             <div>
-                                <p class="text-sm font-black text-gray-900 group-hover/item:text-[#19DC7E] transition-colors">${res.title}</p>
-                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${res.subtitle}</p>
+                                <p class="text-xs font-black text-gray-900 group-hover/item:text-[#19DC7E] transition-colors">${res.title}</p>
+                                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${res.subtitle}</p>
                             </div>
-                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 transition-opacity">
-                                <i class="fas fa-chevron-right text-[10px] text-[#19DC7E]"></i>
+                            <div class="ml-auto opacity-0 group-hover/item:opacity-100 transition-all translate-x-2 group-hover/item:translate-x-0">
+                                <i class="fas fa-arrow-right text-[10px] text-[#19DC7E]"></i>
                             </div>
                         </a>
                     `;
@@ -429,13 +478,9 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             omniResults.classList.remove('hidden');
         }
 
-        // Close dropdowns on click outside
         document.addEventListener('click', (e) => {
-            if (!document.getElementById('omni-search-container').contains(e.target)) {
-                omniResults.classList.add('hidden');
-            }
-            if (!document.getElementById('notif-dropdown').contains(e.target)) {
-                document.getElementById('notif-dropdown-content').classList.add('hidden');
-            }
+            if (!document.getElementById('omni-search-container').contains(e.target)) omniResults.classList.add('hidden');
+            if (!document.getElementById('notif-dropdown').contains(e.target)) document.getElementById('notif-dropdown-content').classList.add('hidden');
+            if (!document.getElementById('user-menu-dropdown').contains(e.target)) document.getElementById('user-menu-content').classList.add('hidden');
         });
         </script>

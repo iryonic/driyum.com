@@ -33,116 +33,106 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
 ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="mb-8 flex justify-between items-center">
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 anim-up">
     <div>
-        <h1 class="text-3xl font-['Fredoka'] font-bold text-gray-900">Dashboard</h1>
-        <p class="text-gray-500 text-sm">Welcome back, Admin!</p>
+        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Dashboard Overview</h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Live store performance and insights</p>
     </div>
-    <div class="text-right">
-        <span class="text-xs font-bold text-gray-400 uppercase">Current Time</span>
-        <div id="admin-clock" class="font-mono text-lg font-bold text-gray-800"><?php echo date('H:i:s'); ?></div>
+    <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-[#19DC7E] animate-pulse"></span>
+        <span class="text-[9px] font-black uppercase tracking-widest text-gray-500">System Ready</span>
     </div>
 </div>
 
-<script>
-function updateClock() {
-    const clock = document.getElementById('admin-clock');
-    if (!clock) return;
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    const m = String(now.getMinutes()).padStart(2, '0');
-    const s = String(now.getSeconds()).padStart(2, '0');
-    clock.textContent = `${h}:${m}:${s}`;
-}
-setInterval(updateClock, 1000);
-updateClock();
-</script>
-
-<!-- STATS GRID -->
-<div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-10">
     <!-- Revenue -->
-    <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 group hover:scale-[1.02] transition-all duration-300">
-        <div class="w-16 h-16 rounded-[22px] bg-green-500/10 flex items-center justify-center text-[#19DC7E] text-3xl mb-4 group-hover:rotate-12 transition-transform shadow-inner">
-            <i class="fas fa-rupee-sign"></i>
-        </div>
-        <div>
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Revenue</div>
-            <div class="text-3xl font-black text-gray-900 fredoka">₹<?php echo number_format($revenue); ?></div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-green-50 text-[#19DC7E] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-indian-rupee-sign"></i>
+            </div>
+            <div>
+                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Revenue</div>
+                <div class="text-xl font-black text-gray-900 fredoka">₹<?php echo number_format($revenue, 0); ?></div>
+            </div>
         </div>
     </div>
 
     <!-- Orders -->
-    <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 group hover:scale-[1.02] transition-all duration-300">
-        <div class="w-16 h-16 rounded-[22px] bg-blue-500/10 flex items-center justify-center text-blue-500 text-3xl mb-4 group-hover:rotate-12 transition-transform shadow-inner">
-            <i class="fas fa-shopping-bag"></i>
-        </div>
-        <div>
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Lifetime Orders</div>
-            <div class="text-3xl font-black text-gray-900 fredoka"><?php echo $orders_count; ?></div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 100ms">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <div>
+                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Orders</div>
+                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $orders_count; ?></div>
+            </div>
         </div>
     </div>
 
     <!-- Pending -->
-    <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 group hover:scale-[1.02] transition-all duration-300 relative overflow-hidden">
-        <div class="w-16 h-16 rounded-[22px] bg-yellow-500/10 flex items-center justify-center text-yellow-500 text-3xl mb-4 group-hover:rotate-12 transition-transform shadow-inner">
-            <i class="fas fa-clock"></i>
-        </div>
-        <div>
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Processing Pending Orders</div>
-            <div class="text-3xl font-black text-gray-900 fredoka"><?php echo $pending_orders; ?></div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up relative overflow-hidden" style="animation-delay: 200ms">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div>
+                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Pending</div>
+                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $pending_orders; ?></div>
+            </div>
         </div>
         <?php if($pending_orders > 0): ?>
-            <div class="absolute right-0 top-0 h-full w-2 bg-yellow-400 animate-pulse"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-1 bg-orange-400"></div>
         <?php endif; ?>
     </div>
 
     <!-- Products -->
-    <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 group hover:scale-[1.02] transition-all duration-300">
-        <div class="w-16 h-16 rounded-[22px] bg-purple-500/10 flex items-center justify-center text-purple-500 text-3xl mb-4 group-hover:rotate-12 transition-transform shadow-inner">
-            <i class="fas fa-boxes"></i>
-        </div>
-        <div>
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Active Products</div>
-            <div class="text-3xl font-black text-gray-900 fredoka"><?php echo $products_count; ?></div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 300ms">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-box"></i>
+            </div>
+            <div>
+                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Snacks</div>
+                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $products_count; ?></div>
+            </div>
         </div>
     </div>
 
     <!-- Subscribers -->
-    <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 group hover:scale-[1.02] transition-all duration-300">
-        <div class="w-16 h-16 rounded-[22px] bg-pink-500/10 flex items-center justify-center text-pink-500 text-3xl mb-4 group-hover:rotate-12 transition-transform shadow-inner">
-            <i class="fas fa-envelope-open-text"></i>
-        </div>
-        <div>
-            <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Subscribers</div>
-            <div class="text-3xl font-black text-gray-900 fredoka"><?php echo $subscribers_count; ?></div>
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 400ms">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <div>
+                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Subscribers</div>
+                <div class="text-xl font-black text-gray-900 fredoka"><?php echo $subscribers_count; ?></div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- BUSINESS INTELLIGENCE SECTION -->
-<div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12">
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
     <!-- Sales Chart -->
-    <div class="xl:col-span-2 bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 anim-up">
-        <div class="flex justify-between items-center mb-8">
+    <div class="xl:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100 anim-up">
+        <div class="flex justify-between items-center mb-6">
             <div>
-                <h3 class="font-bold text-2xl font-['Fredoka'] text-gray-900">Revenue Stream</h3>
-                <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Performance over the last 7 days</p>
-            </div>
-            <div class="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full">
-                <span class="w-2 h-2 rounded-full bg-[#19DC7E]"></span>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Live Velocity</span>
+                <h3 class="font-black text-xl fredoka text-gray-900">Revenue Stream</h3>
+                <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Performance over the last 7 days</p>
             </div>
         </div>
-        <div class="h-80 relative">
+        <div class="h-64 relative">
             <canvas id="salesChart"></canvas>
         </div>
     </div>
 
     <!-- Category Performance -->
-    <div class="bg-white p-10 rounded-[40px] shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
-        <h3 class="font-bold text-2xl font-['Fredoka'] text-gray-900 mb-2">Category Spread</h3>
-        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-8">Product distribution by sector</p>
-        <div class="h-64 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
+        <h3 class="font-black text-xl fredoka text-gray-900 mb-1">Inventory Split</h3>
+        <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-6">Product distribution by Category</p>
+        <div class="h-56">
             <canvas id="categoryChart"></canvas>
         </div>
     </div>
@@ -153,63 +143,82 @@ updateClock();
     
     <!-- LEFT: RECENT ORDERS -->
     <div class="lg:col-span-2 space-y-8">
-        <div class="bg-white rounded-[35px] shadow-sm border border-gray-100 overflow-hidden anim-up">
-            <div class="p-8 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="font-bold text-2xl font-['Fredoka'] text-gray-900">Recent Orders</h3>
-                <a href="orders.php" class="btn-chunky bg-gray-50 text-gray-500 px-4 py-2 rounded-xl text-xs">View All</a>
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
+            <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <h3 class="font-black text-xl fredoka text-gray-900">Recent Orders</h3>
+                    <div id="bulk-actions" class="hidden flex items-center gap-2 animate-fade-in-right">
+                        <select id="bulk-status-select" class="bg-gray-50 border border-gray-200 text-gray-700 text-xs font-bold rounded-lg px-3 py-2 outline-none focus:border-[#19DC7E]">
+                            <option value="">Status...</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button onclick="applyBulkStatus()" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all shadow-sm">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+                <a href="orders.php" class="bg-gray-50 text-gray-400 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black hover:text-[#19DC7E] transition-all">View All</a>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="text-gray-400 text-[10px] font-black uppercase tracking-widest bg-gray-50/50 border-b border-gray-50">
-                            <th class="p-6">Order ID</th>
-                            <th class="p-6">Customer</th>
-                            <th class="p-6">Total</th>
-                            <th class="p-6">Status</th>
-                            <th class="p-6 text-right">Action</th>
+                        <tr class="text-gray-400 text-[9px] font-black uppercase tracking-widest bg-gray-50/50 border-b border-gray-50">
+                            <th class="p-4 w-10 text-center"><input type="checkbox" id="select-all" class="w-4 h-4 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" onclick="toggleSelectAll()"></th>
+                            <th class="p-4">ID</th>
+                            <th class="p-4">Customer</th>
+                            <th class="p-4">Amount</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="text-sm text-gray-600 font-['Outfit']">
+                    <tbody class="text-xs text-gray-600">
                         <?php foreach ($recent_orders as $o): ?>
-                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition group">
-                            <td class="p-6">
-                                <span class="font-black text-gray-900">#<?php echo $o['order_number'] ?: $o['id']; ?></span>
+                        <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
+                            <td class="p-4 text-center">
+                                <input type="checkbox" name="selected_orders[]" value="<?php echo $o['id']; ?>" class="order-checkbox w-4 h-4 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer" onclick="updateBulkState()">
                             </td>
-                            <td class="p-6 font-bold text-gray-500">
-                                <?php 
-                                    $addr = json_decode($o['shipping_address'] ?? '{}', true);
-                                    echo $addr['name'] ?? 'Guest';
-                                ?>
+                            <td class="p-4">
+                                <span class="font-bold text-gray-900">#<?php echo $o['order_number'] ?: $o['id']; ?></span>
                             </td>
-                            <td class="p-6">
-                                <span class="font-black text-gray-900">₹<?php echo number_format($o['total']); ?></span>
+                            <td class="p-4">
+                                <span class="font-medium">
+                                    <?php 
+                                        $addr = json_decode($o['shipping_address'] ?? '{}', true);
+                                        echo $addr['name'] ?? 'Guest';
+                                    ?>
+                                </span>
                             </td>
-                            <td class="p-6">
-                                <div class="relative inline-block status-dropdown-container">
+                            <td class="p-4 font-black text-gray-900">₹<?php echo number_format($o['total']); ?></td>
+                            <td class="p-4">
+                                <div class="relative status-dropdown-container">
                                     <button onclick="toggleStatusDropdown(this, event)" class="status-btn px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm transition-all hover:scale-105 active:scale-95 <?php echo get_status_color($o['order_status']); ?>">
-                                        <?php echo str_replace('_', ' ', $o['order_status']); ?> 
-                                        <i class="fas fa-chevron-down opacity-50 text-[10px] transition-transform duration-300"></i>
+                                        <?php echo str_replace('_', ' ', $o['order_status']); ?>
+                                        <i class="fas fa-chevron-down opacity-50 text-[10px]"></i>
                                     </button>
                                     
-                                    <!-- Dropdown Menu (Standardized with Orders Page) -->
-                                    <div class="status-menu absolute left-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 hidden z-50 overflow-hidden transform origin-top-left transition-all">
-                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'pending', this)" class="block px-4 py-2 hover:bg-yellow-50 text-yellow-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Pending</a>
-                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'confirmed', this)" class="block px-4 py-2 hover:bg-indigo-50 text-indigo-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Confirm</a>
-                                        <a href="javascript:void(0)" onclick="openDispatchModal(<?php echo $o['id']; ?>, '<?php echo $o['id']; ?>')" class="block px-4 py-2 hover:bg-blue-50 text-blue-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Ship / Dispatch</a>
-                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'delivered', this)" class="block px-4 py-2 hover:bg-green-50 text-green-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Delivered</a>
-                                        <div class="border-t border-gray-50 my-1"></div>
-                                        <a href="javascript:void(0)" onclick="updateOrderStatus(<?php echo $o['id']; ?>, 'cancelled', this)" class="block px-4 py-2 hover:bg-red-50 text-red-600 font-bold text-[10px] uppercase tracking-widest transition-colors">Cancel</a>
+                                    <!-- Dropdown Menu -->
+                                    <div class="status-menu hidden absolute left-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden anim-up">
+                                        <?php 
+                                        $statuses = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+                                        foreach($statuses as $s): 
+                                            if($s === $o['order_status']) continue;
+                                        ?>
+                                        <button onclick="updateOrderStatus(<?php echo $o['id']; ?>, '<?php echo $s; ?>', this)" class="w-full text-left px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:bg-gray-50 hover:text-black transition-colors border-b border-gray-50 last:border-0 block">
+                                            <?php echo $s; ?>
+                                        </button>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
                             </td>
-                            <td class="p-6 text-right">
-                                <a href="orders.php?id=<?php echo $o['id']; ?>" class="w-10 h-10 inline-flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl group-hover:bg-black group-hover:text-white transition shadow-sm"><i class="fas fa-eye text-xs"></i></a>
+                            <td class="p-4 text-right">
+                                <a href="orders.php?id=<?php echo $o['id']; ?>" class="w-8 h-8 inline-flex items-center justify-center bg-gray-50 text-gray-400 rounded-lg hover:bg-black hover:text-white transition shadow-sm"><i class="fas fa-arrow-right text-[10px]"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
-                        <?php if(empty($recent_orders)): ?>
-                            <tr><td colspan="5" class="p-20 text-center text-gray-400 font-medium italic">No orders yet. Start your marketing engine! 🚀</td></tr>
-                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -363,6 +372,69 @@ updateClock();
 
 <script>
 // Dashboard Status Management Logic
+function toggleSelectAll() {
+    const parent = document.getElementById('select-all');
+    document.querySelectorAll('.order-checkbox').forEach(cb => cb.checked = parent.checked);
+    updateBulkState();
+}
+
+function updateBulkState() {
+    const checked = document.querySelectorAll('.order-checkbox:checked').length;
+    const actions = document.getElementById('bulk-actions');
+    const parent = document.getElementById('select-all');
+    
+    // Update main checkbox state (indeterminate logic)
+    const all = document.querySelectorAll('.order-checkbox').length;
+    parent.indeterminate = checked > 0 && checked < all;
+    parent.checked = checked === all;
+
+    if (checked > 0) {
+        actions.classList.remove('hidden');
+    } else {
+        actions.classList.add('hidden');
+    }
+}
+
+async function applyBulkStatus() {
+    const status = document.getElementById('bulk-status-select').value;
+    if (!status) return alert('Please select a status to apply.');
+
+    const selected = Array.from(document.querySelectorAll('.order-checkbox:checked')).map(cb => cb.value);
+    
+    if (!confirm(`Are you sure you want to change the status of ${selected.length} orders to "${status}"?`)) return;
+
+    const btn = document.querySelector('#bulk-actions button');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+
+    try {
+        const formData = new FormData();
+        formData.append('ajax_action', 'bulk_status');
+        formData.append('status', status);
+        selected.forEach(id => formData.append('ids[]', id));
+
+        const response = await fetch('orders.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (e) {
+        alert('Bulk update failed. Please try again.');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// ... existing functions ...
 async function updateOrderStatus(id, status, el) {
     const container = el.closest('.status-dropdown-container');
     const btn = container.querySelector('.status-btn');

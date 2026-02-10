@@ -77,7 +77,7 @@ $error = $flash ? $flash['message'] : '';
             
             <div class="relative z-10">
                 <h1 class="text-5xl font-['Fredoka'] font-bold text-white mb-4">Welcome Back!</h1>
-                <p class="text-green-50 text-lg font-['Outfit']">Your daily dose of sun-dried happiness is waiting.</p>
+                <p class="text-green-50 text-lg font-['Outfit']">Your daily dose of pure mountain happiness is waiting.</p>
             </div>
             
             <!-- Decor -->

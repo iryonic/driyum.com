@@ -10,7 +10,7 @@
 
 ## 🎯 Project Overview
 
-**DRIYUM** is an enterprise-grade, production-ready D2C (Direct-to-Consumer) eCommerce platform built for selling premium dehydrated fruit snacks and traditional Kashmiri Hokh Suin (sun-dried vegetables).
+**DRIYUM** is an enterprise-grade, production-ready D2C (Direct-to-Consumer) eCommerce platform built for selling premium dehydrated fruit snacks and traditional Kashmiri Hokh Suin (dehydrated vegetables).
 
 ### ✨ Key Highlights
 - **Myntra-level Polish**: App-like mobile experience with smooth animations

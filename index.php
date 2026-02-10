@@ -16,7 +16,7 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <?php 
     $page_title = 'The Art of Healthy Snacking';
-    $page_description = "Experience 100% natural, sun-dried healthy snacks from the heart of Kashmir. No added sugar, no guilt—just pure, crunchy indulgence delivered to your door.";
+    $page_description = "Experience 100% natural, premium healthy snacks from the heart of Kashmir. No added sugar, no guilt—just pure, crunchy indulgence delivered to your door.";
     include 'includes/head.php'; 
     ?>
     <!-- Custom Scroll Styles -->       
@@ -34,215 +34,263 @@ if (isset($_SESSION['user_id'])) {
     <?php include 'includes/header.php'; ?>
 
     <?php
-    $hero = fetch_one("SELECT * FROM homepage_sections WHERE section_name = 'hero'");
-    if(!$hero) {
-        $hero = [
-            'heading' => "YOUR NEW \nHEALTHY HABIT.",
-            'subheading' => "Absolutely No Sugar. 100% Guilt-Free.",
-            'cta_text' => "Start Crunching",
-            'cta_link' => "shop.php",
-            'media_url' => "assets/images/hero.jpg"
-        ];
+    $hero_slides = get_hero_slides();
+    if (empty($hero_slides)) {
+        // Fallback to static hero if no slides are in the database
+        $hero = fetch_one("SELECT * FROM homepage_sections WHERE section_name = 'hero'");
+        if(!$hero) {
+            $hero = [
+                'title' => "YOUR NEW HEALTHY HABIT.",
+                'subtitle' => "Absolutely No Sugar. 100% Guilt-Free.",
+                'cta_text' => "Start Crunching",
+                'cta_link' => "shop.php",
+                'image' => "assets/images/hero.jpg"
+            ];
+        } else {
+            // Map homepage_sections fields to slide fields for consistency
+            $hero['title'] = $hero['heading'];
+            $hero['subtitle'] = $hero['subheading'];
+            $hero['image'] = $hero['media_url'];
+        }
+        $hero_slides = [$hero];
     }
-    // Parse headline to add style to the second line or specific words
-    $head_parts = explode("\n", $hero['heading']);
-    $main_head = $head_parts[0];
-    $sub_head = isset($head_parts[1]) ? $head_parts[1] : '';
+    
+    // Fetch stats for the hero overlay
+    $show_stats = get_setting('show_hero_stats', 'on');
+    $total_reviews = fetch_one("SELECT COUNT(*) as c FROM reviews")['c'] ?? 5231;
+    $active_sale = fetch_one("SELECT * FROM sale_countdowns WHERE is_active = 1 LIMIT 1");
     ?>
-    <!-- ENHANCED CHUNKY HERO -->
-    <section class="relative pt-12 pb-28 px-4 text-center overflow-hidden">
-        
-        <!-- Animated Background Elements -->
-        <div class="absolute top-20 left-10 w-32 h-32 bg-yellow-300 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-        <div class="absolute bottom-40 right-10 w-40 h-40 bg-[#19DC7E] rounded-full blur-[80px] opacity-20 animate-bounce-slow"></div>
 
-        <!-- FUN FLOATING FRUITS 🍎 -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
-            <!-- Top Left -->
-            <div class="absolute top-10 left-[10%] text-6xl opacity-20 animate-bounce duration-[3000ms] rotate-12 drop-shadow-lg hidden sm:block">🍎</div>
-            <div class="absolute top-40 left-[5%] text-4xl opacity-15 animate-ping duration-[4000ms] hidden sm:block">🍃</div>
-            <div class="absolute top-60 left-[20%] text-5xl opacity-20 animate-bounce duration-[3500ms] -rotate-6 hidden lg:block">🍓</div>
-            
-            <!-- Bottom Left -->
-            <div class="absolute bottom-20 left-[15%] text-7xl opacity-20 animate-bounce duration-[4000ms] -rotate-12 blur-[1px] hidden sm:block">🍑</div>
-            <div class="absolute bottom-40 left-[25%] text-4xl opacity-15 animate-spin-slow duration-[12s] hidden lg:block">🥝</div>
-            
-            <!-- Top Right -->
-            <div class="absolute top-20 right-[10%] text-5xl opacity-20 animate-bounce duration-[3500ms] rotate-[20deg] hidden sm:block">🌰</div>
-            <div class="absolute top-1/2 right-[5%] text-4xl opacity-10 animate-spin-slow duration-[10s] hidden sm:block">🍇</div>
-            <div class="absolute top-32 right-[20%] text-6xl opacity-20 animate-bounce duration-[4200ms] rotate-12 hidden lg:block">🥭</div>
-            
-            <!-- Bottom Right -->
-            <div class="absolute bottom-32 right-[15%] text-6xl opacity-20 animate-bounce duration-[4500ms] -rotate-[15deg] blur-[1px] hidden sm:block">🍒</div>
-            <div class="absolute bottom-10 right-[25%] text-5xl opacity-15 animate-bounce duration-[3800ms] rotate-6 hidden sm:block">🍊</div>
-            
-            <!-- Center area drift -->
-            <div class="absolute top-1/4 left-1/4 text-3xl opacity-10 animate-pulse hidden md:block">✨</div>
-            <div class="absolute bottom-1/4 right-1/4 text-3xl opacity-10 animate-pulse delay-700 hidden md:block">✨</div>
-        </div>
+    <!-- ENHANCED SLIDING HERO -->
+    <section class="relative overflow-hidden group/hero">
+        <div class="swiper heroSwiper w-full h-[60vh] md:h-[50vw]">
+            <div class="swiper-wrapper">
+                <?php foreach ($hero_slides as $index => $slide): ?>
+                    <div class="swiper-slide relative flex items-center justify-center text-center overflow-hidden">
+                        <!-- Background Image with Overlay -->
+                        <div class="absolute inset-0 z-0 scale-100 swiper-image-anim">
+                            <img src="<?php echo get_url($slide['image']); ?>" 
+                                 class="w-full h-full object-cover" 
+                                 alt="<?php echo htmlspecialchars($slide['title']); ?>">
+                            <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/60 backdrop-blur-[1px]"></div>
+                        </div>
 
-        <div class="container mx-auto max-w-5xl relative z-10">
-            
-            <!-- Badge -->
-            <div class="inline-flex items-center gap-2 bg-white border border-gray-100 rounded-full px-5 py-2 shadow-lg mb-8 transform rotate-[-3deg] hover:rotate-0 transition duration-300 cursor-default">
-                <span class="w-3 h-3 rounded-full bg-[#19DC7E] animate-pulse"></span>
-                <span class="text-sm font-black font-['Outfit'] uppercase tracking-widest text-gray-400">Fresh Drop 2026</span>
+                        <!-- Slide Content -->
+                        <div class="container mx-auto px-4 relative z-10">
+                            <div class="max-w-5xl mx-auto">
+                                <!-- Badge -->
+                                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full px-5 py-2 shadow-2xl mb-8 transform swiper-badge-anim opacity-0">
+                                    <span class="w-2 h-2 rounded-full bg-[#19DC7E] animate-pulse"></span>
+                                    <span class="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-white">The Purest Taste of Kashmir</span>
+                                </div>
+
+                                <!-- Title -->
+                                <h1 class="text-5xl md:text-8xl lg:text-9xl font-['Fredoka'] font-black leading-[0.85] text-white mb-8 drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform swiper-title-anim opacity-0 tracking-tighter">
+                                    <?php echo nl2br(htmlspecialchars($slide['title'] ?? '')); ?>
+                                </h1>
+
+                                <!-- Subtitle -->
+                                <p class="text-base md:text-2xl text-white/80 font-medium mb-12 max-w-2xl mx-auto drop-shadow-xl swiper-subtitle-anim opacity-0">
+                                    <?php echo htmlspecialchars($slide['subtitle'] ?? ''); ?>
+                                </p>
+
+                                <!-- CTA Group -->
+                                <div class="flex flex-col md:flex-row items-center justify-center gap-6 swiper-cta-anim opacity-0">
+                                    <?php if (!empty($slide['cta_text'])): ?>
+                                    <a href="<?php echo get_url($slide['cta_link']); ?>" 
+                                       class="group relative inline-flex items-center justify-center px-10 md:px-14 py-5 md:py-6 overflow-hidden font-black text-black transition-all bg-[#19DC7E] rounded-[24px] hover:bg-[#12C66F] hover:scale-105 active:scale-95 shadow-[0_20px_40px_-10px_rgba(25,220,126,0.5)] ring-4 ring-white/10">
+                                        <span class="relative uppercase tracking-widest text-xs md:text-sm"><?php echo htmlspecialchars($slide['cta_text']); ?></span>
+                                        <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
+                                    </a>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
 
-            <!-- Headline -->
-            <h1 class="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-['Fredoka'] font-black leading-[0.9] text-gray-900 mb-6 tracking-tight relative">
-                <?php echo htmlspecialchars($main_head); ?> <br>
-                <?php if($sub_head): ?>
-                <span class="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#19DC7E] to-[#0ea5e9]">
-                    <?php echo htmlspecialchars($sub_head); ?>
-                    <!-- Underline Squiggle -->
-                    <svg class="absolute w-full h-4 -bottom-1 left-0 text-[#19DC7E]" viewBox="0 0 100 10" preserveAspectRatio="none">
-                         <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" class="opacity-30" />
-                    </svg>
-                </span>
+            <!-- Global Overlays -->
+            <div class="absolute inset-0 z-20 pointer-events-none">
+                <!-- Top-Left: Live Sale Countdown -->
+                <?php if($active_sale): ?>
+                <div class="absolute top-8 left-8 hidden lg:block pointer-events-auto">
+                    <div class="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[32px] p-1 pr-6 flex items-center gap-4 shadow-2xl hero-sale-timer-row anim-scale-in" data-end="<?php echo $active_sale['end_date']; ?>">
+                        <div class="bg-[#19DC7E] text-black px-4 py-3 rounded-[28px] flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Live Sale</span>
+                        </div>
+                        <div class="flex items-center gap-4 py-2">
+                            <div class="flex flex-col items-center min-w-[35px]">
+                                <span class="text-white font-black text-xl leading-none hero-days">00</span>
+                                <span class="text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Days</span>
+                            </div>
+                            <span class="text-white/20 font-light text-xl">:</span>
+                            <div class="flex flex-col items-center min-w-[35px]">
+                                <span class="text-white font-black text-xl leading-none hero-hours">00</span>
+                                <span class="text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Hrs</span>
+                            </div>
+                            <span class="text-white/20 font-light text-xl">:</span>
+                            <div class="flex flex-col items-center min-w-[35px]">
+                                <span class="text-white font-black text-xl leading-none hero-mins">00</span>
+                                <span class="text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Min</span>
+                            </div>
+                            <span class="text-white/20 font-light text-xl">:</span>
+                            <div class="flex flex-col items-center min-w-[35px]">
+                                <span class="text-[#19DC7E] font-black text-xl leading-none hero-secs">00</span>
+                                <span class="text-[7px] uppercase text-[#19DC7E] font-bold tracking-[0.2em]">Sec</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <?php endif; ?>
-            </h1>
 
-            <p class="text-xl md:text-2xl text-gray-400 font-['Outfit'] font-medium mb-10 max-w-2xl mx-auto leading-relaxed">
-                <span class="text-gray-900 font-bold"><?php echo htmlspecialchars($hero['subheading']); ?></span>
-            </p>
-
-            <!-- Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16 relative z-20">
-                <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white text-lg md:text-xl px-10 py-5 rounded-[20px] shadow-2xl hover:scale-110 hover:-rotate-3 hover:bg-[#19DC7E] hover:text-black transition-all duration-300 border-none">
-                    <?php echo htmlspecialchars($hero['cta_text']); ?>
-                </a>
-                <a href="#video_brand_story" class="hidden sm:flex w-16 h-16 rounded-[20px] bg-white text-gray-900 border-2 border-gray-100 items-center justify-center text-xl shadow-lg hover:border-[#19DC7E] hover:text-[#19DC7E] hover:rotate-12 transition-all duration-300" aria-label="Watch Brand Story">
-                    <i class="fas fa-play ml-1"></i>
-                </a>
-            </div>
-
-            <?php if(!isset($hero['show_media']) || $hero['show_media']): ?>
-            <!-- 3D HERO IMAGE COMPOSITION -->
-            <div class="relative max-w-4xl mx-auto group perspective-[1000px]">
-                
-                <!-- Main Image Container -->
-                <div class="relative bg-white p-1 md:p-2 rounded-[2.5rem] md:rounded-[3.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.15)] transform rotate-[-2deg] group-hover:rotate-0 transition-all duration-700 ease-out z-10 border-4 border-white ring-4 ring-gray-50">
-                    <img src="<?php echo !empty($hero['media_url']) ? get_url(ltrim($hero['media_url'], '/')) : get_url('assets/images/hero.jpg'); ?>" 
-                         fetchpriority="high" 
-                         loading="eager" 
-                         alt="Premium Healthy Snacks"
-                         class="rounded-[2.2rem] md:rounded-[3rem] w-full h-[280px] md:h-[450px] object-cover transform scale-100 group-hover:scale-105 transition duration-[1.5s]">                    
-                    <!-- Overlay Gradient -->
-                    <div class="absolute inset-0 rounded-[2.2rem] md:rounded-[3rem] bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+                <!-- Floating Sticker (Top-Right) -->
+                <div class="absolute top-[15%] right-[10%] w-40 animate-bounce-slow hidden md:block">
+                    <img src="<?php echo get_url('assets/images/stickers/healthy.png'); ?>" class="w-full drop-shadow-2xl rotate-12" onerror="this.style.display='none'">
                 </div>
 
-                <!-- Floating Elements (Stickers) -->
-                <div class="absolute -top-6 -left-4 md:-top-10 md:-left-10 z-20 animate-bounce-slow">
-                     <div class="bg-[#19DC7E] text-white font-black font-['Fredoka'] text-sm md:text-3xl px-4 py-2 md:px-6 md:py-4 rounded-[1.5rem] md:rounded-[2rem] shadow-xl transform -rotate-12 border-2 md:border-4 border-white">
-                        100% NATURAL 🌿
-                     </div>
-                </div>
-
-                <div class="absolute -bottom-8 -right-4 md:-bottom-10 md:-right-5 z-20">
-                     <div class="bg-yellow-400 text-black font-black font-['Fredoka'] text-xs md:text-2xl px-4 py-6 md:px-6 md:py-8 rounded-full shadow-xl transform rotate-12 border-2 md:border-4 border-white flex flex-col items-center leading-none group-hover:rotate-[20deg] transition duration-500">
-                        <span>ZERO</span>
-                        <span class="text-[8px] md:text-sm">JUNK</span>
-                     </div>
-                </div>
-
-                <!-- Glass Stats Card -->
-                <div class="absolute bottom-10 left-10 md:left-10 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-white/50 z-30 transform translate-y-4 group-hover:translate-y-0 transition duration-500 hidden md:flex items-center gap-3">
-                    <div class="flex -space-x-2">
-                        <img src="https://i.pravatar.cc/100?img=5" loading="lazy" alt="User review 1" class="w-8 h-8 rounded-full border-2 border-white">
-                        <img src="https://i.pravatar.cc/100?img=8" loading="lazy" alt="User review 2" class="w-8 h-8 rounded-full border-2 border-white">
-                        <img src="https://i.pravatar.cc/100?img=12" loading="lazy" alt="User review 3" class="w-8 h-8 rounded-full border-2 border-white">
+                <!-- Stats Card (Bottom-Left) -->
+                <?php if($show_stats === 'on'): ?>
+                <div class="absolute bottom-28 left-8 bg-white/10 backdrop-blur-2xl p-5 rounded-[32px] shadow-2xl border border-white/20 flex items-center gap-4 pointer-events-auto hover:-translate-y-2 transition-transform duration-500 hidden md:flex">
+                    <div class="flex -space-x-3">
+                        <img src="https://i.pravatar.cc/100?img=5" class="w-10 h-10 rounded-full border-2 border-white/30 shadow-xl">
+                        <img src="https://i.pravatar.cc/100?img=8" class="w-10 h-10 rounded-full border-2 border-white/30 shadow-xl">
+                        <img src="https://i.pravatar.cc/100?img=12" class="w-10 h-10 rounded-full border-2 border-white/30 shadow-xl">
                     </div>
                     <div>
-                        <div class="flex text-yellow-500 text-[10px]">
+                        <div class="flex text-amber-400 text-[10px] mb-0.5">
                             <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
-                        <span class="text-xs font-bold text-gray-800">5k+ Reviews</span>
+                        <p class="text-white font-black text-[11px] uppercase tracking-widest"><?php echo number_format($total_reviews); ?>+ Reviews</p>
                     </div>
                 </div>
-
+                <?php endif; ?>
+                
+                <!-- Floating Fruits Overlays -->
+                <div class="absolute top-[20%] left-[10%] text-7xl opacity-20 animate-bounce-slow hidden md:block">🍎</div>
+                <div class="absolute bottom-[30%] right-[12%] text-8xl opacity-20 animate-bounce-slow hidden md:block" style="animation-delay: 1.5s;">🥝</div>
             </div>
-            <?php endif; ?>
 
+            <!-- Bottom Floating Trust Marquee Overlay -->
+            <div class="absolute bottom-0 left-0 w-full z-30 bg-white/5 backdrop-blur-[20px] border-t border-white/10 py-5 overflow-hidden group/marquee">
+                <div class="flex animate-marquee whitespace-nowrap group-hover/marquee:[animation-play-state:paused]">
+                    <?php 
+                    $badges = [
+                        ['icon' => '🌱', 'text' => '100% Organic'],
+                        ['icon' => '🏔️', 'text' => 'Mountain Fresh'],
+                        ['icon' => '🚫', 'text' => 'No Added Sugar'],
+                        ['icon' => '💎', 'text' => 'Handpicked Quality'],
+                        ['icon' => '🌍', 'text' => 'Ethically Sourced'],
+                        ['icon' => '🌾', 'text' => 'Gluten Free'],
+                        ['icon' => '📦', 'text' => 'Eco Friendly']
+                    ];
+                    $display_badges = array_merge($badges, $badges, $badges);
+                    foreach($display_badges as $badge):
+                    ?>
+                    <div class="flex items-center gap-3 mx-10">
+                        <span class="text-xl"><?php echo $badge['icon']; ?></span>
+                        <span class="text-[11px] font-black text-white/80 uppercase tracking-[0.2em]"><?php echo $badge['text']; ?></span>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Swiper Controls -->
+            <div class="swiper-button-next !w-16 !h-16 !bg-white/10 hover:!bg-white/20 !backdrop-blur-xl !rounded-full !text-white after:!content-[''] !right-8 hidden lg:flex items-center justify-center border border-white/20 transition-all opacity-0 group-hover/hero:opacity-100">
+                <i class="fas fa-chevron-right text-xl"></i>
+            </div>
+            <div class="swiper-button-prev !w-16 !h-16 !bg-white/10 hover:!bg-white/20 !backdrop-blur-xl !rounded-full !text-white after:!content-[''] !left-8 hidden lg:flex items-center justify-center border border-white/20 transition-all opacity-0 group-hover/hero:opacity-100">
+                <i class="fas fa-chevron-left text-xl"></i>
+            </div>
+            
+            <div class="swiper-pagination !bottom-12 swiper-pagination-premium"></div>
         </div>
     </section>
 
+    <style>
+        .heroSwiper .swiper-slide-active .swiper-title-anim { animation: fadeInUpHero 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .heroSwiper .swiper-slide-active .swiper-subtitle-anim { animation: fadeInUpHero 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards; }
+        .heroSwiper .swiper-slide-active .swiper-cta-anim { animation: fadeInUpHero 1s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards; }
+        .heroSwiper .swiper-slide-active .swiper-badge-anim { animation: fadeInUpHero 1s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .heroSwiper .swiper-slide-active .swiper-image-anim { animation: heroZoom 15s linear infinite alternate; }
 
-    <?php
-    $active_sale = fetch_one("SELECT * FROM sale_countdowns WHERE is_active = 1 LIMIT 1");
-    if($active_sale):
-    ?>
-    <section class="py-0 px-4 -mt-8 md:-mt-16 relative z-20 mb-12 md:mb-20">
-        <div class="container mx-auto">
-            <div class="bg-black text-white rounded-[32px] md:rounded-[48px] p-6 md:p-12 shadow-[0_40px_80px_rgba(0,0,0,0.4)] flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12 border-4 border-[#19DC7E] overflow-hidden relative">
-                
-                <!-- Background Glitch Effect -->
-                <div class="absolute inset-0 bg-[url('<?php echo get_url('assets/images/noise.png'); ?>')] opacity-20 pointer-events-none mix-blend-overlay"></div>
-                <div class="absolute -right-20 -top-20 w-64 h-64 bg-[#19DC7E] rounded-full blur-[100px] opacity-20 animate-pulse"></div>
+        @keyframes heroZoom {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        
+        @keyframes fadeInUpHero {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-                <div class="text-center lg:text-left relative z-10 lg:max-w-md">
-                    <span class="inline-block bg-[#19DC7E] text-black font-black uppercase text-[10px] md:text-xs px-4 py-1.5 rounded-full mb-4 animate-bounce">Limited Time Offer</span>
-                    <h2 class="text-2xl md:text-4xl lg:text-5xl font-['Fredoka'] font-black leading-tight mb-2"><?php echo htmlspecialchars($active_sale['title']); ?></h2>
-                    <p class="text-gray-400 font-['Outfit'] text-sm md:text-base opacity-80">Don't miss out on these crunch-tastic deals!</p>
-                </div>
+        .swiper-pagination-premium .swiper-pagination-bullet {
+            width: 12px !important;
+            height: 12px !important;
+            background: #fff !important;
+            opacity: 0.3 !important;
+            margin: 0 6px !important;
+            transition: all 0.4s ease !important;
+            border-radius: 4px !important;
+        }
+        .swiper-pagination-premium .swiper-pagination-bullet-active {
+            width: 40px !important;
+            opacity: 1 !important;
+            background: #19DC7E !important;
+        }
+    </style>
 
-                <div class="flex flex-col sm:flex-row items-center gap-8 relative z-10 w-full lg:w-auto">
-                    <!-- Timer Grid -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 text-center w-full sm:w-auto" id="sale-timer" data-end="<?php echo $active_sale['end_date']; ?>">
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-6 border border-white/10 min-w-[75px] md:min-w-[100px]">
-                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="days">00</div>
-                            <div class="text-[9px] md:text-xs uppercase text-[#19DC7E] font-black tracking-widest">Days</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-6 border border-white/10 min-w-[75px] md:min-w-[100px]">
-                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="hours">00</div>
-                            <div class="text-[9px] md:text-xs uppercase text-[#19DC7E] font-black tracking-widest">Hrs</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-6 border border-white/10 min-w-[75px] md:min-w-[100px]">
-                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="minutes">00</div>
-                            <div class="text-[9px] md:text-xs uppercase text-[#19DC7E] font-black tracking-widest">Mins</div>
-                        </div>
-                        <div class="bg-[#19DC7E] text-black rounded-2xl md:rounded-3xl p-4 md:p-6 border border-[#19DC7E] min-w-[75px] md:min-w-[100px] shadow-[0_0_40px_rgba(25,220,126,0.4)]">
-                            <div class="text-2xl md:text-4xl font-black font-['Fredoka'] leading-none mb-1" id="seconds">00</div>
-                            <div class="text-[9px] md:text-xs uppercase font-black tracking-widest">Secs</div>
-                        </div>
-                    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            new Swiper('.heroSwiper', {
+                loop: true,
+                speed: 1200,
+                parallax: true,
+                autoplay: {
+                    delay: 6000,
+                    disableOnInteraction: false,
+                },
+                effect: 'creative',
+                creativeEffect: {
+                    prev: {
+                        shadow: true,
+                        translate: ['-20%', 0, -1],
+                    },
+                    next: {
+                        translate: ['100%', 0, 0],
+                    },
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        });
+    </script>
 
-                    <!-- CTA Button -->
-                    <div class="w-full sm:w-auto">
-                        <a href="<?php echo get_url('shop'); ?>" class="btn-chunky w-full sm:w-auto bg-white text-black font-black uppercase text-sm px-8 py-5 rounded-2xl hover:bg-[#19DC7E] hover:scale-105 transition-all duration-300 shadow-2xl group flex items-center justify-center gap-3">
-                            Shop Sale <i class="fas fa-shopping-bag group-hover:animate-bounce"></i>
-                        </a>
-                    </div>
-                </div>
 
-            </div>
-        </div>
-        <script>
-        (function() {
-            const timer = document.getElementById('sale-timer');
-            if(!timer) return;
+
+
+    <script>
+    (function() {
+        const timerRows = document.querySelectorAll('.hero-sale-timer-row');
+        if(timerRows.length === 0) return;
+        
+        const dateStr = timerRows[0].dataset.end.replace(' ', 'T');
+        const endDate = new Date(dateStr).getTime();
+        
+        const update = () => {
+            const now = new Date().getTime();
+            const distance = endDate - now;
             
-            // Standardize date for cross-browser support (replace space with T)
-            const dateStr = timer.dataset.end.replace(' ', 'T');
-            const endDate = new Date(dateStr).getTime();
-            
-            if (isNaN(endDate)) {
-                console.error("Countdown Date Invalid:", timer.dataset.end);
-                return;
-            }
-
-            const daysEl = document.getElementById('days');
-            const hoursEl = document.getElementById('hours');
-            const minsEl = document.getElementById('minutes');
-            const secsEl = document.getElementById('seconds');
-            
-            const update = () => {
-                const now = new Date().getTime();
-                const distance = endDate - now;
-                
+            timerRows.forEach(row => {
                 if (distance < 0) {
-                    timer.innerHTML = '<div class="col-span-full text-center py-4 text-2xl md:text-3xl font-black text-[#19DC7E] animate-bounce uppercase tracking-widest">Sale has Ended!</div>';
-                    clearInterval(timerInterval);
+                    row.style.display = 'none';
                     return;
                 }
 
@@ -251,18 +299,25 @@ if (isset($_SESSION['user_id'])) {
                 const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distance % (1000 * 60)) / 1000);
 
+                const daysEl = row.querySelector('.hero-days');
+                const hoursEl = row.querySelector('.hero-hours');
+                const minsEl = row.querySelector('.hero-mins');
+                const secsEl = row.querySelector('.hero-secs');
+
                 if(daysEl) daysEl.innerText = d.toString().padStart(2, '0');
                 if(hoursEl) hoursEl.innerText = h.toString().padStart(2, '0');
                 if(minsEl) minsEl.innerText = m.toString().padStart(2, '0');
                 if(secsEl) secsEl.innerText = s.toString().padStart(2, '0');
-            };
-            
-            const timerInterval = setInterval(update, 1000);
-            update();
-        })();
-        </script>
-    </section>
-    <?php endif; ?>
+            });
+        };
+
+        setInterval(update, 1000);
+        update();
+    })();
+    </script>
+
+
+
 
     <!-- CATEGORIES CAROUSEL (Scroll Snap) -->
     <section class="py-16 anim-up delay-200 overflow-hidden">
@@ -498,7 +553,7 @@ if (isset($_SESSION['user_id'])) {
     if(!$vid_sec) {
         $vid_sec = [
             'heading' => "FROM KASHMIR \nWITH LOVE.",
-            'subheading' => "Experience the journey of our sun-dried treats. No machines, just sunshine and mountain air.",
+            'subheading' => "Experience the journey of our premium treats. No machines, just mountain air and traditional processing.",
             'media_url' => "assets/images/hero.jpg",
             'video_url' => "#"
         ];

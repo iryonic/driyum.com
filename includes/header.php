@@ -24,7 +24,7 @@ run_crons();
 ?>
 
 <!-- INFINITE MARQUEE -->
-<div class="bg-black text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30">
+<div class="bg-[#004f42] text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30">
     <!-- Gradient Overlay for fade effect on edges -->
     <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
     <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
@@ -54,7 +54,7 @@ run_crons();
         
         <!-- Logo -->
         <a href="<?php echo get_url(''); ?>" class="flex items-center gap-2 group shrink-0" aria-label="<?php echo $store_name; ?> - Home">
-            <img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?> Logo" width="100" height="100" class="w-20 lg:w-24">
+            <img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="<?php echo $store_name; ?> Logo" width="100" height="100" class="w-20 lg:w-24">
         </a>
 
         <!-- Navigation with Mega Menu -->
@@ -167,7 +167,7 @@ run_crons();
     <div class="flex items-center gap-2">
         <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors" aria-label="Search"><i class="fas fa-search"></i></button>
     </div>
-    <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?> - Home" class="w-24"></a>
+    <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="<?php echo $store_name; ?> - Home" class="w-24"></a>
     <button onclick="openCartSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-700 relative hover:text-black transition-colors" aria-label="Open Shopping Bag">
         <i class="fas fa-shopping-bag"></i>
     </button>
@@ -180,7 +180,7 @@ run_crons();
     <!-- Drawer Header -->
     <div class="px-6 pt-10 pb-6 flex justify-between items-center border-b border-gray-50">
         <a href="<?php echo get_url(''); ?>">
-            <img src="<?php echo get_url('assets/images/logo.png'); ?>" class="w-20">
+            <img src="<?php echo get_url('assets/images/logo.svg'); ?>" class="w-20">
         </a>
         <button onclick="toggleMobileMenuDrawer()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-black shadow-sm transition-all active:scale-90" aria-label="Close Mobile Menu">
             <i class="fas fa-times text-lg"></i>

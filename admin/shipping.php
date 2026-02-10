@@ -83,10 +83,10 @@ $rates = $pagination_rates['records'];
 $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
 ?>
 
-<div class="flex items-center justify-between mb-8">
+<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
     <div>
-        <h1 class="text-3xl font-black fredoka text-gray-900 tracking-tight">Shipping Management</h1>
-        <p class="text-gray-500 mt-1">Configure shipping methods, zones, and weight-based charges.</p>
+        <h1 class="text-3xl font-black text-gray-900 fredoka tracking-tight">Shipping Desk</h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Configure logistics, zones, and rates</p>
     </div>
 </div>
 
@@ -100,46 +100,41 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
 <?php endif; ?>
 
 <!-- Tabs -->
-<div class="flex gap-4 mb-8">
-    <a href="?tab=methods" class="px-6 py-3 rounded-2xl font-bold transition-all <?php echo $active_tab == 'methods' ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/30' : 'bg-white text-gray-500 hover:bg-gray-100'; ?>">
-        <i class="fas fa-truck-loading mr-2"></i> Methods
+<div class="flex gap-2 mb-8 bg-gray-50/50 p-1.5 rounded-2xl w-fit anim-up border border-gray-100">
+    <a href="?tab=methods" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'methods' ? 'bg-black text-[#19DC7E] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
+        Methods
     </a>
-    <a href="?tab=zones" class="px-6 py-3 rounded-2xl font-bold transition-all <?php echo $active_tab == 'zones' ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/30' : 'bg-white text-gray-500 hover:bg-gray-100'; ?>">
-        <i class="fas fa-map-marked-alt mr-2"></i> Zones
+    <a href="?tab=zones" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'zones' ? 'bg-black text-[#19DC7E] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
+        Zones
     </a>
-    <a href="?tab=rates" class="px-6 py-3 rounded-2xl font-bold transition-all <?php echo $active_tab == 'rates' ? 'bg-[#19DC7E] text-black shadow-lg shadow-green-500/30' : 'bg-white text-gray-500 hover:bg-gray-100'; ?>">
-        <i class="fas fa-weight-hanging mr-2"></i> Weight Rates
+    <a href="?tab=rates" class="px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $active_tab == 'rates' ? 'bg-black text-[#19DC7E] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'; ?>">
+        Rates
     </a>
 </div>
 
 <?php if ($active_tab == 'methods'): ?>
     <!-- Shipping Methods Tab -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 anim-up">
         <div class="lg:col-span-1">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    Add New Method
-                </h3>
+                <h3 class="text-sm font-black uppercase tracking-widest mb-6 py-1 border-l-4 border-[#19DC7E] pl-4">New Method</h3>
                 <form action="?tab=methods" method="POST" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Carrier Name (e.g. India Post)</label>
-                        <input type="text" name="carrier_name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Carrier Name</label>
+                        <input type="text" name="carrier_name" required placeholder="e.g. India Post" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#19DC7E] transition-all">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Display Name (e.g. Speed Post)</label>
-                        <input type="text" name="display_name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Display Name</label>
+                        <input type="text" name="display_name" required placeholder="e.g. Speed Post" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#19DC7E] transition-all">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Charge Type</label>
-                        <select name="charge_type" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#19DC7E] focus:outline-none">
+                        <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 ml-1">Charge Type</label>
+                        <select name="charge_type" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none focus:ring-1 focus:ring-[#19DC7E] transition-all">
                             <option value="weight_based">Weight Based</option>
                             <option value="flat">Flat Rate</option>
                         </select>
                     </div>
-                    <button type="submit" name="add_method" class="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-gray-800 transition shadow-lg">
+                    <button type="submit" name="add_method" class="w-full bg-[#19DC7E] text-black font-black py-4 rounded-xl text-[10px] uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-50">
                         Create Method
                     </button>
                 </form>

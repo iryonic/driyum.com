@@ -325,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
     <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-100">
         <div class="container mx-auto px-6 h-20 flex items-center justify-between">
             <a href="<?php echo get_url(''); ?>" class="flex items-center gap-2">
-                <img src="<?php echo get_url('./assets/images/logo.png'); ?>" alt="Logo" class="w-20">
+                <img src="<?php echo get_url('./assets/images/logo.svg'); ?>" alt="Logo" class="w-20">
             </a>
             <div class="flex items-center gap-3 text-gray-400 font-bold text-xs uppercase tracking-widest">
                 <i class="fas fa-lock text-[#19DC7E]"></i> 
@@ -841,7 +841,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         "currency": rData.currency || "INR",
                         "name": rData.name,
                         "description": rData.description,
-                        "image": BASE_URL + "assets/images/logo.png",
+                        "image": BASE_URL + "assets/images/logo.svg",
                         "order_id": rData.order_id,
                         "handler": async function (response){
                             // 3. Verify Payment

@@ -19,6 +19,15 @@ $address = json_decode($order['shipping_address'], true);
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3LPLX64');</script>
+<!-- End Google Tag Manager -->
+
     <meta charset="UTF-8">
     <title>Label_<?php echo $order['order_number']; ?></title>
     <style>
@@ -40,21 +49,28 @@ $address = json_decode($order['shipping_address'], true);
 </head>
 <body>
 
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3LPLX64"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
     <div class="no-print" style="position: fixed; top: 10px; right: 10px;">
         <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">Print Label</button>
     </div>
 
     <div class="label-container">
         <div class="section header">
-            <span>DRIYUM EXPRESS</span>
-            <span>STANDARD</span>
+            <img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="DRIYUM" width="100" >
+            <span></span>
         </div>
 
         <div class="section">
             <div class="small-text">Ship From:</div>
             <div style="font-size: 10px; font-weight: bold;">
-                DRIYUM PREMIUM PVT LTD<br>
-                SRINAGAR, J&K 190001
+                DRIYUM <br>
+                BAGHI MEHTAB SRINAGAR, J&K 190019 <br>
+                PHONE  : 9149809801
             </div>
         </div>
 
