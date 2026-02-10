@@ -87,7 +87,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="absolute inset-0 pointer-events-none z-[5] bg-gradient-to-b from-[#004F42]/30 via-transparent to-[#004F42]/50"></div>
         <div class="absolute -top-[50%] -left-[20%] w-[150%] h-[150%] bg-gradient-to-br from-white/5 to-transparent rounded-full blur-[150px] pointer-events-none z-[6] animate-pulse-slow"></div>
 
-        <div class="swiper heroSwiper w-full h-[50vh] md:h-[min(90vh,70vw)] lg:h-[90vh]">
+        <div class="swiper heroSwiper w-full h-[90vh] md:h-[min(90vh,70vw)] lg:h-[90vh]">
             <div class="swiper-wrapper">
                 <?php 
                 $brand_accents = ['bg-[#24B25D]', 'bg-[#F67E42]', 'bg-[#17775D]', 'bg-[#EDB02C]'];
@@ -492,7 +492,7 @@ if (isset($_SESSION['user_id'])) {
 
     <!-- CHUNKY PRODUCT GRID (Clickable Cards) -->
     <section class="py-16 bg-white rounded-t-[3rem] shadow-[0_-20px_40px_rgba(0,0,0,0.05)] relative z-20 overflow-hidden">
-        <div class="container mx-auto px-6">
+        <div class="cantainer mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
                 <div>
                     <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-['Inter']">Fresh From The Farm</span>
@@ -640,7 +640,7 @@ if (isset($_SESSION['user_id'])) {
     }
     ?>
     <section class="py-10 px-4 mb-20 md:mb-0" id="video_brand_story">
-        <div class="container mx-auto">
+        <div class="cantainer mx-auto">
             <div class="relative w-full rounded-[40px] overflow-hidden shadow-2xl group cursor-pointer aspect-[16/10] md:aspect-video bg-black">
                 
                 <!-- Video Placeholder (Dynamic Image) -->

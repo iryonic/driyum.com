@@ -11,100 +11,271 @@ $shipping_method = null;
 if ($order && !empty($order['shipping_method_id'])) {
     $shipping_method = fetch_one("SELECT * FROM shipping_methods WHERE id = ?", [$order['shipping_method_id']]);
 }
+
+// Fetch Order Items for GA4
+$order_items = [];
+if ($order) {
+    $order_items = fetch_all("SELECT oi.*, p.name as product_name, p.category_id FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE order_id = ?", [$order['id']]);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T3LPLX64');</script>
+<!-- End Google Tag Manager -->
+
     <?php 
-    $page_title = 'Order Confirmed!';
+    $page_title = 'Order Confirmed - Driyum';
     include 'includes/head.php'; 
     ?>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-</head>
-<body class="bg-[#FFFEDC] flex items-center justify-center min-h-screen p-4 overflow-hidden">
-
-    <div class="max-w-xl w-full text-center relative z-10">
+    <style>
+        .premium-success-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1);
+        }
+        .success-icon-wrap {
+            background: linear-gradient(135deg, #19DC7E, #14B86A);
+            box-shadow: 0 10px 30px rgba(25, 220, 126, 0.3);
+        }
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .anim-float { animation: float-gentle 4s ease-in-out infinite; }
         
-        <!-- Success Card -->
-        <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-2xl border-2 border-green-50 relative anim-up">
-            <div class="w-24 h-24 bg-[#24B25D] rounded-full flex items-center justify-center text-white text-5xl mx-auto mb-8 shadow-lg animate-[bounce_1s_infinite]">
+        /* Particle Background */
+        #success-particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="bg-[#FFFEDC] min-h-screen flex items-center justify-center p-4 md:p-8 overflow-x-hidden selection:bg-[#19DC7E]/20">
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T3LPLX64"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <!-- ATMOSPHERIC LAYERS -->
+    <div class="fixed inset-0 pointer-events-none z-0 opacity-[0.05]" style="background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');"></div>
+    <div class="fixed top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[#19DC7E]/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+    <div class="fixed bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#FFD700]/10 rounded-full blur-[120px] pointer-events-none animate-pulse" style="animation-delay: 2s"></div>
+
+    <div class="max-w-2xl w-full relative z-10 flex flex-col items-center">
+        
+        <!-- Celebration Emojis -->
+        <div class="absolute -top-12 -left-8 text-5xl md:text-7xl anim-float" style="animation-delay: 0.5s">🥨</div>
+        <div class="absolute -top-20 -right-4 text-5xl md:text-7xl anim-float" style="animation-delay: 1.5s">✨</div>
+        <div class="absolute bottom-10 -right-12 text-5xl md:text-7xl anim-float hidden md:block" style="animation-delay: 2.5s">🎁</div>
+
+        <!-- Main Confirmation Card -->
+        <div class="premium-success-card w-full rounded-[3.5rem] p-8 md:p-14 text-center relative overflow-hidden anim-up">
+            
+            <!-- Confetti Cannon Decor -->
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#19DC7E]/30 to-transparent"></div>
+
+            <div class="success-icon-wrap w-24 h-24 rounded-[30%] flex items-center justify-center text-white text-5xl mx-auto mb-10 transform -rotate-12 hover:rotate-0 transition-transform duration-500">
                 <i class="fas fa-check"></i>
             </div>
 
-            <h1 class="text-4xl md:text-5xl font-['Crimson_Pro'] font-bold text-gray-900 mb-4">You're Awesome!</h1>
-            <p class="text-xl text-gray-500 font-['Inter'] mb-8">Your order <span class="text-black font-bold">#<?php echo $order_num; ?></span> has been placed successfully.</p>
+            <h1 class="text-4xl md:text-6xl font-['Fredoka'] font-black text-[#111827] mb-4 tracking-tight">You're Awesome!</h1>
+            <p class="text-lg md:text-xl text-gray-500 font-['Outfit'] mb-10 max-w-md mx-auto leading-relaxed">
+                Order <span class="text-[#004F42] font-black underline decoration-[#19DC7E] decoration-4 underline-offset-4">#<?php echo $order ? $order['order_number'] : $order_num; ?></span> is officially on its way to your cravings.
+            </p>
 
-            <div class="bg-gray-50 rounded-2xl p-6 mb-8 text-left">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-gray-500 text-sm uppercase font-bold">Estimated Delivery</span>
-                    <span class="text-gray-900 font-bold">
-                        <?php 
-                            if ($shipping_method) {
-                                $created_at = strtotime($order['created_at']);
-                                echo date('M j', strtotime("+{$shipping_method['min_days']} days", $created_at)) . " - " . date('M j', strtotime("+{$shipping_method['max_days']} days", $created_at));
-                            } else {
-                                echo date('M j', strtotime('+4 days')) . " - " . date('M j', strtotime('+6 days'));
-                            }
-                        ?>
-                    </span>
+            <!-- Delivery Tracker Visual -->
+            <div class="bg-[#004F42]/5 border border-[#004F42]/10 rounded-[2.5rem] p-8 mb-10 text-left relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+                    <div>
+                        <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#004F42]/60 block mb-1">Estimated Delivery</span>
+                        <h3 class="text-2xl font-['Crimson_Pro'] font-black text-[#004F42]">
+                            <?php 
+                                $created_at = $order ? strtotime($order['created_at']) : time();
+                                $min_days = 4;
+                                $max_days = 6;
+
+                                if ($order) {
+                                    $address_data = json_decode($order['shipping_address'], true);
+                                    $pincode = $address_data['zip'] ?? '';
+                                    $zone = get_shipping_zone($pincode);
+                                    
+                                    if ($shipping_method) {
+                                        $min_days = ($zone && ($zone['min_days'] > 0 || $zone['max_days'] > 0)) ? $zone['min_days'] : ($shipping_method['min_days'] ?: 4);
+                                        $max_days = ($zone && ($zone['min_days'] > 0 || $zone['max_days'] > 0)) ? $zone['max_days'] : ($shipping_method['max_days'] ?: 6);
+                                    } elseif ($zone) {
+                                        $min_days = $zone['min_days'] > 0 ? $zone['min_days'] : 4;
+                                        $max_days = $zone['max_days'] > 0 ? $zone['max_days'] : 6;
+                                    }
+                                }
+
+                                $min_date = date('M j', strtotime("+$min_days days", $created_at));
+                                $max_date = date('M j', strtotime("+$max_days days", $created_at));
+
+                                echo ($min_date === $max_date) ? $min_date : "$min_date - $max_date";
+                            ?>
+                        </h3>
+                    </div>
+                    <div class="px-4 py-2 bg-[#19DC7E]/10 rounded-full border border-[#19DC7E]/20">
+                        <span class="text-[10px] font-black text-[#14B86A] uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-[#14B86A] animate-pulse"></span>
+                            Shipment Originating
+                        </span>
+                    </div>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-[#24B25D] h-2 rounded-full w-[20%]"></div>
+
+                <!-- Tracker Line -->
+                <div class="relative h-2.5 w-full bg-[#004F42]/10 rounded-full mb-3 overflow-hidden">
+                    <div class="absolute top-0 left-0 h-full bg-[#19DC7E] w-[15%] rounded-full shadow-[0_0_15px_rgba(25,220,126,0.6)]"></div>
                 </div>
-                <div class="flex justify-between text-xs text-gray-400 mt-2">
-                    <span>Ordered</span>
-                    <span>Packed</span>
-                    <span>Shipped</span>
-                    <span>Delivered</span>
+                <div class="grid grid-cols-4 text-[9px] font-black uppercase tracking-widest text-[#004F42]/40">
+                    <span class="text-[#14B86A]">Ordered</span>
+                    <span class="text-center">Packed</span>
+                    <span class="text-center">Transit</span>
+                    <span class="text-right">Home</span>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3">
-                <a href="track.php?id=<?php echo $order_id; ?>" class="btn-chunky btn-primary w-full py-4 text-lg shadow-lg">Track Order</a>
-                <a href="<?php echo get_url('index'); ?>" class="btn-chunky btn-outline w-full py-4 border-none text-gray-500 hover:text-black">Continue Shopping</a>
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="track.php?id=<?php echo $order_id; ?>" class="group flex items-center justify-between bg-[#111827] text-white p-5 rounded-[20px] hover:bg-[#19DC7E] hover:text-black transition-all shadow-xl hover:-translate-y-1">
+                    <span class="font-black uppercase tracking-widest text-xs">Live Tracking</span>
+                    <i class="fas fa-location-arrow group-hover:rotate-45 transition-transform"></i>
+                </a>
+                <a href="<?php echo get_url('index'); ?>" class="group flex items-center justify-between bg-white border-2 border-gray-100 text-gray-900 p-5 rounded-[20px] hover:border-[#F67E42] hover:text-[#F67E42] transition-all shadow-sm hover:-translate-y-1">
+                    <span class="font-black uppercase tracking-widest text-xs">Keep Browsing</span>
+                    <i class="fas fa-shopping-bag group-hover:scale-110 transition-transform"></i>
+                </a>
             </div>
-            
-            <!-- Decor -->
-            <div class="absolute -top-6 -right-6 text-6xl rotate-12">🎉</div>
-            <div class="absolute -bottom-6 -left-6 text-6xl rotate-[-12deg]">📦</div>
+
+            <!-- Share the Joy -->
+            <div class="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-gray-100 flex flex-col items-center gap-4">
+                <span class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Share the crunch</span>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white transition-all"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#E1306C] hover:text-white transition-all"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-[#25D366] hover:text-white transition-all"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Support Badge -->
+        <div class="mt-8 md:mt-10 flex items-center gap-4 px-6 py-3 bg-white/40 backdrop-blur-md rounded-full border border-white/50 anim-up-delayed">
+            <div class="w-8 h-8 rounded-full bg-[#004F42] flex items-center justify-center text-white text-[10px]">
+                <i class="fas fa-headset"></i>
+            </div>
+            <p class="text-[10px] md:text-[11px] font-bold text-[#004F42]/70 uppercase tracking-widest">
+                Need help? <a href="mailto:support@driyum.com" class="text-[#004F42] underline font-black">Talk to us</a>
+            </p>
         </div>
         
     </div>
 
-    <!-- Background Decor -->
-    <div class="fixed top-20 left-20 w-32 h-32 bg-[#FFD700] rounded-full blur-3xl opacity-20 animate-pulse"></div>
-    <div class="fixed bottom-20 right-20 w-40 h-40 bg-[#24B25D] rounded-full blur-3xl opacity-20 animate-pulse"></div>
-
     <script>
-        // Trigger Massive Confetti
-        window.onload = function() {
-            const duration = 3000;
-            const end = Date.now() + duration;
+        window.addEventListener('load', function() {
+            // GA4 Purchase Event
+            <?php if($order && !empty($order_items)): ?>
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                    transaction_id: "<?php echo $order['order_number']; ?>",
+                    value: <?php echo (float)$order['total_amount']; ?>,
+                    tax: 0,
+                    shipping: <?php echo (float)$order['shipping_cost']; ?>,
+                    currency: "INR",
+                    coupon: "<?php echo $order['coupon_code'] ?? ''; ?>",
+                    items: [
+                        <?php foreach($order_items as $item): ?>
+                        {
+                            item_id: "<?php echo $item['product_id']; ?>",
+                            item_name: "<?php echo addslashes($item['product_name']); ?>",
+                            price: <?php echo (float)$item['price']; ?>,
+                            quantity: <?php echo (int)$item['quantity']; ?>
+                        },
+                        <?php endforeach; ?>
+                    ]
+                }
+            });
+            <?php endif; ?>
 
-            (function frame() {
+            // Check if confetti is available
+            if (typeof confetti === 'undefined') {
+                console.error('Confetti library not loaded');
+                return;
+            }
+
+            // Celebration Firework - Progressive Burst
+            const duration = 5000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // since particles fall down, start a bit higher than random
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#19DC7E', '#FFD700', '#F67E42']
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#19DC7E', '#FF3E3E', '#F67E42']
+                }));
+            }, 250);
+
+            // Initial Cannon Blast
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#19DC7E', '#FFD700', '#F67E42', '#ffffff']
+            });
+
+            // Delayed Side Blasts
+            setTimeout(() => {
                 confetti({
-                    particleCount: 5,
+                    particleCount: 100,
                     angle: 60,
                     spread: 55,
                     origin: { x: 0 },
-                    colors: ['#24B25D', '#FFD700', '#FF6B6B']
+                    colors: ['#19DC7E', '#FFD700']
                 });
                 confetti({
-                    particleCount: 5,
+                    particleCount: 100,
                     angle: 120,
                     spread: 55,
                     origin: { x: 1 },
-                    colors: ['#24B25D', '#FFD700', '#FF6B6B']
+                    colors: ['#19DC7E', '#FF3E3E']
                 });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        };
+            }, 800);
+        });
     </script>
 
 </body>
 </html>
-
-
