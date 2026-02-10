@@ -183,7 +183,75 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
+        function triggerConfetti() {
+            if (typeof confetti === 'undefined') {
+                console.error('Confetti library not loaded');
+                return;
+            }
+
+            // Celebration Firework - Progressive Burst
+            const duration = 5000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 20 * (timeLeft / duration);
+                
+                // since particles fall down, start a bit higher than random
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.1 },
+                    colors: ['#19DC7E', '#FFD700', '#F67E42']
+                }));
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.1 },
+                    colors: ['#19DC7E', '#FF3E3E', '#F67E42']
+                }));
+            }, 250);
+
+            // Initial Cannon Blast
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                zIndex: 1000,
+                colors: ['#19DC7E', '#FFD700', '#F67E42', '#ffffff']
+            });
+
+            // Delayed Side Blasts
+            setTimeout(() => {
+                confetti({
+                    particleCount: 80,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.6 },
+                    zIndex: 1000,
+                    colors: ['#19DC7E', '#FFD700']
+                });
+                confetti({
+                    particleCount: 80,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.6 },
+                    zIndex: 1000,
+                    colors: ['#19DC7E', '#FF3E3E']
+                });
+            }, 600);
+        }
+
         window.addEventListener('load', function() {
             // GA4 Purchase Event
             <?php if($order && !empty($order_items)): ?>
@@ -212,69 +280,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
             <?php endif; ?>
 
-            // Check if confetti is available
-            if (typeof confetti === 'undefined') {
-                console.error('Confetti library not loaded');
-                return;
-            }
-
-            // Celebration Firework - Progressive Burst
-            const duration = 5000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                const particleCount = 50 * (timeLeft / duration);
-                
-                // since particles fall down, start a bit higher than random
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-                    colors: ['#19DC7E', '#FFD700', '#F67E42']
-                }));
-                confetti(Object.assign({}, defaults, { 
-                    particleCount, 
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-                    colors: ['#19DC7E', '#FF3E3E', '#F67E42']
-                }));
-            }, 250);
-
-            // Initial Cannon Blast
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#19DC7E', '#FFD700', '#F67E42', '#ffffff']
-            });
-
-            // Delayed Side Blasts
-            setTimeout(() => {
-                confetti({
-                    particleCount: 100,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: ['#19DC7E', '#FFD700']
-                });
-                confetti({
-                    particleCount: 100,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: ['#19DC7E', '#FF3E3E']
-                });
-            }, 800);
+            triggerConfetti();
         });
+        
+        // Secondary trigger for safety
+        setTimeout(triggerConfetti, 1000);
     </script>
 
 </body>
