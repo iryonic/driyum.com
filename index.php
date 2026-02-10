@@ -122,31 +122,31 @@ if (isset($_SESSION['user_id'])) {
             <div class="absolute inset-0 z-20 pointer-events-none">
                 <!-- Top-Left: Live Sale Countdown -->
                 <?php if($active_sale): ?>
-                <div class="absolute top-8 left-8 hidden lg:block pointer-events-auto">
-                    <div class="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[32px] p-1 pr-6 flex items-center gap-4 shadow-2xl hero-sale-timer-row anim-scale-in" data-end="<?php echo $active_sale['end_date']; ?>">
-                        <div class="bg-[#19DC7E] text-black px-4 py-3 rounded-[28px] flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
-                            <span class="text-[10px] font-black uppercase tracking-widest">Live Sale</span>
+                <div class="absolute top-4 left-4 md:top-8 md:left-8 z-30 pointer-events-auto">
+                    <div class="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[24px] md:rounded-[32px] p-1 pr-3 md:pr-6 flex items-center gap-2 md:gap-4 shadow-2xl hero-sale-timer-row anim-scale-in" data-end="<?php echo $active_sale['end_date']; ?>">
+                        <div class="bg-[#19DC7E] text-black px-3 md:px-4 py-2 md:py-3 rounded-[20px] md:rounded-[28px] flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-black animate-ping"></span>
+                            <span class="text-[8px] md:text-[10px] font-black uppercase tracking-widest">Live Sale</span>
                         </div>
-                        <div class="flex items-center gap-4 py-2">
-                            <div class="flex flex-col items-center min-w-[35px]">
-                                <span class="text-white font-black text-xl leading-none hero-days">00</span>
-                                <span class="text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Days</span>
+                        <div class="flex items-center gap-2 md:gap-4 py-1 md:py-2">
+                            <div class="flex flex-col items-center min-w-[25px] md:min-w-[35px]">
+                                <span class="text-white font-black text-sm md:text-xl leading-none hero-days">00</span>
+                                <span class="text-[6px] md:text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Days</span>
                             </div>
-                            <span class="text-white/20 font-light text-xl">:</span>
-                            <div class="flex flex-col items-center min-w-[35px]">
-                                <span class="text-white font-black text-xl leading-none hero-hours">00</span>
-                                <span class="text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Hrs</span>
+                            <span class="text-white/20 font-light text-sm md:text-xl">:</span>
+                            <div class="flex flex-col items-center min-w-[25px] md:min-w-[35px]">
+                                <span class="text-white font-black text-sm md:text-xl leading-none hero-hours">00</span>
+                                <span class="text-[6px] md:text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Hrs</span>
                             </div>
-                            <span class="text-white/20 font-light text-xl">:</span>
-                            <div class="flex flex-col items-center min-w-[35px]">
-                                <span class="text-white font-black text-xl leading-none hero-mins">00</span>
-                                <span class="text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Min</span>
+                            <span class="text-white/20 font-light text-sm md:text-xl">:</span>
+                            <div class="flex flex-col items-center min-w-[25px] md:min-w-[35px]">
+                                <span class="text-white font-black text-sm md:text-xl leading-none hero-mins">00</span>
+                                <span class="text-[6px] md:text-[7px] uppercase text-white/40 font-bold tracking-[0.2em]">Min</span>
                             </div>
-                            <span class="text-white/20 font-light text-xl">:</span>
-                            <div class="flex flex-col items-center min-w-[35px]">
-                                <span class="text-[#19DC7E] font-black text-xl leading-none hero-secs">00</span>
-                                <span class="text-[7px] uppercase text-[#19DC7E] font-bold tracking-[0.2em]">Sec</span>
+                            <span class="text-white/20 font-light text-sm md:text-xl">:</span>
+                            <div class="flex flex-col items-center min-w-[25px] md:min-w-[35px]">
+                                <span class="text-[#19DC7E] font-black text-sm md:text-xl leading-none hero-secs">00</span>
+                                <span class="text-[6px] md:text-[7px] uppercase text-[#19DC7E] font-bold tracking-[0.2em]">Sec</span>
                             </div>
                         </div>
                     </div>

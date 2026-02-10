@@ -133,6 +133,48 @@ function send_email($to, $subject, $message) {
     }
 }
 
+/**
+ * Queue Email for background processing
+ * Adds email to a queue table to avoid timeouts during bulk broadcasts.
+ */
+function queue_email($to, $subject, $message) {
+    // Check if table exists, if not create it (One-time check per session)
+    static $table_checked = false;
+    if (!$table_checked) {
+        $sql = "CREATE TABLE IF NOT EXISTS email_queue (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            recipient VARCHAR(255) NOT NULL,
+            subject VARCHAR(255) NOT NULL,
+            message TEXT NOT NULL,
+            status ENUM('pending', 'sent', 'failed') DEFAULT 'pending',
+            attempts INT DEFAULT 0,
+            last_attempt TIMESTAMP NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        execute_query($sql);
+        $table_checked = true;
+    }
+
+    return execute_query("INSERT INTO email_queue (recipient, subject, message) VALUES (?, ?, ?)", [$to, $subject, $message]);
+}
+
+/**
+ * Process the Email Queue
+ * This should be triggered via Cron or individual calls.
+ */
+function process_email_queue($limit = 10) {
+    $queued = fetch_all("SELECT * FROM email_queue WHERE status = 'pending' OR (status = 'failed' AND attempts < 3) LIMIT ?", [$limit]);
+    
+    foreach ($queued as $item) {
+        $status = send_email($item['recipient'], $item['subject'], $item['message']) ? 'sent' : 'failed';
+        $attempts = $item['attempts'] + 1;
+        
+        execute_query("UPDATE email_queue SET status = ?, attempts = ?, last_attempt = CURRENT_TIMESTAMP WHERE id = ?", [$status, $attempts, $item['id']]);
+    }
+    
+    return count($queued);
+}
+
 // Flash Message Helpers
 function set_flash_message($message, $type = 'success') {
     $_SESSION['flash'] = [

@@ -64,6 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             queue_email($email, $subject, $body);
         }
         $_SESSION['success'] = "Broadcast of " . count($emails) . " emails has been queued!";
+        // Start processing the first batch immediately
+        process_email_queue(5);
     } else {
         $_SESSION['error'] = "No subscribers selected.";
     }
