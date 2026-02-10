@@ -325,7 +325,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="container mx-auto px-6 mb-8 flex justify-between items-end">
             <div>
                 <span class="text-[#19DC7E] font-bold tracking-wider uppercase text-sm mb-2 block">Browse by Vibe</span>
-                <h2 class="text-3xl md:text-5xl font-bold text-gray-900">Find Your Crunch</h2>
+                <h2 class="text-3xl md:text-5xl font-['Crimson_Pro'] font-bold text-gray-900">Find Your Crunch</h2>
             </div>
 
             <!-- Category Slider Controls -->
