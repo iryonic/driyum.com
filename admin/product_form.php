@@ -425,11 +425,14 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                         </div>
                     <?php endif; ?>
 
+                    <!-- Local Preview for Newly Selected Files -->
+                    <div id="new-gallery-preview-grid" class="grid grid-cols-4 gap-4 mb-4 hidden"></div>
+
                     <!-- Upload New -->
                     <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 hover:bg-gray-50 hover:border-[#19DC7E] transition cursor-pointer relative overflow-hidden group text-center">
                         <i class="fas fa-images text-4xl text-gray-300 mb-2 group-hover:text-[#19DC7E] transition"></i>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Add Gallery Images</p>
-                        <input type="file" name="gallery[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewMultipleImages(this, 'gallery-container')">
+                        <input type="file" name="gallery[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewMultipleImages(this)">
                     </div>
                 </div>
             </div>
@@ -520,7 +523,7 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                         <p class="text-[10px] font-black uppercase tracking-widest">Main Product Art</p>
                     </div>
                     
-                    <input type="file" name="image" class="absolute inset-0 opacity-0 cursor-pointer z-30" onchange="previewImage(this, 'featured-preview'); document.getElementById('featured-placeholder').classList.add('hidden'); document.getElementById('featured-preview').classList.remove('hidden');">
+                    <input type="file" name="image" class="absolute inset-0 opacity-0 cursor-pointer z-30" onchange="previewImage(this, 'featured-preview')">
                 </div>
                 <p class="mt-4 text-[10px] font-bold text-gray-300 uppercase tracking-widest">Click to update</p>
             </div>
@@ -530,6 +533,52 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
 </div>
 
 <script>
+function previewImage(input, previewId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById(previewId);
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
+            
+            // Hide placeholder if it exists
+            const placeholder = preview.nextElementSibling;
+            if (placeholder && placeholder.id.includes('placeholder')) {
+                placeholder.classList.add('hidden');
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function previewMultipleImages(input) {
+    const previewContainer = document.getElementById('new-gallery-preview-grid');
+    if (!previewContainer) return;
+    
+    previewContainer.innerHTML = ''; // Clear previous selections
+    
+    if (input.files.length > 0) {
+        previewContainer.classList.remove('hidden');
+        Array.from(input.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'relative aspect-square anim-up';
+                div.innerHTML = `
+                    <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border-2 border-[#19DC7E] shadow-lg">
+                    <div class="absolute -top-2 -right-2 bg-[#19DC7E] text-black w-6 h-6 rounded-full flex items-center justify-center text-[10px] shadow-xl border-2 border-white font-black">
+                        NEW
+                    </div>
+                `;
+                previewContainer.appendChild(div);
+            }
+            reader.readAsDataURL(file);
+        });
+    } else {
+        previewContainer.classList.add('hidden');
+    }
+}
+
 function updateBulkBar() {
     const checked = document.querySelectorAll('.gallery-checkbox:checked');
     const bar = document.getElementById('bulk-action-bar');
@@ -564,7 +613,6 @@ async function deleteGalleryImage(id) {
         if (data.success) {
             item.remove();
             updateBulkBar();
-            // If gallery is empty, hide container or show placeholder?
             if (document.querySelectorAll('.gallery-item').length === 0) {
                 document.getElementById('existing-gallery')?.remove();
             }
@@ -611,7 +659,6 @@ async function bulkDeleteImages() {
         alert('Failed to delete images');
     } finally {
         updateBulkBar();
-        // Restore bar if any were missed or if refresh needed
         bar.innerHTML = `
             <span class="text-xs font-bold text-red-600 uppercase tracking-widest"><span id="selected-count">0</span> Images Selected</span>
             <button type="button" onclick="bulkDeleteImages()" class="bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 transition shadow-lg">

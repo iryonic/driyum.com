@@ -147,7 +147,7 @@ $out_of_stock_count = count(array_filter($all_products, fn($p) => $p['stock'] <=
         }
     }
 </style>
-<div id="bulk-bar" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black text-white px-8 py-5 rounded-[32px] shadow-2xl items-center gap-8 anim-up border border-white/10">
+<div id="bulk-bar" class="hidden fixed bottom-10 z-50 bg-black text-white px-8 py-5 rounded-[32px] shadow-2xl items-center gap-8 anim-up border border-white/10">
     <div class="flex items-center gap-4 pr-8 border-r border-white/10">
         <div class="w-10 h-10 rounded-2xl bg-[#19DC7E] flex items-center justify-center text-black">
             <i class="fas fa-boxes text-lg"></i>

@@ -341,185 +341,238 @@ $show_stats = get_setting('show_hero_stats', 'on');
         </div>
 
         <!-- ADD SLIDE MODAL -->
-        <div id="add-slide-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
-            <div class="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden anim-up">
-                <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-                    <h3 class="text-xl font-black text-gray-900 crimson-pro">New Slide Canvas</h3>
-                    <button onclick="document.getElementById('add-slide-modal').classList.add('hidden')" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-all">
+        <div id="add-slide-modal" class="fixed inset-0 z-[9999] flex items-start justify-center p-4 md:p-10  backdrop-blur-sm hidden overflow-y-auto">
+            <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden anim-up border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                    <h3 class="text-lg font-bold text-gray-900">Add New Slide</h3>
+                    <button onclick="document.getElementById('add-slide-modal').classList.add('hidden')" class="text-gray-400 hover:text-black transition-colors">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <form method="POST" enctype="multipart/form-data" class="p-8">
+
+                <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
                     <input type="hidden" name="add_slide" value="1">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-6">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Floating Badge Text</label>
-                                <input type="text" name="badge_text" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold" placeholder="The Purest Taste of Kashmir">
-                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
-                                    <input type="checkbox" name="show_badge" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
-                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                    
+                    <!-- Live Preview -->
+                    <div class="relative aspect-video rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner">
+                        <img id="add-preview-bg" src="../assets/images/hero.jpg" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 space-y-1">
+                            <div id="add-preview-badge" class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-0.5 mb-1 transition-opacity">
+                                <span class="text-[7px] font-black text-white uppercase tracking-widest" id="add-badge-text-val">KASHMIRI PURE</span>
+                            </div>
+                            <h1 id="add-preview-title" class="text-xl font-black text-white leading-tight transition-opacity">YOUR HEADLINE</h1>
+                            <p id="add-preview-subtitle" class="text-[9px] text-white/80 font-medium transition-opacity">Subtitle description preview</p>
+                            <div id="add-preview-cta" class="mt-2 px-4 py-1.5 bg-green-500 text-black font-black text-[8px] rounded-lg shadow-lg transition-opacity">SHOP NOW</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Headline -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1 ml-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Headline (Title)</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_title" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
                                 </label>
                             </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Main Headline</label>
-                                <textarea name="slide_title" rows="2" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-2xl px-5 py-3 outline-none font-bold text-gray-900 transition-all resize-none" placeholder="PURE KASHMIRI CRUNCH" required></textarea>
-                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
-                                    <input type="checkbox" name="show_title" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
-                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
-                                </label>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Tagline Subtitle</label>
-                                <input type="text" name="slide_subtitle" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold" placeholder="Taste the mountains.">
-                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
-                                    <input type="checkbox" name="show_subtitle" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
-                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
-                                </label>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">CTA Label</label>
-                                    <input type="text" name="slide_cta_text" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 outline-none font-black text-[10px]" placeholder="SHOP NOW">
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Target Link</label>
-                                    <input type="text" name="slide_cta_link" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 outline-none font-black text-[10px]" placeholder="shop.php">
-                                </div>
-                                <div class="col-span-2">
-                                    <label class="flex items-center gap-2 ml-2 cursor-pointer">
-                                        <input type="checkbox" name="show_cta" value="1" checked class="rounded border-gray-300 text-black focus:ring-black">
-                                        <span class="text-[8px] font-black text-gray-400 uppercase">Show Button Group</span>
+                            <textarea name="slide_title" placeholder="Enter main text..." rows="2" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
+                        </div>
+
+                        <!-- Badge & Tagline -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-1 ml-1">
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Badge</label>
+                                    <label class="flex items-center gap-1.5 cursor-pointer">
+                                        <input type="checkbox" name="show_badge" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
                                     </label>
                                 </div>
+                                <input type="text" name="badge_text" placeholder="e.g. Pure Taste" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
                             </div>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Banner Image</label>
-                                <div class="relative group aspect-video rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 hover:border-black transition-all">
-                                    <img id="new-slide-preview" class="w-full h-full object-cover hidden">
-                                    <div id="upload-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-                                        <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
-                                        <span class="text-[9px] font-black uppercase tracking-widest">Select Image</span>
-                                    </div>
-                                    <input type="file" name="slide_image" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewNewSlide(this)" required>
+                            <div>
+                                <div class="flex items-center justify-between mb-1 ml-1">
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tagline</label>
+                                    <label class="flex items-center gap-1.5 cursor-pointer">
+                                        <input type="checkbox" name="show_subtitle" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                    </label>
                                 </div>
+                                <input type="text" name="slide_subtitle" placeholder="Short description..." oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
                             </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Display Rank (Order)</label>
-                                <input type="number" name="slide_sort_order" value="0" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-5 py-3 outline-none font-bold">
+                        </div>
+
+                        <!-- Button Context -->
+                        <div class="p-4 bg-gray-50 rounded-xl space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Button (Call to Action)</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_cta" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                </label>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" name="slide_cta_text" placeholder="Button Text" oninput="updatePreview('add')" class="w-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-xs uppercase tracking-widest">
+                                <input type="text" name="slide_cta_link" placeholder="Link (e.g. shop.php)" class="w-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-xs">
+                            </div>
+                        </div>
+
+                        <!-- Image & Sort -->
+                        <div class="grid grid-cols-2 gap-4 items-end">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Slide Photo</label>
+                                <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
+                                <label for="add-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
+                                    <i class="fas fa-camera mr-2"></i> Choose File
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Number</label>
+                                <input type="number" name="slide_sort_order" value="0" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-center">
                             </div>
                         </div>
                     </div>
-                    <div class="mt-8 flex gap-4">
-                        <button type="submit" class="flex-1 bg-black text-white py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-[#19DC7E] hover:text-black transition-all shadow-xl">Deploy Slide</button>
-                    </div>
+
+                    <button type="submit" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-[0.2em] hover:bg-black transition-all shadow-xl">Save New Slide</button>
                 </form>
             </div>
         </div>
 
         <!-- EDIT SLIDE MODAL -->
-        <div id="edit-slide-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md hidden">
-            <div class="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden anim-up">
-                <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
-                    <h3 class="text-xl font-black text-gray-900 crimson-pro">Refine Slide Canvas</h3>
-                    <button onclick="document.getElementById('edit-slide-modal').classList.add('hidden')" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-all">
+        <div id="edit-slide-modal" class="fixed inset-0 z-[9999] flex items-start justify-center p-4  backdrop-blur-sm hidden overflow-y-auto">
+            <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden anim-up border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+                    <h3 class="text-lg font-bold text-gray-900">Edit Slide</h3>
+                    <button onclick="document.getElementById('edit-slide-modal').classList.add('hidden')" class="text-gray-400 hover:text-black transition-colors">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <form method="POST" enctype="multipart/form-data" class="p-8">
+
+                <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
                     <input type="hidden" name="edit_slide" value="1">
                     <input type="hidden" name="slide_id" id="edit-slide-id">
                     <input type="hidden" name="current_image" id="edit-current-image">
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-6">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Floating Badge Text</label>
-                                <input type="text" name="badge_text" id="edit-badge-text" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold">
-                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
-                                    <input type="checkbox" name="show_badge" id="edit-show-badge" value="1" class="rounded border-gray-300 text-black focus:ring-black">
-                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
+                    <!-- Live Preview -->
+                    <div class="relative aspect-video rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner">
+                        <img id="edit-preview-bg" src="" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-4 space-y-1">
+                            <div id="edit-preview-badge" class="bg-white/20 backdrop-blur-sm rounded-full px-3 py-0.5 mb-1 transition-opacity">
+                                <span class="text-[7px] font-black text-white uppercase tracking-widest" id="edit-badge-text-val">BADGE</span>
+                            </div>
+                            <h1 id="edit-preview-title" class="text-xl font-black text-white leading-tight transition-opacity">HEADLINE</h1>
+                            <p id="edit-preview-subtitle" class="text-[9px] text-white/80 font-medium transition-opacity">Description</p>
+                            <div id="edit-preview-cta" class="mt-2 px-4 py-1.5 bg-green-500 text-black font-black text-[8px] rounded-lg shadow-lg transition-opacity">BUTTON</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Headline -->
+                        <div>
+                            <div class="flex items-center justify-between mb-1 ml-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Headline (Title)</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_title" id="edit-show-title" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
                                 </label>
                             </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Main Headline</label>
-                                <textarea name="slide_title" id="edit-slide-title" rows="2" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-2xl px-5 py-3 outline-none font-bold text-gray-900 transition-all resize-none" required></textarea>
-                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
-                                    <input type="checkbox" name="show_title" id="edit-show-title" value="1" class="rounded border-gray-300 text-black focus:ring-black">
-                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
-                                </label>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Tagline Subtitle</label>
-                                <input type="text" name="slide_subtitle" id="edit-slide-subtitle" class="w-full bg-gray-50 border border-transparent focus:border-black focus:bg-white rounded-xl px-5 py-3 outline-none font-bold">
-                                <label class="flex items-center gap-2 mt-1 ml-2 cursor-pointer">
-                                    <input type="checkbox" name="show_subtitle" id="edit-show-subtitle" value="1" class="rounded border-gray-300 text-black focus:ring-black">
-                                    <span class="text-[8px] font-black text-gray-400 uppercase">Visible</span>
-                                </label>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">CTA Label</label>
-                                    <input type="text" name="slide_cta_text" id="edit-slide-cta-text" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 outline-none font-black text-[10px]">
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Target Link</label>
-                                    <input type="text" name="slide_cta_link" id="edit-slide-cta-link" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-4 py-3 outline-none font-black text-[10px]">
-                                </div>
-                                <div class="col-span-2">
-                                    <label class="flex items-center gap-2 ml-2 cursor-pointer">
-                                        <input type="checkbox" name="show_cta" id="edit-show-cta" value="1" class="rounded border-gray-300 text-black focus:ring-black">
-                                        <span class="text-[8px] font-black text-gray-400 uppercase">Show Button Group</span>
+                            <textarea name="slide_title" id="edit-slide-title" placeholder="Banner text..." rows="2" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
+                        </div>
+
+                        <!-- Badge & Tagline -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="flex items-center justify-between mb-1 ml-1">
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Badge</label>
+                                    <label class="flex items-center gap-1.5 cursor-pointer">
+                                        <input type="checkbox" name="show_badge" id="edit-show-badge" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
                                     </label>
                                 </div>
+                                <input type="text" name="badge_text" id="edit-badge-text" placeholder="e.g. Pure Taste" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
                             </div>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Banner Image</label>
-                                <div class="relative group aspect-video rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 hover:border-black transition-all">
-                                    <img id="edit-slide-preview" class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-white bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <i class="fas fa-camera text-2xl mb-2"></i>
-                                        <span class="text-[9px] font-black uppercase tracking-widest">Update Image</span>
-                                    </div>
-                                    <input type="file" name="slide_image" class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewEditSlide(this)">
+                            <div>
+                                <div class="flex items-center justify-between mb-1 ml-1">
+                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tagline</label>
+                                    <label class="flex items-center gap-1.5 cursor-pointer">
+                                        <input type="checkbox" name="show_subtitle" id="edit-show-subtitle" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                    </label>
                                 </div>
+                                <input type="text" name="slide_subtitle" id="edit-slide-subtitle" placeholder="Short description..." oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
                             </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Display Rank (Order)</label>
-                                <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full bg-gray-50 border border-transparent focus:border-black rounded-xl px-5 py-3 outline-none font-bold">
+                        </div>
+
+                        <!-- Button Context -->
+                        <div class="p-4 bg-gray-50 rounded-xl space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Button (Call to Action)</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_cta" id="edit-show-cta" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                </label>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" name="slide_cta_text" id="edit-slide-cta-text" placeholder="Button Text" oninput="updatePreview('edit')" class="w-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-xs">
+                                <input type="text" name="slide_cta_link" id="edit-slide-cta-link" placeholder="Destination link" class="w-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-xs">
+                            </div>
+                        </div>
+
+                        <!-- Image & Sort -->
+                        <div class="grid grid-cols-2 gap-4 items-end">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Swap Photo (Optional)</label>
+                                <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
+                                <label for="edit-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
+                                    <i class="fas fa-camera mr-2"></i> Update Image
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Number</label>
+                                <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-center">
                             </div>
                         </div>
                     </div>
-                    <div class="mt-8 flex gap-4">
-                        <button type="submit" class="flex-1 bg-[#19DC7E] text-black py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-black hover:text-white transition-all shadow-xl">Update Slide</button>
-                    </div>
+
+                    <button type="submit" class="w-full bg-black text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-green-500 transition-all shadow-xl">Save Changes</button>
                 </form>
             </div>
         </div>
 
         <script>
-        function previewNewSlide(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.getElementById('new-slide-preview');
-                    img.src = e.target.result;
-                    img.classList.remove('hidden');
-                    document.getElementById('upload-placeholder').classList.add('hidden');
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
+        function updatePreview(type) {
+            const container = type === 'add' ? document.getElementById('add-slide-modal') : document.getElementById('edit-slide-modal');
+            const prefix = type === 'add' ? 'add' : 'edit';
+            
+            const badge = container.querySelector('[name="badge_text"]').value;
+            const title = container.querySelector('[name="slide_title"]').value;
+            const subtitle = container.querySelector('[name="slide_subtitle"]').value;
+            const cta = container.querySelector('[name="slide_cta_text"]').value;
+            
+            const showBadge = container.querySelector('[name="show_badge"]').checked;
+            const showTitle = container.querySelector('[name="show_title"]').checked;
+            const showSubtitle = container.querySelector('[name="show_subtitle"]').checked;
+            const showCta = container.querySelector('[name="show_cta"]').checked;
+            
+            document.getElementById(prefix + '-badge-text-val').innerText = badge || 'KASHMIRI PURE';
+            document.getElementById(prefix + '-preview-title').innerHTML = (title || 'YOUR HEADLINE').replace(/\n/g, '<br>');
+            document.getElementById(prefix + '-preview-subtitle').innerText = subtitle || 'Description preview text...';
+            document.getElementById(prefix + '-preview-cta').innerText = cta || 'SHOP NOW';
+            
+            document.getElementById(prefix + '-preview-badge').style.opacity = showBadge ? '1' : '0';
+            document.getElementById(prefix + '-preview-title').style.opacity = showTitle ? '1' : '0.1';
+            document.getElementById(prefix + '-preview-subtitle').style.opacity = showSubtitle ? '1' : '0.1';
+            document.getElementById(prefix + '-preview-cta').style.opacity = showCta ? '1' : '0';
         }
 
-        function previewEditSlide(input) {
+        function previewSlideFile(input, type) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('edit-slide-preview').src = e.target.result;
+                    document.getElementById(type + '-preview-bg').src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -528,19 +581,79 @@ $show_stats = get_setting('show_hero_stats', 'on');
         function openEditSlide(slide) {
             document.getElementById('edit-slide-id').value = slide.id;
             document.getElementById('edit-current-image').value = slide.image;
-            document.getElementById('edit-badge-text').value = slide.badge_text;
-            document.getElementById('edit-slide-title').value = slide.title;
-            document.getElementById('edit-slide-subtitle').value = slide.subtitle;
-            document.getElementById('edit-slide-cta-text').value = slide.cta_text;
-            document.getElementById('edit-slide-cta-link').value = slide.cta_link;
+            document.getElementById('edit-badge-text').value = slide.badge_text || '';
+            document.getElementById('edit-slide-title').value = slide.title || '';
+            document.getElementById('edit-slide-subtitle').value = slide.subtitle || '';
+            document.getElementById('edit-slide-cta-text').value = slide.cta_text || '';
+            document.getElementById('edit-slide-cta-link').value = slide.cta_link || '';
             document.getElementById('edit-slide-sort').value = slide.sort_order;
-            document.getElementById('edit-slide-preview').src = '../' + slide.image;
+            
+            document.getElementById('edit-preview-bg').src = '../' + slide.image;
             
             document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
             document.getElementById('edit-show-title').checked = slide.show_title == 1;
             document.getElementById('edit-show-subtitle').checked = slide.show_subtitle == 1;
             document.getElementById('edit-show-cta').checked = slide.show_cta == 1;
             
+            updatePreview('edit');
+            document.getElementById('edit-slide-modal').classList.remove('hidden');
+        }
+        </script>
+
+        <script>
+        function updatePreview(type) {
+            const container = type === 'add' ? document.getElementById('add-slide-modal') : document.getElementById('edit-slide-modal');
+            const prefix = type === 'add' ? 'add' : 'edit';
+            
+            const badge = container.querySelector('[name="badge_text"]').value;
+            const title = container.querySelector('[name="slide_title"]').value;
+            const subtitle = container.querySelector('[name="slide_subtitle"]').value;
+            const cta = container.querySelector('[name="slide_cta_text"]').value;
+            
+            const showBadge = container.querySelector('[name="show_badge"]').checked;
+            const showTitle = container.querySelector('[name="show_title"]').checked;
+            const showSubtitle = container.querySelector('[name="show_subtitle"]').checked;
+            const showCta = container.querySelector('[name="show_cta"]').checked;
+            
+            document.getElementById(prefix + '-badge-text-val').innerText = badge || 'KASHMIRI PURE';
+            document.getElementById(prefix + '-preview-title').innerHTML = (title || 'YOUR HEADLINE').replace(/\n/g, '<br>');
+            document.getElementById(prefix + '-preview-subtitle').innerText = subtitle || 'Description preview text...';
+            document.getElementById(prefix + '-preview-cta').innerText = cta || 'SHOP NOW';
+            
+            document.getElementById(prefix + '-preview-badge').style.opacity = showBadge ? '1' : '0';
+            document.getElementById(prefix + '-preview-title').style.opacity = showTitle ? '1' : '0.1';
+            document.getElementById(prefix + '-preview-subtitle').style.opacity = showSubtitle ? '1' : '0.1';
+            document.getElementById(prefix + '-preview-cta').style.opacity = showCta ? '1' : '0';
+        }
+
+        function previewSlideFile(input, type) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(type + '-preview-bg').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function openEditSlide(slide) {
+            document.getElementById('edit-slide-id').value = slide.id;
+            document.getElementById('edit-current-image').value = slide.image;
+            document.getElementById('edit-badge-text').value = slide.badge_text || '';
+            document.getElementById('edit-slide-title').value = slide.title || '';
+            document.getElementById('edit-slide-subtitle').value = slide.subtitle || '';
+            document.getElementById('edit-slide-cta-text').value = slide.cta_text || '';
+            document.getElementById('edit-slide-cta-link').value = slide.cta_link || '';
+            document.getElementById('edit-slide-sort').value = slide.sort_order;
+            
+            document.getElementById('edit-preview-bg').src = '../' + slide.image;
+            
+            document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
+            document.getElementById('edit-show-title').checked = slide.show_title == 1;
+            document.getElementById('edit-show-subtitle').checked = slide.show_subtitle == 1;
+            document.getElementById('edit-show-cta').checked = slide.show_cta == 1;
+            
+            updatePreview('edit');
             document.getElementById('edit-slide-modal').classList.remove('hidden');
         }
         </script>

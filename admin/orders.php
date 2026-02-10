@@ -256,7 +256,7 @@ $orders = $pagination['records'];
 </div>
 
 <!-- Bulk Bar -->
-<div id="bulk-action-bar" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black backdrop-blur-xl border border-white/10 px-8 py-5 rounded-[2rem] shadow-2xl shadow-blue-900/20 items-center gap-8 anim-up ring-1 ring-white/10">
+<div id="bulk-action-bar" class="hidden fixed bottom-10 z-50 bg-black backdrop-blur-xl border border-white/10 px-8 py-5 rounded-[2rem] shadow-2xl shadow-blue-900/20 items-center gap-8 anim-up ring-1 ring-white/10">
     <div class="flex items-center gap-3 border-r border-white/10 pr-8">
         <div class="w-8 h-8 rounded-full bg-[#19DC7E] text-black flex items-center justify-center font-black text-xs shadow-lg shadow-green-500/20" id="selected-count-circle">0</div>
         <div class="flex flex-col">

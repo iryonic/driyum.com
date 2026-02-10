@@ -276,3 +276,45 @@
 ----------------------------------------
 [2026-02-10 12:13:13] To: drop.mail.iry@gmail.com | Subject: Order #ORD-6971FEB00D7F6 Status Update: PENDING
 ----------------------------------------
+[2026-02-10 12:26:54] To: test@example.com | Subject: Test Subject
+----------------------------------------
+[2026-02-10 12:26:56] To: thisizirfan2@gmail.com | Subject: Hurry! Driyum’s Limited-Time Fruit Sale Ends Soon
+----------------------------------------
+[2026-02-10 12:26:59] To: test@example.com | Subject: Test Subject
+----------------------------------------
+[2026-02-10 12:27:01] To: thisizirfan2@gmail.com | Subject: Hurry! Driyum’s Limited-Time Fruit Sale Ends Soon
+----------------------------------------
+[2026-02-10 12:27:20] To: test@example.com | Subject: Test Subject
+----------------------------------------
+[2026-02-10 12:27:22] To: thisizirfan2@gmail.com | Subject: Hurry! Driyum’s Limited-Time Fruit Sale Ends Soon
+----------------------------------------
+[2026-02-10 12:27:24] To: faiqbhat123@gmail.com | Subject: try
+----------------------------------------
+[2026-02-10 12:27:26] To: thisizirfan2@gmail.com | Subject: try
+----------------------------------------
+[2026-02-10 12:27:28] To: faiqbhat123@gmail.com | Subject: try
+----------------------------------------
+[2026-02-10 12:27:30] To: thisizirfan2@gmail.com | Subject: try
+----------------------------------------
+[2026-02-10 12:27:40] To: faiqbhat123@gmail.com | Subject: try
+----------------------------------------
+[2026-02-10 12:27:42] To: thisizirfan2@gmail.com | Subject: try
+----------------------------------------
+[2026-02-10 12:28:00] To: drop.mail.iry@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:02] To: hire.iry@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:04] To: thisizirfan2@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:06] To: drop.mail.iry@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:08] To: hire.iry@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:10] To: thisizirfan2@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:48] To: drop.mail.iry@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:50] To: hire.iry@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------
+[2026-02-10 12:28:53] To: thisizirfan2@gmail.com | Subject: Test Email – Driyum Mail System
+----------------------------------------

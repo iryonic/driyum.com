@@ -2,8 +2,8 @@
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
-// AJAX Bulk Actions (Status, Weight, Delete)
-if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_delete', 'bulk_status', 'bulk_weight'])) {
+// AJAX Bulk Actions (Status, Weight, Delete, Featured)
+if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_delete', 'bulk_status', 'bulk_weight', 'bulk_featured'])) {
     $ids = $_POST['ids'] ?? [];
     if (empty($ids)) {
         header('Content-Type: application/json');
@@ -42,6 +42,10 @@ if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_delet
         $weight = $conn->real_escape_string($_POST['weight']);
         $conn->query("UPDATE products SET weight = '$weight' WHERE id IN ($ids_str)");
     }
+    elseif ($action === 'bulk_featured') {
+        $feat = (int)$_POST['featured'];
+        $conn->query("UPDATE products SET is_featured = $feat WHERE id IN ($ids_str)");
+    }
 
     header('Content-Type: application/json');
     echo json_encode(['success' => true]);
@@ -49,15 +53,28 @@ if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_delet
 }
 
 // AJAX Status Toggle (Single)
-if (isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'toggle_status') {
+if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['toggle_status', 'toggle_featured'])) {
     $id = (int)$_POST['id'];
-    $current = fetch_one("SELECT is_active FROM products WHERE id = ?", [$id]);
-    if ($current) {
-        $new_status = $current['is_active'] ? 0 : 1;
-        execute_query("UPDATE products SET is_active = ? WHERE id = ?", [$new_status, $id]);
-        header('Content-Type: application/json');
-        echo json_encode(['success' => true, 'new_status' => $new_status, 'label' => $new_status ? 'Active' : 'Inactive']);
-        exit;
+    $action = $_POST['ajax_action'];
+    
+    if ($action === 'toggle_status') {
+        $current = fetch_one("SELECT is_active FROM products WHERE id = ?", [$id]);
+        if ($current) {
+            $new_status = $current['is_active'] ? 0 : 1;
+            execute_query("UPDATE products SET is_active = ? WHERE id = ?", [$new_status, $id]);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'new_status' => $new_status, 'label' => $new_status ? 'Active' : 'Offline']);
+            exit;
+        }
+    } elseif ($action === 'toggle_featured') {
+        $current = fetch_one("SELECT is_featured FROM products WHERE id = ?", [$id]);
+        if ($current) {
+            $new_val = $current['is_featured'] ? 0 : 1;
+            execute_query("UPDATE products SET is_featured = ? WHERE id = ?", [$new_val, $id]);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'is_featured' => $new_val]);
+            exit;
+        }
     }
 }
 ?>
@@ -93,35 +110,51 @@ $pagination = get_pagination_data($query, $params, 12);
 $products = $pagination['records'];
 ?>
 <style>
-    /* Premium Responsive Bulk Bar */
+    /* Premium Responsive Bulk Dock */
+    #bulk-action-bar {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
     @media (max-width: 768px) {
         #bulk-action-bar {
-            bottom: 1.5rem;
-            left: 1rem;
-            right: 1rem;
+            bottom: 1rem !important;
+            left: 1rem !important;
+            right: 1rem !important;
+            margin: 0 !important;
+            transform: translateY(0) scale(1) !important;
+            border-radius: 20px;
+            padding: 0.4rem;
+            gap: 0.4rem;
+            overflow-x: auto;
+            justify-content: flex-start;
+            max-width: none !important;
             width: auto;
-            transform: none !important;
-            z-index: 50;
-            flex-direction: column;
-            align-items: stretch;
-            border-style: solid;
-            background: rgba(0, 0, 0, 1);
-            border-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(16px);
-            padding: 1.25rem;
-            gap: 1rem;
+            /* Hide scrollbar but keep functionality */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        #bulk-action-bar .border-r, 
-        #bulk-action-bar .h-6.w-px,
-        #bulk-action-bar > div.h-4 {
+        #bulk-action-bar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        #bulk-action-bar > div, 
+        #bulk-action-bar > button {
+            flex-shrink: 0;
+        }
+
+        #bulk-action-bar .px-5 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        #bulk-action-bar .px-4 {
+            padding-left: 0.4rem;
+            padding-right: 0.4rem;
+        }
+
+        /* More aggressive text hiding on mobile */
+        #bulk-action-bar span.sm\:inline {
             display: none !important;
-        }
-        #bulk-action-bar .flex {
-            justify-content: space-between;
-            width: 100%;
-        }
-        #bulk-action-bar #bulk-weight-input {
-            flex: 1;
         }
     }
 </style>
@@ -143,28 +176,58 @@ $products = $pagination['records'];
     </div>
 </div>
 
-<!-- Simplified Bulk Bar -->
-<div id="bulk-action-bar" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black backdrop-blur-xl border border-white/10 px-6 py-4 rounded-3xl shadow-2xl items-center gap-6 anim-up">
-    <div class="flex items-center gap-3 border-r border-white/10 pr-6">
-        <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-widest"><span id="selected-count">1</span> Selected</span>
-    </div>
+<!-- PREMIUM BULK ACTION DOCK -->
+<div id="bulk-action-bar" class="hidden fixed bottom-8   z-[100] bg-[#111] backdrop-blur-2xl border border-white/10 px-3 py-3 rounded-[28px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] items-center gap-2 anim-up border-b-4 border-b-[#19DC7E]/20 max-w-[95vw] sm:max-w-none">
     
-    <div class="flex items-center gap-2">
-        <button onclick="bulkUpdateAction('bulk_status', {status: 1})" class="text-[10px] font-black text-white hover:text-[#19DC7E] uppercase tracking-widest transition-colors px-2">Activate</button>
-        <button onclick="bulkUpdateAction('bulk_status', {status: 0})" class="text-[10px] font-black text-white hover:text-red-400 uppercase tracking-widest transition-colors px-2">Deactivate</button>
+    <!-- Selection Info -->
+    <div class="bg-white/5 rounded-2xl px-5 py-3 flex items-center gap-4 mr-1 border border-white/5">
+        <div class="flex flex-col">
+            <span class="text-[8px] font-black text-gray-500 uppercase tracking-[0.2em] leading-none mb-1 hidden sm:block">Editing</span>
+            <span class="text-xs font-black text-[#19DC7E] leading-none"><span id="selected-count">0</span><span class="hidden sm:inline ml-1">Items</span></span>
+        </div>
+        <button onclick="document.querySelectorAll('.product-checkbox').forEach(cb => {cb.checked = false; updateBulkBar();})" class="w-7 h-7 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all text-gray-400 hover:text-white">
+            <i class="fas fa-times text-[10px]"></i>
+        </button>
     </div>
 
-    <div class="h-4 w-px bg-white/10"></div>
-
-    <div class="flex items-center gap-2">
-        <input type="number" step="0.001" id="bulk-weight-input" placeholder="Weight" class="w-20 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-[10px] font-bold text-white outline-none focus:border-[#19DC7E]">
-        <button onclick="bulkUpdateAction('bulk_weight', {weight: document.getElementById('bulk-weight-input').value})" class="bg-[#19DC7E] text-black text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-xl">Apply</button>
+    <!-- Group: Status -->
+    <div class="flex items-center p-0.5 bg-white/5 rounded-2xl border border-white/5">
+        <button onclick="bulkUpdateAction('bulk_status', {status: 1})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
+            <i class="fas fa-eye text-[10px] text-[#19DC7E] group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Active</span>
+        </button>
+        <button onclick="bulkUpdateAction('bulk_status', {status: 0})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
+            <i class="fas fa-eye-slash text-[10px] text-gray-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Inactive</span>
+        </button>
     </div>
 
-    <div class="h-4 w-px bg-white/10"></div>
+    <!-- Group: Homepage -->
+    <div class="flex items-center p-0.5 bg-white/5 rounded-2xl border border-white/5">
+        <button onclick="bulkUpdateAction('bulk_featured', {featured: 1})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
+            <i class="fas fa-star text-[10px] text-yellow-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Feature</span>
+        </button>
+        <button onclick="bulkUpdateAction('bulk_featured', {featured: 0})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
+            <i class="far fa-star text-[10px] text-gray-500 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Normal</span>
+        </button>
+    </div>
 
-    <button onclick="bulkDeleteProducts()" class="text-red-400 hover:bg-red-400/10 p-2 rounded-xl transition-all">
-        <i class="fas fa-trash-alt text-xs"></i>
+    <!-- Group: Weight -->
+    <div class="flex items-center pl-3 sm:pl-4 pr-1 py-1 bg-white/10 rounded-2xl border border-white/10 ring-2 ring-transparent focus-within:ring-[#19DC7E]/30 transition-all">
+        <i class="fas fa-weight-hanging text-[10px] text-gray-400 mr-2 sm:mr-3"></i>
+        <input type="number" step="0.001" id="bulk-weight-input" placeholder="0.5" class="w-10 sm:w-16 bg-transparent border-none p-0 text-xs font-black text-white outline-none placeholder:text-white/20">
+        <button onclick="bulkUpdateAction('bulk_weight', {weight: document.getElementById('bulk-weight-input').value})" class="bg-[#19DC7E] text-black w-8 h-8 rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all ml-1 sm:ml-2 shadow-lg shadow-[#19DC7E]/20">
+            <i class="fas fa-check text-[10px]"></i>
+        </button>
+    </div>
+
+    <div class="w-px h-8 bg-white/10 mx-0.5 hidden sm:block"></div>
+
+    <!-- Delete -->
+    <button onclick="bulkDeleteProducts()" class="w-11 h-11 rounded-2xl flex items-center justify-center text-red-400 hover:bg-red-500/10 hover:text-red-500 transition-all hover:rotate-6">
+        <i class="fas fa-trash-alt text-sm"></i>
     </button>
 </div>
 
@@ -190,7 +253,12 @@ $products = $pagination['records'];
         <!-- Info -->
         <div class="flex-1 flex flex-col">
             <div class="flex items-center justify-between mb-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest"><?php echo $p['cat_name']; ?></span>
+                <div class="flex items-center gap-2">
+                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest"><?php echo $p['cat_name']; ?></span>
+                    <button onclick="toggleFeatured(<?php echo $p['id']; ?>, this)" class="featured-toggle transition-all hover:scale-125 <?php echo $p['is_featured'] ? 'text-yellow-400' : 'text-gray-200'; ?>">
+                        <i class="fas fa-star text-[10px]"></i>
+                    </button>
+                </div>
                 <button onclick="toggleProductStatus(<?php echo $p['id']; ?>, this)" class="text-[8px] font-black uppercase tracking-widest status-badge <?php echo $p['is_active'] ? 'text-[#19DC7E]' : 'text-gray-300'; ?>">
                     <?php echo $p['is_active'] ? 'Active' : 'Offline'; ?>
                 </button>
@@ -221,6 +289,41 @@ $products = $pagination['records'];
 <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 
 <script>
+async function toggleFeatured(id, btn) {
+    const icon = btn.querySelector('i');
+    btn.style.pointerEvents = 'none';
+    icon.classList.remove('fa-star');
+    icon.classList.add('fa-spinner', 'fa-spin');
+
+    try {
+        const formData = new FormData();
+        formData.append('ajax_action', 'toggle_featured');
+        formData.append('id', id);
+
+        const response = await fetch('products.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            if (data.is_featured) {
+                btn.classList.add('text-yellow-400');
+                btn.classList.remove('text-gray-200');
+            } else {
+                btn.classList.remove('text-yellow-400');
+                btn.classList.add('text-gray-200');
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    } finally {
+        icon.classList.remove('fa-spinner', 'fa-spin');
+        icon.classList.add('fa-star');
+        btn.style.pointerEvents = 'auto';
+    }
+}
+
 async function toggleProductStatus(id, btn) {
     const originalContent = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
