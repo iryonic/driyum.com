@@ -188,7 +188,7 @@ $total_admins = fetch_one("SELECT COUNT(*) as count FROM users WHERE is_admin = 
             }
         }
     </style>
-    <div id="bulk-bar" class="hidden fixed bottom-8  z-50 anim-up-static">
+    <div id="bulk-bar" class="hidden fixed bottom-8 z-50 anim-up-static">
         <div class="bg-black text-white px-6 py-3 rounded-[30px] shadow-2xl flex items-center gap-6 border border-white/10 backdrop-blur-xl">
             <div class="flex items-center gap-3">
                 <span id="selected-count" class="w-8 h-8 bg-[#19DC7E] text-black rounded-xl flex items-center justify-center font-black text-xs">0</span>

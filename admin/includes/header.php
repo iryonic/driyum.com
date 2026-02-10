@@ -58,7 +58,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             top: 0; 
             width: 260px; 
             overflow-y: auto; 
-            background: #0f172a;
+            background: #004f42;
             z-index: 100;
             border-right: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -145,7 +145,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
 
     <!-- SIDEBAR -->
-    <aside class="admin-sidebar bg-[#0f172a] text-white p-5 flex flex-col">
+    <aside class="admin-sidebar bg-[#004f42] text-white p-5 flex flex-col">
         <div class="mb-8 flex items-center justify-between px-2">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 bg-[#19DC7E] rounded-xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(25,220,126,0.3)]">
@@ -164,17 +164,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Main</h4>
                 <div class="space-y-1">
                     <?php $p = basename($_SERVER['PHP_SELF']); ?>
-                    <a href="index.php" class="nav-link <?php echo $p=='index.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="index.php" class="nav-link <?php echo $p=='index.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-chart-line w-5 text-sm"></i> <span>Dashboard</span>
                     </a>
-                    <a href="orders.php" class="nav-link <?php echo ($p=='orders.php' || $p=='generate_batch_shipments.php')?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="orders.php" class="nav-link <?php echo ($p=='orders.php' || $p=='generate_batch_shipments.php')?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-box w-5 text-sm"></i> 
                         <span>Orders</span>
                         <?php if($total_orders_today > 0): ?>
                             <span class="ml-auto bg-[#19DC7E] text-black text-[9px] font-black px-1.5 py-0.5 rounded-full"><?php echo $total_orders_today; ?></span>
                         <?php endif; ?>
                     </a>
-                    <a href="abandoned_carts.php" class="nav-link <?php echo $p=='abandoned_carts.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="abandoned_carts.php" class="nav-link <?php echo $p=='abandoned_carts.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-shopping-cart w-5 text-sm"></i> <span>Abandoned Carts</span>
                     </a>
                 </div>
@@ -183,13 +183,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Products</h4>
                 <div class="space-y-1">
-                    <a href="products.php" class="nav-link <?php echo ($p=='products.php' || $p=='product_form.php')?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="products.php" class="nav-link <?php echo ($p=='products.php' || $p=='product_form.php')?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-apple-alt w-5 text-sm"></i> <span>Product List</span>
                     </a>
-                    <a href="categories.php" class="nav-link <?php echo ($p=='categories.php' || $p=='category_form.php')?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="categories.php" class="nav-link <?php echo ($p=='categories.php' || $p=='category_form.php')?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-th-list w-5 text-sm"></i> <span>Categories</span>
                     </a>
-                    <a href="inventory.php" class="nav-link <?php echo $p=='inventory.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="inventory.php" class="nav-link <?php echo $p=='inventory.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-boxes w-5 text-sm"></i> <span>Stock Status</span>
                         <?php if($low_stock_count > 0): ?>
                             <span class="ml-auto bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full"><?php echo $low_stock_count; ?></span>
@@ -201,13 +201,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">People</h4>
                 <div class="space-y-1">
-                    <a href="users.php" class="nav-link <?php echo $p=='users.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="users.php" class="nav-link <?php echo $p=='users.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-users w-5 text-sm"></i> <span>Customers</span>
                     </a>
-                    <a href="affiliates.php" class="nav-link <?php echo $p=='affiliates.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="affiliates.php" class="nav-link <?php echo $p=='affiliates.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-user-tag w-5 text-sm"></i> <span>Affiliates</span>
                     </a>
-                    <a href="subscribers.php" class="nav-link <?php echo $p=='subscribers.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="subscribers.php" class="nav-link <?php echo $p=='subscribers.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-envelope w-5 text-sm"></i> <span>Newsletter</span>
                     </a>
                 </div>
@@ -216,13 +216,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Marketing</h4>
                 <div class="space-y-1">
-                    <a href="coupons.php" class="nav-link <?php echo $p=='coupons.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="coupons.php" class="nav-link <?php echo $p=='coupons.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-percentage w-5 text-sm"></i> <span>Coupons</span>
                     </a>
-                    <a href="reviews.php" class="nav-link <?php echo $p=='reviews.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="reviews.php" class="nav-link <?php echo $p=='reviews.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-star w-5 text-sm"></i> <span>Reviews</span>
                     </a>
-                    <a href="manage_testimonials.php" class="nav-link <?php echo $p=='manage_testimonials.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="manage_testimonials.php" class="nav-link <?php echo $p=='manage_testimonials.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-comment w-5 text-sm"></i> <span>Testimonials</span>
                     </a>
                 </div>
@@ -231,19 +231,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Website</h4>
                 <div class="space-y-1">
-                    <a href="manage_home.php" class="nav-link <?php echo $p=='manage_home.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="manage_home.php" class="nav-link <?php echo $p=='manage_home.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-home w-5 text-sm"></i> <span>Homepage</span>
                     </a>
-                    <a href="manage_pages.php" class="nav-link <?php echo $p=='manage_pages.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="manage_pages.php" class="nav-link <?php echo $p=='manage_pages.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-file w-5 text-sm"></i> <span>Pages</span>
                     </a>
-                    <a href="manage_contact.php" class="nav-link <?php echo $p=='manage_contact.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="manage_contact.php" class="nav-link <?php echo $p=='manage_contact.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-inbox w-5 text-sm"></i> <span>Messages</span>
                     </a>
-                    <a href="shipping.php" class="nav-link <?php echo $p=='shipping.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="shipping.php" class="nav-link <?php echo $p=='shipping.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-truck w-5 text-sm"></i> <span>Shipping</span>
                     </a>
-                    <a href="settings.php" class="nav-link <?php echo $p=='settings.php'?'nav-link-active':'text-gray-400'; ?>">
+                    <a href="settings.php" class="nav-link <?php echo $p=='settings.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-tools w-5 text-sm"></i> <span>Settings</span>
                     </a>
                 </div>
@@ -251,7 +251,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </nav>
 
         <div class="pt-6 mt-6 border-t border-white/5 pb-4">
-            <a href="../logout.php" class="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 text-gray-400 hover:text-red-400 transition group">
+            <a href="../logout.php" class="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 text-white hover:text-red-400 transition group">
                 <span class="text-[10px] font-black uppercase tracking-widest">Logout</span>
                 <i class="fas fa-power-off text-xs"></i>
             </a>
@@ -304,7 +304,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         echo $page_titles[$curr_page] ?? 'Admin Panel';
                         ?>
                     </h2>
-                    <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                    <div class="flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest mt-1">
                         <span class="hover:text-black transition-colors cursor-pointer">Home</span>
                         <i class="fas fa-chevron-right text-[8px] opacity-50"></i>
                         <span class="text-[#19DC7E]"><?php echo $page_titles[$curr_page] ?? 'Page'; ?></span>
@@ -319,7 +319,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <input type="text" id="omni-search-input" placeholder="Search..." class="w-full bg-gray-50/50 border border-gray-100 focus:border-[#19DC7E] focus:bg-white rounded-xl pl-10 pr-12 py-2.5 text-xs font-bold transition-all outline-none shadow-sm group-hover:shadow-md">
                     <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#19DC7E] transition-colors text-xs"></i>
                     <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <span class="bg-white border border-gray-200 text-gray-400 text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">/</span>
+                        <span class="bg-white border border-gray-200 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">/</span>
                     </div>
                     <div id="omni-results" class="absolute left-0 w-screen md:w-80 md:left-auto md:right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden hidden z-[200]">
                         <div id="omni-results-content" class="max-h-96 overflow-y-auto p-2 custom-scrollbar"></div>
