@@ -14,6 +14,15 @@ try {
     // Fetch Dynamic Settings
     $store_name = get_setting('store_name', 'DRIYUM');
     $announcement_raw = get_setting('announcement_text', '🚀 Free Shipping on All Orders Over ₹499 • 🌿 100% Organic & Natural');
+    $announcement_bg = get_setting('announcement_bg_color', '#004f42');
+    
+    // Convert popular emojis to FA icons for premium feel
+    $announcement_raw = str_replace(
+        ['🚀', '🌿', '✨', '⚡', '📦'], 
+        ['<i class="fas fa-bolt text-[#19DC7E] mr-2"></i>', '<i class="fas fa-leaf text-[#19DC7E] mr-2"></i>', '<i class="fas fa-star text-[#19DC7E] mr-2"></i>', '<i class="fas fa-bolt text-[#19DC7E] mr-2"></i>', '<i class="fas fa-box text-[#19DC7E] mr-2"></i>'], 
+        $announcement_raw
+    );
+    
     $announcement_parts = explode('•', $announcement_raw);
 
     // Support & Social Settings
@@ -153,11 +162,11 @@ try {
     <div class="loader-bg-sparkles" id="sparkle-wrap"></div>
     
     <div class="loader-content">
-        <!-- Floating emojis for fun -->
-        <span class="floating-emoji" style="--tw-x1:-60px; --tw-y1:-80px; --tw-x2:-80px; --tw-y2:-140px; --tw-x3:-100px; --tw-y3:-200px; left:0; top:0; animation-delay:0s;">🥨</span>
-        <span class="floating-emoji" style="--tw-x1:60px; --tw-y1:-70px; --tw-x2:90px; --tw-y2:-120px; --tw-x3:120px; --tw-y3:-180px; right:0; top:10px; animation-delay:0.5s;">🍓</span>
-        <span class="floating-emoji" style="--tw-x1:-50px; --tw-y1:60px; --tw-x2:-70px; --tw-y2:110px; --tw-x3:-90px; --tw-y3:160px; left:20px; bottom:20px; animation-delay:1s;">🍪</span>
-        <span class="floating-emoji" style="--tw-x1:50px; --tw-y1:50px; --tw-x2:70px; --tw-y2:100px; --tw-x3:90px; --tw-y3:150px; right:20px; bottom:0px; animation-delay:1.5s;">🥭</span>
+        <!-- Floating icons for fun (No emojis for premium feel) -->
+        <span class="floating-emoji text-[#19DC7E]" style="--tw-x1:-60px; --tw-y1:-80px; --tw-x2:-80px; --tw-y2:-140px; --tw-x3:-100px; --tw-y3:-200px; left:0; top:0; animation-delay:0s;"><i class="fas fa-seedling"></i></span>
+        <span class="floating-emoji text-pink-400" style="--tw-x1:60px; --tw-y1:-70px; --tw-x2:90px; --tw-y2:-120px; --tw-x3:120px; --tw-y3:-180px; right:0; top:10px; animation-delay:0.5s;"><i class="fas fa-apple-whole"></i></span>
+        <span class="floating-emoji text-amber-500" style="--tw-x1:-50px; --tw-y1:60px; --tw-x2:-70px; --tw-y2:110px; --tw-x3:-90px; --tw-y3:160px; left:20px; bottom:20px; animation-delay:1s;"><i class="fas fa-cookie-bite"></i></span>
+        <span class="floating-emoji text-emerald-400" style="--tw-x1:50px; --tw-y1:50px; --tw-x2:70px; --tw-y2:100px; --tw-x3:90px; --tw-y3:150px; right:20px; bottom:0px; animation-delay:1.5s;"><i class="fas fa-leaf"></i></span>
         
         <div class="loader-logo-wrap">
             <img src="<?php echo get_url('assets/images/logoicon.png'); ?>" alt="Loading..." class="loader-logo-main">
@@ -227,7 +236,7 @@ try {
 </script>
 
 <!-- INFINITE MARQUEE -->
-<div class="bg-black text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30">
+<div class="text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30" style="background-color: <?php echo $announcement_bg; ?>;">
     <!-- Gradient Overlay for fade effect on edges -->
     <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
     <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
@@ -237,7 +246,7 @@ try {
             <?php foreach($announcement_parts as $msg): ?>
                 <div class="flex items-center gap-3 mx-6">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#19DC7E] animate-pulse"></span>
-                    <span class="font-['Fredoka'] font-bold text-xs tracking-widest uppercase text-gray-200">
+                    <span class="font-['Crimson'] font-bold text-xs tracking-widest uppercase text-white">
                         <?php echo trim($msg); ?>
                     </span>
                     <i class="fas fa-star text-[8px] text-[#19DC7E]/50 ml-3"></i>
@@ -257,7 +266,7 @@ try {
         
         <!-- Logo -->
         <a href="<?php echo get_url(''); ?>" class="flex items-center gap-2 group shrink-0" aria-label="<?php echo $store_name; ?> - Home">
-            <img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?> Logo" width="100" height="100" class="w-20 lg:w-24">
+            <img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="<?php echo $store_name; ?> Logo" width="100" height="100" class="w-20 lg:w-24">
         </a>
 
         <!-- Navigation with Mega Menu -->
@@ -378,7 +387,7 @@ try {
     <div class="flex items-center gap-2">
         <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors" aria-label="Search"><i class="fas fa-search"></i></button>
     </div>
-    <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.png'); ?>" alt="<?php echo $store_name; ?> - Home" class="w-24"></a>
+    <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="<?php echo $store_name; ?> - Home" class="w-24"></a>
     <button onclick="openCartSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-700 relative hover:text-black transition-colors" aria-label="Open Shopping Bag">
         <i class="fas fa-shopping-bag"></i>
     </button>
@@ -391,7 +400,7 @@ try {
     <!-- Drawer Header -->
     <div class="px-6 pt-10 pb-6 flex justify-between items-center border-b border-gray-50">
         <a href="<?php echo get_url(''); ?>">
-            <img src="<?php echo get_url('assets/images/logo.png'); ?>" class="w-20">
+            <img src="<?php echo get_url('assets/images/logo.svg'); ?>" class="w-20">
         </a>
         <button onclick="toggleMobileMenuDrawer()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:text-black shadow-sm transition-all active:scale-90" aria-label="Close Mobile Menu">
             <i class="fas fa-times text-lg"></i>
