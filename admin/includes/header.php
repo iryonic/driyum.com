@@ -305,8 +305,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         ?>
                     </h2>
                     <div class="flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-widest mt-1">
-                        <span class="hover:text-black transition-colors cursor-pointer">Home</span>
-                        <i class="fas fa-chevron-right text-[8px] opacity-50"></i>
+                        <span class="text-black hover:text-green-500 transition-colors cursor-pointer">Home</span>
+                        <i class="fas fa-chevron-right text-[8px] text-gray-400 opacity-80"></i>
                         <span class="text-[#24B25D]"><?php echo $page_titles[$curr_page] ?? 'Page'; ?></span>
                     </div>
                 </div>

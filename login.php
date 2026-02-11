@@ -88,7 +88,7 @@ $error = $flash ? $flash['message'] : '';
         <!-- RIGHT: FORM -->
         <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
             
-            <h2 class="text-3xl font-['Crimson_Pro'] font-bold text-gray-900 mb-8">Sign In</h2>
+            <h2 class="text-3xl font-['Crimson_Pro'] font-bold text-white mb-8">Sign In</h2>
             
             <?php if($flash): ?>
                 <div class="<?php echo $flash['type'] === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'; ?> p-4 rounded-xl mb-6 font-bold flex items-center gap-2">
@@ -121,7 +121,7 @@ $error = $flash ? $flash['message'] : '';
                     <a href="<?php echo get_url('forgot-password'); ?>" class="text-sm font-bold text-[#24B25D] hover:underline">Lost Password?</a>
                 </div>
 
-                <button type="submit" class="btn-chunky btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1">
+                <button type="submit" class="btn-chunky btn-primary w-full py-4 text-lg text-white shadow-xl hover:shadow-2xl hover:-translate-y-1">
                     Log In <i class="fas fa-arrow-right ml-2 opacity-70"></i>
                 </button>
             </form>

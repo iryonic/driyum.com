@@ -20,8 +20,8 @@
     --shadow-float: 0 10px 30px -5px rgba(25, 220, 126, 0.3);
 
     /* Typography */
-    --font-heading: 'Crimson Pro', serif;
-    --font-body: 'Inter', sans-serif;
+    --font-heading: 'Crimson', sans-serif;
+    --font-body: 'Crimson';
 
     /* Radius */
     --radius-l: 24px;

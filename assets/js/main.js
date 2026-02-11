@@ -3,16 +3,16 @@
 // Toast Notification System
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
-    
+
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
+
     const icons = {
         success: '<svg class="toast-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
         error: '<svg class="toast-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
         warning: '<svg class="toast-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>'
     };
-    
+
     toast.innerHTML = `
         ${icons[type] || icons.success}
         <span class="toast-message">${message}</span>
@@ -22,9 +22,9 @@ function showToast(message, type = 'success') {
             </svg>
         </button>
     `;
-    
+
     container.appendChild(toast);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         toast.style.opacity = '0';
@@ -37,11 +37,11 @@ function showToast(message, type = 'success') {
 function openCart() {
     const sidebar = document.getElementById('cart-sidebar');
     const overlay = document.getElementById('cart-overlay');
-    
+
     sidebar.classList.add('open');
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
-    
+
     // Load cart items
     loadCartItems();
 }
@@ -49,7 +49,7 @@ function openCart() {
 function closeCart() {
     const sidebar = document.getElementById('cart-sidebar');
     const overlay = document.getElementById('cart-overlay');
-    
+
     sidebar.classList.remove('open');
     overlay.classList.remove('open');
     document.body.style.overflow = '';
@@ -57,15 +57,16 @@ function closeCart() {
 
 async function loadCartItems() {
     try {
-        const response = await fetch('/api/cart.php?action=get');
+        const baseUrl = window.APP_CONFIG ? window.APP_CONFIG.baseUrl : '/';
+        const response = await fetch(baseUrl + 'api/cart.php?action=get');
         const data = await response.json();
-        
+
         const container = document.getElementById('cart-items-container');
         const footer = document.getElementById('cart-footer');
-        
+
         if (data.success && data.cart.items.length > 0) {
             let html = '';
-            
+
             data.cart.items.forEach(item => {
                 html += `
                     <div class="cart-item" data-product-id="${item.id}">
@@ -95,13 +96,13 @@ async function loadCartItems() {
                     </div>
                 `;
             });
-            
+
             container.innerHTML = html;
             footer.classList.remove('hidden');
-            
+
             document.getElementById('cart-subtotal').textContent = `₹${data.cart.total.toFixed(2)}`;
             document.getElementById('cart-total').textContent = `₹${data.cart.total.toFixed(2)}`;
-            
+
             // Update cart badge
             updateCartBadge(data.cart.count);
         } else {
@@ -127,7 +128,8 @@ async function loadCartItems() {
 
 async function addToCart(productId, quantity = 1) {
     try {
-        const response = await fetch('/api/cart.php', {
+        const baseUrl = window.APP_CONFIG ? window.APP_CONFIG.baseUrl : '/';
+        const response = await fetch(baseUrl + 'api/cart.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -138,13 +140,13 @@ async function addToCart(productId, quantity = 1) {
                 quantity: quantity
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             showToast('Product added to cart!', 'success');
             updateCartBadge(data.cart_count);
-            
+
             // Animate button
             const btn = document.querySelector(`button[data-product-id="${productId}"]`);
             if (btn) {
@@ -162,7 +164,8 @@ async function addToCart(productId, quantity = 1) {
 
 async function updateCartQuantity(productId, quantity) {
     try {
-        const response = await fetch('/api/cart.php', {
+        const baseUrl = window.APP_CONFIG ? window.APP_CONFIG.baseUrl : '/';
+        const response = await fetch(baseUrl + 'api/cart.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -173,9 +176,9 @@ async function updateCartQuantity(productId, quantity) {
                 quantity: quantity
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             loadCartItems();
         } else {
@@ -189,7 +192,8 @@ async function updateCartQuantity(productId, quantity) {
 
 async function removeFromCart(productId) {
     try {
-        const response = await fetch('/api/cart.php', {
+        const baseUrl = window.APP_CONFIG ? window.APP_CONFIG.baseUrl : '/';
+        const response = await fetch(baseUrl + 'api/cart.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,9 +203,9 @@ async function removeFromCart(productId) {
                 product_id: productId
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             showToast('Product removed from cart', 'success');
             loadCartItems();
@@ -231,7 +235,7 @@ function openSearch() {
     const modal = document.getElementById('search-modal');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
-    
+
     // Focus on search input
     setTimeout(() => {
         document.getElementById('search-input').focus();
@@ -242,7 +246,7 @@ function closeSearch() {
     const modal = document.getElementById('search-modal');
     modal.classList.remove('open');
     document.body.style.overflow = '';
-    
+
     // Clear search
     document.getElementById('search-input').value = '';
     document.getElementById('popular-searches').classList.remove('hidden');
@@ -259,7 +263,8 @@ function quickView(productId) {
 // Wishlist
 async function addToWishlist(productId) {
     try {
-        const response = await fetch('/api/wishlist.php', {
+        const baseUrl = window.APP_CONFIG ? window.APP_CONFIG.baseUrl : '/';
+        const response = await fetch(baseUrl + 'api/wishlist.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -269,14 +274,15 @@ async function addToWishlist(productId) {
                 product_id: productId
             })
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
             showToast('Added to wishlist!', 'success');
         } else {
             if (data.message === 'Login required') {
-                window.location.href = '/login.php';
+                const baseUrl = window.APP_CONFIG ? window.APP_CONFIG.baseUrl : '/';
+                window.location.href = baseUrl + 'login.php';
             } else {
                 showToast(data.message || 'Failed to add to wishlist', 'error');
             }
@@ -305,7 +311,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Close modals on Escape key
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
         closeCart();
         closeSearch();
@@ -331,7 +337,7 @@ if ('IntersectionObserver' in window) {
 }
 
 // Initialize on load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Set active nav link
     const currentPage = window.location.pathname.split('/').pop() || 'index.php';
     document.querySelectorAll('.nav-link').forEach(link => {
@@ -339,22 +345,22 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('active');
         }
     });
-    
+
     // Initialize tooltips if any
     const tooltips = document.querySelectorAll('[data-tooltip]');
     tooltips.forEach(el => {
-        el.addEventListener('mouseenter', function() {
+        el.addEventListener('mouseenter', function () {
             const tooltip = document.createElement('div');
             tooltip.className = 'tooltip';
             tooltip.textContent = this.dataset.tooltip;
             document.body.appendChild(tooltip);
-            
+
             const rect = this.getBoundingClientRect();
             tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
             tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
         });
-        
-        el.addEventListener('mouseleave', function() {
+
+        el.addEventListener('mouseleave', function () {
             const tooltip = document.querySelector('.tooltip');
             if (tooltip) tooltip.remove();
         });

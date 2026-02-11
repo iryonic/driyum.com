@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="w-full max-w-5xl bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row-reverse min-h-[600px] anim-up">
         
         <!-- RIGHT: ARTWORK -->
-        <div class="w-full md:w-1/2 bg-[#24B25D] p-12 flex flex-col justify-between relative overflow-hidden text-gray-900">
+        <div class="w-full md:w-1/2 bg-[#24B25D] p-12 flex flex-col justify-between relative overflow-hidden text-white">
             <a href="<?php echo get_url(''); ?>" class="font-['Crimson_Pro'] font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
             
             <div class="relative z-10">
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- LEFT: FORM -->
         <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
             
-            <h2 class="text-3xl font-['Crimson_Pro'] font-bold text-gray-900 mb-8">Create Account</h2>
+            <h2 class="text-3xl font-['Crimson_Pro'] font-bold text-white mb-8">Create Account</h2>
             
             <?php if($error): ?>
                 <div class="bg-red-50 text-red-500 p-4 rounded-xl mb-6 font-bold flex items-center gap-2">
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="mt-8 text-center text-gray-500 font-['Inter']">
-                Already have an account? <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#24B25D] underline decoration-wavy">Log In</a>
+                Already have an account? <a href="<?php echo get_url('login'); ?>" class=" font-bold text-black hover:text-[#24B25D] underline decoration-wavy">Log In</a>
             </div>
             
         </div>
