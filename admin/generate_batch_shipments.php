@@ -249,7 +249,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div>
                     <h1 style="margin: 0; font-size: 32px; font-weight: 900; color: #000; letter-spacing: -1px;"><img src="../assets/images/logo.svg" alt="logo" width="100"
                     ></h1>
-                    <p class="small-text" style="margin-top: 5px; font-size: 10px;">BAGHI MEHTAB SRINAGAR, J&K 190019 • </p>
+                    <p class="small-text" style="margin-top: 5px; font-size: 10px;">BAGHI MEHTAB SRINAGAR, J&K 190019 • Fssai number : 21025419000871 </p>
                 </div>
                 <div style="text-align: right;">
                     <h2 style="margin: 0; font-size: 24px; font-weight: 900;">TAX INVOICE</h2>

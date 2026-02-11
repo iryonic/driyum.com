@@ -83,8 +83,8 @@ $address = json_decode($order['shipping_address'], true);
             <div>
                 <h1><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="DRIYUM" width="100" ></h1>
                 <p style="font-size: 12px; color: #666; margin-top: 5px;">
-                    Srinagar, Jammu & Kashmir 190001<br>
-                    GSTIN: 01ABCDE1234F1Z5
+                    BAGHI MEHTAB SRINAGAR, J&K 190019<br>
+                    Fssai number : 21025419000871
                 </p>
             </div>
             <div style="text-align: right;">
