@@ -202,6 +202,18 @@ function update_setting($key, $value) {
     execute_query("INSERT INTO settings (`key`, `value`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `value` = ?", [$key, $value, $value]);
 }
 
+/**
+ * Live User Tracking
+ */
+function get_live_user_count($minutes = 5) {
+    $res = fetch_one("SELECT COUNT(DISTINCT session_id) as c FROM live_users WHERE last_activity > (NOW() - INTERVAL ? MINUTE)", [$minutes]);
+    return $res['c'] ?? 0;
+}
+
+function get_live_users_list($minutes = 5) {
+    return fetch_all("SELECT * FROM live_users WHERE last_activity > (NOW() - INTERVAL ? MINUTE) ORDER BY last_activity DESC", [$minutes]);
+}
+
 // Remember Me Logic (Cookie Check)
 if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
     $token = $_COOKIE['remember_token'];

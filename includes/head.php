@@ -12,6 +12,8 @@ $page_image = $page_image ?? 'assets/images/og-image.jpg';
 // In some files, description might be passed via local variables - we try to detect
 if (!isset($page_title) && isset($title)) $page_title = $title;
 if (!isset($page_description) && isset($description)) $page_description = $description;
+
+require_once __DIR__ . '/activity_tracker.php';
 ?>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -7,6 +7,7 @@ $products_count = fetch_one("SELECT COUNT(*) as c FROM products WHERE is_active=
 $revenue = fetch_one("SELECT SUM(total) as t FROM orders WHERE order_status != 'cancelled'")['t'] ?? 0;
 $pending_orders = fetch_one("SELECT COUNT(*) as c FROM orders WHERE order_status = 'pending'")['c'];
 $subscribers_count = fetch_one("SELECT COUNT(*) as c FROM newsletter_subscribers WHERE is_active=1")['c'];
+$live_users_count = get_live_user_count(5);
 
 // Recent Orders
 $recent_orders = fetch_all("SELECT * FROM orders ORDER BY created_at DESC LIMIT 5");
@@ -44,9 +45,29 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
     </div>
 </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-10">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-10">
+    <!-- Live Users -->
+    <div class="bg-black p-6 rounded-3xl shadow-xl group hover:scale-105 transition-all anim-up relative overflow-hidden">
+        <div class="flex items-center gap-4 relative z-10">
+            <div class="w-12 h-12 rounded-2xl bg-[#24B25D]/20 text-[#24B25D] flex items-center justify-center text-xl relative">
+                <i class="fas fa-users"></i>
+                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#24B25D] opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-[#24B25D]"></span>
+                </span>
+            </div>
+            <div>
+                <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Live Users</div>
+                <div class="text-xl font-black text-white crimson-pro" id="live-users-count"><?php echo $live_users_count; ?></div>
+            </div>
+        </div>
+        <div class="absolute -right-4 -bottom-4 opacity-5 pointer-events-none">
+            <i class="fas fa-signal text-9xl"></i>
+        </div>
+    </div>
+
     <!-- Revenue -->
-    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 50ms">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-2xl bg-green-50 text-[#24B25D] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-indian-rupee-sign"></i>
@@ -72,14 +93,14 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
     </div>
 
     <!-- Pending -->
-    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up relative overflow-hidden" style="animation-delay: 200ms">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up relative overflow-hidden" style="animation-delay: 150ms">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-clock"></i>
             </div>
             <div>
                 <div class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mb-0.5">Pending</div>
-                <div class="text-xl font-black text-gray-900 crimson-pro"><?php echo $pending_orders; ?></div>
+                <div class="text-xl font-black text-gray-900 crimson-pro" id="pending-orders-count"><?php echo $pending_orders; ?></div>
             </div>
         </div>
         <?php if($pending_orders > 0): ?>
@@ -88,7 +109,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
     </div>
 
     <!-- Products -->
-    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 300ms">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 200ms">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-box"></i>
@@ -101,7 +122,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
     </div>
 
     <!-- Subscribers -->
-    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 400ms">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 group hover:shadow-lg transition-all anim-up" style="animation-delay: 250ms">
         <div class="flex items-center gap-4">
             <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                 <i class="fas fa-envelope-open-text"></i>
@@ -243,7 +264,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                     <div class="p-6 bg-gradient-to-r from-green-600 to-[#24B25D] rounded-[30px] text-white shadow-lg relative overflow-hidden group mb-2">
                         <div class="relative z-10">
                             <div class="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">Market Velocity</div>
-                            <div class="text-3xl font-black crimson-pro">₹<?php echo number_format($sales_today); ?></div>
+                            <div class="text-3xl font-black crimson-pro">₹<span id="sales-today-count"><?php echo number_format($sales_today); ?></span></div>
                             <p class="text-[10px] font-bold opacity-80 mt-1 italic">Today's Revenue</p>
                         </div>
                         <i class="fas fa-bolt absolute -right-2 -bottom-2 text-white/10 text-6xl group-hover:scale-125 transition-all duration-500"></i>
@@ -625,6 +646,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Real-time Stats Refresher
+async function refreshLiveStats() {
+    try {
+        const response = await fetch('../api/get_live_stats.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update counts with subtle animation
+            updateElementWithAnim('live-users-count', data.live_users);
+            updateElementWithAnim('sales-today-count', data.sales_today);
+            updateElementWithAnim('pending-orders-count', data.pending_orders);
+            
+            // Optional: Update document title if there are new pending orders
+            if (data.pending_orders > 0) {
+                document.title = `(${data.pending_orders}) Admin Dashboard | DRIYUM`;
+            } else {
+                document.title = `Admin Dashboard | DRIYUM`;
+            }
+        }
+    } catch (e) {
+        console.error("Stats refresh failed", e);
+    }
+}
+
+function updateElementWithAnim(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    
+    const currentVal = el.textContent.replace('₹', '').trim();
+    if (currentVal !== String(value)) {
+        el.classList.add('scale-110', 'text-[#24B25D]');
+        el.textContent = value;
+        setTimeout(() => {
+            el.classList.remove('scale-110', 'text-[#24B25D]');
+        }, 1000);
+    }
+}
+
+// Refresh every 10 seconds for real-time feel
+setInterval(refreshLiveStats, 10000);
+document.addEventListener('DOMContentLoaded', refreshLiveStats);
 </script>
 <?php include 'includes/footer.php'; ?>
 

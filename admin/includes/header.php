@@ -402,7 +402,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const now = new Date();
             el.textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
-        setFigtreeval(updateHeaderClock, 1000);
+        setInterval(updateHeaderClock, 1000);
         updateHeaderClock();
 
         async function markRead(id) {

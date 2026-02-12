@@ -359,8 +359,24 @@ function closeEmailModal() {
 }
 
 function exportSubscribers() {
-    // Basic CSV export logic would go here
-    alert('Exporting ' + (isAllSelectedAcrossPages ? TOTAL_RECORDS : getStored().size) + ' subscribers...');
+    let url = 'export_subscribers.php';
+    const params = new URLSearchParams();
+    const tracked = Array.from(getStored());
+    
+    if (isAllSelectedAcrossPages) {
+        params.append('all', '1');
+        const q = new URLSearchParams(window.location.search).get('q');
+        if (q) params.append('q', q);
+    } else if (tracked.length > 0) {
+        params.append('ids', tracked.join(','));
+    } else {
+        // If nothing selected, export all matches (or all if no search)
+        params.append('all', '1');
+        const q = new URLSearchParams(window.location.search).get('q');
+        if (q) params.append('q', q);
+    }
+    
+    window.location.href = url + '?' + params.toString();
 }
 
 init();

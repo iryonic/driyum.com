@@ -166,6 +166,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
         $user_id = is_logged_in() ? $_SESSION['user_id'] : null;
         $method = $_POST['payment_method'] ?? 'cod';
+
+        // Validate Payment Method Status
+        if ($method === 'cod' && get_setting('payment_cod_enabled', 'on') !== 'on') {
+            throw new Exception("Cash on Delivery is currently disabled. Please choose another method.");
+        }
+        if ($method === 'razorpay' && get_setting('payment_online_enabled', 'on') !== 'on') {
+            throw new Exception("Online payment is currently disabled. Please choose another method.");
+        }
+
         $status = 'pending';
         $order_number = 'ORD-' . strtoupper(uniqid());
 
@@ -402,35 +411,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Email Address</label>
-                                    <input type="email" name="email" required placeholder="your@email.com" value="<?php echo $form['email']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="email" name="email" required placeholder="eg : your@email.com" value="<?php echo $form['email']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Phone Number</label>
-                                    <input type="text" name="phone" required placeholder="+91 00000 00000" value="<?php echo $form['phone']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="phone" required placeholder="eg : +91 00000 00000" value="<?php echo $form['phone']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">First Name</label>
-                                    <input type="text" name="first_name" required placeholder="John" value="<?php echo $form['first_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="first_name" required placeholder="eg : John" value="<?php echo $form['first_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Last Name</label>
-                                    <input type="text" name="last_name" required placeholder="Doe" value="<?php echo $form['last_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="last_name" required placeholder=" eg : last name" value="<?php echo $form['last_name']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2 md:col-span-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Delivery Address</label>
-                                    <input type="text" name="address" required placeholder="House No, Street, Locality" value="<?php echo $form['address']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="address" required placeholder="eg : House No, Street, Locality" value="<?php echo $form['address']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">City</label>
-                                    <input type="text" name="city" required placeholder="Srinagar" value="<?php echo $form['city']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="city" required placeholder="eg  : Srinagar" value="<?php echo $form['city']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">State</label>
-                                    <input type="text" name="state" required placeholder="J&K" value="<?php echo $form['state']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="state" required placeholder="eg : J&K" value="<?php echo $form['state']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">PIN Code</label>
-                                    <input type="text" name="zip" id="zip_input" required placeholder="190001" value="<?php echo $form['zip']; ?>" maxlength="6" oninput="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="zip" id="zip_input" required placeholder="eg :190001" value="<?php echo $form['zip']; ?>" maxlength="6" oninput="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
 
                                 <div class="md:col-span-2 mt-4 hidden" id="shipping-methods-container">
@@ -456,39 +465,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             <h2 class="text-3xl font-heading font-black text-gray-900 mb-2">Payment Method</h2>
                             <p class="text-gray-400 text-sm mb-10">All transactions are secure and encrypted.</p>
                             
-                            <div class="space-y-4">
-                                <!-- COD -->
-                                <div class="relative">
-                                    <input type="radio" name="payment_method" value="cod" id="pay-cod" checked class="hidden payment-radio">
-                                    <label for="pay-cod" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#24B25D]">
-                                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">🚚</div>
-                                        <div class="flex-1">
-                                            <h4 class="font-black text-gray-900 text-xl font-heading">Cash on Delivery</h4>
-                                            <p class="text-xs text-gray-500 font-medium">Pay when your snacks arrive.</p>
-                                        </div>
-                                        <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
-                                            <div class="w-3 h-3 bg-[#24B25D] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <!-- Razorpay -->
-                                <div class="relative">
-                                    <input type="radio" name="payment_method" value="razorpay" id="pay-razorpay" class="hidden payment-radio">
-                                    <label for="pay-razorpay" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#24B25D]">
-                                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">💳</div>
-                                        <div class="flex-1">
-                                            <h4 class="font-black text-gray-900 text-xl font-heading">Online Payment</h4>
-                                            <p class="text-xs text-gray-500 font-medium">Credit/Debit Card, UPI, Netbanking.</p>
-                                        </div>
-                                        <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
-                                            <div class="w-3 h-3 bg-[#24B25D] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
-                                        </div>
-                                    </label>
-                                </div>
-
+                            <?php 
+                            $cod_enabled = get_setting('payment_cod_enabled', 'on') === 'on';
+                            $online_enabled = get_setting('payment_online_enabled', 'on') === 'on';
                             
-                            </div>
+                            if (!$cod_enabled && !$online_enabled): ?>
+                                <div class="p-8 bg-red-50 rounded-[32px] border-2 border-red-100 text-center">
+                                    <div class="text-4xl mb-4">⚠️</div>
+                                    <h4 class="font-black text-gray-900 text-xl mb-2">No Payment Methods Available</h4>
+                                    <p class="text-sm text-gray-500 font-medium">Please contact support or try again later.</p>
+                                </div>
+                            <?php else: ?>
+                                <div class="space-y-4">
+                                    <!-- COD -->
+                                    <?php if ($cod_enabled): ?>
+                                    <div class="relative">
+                                        <input type="radio" name="payment_method" value="cod" id="pay-cod" <?php echo ($cod_enabled) ? 'checked' : ''; ?> class="hidden payment-radio">
+                                        <label for="pay-cod" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#24B25D]">
+                                            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">🚚</div>
+                                            <div class="flex-1">
+                                                <h4 class="font-black text-gray-900 text-xl font-heading">Cash on Delivery</h4>
+                                                <p class="text-xs text-gray-500 font-medium">Pay when your snacks arrive.</p>
+                                            </div>
+                                            <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
+                                                <div class="w-3 h-3 bg-[#24B25D] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <!-- Razorpay -->
+                                    <?php if ($online_enabled): ?>
+                                    <div class="relative">
+                                        <input type="radio" name="payment_method" value="razorpay" id="pay-razorpay" <?php echo (!$cod_enabled && $online_enabled) ? 'checked' : ''; ?> class="hidden payment-radio">
+                                        <label for="pay-razorpay" class="payment-card border-2 border-gray-100 rounded-[32px] p-6 flex items-center gap-6 cursor-pointer transition-all hover:border-[#24B25D]">
+                                            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-gray-50">💳</div>
+                                            <div class="flex-1">
+                                                <h4 class="font-black text-gray-900 text-xl font-heading">Online Payment</h4>
+                                                <p class="text-xs text-gray-500 font-medium">Credit/Debit Card, UPI, Netbanking.</p>
+                                            </div>
+                                            <div class="w-6 h-6 rounded-full border-2 border-gray-200 flex items-center justify-center">
+                                                <div class="w-3 h-3 bg-[#24B25D] rounded-full opacity-0 scale-0 transition-all check-dot"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="flex flex-col sm:flex-row gap-4 mt-12">
                                 <button type="button" onclick="goToStep(1)" class="btn-chunky border-gray-100 text-gray-500 hover:text-black hover:border-black py-4 px-8">

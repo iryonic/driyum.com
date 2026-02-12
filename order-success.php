@@ -200,11 +200,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 return Math.random() * (max - min) + min;
             }
 
-            const interval = setFigtreeval(function() {
+            const interval = setInterval(function() {
                 const timeLeft = animationEnd - Date.now();
 
                 if (timeLeft <= 0) {
-                    return clearFigtreeval(interval);
+                    return clearInterval(interval);
                 }
 
                 const particleCount = 20 * (timeLeft / duration);

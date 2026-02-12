@@ -30,7 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         'maintenance_overlay_text',
         'maintenance_show_timer',
         'maintenance_end_date',
-        'maintenance_countdown_label'
+        'maintenance_countdown_label',
+        'payment_cod_enabled',
+        'payment_online_enabled'
     ];
 
     $error_found = false;
@@ -175,7 +177,7 @@ $s = [
                 </div>
             </div>
 
-            <!-- Tax & Shipping -->
+            <!-- Economics -->
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
                 <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
                     <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center">
@@ -191,6 +193,40 @@ $s = [
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Free Ship (₹)</label>
                         <input type="number" name="free_shipping_threshold" value="<?php echo $s['threshold']; ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900">Payment Methods</h3>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-gray-50/50 rounded-2xl">
+                        <div>
+                            <p class="text-xs font-bold text-gray-900">Cash on Delivery</p>
+                            <p class="text-[10px] text-gray-400">Enable/Disable COD payment</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="hidden" name="payment_cod_enabled" value="off">
+                            <input type="checkbox" name="payment_cod_enabled" value="on" class="sr-only peer" <?php echo get_setting('payment_cod_enabled', 'on') == 'on' ? 'checked' : ''; ?>>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#24B25D]"></div>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50/50 rounded-2xl">
+                        <div>
+                            <p class="text-xs font-bold text-gray-900">Online Payment</p>
+                            <p class="text-[10px] text-gray-400">Enable/Disable Razorpay</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="hidden" name="payment_online_enabled" value="off">
+                            <input type="checkbox" name="payment_online_enabled" value="on" class="sr-only peer" <?php echo get_setting('payment_online_enabled', 'on') == 'on' ? 'checked' : ''; ?>>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#24B25D]"></div>
+                        </label>
                     </div>
                 </div>
             </div>

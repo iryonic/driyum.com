@@ -645,7 +645,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
         // Run immediately and then every second
         updateTimer();
-        setFigtreeval(updateTimer, 1000);
+        setInterval(updateTimer, 1000);
     })();
     </script>
 
@@ -1045,7 +1045,7 @@ $wishlist_json = json_encode($wishlist_ids);
         }
         
         // Auto Play
-        setFigtreeval(nextReview, 6000);
+        setInterval(nextReview, 6000);
     </script>
 
 
