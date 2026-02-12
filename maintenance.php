@@ -65,23 +65,38 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="shortcut icon" href="<?php echo get_url('assets/images/favicon_io/favicon.ico'); ?>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Delius&family=Figtree:wght@300..900&family=Montserrat:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --font-heading: 'Montserrat', sans-serif;
+            --font-body: 'Figtree', sans-serif;
+            --font-cute: 'Delius', cursive;
+        }
         body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: var(--font-body); 
             background-color: #FFFEDC;
             overflow-x: hidden;
         }
-        .font-crimson-pro { font-family: 'Crimson Pro', sans-serif; }
+        .font-heading { font-family: var(--font-heading); }
+        .font-crimson-pro { font-family: var(--font-heading); } /* Alias for legacy usage */
+        .font-cute { font-family: var(--font-cute); }
         
-        /* Floating Emojis Animation */
+        /* Animations */
+        @keyframes anim-up {
+            from { transform: translateY(30px); opacity: 0; filter: blur(5px); }
+            to { transform: translateY(0); opacity: 1; filter: blur(0); }
+        }
+        .anim-up { animation: anim-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-up { animation: anim-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; } /* Alias */
+        
         @keyframes float-slow {
             0%, 100% { transform: translateY(0) rotate(5deg); }
             50% { transform: translateY(-20px) rotate(-5deg); }
         }
         .animate-float { animation: float-slow 6s ease-in-out infinite; }
         
-        .animate-spin-slow { animation: spin 12s linear infinite; }
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-slow { animation: spin-slow 12s linear infinite; }
 
         /* Chunky Button Style from Index */
         .btn-chunky {
@@ -284,6 +299,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <?php if (!empty($target_date) && $show_timer === 'on'): ?>
     <script>
         const targetDate = new Date("<?php echo $target_date; ?>").getTime();
+        let isExpired = false;
         
         function updateCountdown() {
             const now = new Date().getTime();
@@ -293,7 +309,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (!countdownEl) return;
 
             if (distance < 0) {
-                countdownEl.innerHTML = "<div class='bg-[#24B25D] text-white font-bold px-6 py-3 rounded-2xl w-full text-center shadow-lg'>We are launching soon!</div>";
+                if (!isExpired) {
+                    countdownEl.innerHTML = "<div class='bg-[#24B25D] text-white font-bold px-8 py-4 rounded-[2rem] w-full text-center shadow-2xl shadow-green-500/20 anim-up'><i class='fas fa-rocket mr-2'></i> Preparing Launch...</div>";
+                    isExpired = true;
+                }
                 return;
             }
 
@@ -302,10 +321,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById("days").innerText = days.toString().padStart(2, '0');
-            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+            const dEl = document.getElementById("days");
+            const hEl = document.getElementById("hours");
+            const mEl = document.getElementById("minutes");
+            const sEl = document.getElementById("seconds");
+
+            if(dEl) dEl.innerText = days.toString().padStart(2, '0');
+            if(hEl) hEl.innerText = hours.toString().padStart(2, '0');
+            if(mEl) mEl.innerText = minutes.toString().padStart(2, '0');
+            if(sEl) sEl.innerText = seconds.toString().padStart(2, '0');
         }
 
         setInterval(updateCountdown, 1000);

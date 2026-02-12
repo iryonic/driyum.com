@@ -93,6 +93,7 @@
         <div class="pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-sans">
             <p>&copy; <?php echo date('Y'); ?> <?php echo get_setting('store_name', 'DRIYUM'); ?>. All rights reserved.</p>
             <p>Developed By <a href="https://irfanmanzoor.in/" target="_blank" class="text-[#24B25D] hover:underline transition">Irfan Manzoor</a> </p>
+            <!-- <p>Powered By <a href="https://irfanmanzoor.in/" target="_blank" class="text-[#24B25D] hover:underline transition">EXORA.DEV</a> </p> -->
             <div class="flex gap-6 mt-4 md:mt-0 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
                 <i class="fab fa-cc-visa text-2xl"></i>
                 <i class="fab fa-cc-mastercard text-2xl"></i>
