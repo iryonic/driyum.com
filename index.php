@@ -30,7 +30,8 @@ if(!empty($slides_data)) {
             'image' => $s['image'],
             'bg' => $s['accent_color'],
             'v1' => $s['v_text_1'] ?? 'SNACKING',
-            'v2' => $s['v_text_2'] ?? 'REIMAGINED'
+            'v2' => $s['v_text_2'] ?? 'REIMAGINED',
+            'tagline' => $s['badge_text'] ?? 'Your New Healthy Habit'
         ];
     }
 } else {
@@ -46,7 +47,8 @@ if(!empty($slides_data)) {
             'image' => $f['image'],
             'bg' => '#19DC7E',
             'v1' => 'ORGANIC',
-            'v2' => 'HARVEST'
+            'v2' => 'HARVEST',
+            'tagline' => 'Your New Healthy Habit'
         ];
     }
 }
@@ -54,10 +56,10 @@ if(!empty($slides_data)) {
 // Global High-End Fallback if still empty
 if(empty($hero_variants)) {
     $hero_variants = [
-        ['id'=>1, 'product_id'=>1, 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'bg'=>'#19DC7E', 'v1'=>'PURE', 'v2'=>'ENERGY'],
-        ['id'=>2, 'product_id'=>2, 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'bg'=>'#EDB02C', 'v1'=>'NATURE\'S', 'v2'=>'SWEET'],
-        ['id'=>3, 'product_id'=>3, 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'bg'=>'#F67E42', 'v1'=>'BOLD', 'v2'=>'CRUNCH'],
-        ['id'=>4, 'product_id'=>4, 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'bg'=>'#EC4899', 'v1'=>'WILD', 'v2'=>'PICKED']
+        ['id'=>1, 'product_id'=>1, 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'bg'=>'#19DC7E', 'v1'=>'PURE', 'v2'=>'ENERGY', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>2, 'product_id'=>2, 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'bg'=>'#EDB02C', 'v1'=>'NATURE\'S', 'v2'=>'SWEET', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>3, 'product_id'=>3, 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'bg'=>'#F67E42', 'v1'=>'BOLD', 'v2'=>'CRUNCH', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>4, 'product_id'=>4, 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'bg'=>'#EC4899', 'v1'=>'WILD', 'v2'=>'PICKED', 'tagline'=>'Your New Healthy Habit']
     ];
 }
 
@@ -260,7 +262,7 @@ $wishlist_json = json_encode($wishlist_ids);
     // Fetch stats for the hero overlay
     $show_stats = get_setting('show_hero_stats', 'on');
     $total_reviews = fetch_one("SELECT COUNT(*) as c FROM reviews")['c'] ?? 5231;
-    $active_sale = fetch_one("SELECT * FROM sale_countdowns WHERE is_active = 1 LIMIT 1");
+    $active_sale = fetch_one("SELECT * FROM sale_countdowns WHERE is_active = 1 AND end_date > NOW() LIMIT 1");
     
     // Fetch trust badges for the marquee
     $trust_badges = fetch_all("SELECT * FROM trust_badges WHERE is_active = 1 ORDER BY sort_order ASC");
@@ -326,11 +328,20 @@ $wishlist_json = json_encode($wishlist_ids);
             <div class="w-full lg:w-[55%] flex flex-col justify-center px-6 sm:px-10 md:px-16 lg:px-24 py-12 lg:py-0 relative z-20 text-center lg:text-left">
                 <div class="max-w-2xl mx-auto lg:mx-0">
                     <!-- Top Tagline -->
-                    <span class="text-[#19DC7E] font-black uppercase tracking-[0.4em] text-[10px] sm:text-xs lg:text-sm mb-4 block anim-reveal-up" style="animation-delay: 0.1s">Your New Healthy Habit </span>
+                    <span class="text-[#19DC7E] font-black uppercase tracking-[0.4em] text-[10px] sm:text-xs lg:text-sm mb-4 block anim-reveal-up" style="animation-delay: 0.1s">
+                        <?php echo $hero_variants[0]['tagline'] ?? 'Your New Healthy Habit'; ?>
+                    </span>
                     
                     <!-- Main Catchy Headline (Fluid Typography) -->
                     <h1 id="hero-main-title" class="text-[clamp(2.5rem,8vw,6rem)] font-black leading-[0.95] text-white tracking-tighter uppercase mb-6 lg:mb-12 anim-reveal-up" style="animation-delay: 0.2s">
-                        PURE LOVE <br>OF CRUNCH
+                        <?php 
+                            $first_title = $hero_variants[0]['name'] ?? 'PURE CRUNCH';
+                            $words = explode(' ', strtoupper($first_title));
+                            echo implode(' ', array_slice($words, 0, 2));
+                            if (count($words) > 2) {
+                                echo '<br>' . implode(' ', array_slice($words, 2));
+                            }
+                        ?>
                     </h1>
 
                     <!-- Badges Row (Optimized for Mobile) -->
@@ -393,13 +404,17 @@ $wishlist_json = json_encode($wishlist_ids);
             <div class="w-full lg:w-[45%] relative min-h-[50vh] md:min-h-[50vh] lg:h-full flex items-center justify-center mt-auto lg:mt-0">
                 
                 <!-- ACCENT BACKGROUND (Dynamic Fluid Shape) -->
-                <div id="hero-accent-panel" class="absolute inset-y-0 right-0 w-full lg:w-[85%] bg-[#19DC7E] lg:rounded-l-[100px] xl:rounded-l-[150px] transform transition-all duration-1000 ease-out z-0"></div>
+                <div id="hero-accent-panel" class="absolute inset-y-0 right-0 w-full lg:w-[85%] lg:rounded-l-[100px] xl:rounded-l-[150px] transform transition-all duration-1000 ease-out z-0" style="background-color: <?php echo $hero_variants[0]['bg'] ?? '#19DC7E'; ?>"></div>
 
                 <!-- VERTICAL TEXT CONTAINER (Safe Visibility) -->
                 <div class="absolute inset-0 flex items-center justify-center lg:justify-end pointer-events-none select-none z-10 overflow-hidden px-10">
                     <div id="hero-vertical-text-box" class="flex flex-col gap-4 transform opacity-10 lg:opacity-100 lg:mr-12 xl:mr-20">
-                         <span class="hero-v-text text-[clamp(4rem,15vw,10rem)] font-black text-[#002A23]/10 uppercase leading-none tracking-tighter lg:text-[#002A23]/10" style="-webkit-text-stroke: 1px rgba(0,42,35,0.2);">HEALTHY</span>
-                         <span class="hero-v-text text-[clamp(4rem,15vw,10rem)] font-black text-[#002A23]/10 uppercase leading-none tracking-tighter lg:text-[#002A23]/10" style="-webkit-text-stroke: 1px rgba(0,42,35,0.2);">SNACKING</span>
+                         <span class="hero-v-text text-[clamp(4rem,15vw,10rem)] font-black text-[#002A23]/10 uppercase leading-none tracking-tighter lg:text-[#002A23]/10" style="-webkit-text-stroke: 1px rgba(0,42,35,0.2);">
+                            <?php echo $hero_variants[0]['v1'] ?? 'HEALTHY'; ?>
+                         </span>
+                         <span class="hero-v-text text-[clamp(4rem,15vw,10rem)] font-black text-[#002A23]/10 uppercase leading-none tracking-tighter lg:text-[#002A23]/10" style="-webkit-text-stroke: 1px rgba(0,42,35,0.2);">
+                            <?php echo $hero_variants[0]['v2'] ?? 'SNACKING'; ?>
+                         </span>
                     </div>
                 </div>
 
@@ -572,18 +587,32 @@ $wishlist_json = json_encode($wishlist_ids);
 
     <script>
     (function() {
+        // Find all timer rows
         const timerRows = document.querySelectorAll('.hero-sale-timer-row');
         if(timerRows.length === 0) return;
         
-        const dateStr = timerRows[0].dataset.end.replace(' ', 'T');
+        // Use the first row to determine the end time
+        const rawDate = timerRows[0].getAttribute('data-end');
+        if(!rawDate) return;
+
+        // universal format: YYYY/MM/DD HH:MM:SS
+        const dateStr = rawDate.replace(/-/g, "/");
         const endDate = new Date(dateStr).getTime();
         
-        const update = () => {
+        if (isNaN(endDate)) {
+            console.error("Invalid sale end date:", rawDate);
+            return;
+        }
+
+        const updateTimer = () => {
             const now = new Date().getTime();
             const distance = endDate - now;
             
             timerRows.forEach(row => {
                 if (distance < 0) {
+                    // Find the main banner container to hide
+                    const ticker = row.closest('.bg-\\[\\#19DC7E\\]') || row.parentElement.parentElement;
+                    if (ticker) ticker.style.display = 'none';
                     row.style.display = 'none';
                     return;
                 }
@@ -593,20 +622,21 @@ $wishlist_json = json_encode($wishlist_ids);
                 const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distance % (1000 * 60)) / 1000);
 
-                const daysEl = row.querySelector('.hero-days');
-                const hoursEl = row.querySelector('.hero-hours');
-                const minsEl = row.querySelector('.hero-mins');
-                const secsEl = row.querySelector('.hero-secs');
+                const elDays = row.querySelector('.hero-days');
+                const elHours = row.querySelector('.hero-hours');
+                const elMin = row.querySelector('.hero-mins');
+                const elSec = row.querySelector('.hero-secs');
 
-                if(daysEl) daysEl.innerText = d.toString().padStart(2, '0');
-                if(hoursEl) hoursEl.innerText = h.toString().padStart(2, '0');
-                if(minsEl) minsEl.innerText = m.toString().padStart(2, '0');
-                if(secsEl) secsEl.innerText = s.toString().padStart(2, '0');
+                if(elDays) elDays.innerText = d.toString().padStart(2, '0');
+                if(elHours) elHours.innerText = h.toString().padStart(2, '0');
+                if(elMin) elMin.innerText = m.toString().padStart(2, '0');
+                if(elSec) elSec.innerText = s.toString().padStart(2, '0');
             });
         };
 
-        setInterval(update, 1000);
-        update();
+        // Run immediately and then every second
+        updateTimer();
+        setInterval(updateTimer, 1000);
     })();
     </script>
 
