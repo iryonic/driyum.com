@@ -73,11 +73,11 @@ $error = $flash ? $flash['message'] : '';
         
         <!-- LEFT: ARTWORK -->
         <div class="w-full md:w-1/2 bg-[#24B25D] p-12 flex flex-col justify-between relative overflow-hidden">
-            <a href="<?php echo get_url(''); ?>" class="text-white font-['Crimson_Pro'] font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
+            <a href="<?php echo get_url(''); ?>" class="text-white font-heading font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
             
             <div class="relative z-10">
-                <h1 class="text-5xl font-['Crimson_Pro'] font-bold text-white mb-4">Welcome Back!</h1>
-                <p class="text-green-50 text-lg font-['Inter']">Your daily dose of pure mountain happiness is waiting.</p>
+                <h1 class="text-5xl font-heading font-bold text-white mb-4">Welcome Back!</h1>
+                <p class="text-green-50 text-lg font-sans">Your daily dose of pure mountain happiness is waiting.</p>
             </div>
             
             <!-- Decor -->
@@ -88,7 +88,7 @@ $error = $flash ? $flash['message'] : '';
         <!-- RIGHT: FORM -->
         <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
             
-            <h2 class="text-3xl font-['Crimson_Pro'] font-bold text-white mb-8">Sign In</h2>
+            <h2 class="text-3xl font-heading font-bold text-white mb-8">Sign In</h2>
             
             <?php if($flash): ?>
                 <div class="<?php echo $flash['type'] === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'; ?> p-4 rounded-xl mb-6 font-bold flex items-center gap-2">
@@ -126,7 +126,7 @@ $error = $flash ? $flash['message'] : '';
                 </button>
             </form>
 
-            <div class="mt-8 text-center text-gray-500 font-['Inter']">
+            <div class="mt-8 text-center text-gray-500 font-sans">
                 New to the family? <a href="<?php echo get_url('register'); ?>" class="text-black font-bold hover:text-[#24B25D] underline decoration-wavy">Create Account</a>
             </div>
             

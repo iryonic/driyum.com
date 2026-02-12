@@ -90,8 +90,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <i class="fas fa-check"></i>
             </div>
 
-            <h1 class="text-4xl md:text-6xl font-['Fredoka'] font-black text-[#111827] mb-4 tracking-tight">You're Awesome!</h1>
-            <p class="text-lg md:text-xl text-gray-500 font-['Outfit'] mb-10 max-w-md mx-auto leading-relaxed">
+            <h1 class="text-4xl md:text-6xl font-cute font-black text-[#111827] mb-4 tracking-tight">You're Awesome!</h1>
+            <p class="text-lg md:text-xl text-gray-500 font-sans mb-10 max-w-md mx-auto leading-relaxed">
                 Order <span class="text-[#004F42] font-black underline decoration-[#19DC7E] decoration-4 underline-offset-4">#<?php echo $order ? $order['order_number'] : $order_num; ?></span> is officially on its way to your cravings.
             </p>
 
@@ -100,7 +100,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
                     <div>
                         <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#004F42]/60 block mb-1">Estimated Delivery</span>
-                        <h3 class="text-2xl font-['Crimson_Pro'] font-black text-[#004F42]">
+                        <h3 class="text-2xl font-heading font-black text-[#004F42]">
                             <?php 
                                 $created_at = $order ? strtotime($order['created_at']) : time();
                                 $min_days = 4;
@@ -200,11 +200,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 return Math.random() * (max - min) + min;
             }
 
-            const interval = setInterval(function() {
+            const interval = setFigtreeval(function() {
                 const timeLeft = animationEnd - Date.now();
 
                 if (timeLeft <= 0) {
-                    return clearInterval(interval);
+                    return clearFigtreeval(interval);
                 }
 
                 const particleCount = 20 * (timeLeft / duration);

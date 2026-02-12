@@ -230,7 +230,7 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
         
         <!-- Live Pulse & Intelligence -->
         <div class="bg-white p-8 rounded-[35px] shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
-                <h3 class="font-bold text-xl font-['Crimson_Pro'] text-gray-900 mb-6 flex items-center gap-2">
+                <h3 class="font-bold text-xl font-heading text-gray-900 mb-6 flex items-center gap-2">
                     <span class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>

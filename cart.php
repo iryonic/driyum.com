@@ -67,12 +67,12 @@ if (isset($_SESSION['coupon'])) {
     <?php include 'includes/header.php'; ?>
 
     <div class="container mx-auto px-4 py-12">
-        <h1 class="text-4xl md:text-5xl font-['Crimson_Pro'] font-bold mb-8 text-center text-gray-900">Your Stash 🧺</h1>
+        <h1 class="text-4xl md:text-5xl font-heading font-bold mb-8 text-center text-gray-900">Your Stash 🧺</h1>
 
         <?php if (empty($products)): ?>
             <div class="max-w-md mx-auto text-center py-20 bg-white rounded-[3rem] shadow-sm border-2 border-dashed border-gray-200 anim-up">
                 <div class="text-8xl mb-6 animate-bounce">🛒</div>
-                <h2 class="text-2xl font-bold font-['Crimson_Pro'] text-gray-400 mb-4">Empty Bag? Tragic.</h2>
+                <h2 class="text-2xl font-bold font-heading text-gray-400 mb-4">Empty Bag? Tragic.</h2>
                 <p class="text-gray-500 mb-8 px-8">Our snacks are lonely. Give them a home.</p>
                 <a href="<?php echo get_url('shop'); ?>" class="btn-chunky btn-primary shadow-lg">Stock Up Now</a>
             </div>
@@ -90,11 +90,11 @@ if (isset($_SESSION['coupon'])) {
                     ?>
                     <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm mb-4">
                         <?php if ($remaining > 0): ?>
-                            <p class="font-['Crimson_Pro'] font-bold text-gray-700 mb-2">
+                            <p class="font-heading font-bold text-gray-700 mb-2">
                                 Add <span class="text-[#24B25D]">₹<?php echo $remaining; ?></span> more for <span class="text-[#24B25D]">FREE Shipping!</span> 🚚
                             </p>
                         <?php else: ?>
-                            <p class="font-['Crimson_Pro'] font-bold text-[#24B25D] mb-2">
+                            <p class="font-heading font-bold text-[#24B25D] mb-2">
                                 🎉 You've unlocked FREE Shipping!
                             </p>
                         <?php endif; ?>
@@ -116,8 +116,8 @@ if (isset($_SESSION['coupon'])) {
 
                         <!-- Details -->
                         <div class="flex-1 text-center sm:text-left">
-                            <a href="<?php echo product_url($p['slug']); ?>" class="font-bold text-xl font-['Crimson_Pro'] text-gray-900 hover:text-[#24B25D] transition"><?php echo $p['name']; ?></a>
-                            <p class="text-gray-500 text-sm font-['Inter'] mb-2"><?php echo $p['weight']; ?></p>
+                            <a href="<?php echo product_url($p['slug']); ?>" class="font-bold text-xl font-heading text-gray-900 hover:text-[#24B25D] transition"><?php echo $p['name']; ?></a>
+                            <p class="text-gray-500 text-sm font-sans mb-2"><?php echo $p['weight']; ?></p>
                             <div class="text-gray-400 font-bold text-sm">Unit: ₹<?php echo $p['price']; ?></div>
                         </div>
 
@@ -129,7 +129,7 @@ if (isset($_SESSION['coupon'])) {
                                 <button type="submit" name="quantity" value="<?php echo $qty - 1; ?>" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black hover:bg-white hover:rounded-full hover:shadow-sm transition">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <span class="font-bold w-10 text-center font-['Crimson_Pro'] text-lg"><?php echo $qty; ?></span>
+                                <span class="font-bold w-10 text-center font-heading text-lg"><?php echo $qty; ?></span>
                                 <button type="submit" name="quantity" value="<?php echo $qty + 1; ?>" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black hover:bg-white hover:rounded-full hover:shadow-sm transition">
                                     <i class="fas fa-plus"></i>
                                 </button>
@@ -138,7 +138,7 @@ if (isset($_SESSION['coupon'])) {
 
                         <!-- Total & Remove -->
                         <div class="text-right flex flex-col items-end gap-2 w-full sm:w-auto">
-                            <span class="font-black text-2xl font-['Crimson_Pro'] text-gray-900">₹<?php echo $line_total; ?></span>
+                            <span class="font-black text-2xl font-heading text-gray-900">₹<?php echo $line_total; ?></span>
                             <a href="?remove=<?php echo $p['id']; ?>" class="text-red-400 hover:text-red-600 text-xs font-bold uppercase tracking-wider bg-red-50 hover:bg-red-100 px-3 py-1 rounded-full transition"><i class="fas fa-trash mr-1"></i> Remove</a>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ if (isset($_SESSION['coupon'])) {
                 <!-- Summary Sidebar -->
                 <div class="w-full lg:w-96 flex-shrink-0">
                     <div class="card-chunky p-8 sticky top-24 bg-white border-2 border-gray-100">
-                        <h3 class="font-bold text-2xl font-['Crimson_Pro'] mb-6">Order Summary</h3>
+                        <h3 class="font-bold text-2xl font-heading mb-6">Order Summary</h3>
                         
                         <!-- Coupon -->
                         <div class="mb-6">
@@ -171,7 +171,7 @@ if (isset($_SESSION['coupon'])) {
                             <?php endif; ?>
                         </div>
 
-                        <div class="space-y-4 mb-6 text-gray-600 font-['Inter']">
+                        <div class="space-y-4 mb-6 text-gray-600 font-sans">
                             <div class="flex justify-between">
                                 <span>Subtotal</span>
                                 <span class="font-bold text-gray-900">₹<?php echo $subtotal; ?></span>
@@ -209,7 +209,7 @@ if (isset($_SESSION['coupon'])) {
                         </div>
 
                         <div class="border-t-2 border-dashed border-gray-200 pt-6 mb-8">
-                            <div class="flex justify-between text-3xl font-black font-['Crimson_Pro'] mb-2">
+                            <div class="flex justify-between text-3xl font-black font-heading mb-2">
                                 <span>Total</span>
                                 <span id="cart-total-display">₹<?php echo ($subtotal - $coupon_discount) + $shipping_cost + $tax_amount; ?></span>
                             </div>

@@ -636,7 +636,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
         // Run immediately and then every second
         updateTimer();
-        setInterval(updateTimer, 1000);
+        setFigtreeval(updateTimer, 1000);
     })();
     </script>
 
@@ -646,10 +646,10 @@ $wishlist_json = json_encode($wishlist_ids);
     <!-- CATEGORIES CAROUSEL (Scroll Snap) -->
     <section class="py-16 anim-up delay-200 overflow-hidden">
         <div class="container mx-auto px-6 mb-8 flex justify-between items-end">
-            <div>
-                <span class="text-[#24B25D] font-bold tracking-wider uppercase text-sm mb-2 block">Browse by Vibe</span>
-                <h2 class="text-3xl md:text-5xl font-['Crimson_Pro'] font-bold text-gray-900">Find Your Crunch</h2>
-            </div>
+             <div>
+                    <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-sans">Browse by Vibe</span>
+                    <h2 class="text-3xl md:text-5xl font-heading font-black text-gray-900 leading-none">Find Your Crunch </h2>
+                </div>
 
             <!-- Category Slider Controls -->
             <div class="hidden md:flex gap-3">
@@ -698,8 +698,8 @@ $wishlist_json = json_encode($wishlist_ids);
                              <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-xs md:text-base"></i>
                         </div>
                     </div>
-                    <h3 class="text-xl md:text-4xl font-['Crimson_Pro'] font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
-                    <p class="<?php echo $s['text']; ?>/80 font-['Inter'] font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
+                    <h3 class="text-xl md:text-4xl font-heading font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
+                    <p class="<?php echo $s['text']; ?>/80 font-sans font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
                         <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current animate-pulse"></span>
                         <?php echo $c['product_count']; ?> Varieties
                     </p>
@@ -732,8 +732,8 @@ $wishlist_json = json_encode($wishlist_ids);
         <div class="cantainer mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
                 <div>
-                    <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-['Inter']">Fresh From The Farm</span>
-                    <h2 class="text-4xl md:text-7xl font-['Crimson_Pro'] font-black text-gray-900 leading-none">New Drops <span class="text-[#24B25D]">🔥</span></h2>
+                    <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-sans">Fresh From The Farm</span>
+                    <h2 class="text-4xl md:text-7xl font-heading font-black text-gray-900 leading-none">Hot Drops <span class="text-[#24B25D]">🔥</span></h2>
                 </div>
                 <!-- Slider Controls -->
                 <div class="flex gap-3">
@@ -748,7 +748,7 @@ $wishlist_json = json_encode($wishlist_ids);
             
             <!-- Constrained Product Slider Wrapper -->
             <div class="w-full relative overflow-hidden">
-                <div id="product-slider-container" class="flex flex-row flex-nowrap w-full gap-6 overflow-x-auto hide-scrollbar scroll-smooth px-6 pb-12 snap-x mandatory">
+                <div id="product-slider-container" class="flex flex-row flex-nowrap w-full gap-6 overflow-x-auto hide-scrollbar scroll-smooth px-2 pb-12 snap-x mandatory">
                 <?php 
                 $delay = 0;
                 $default_bg_colors = ['#E0F2FE', '#DCFCE7', '#FEF3C7', '#FEE2E2', '#F3E8FF', '#FFEDD5'];
@@ -811,9 +811,9 @@ $wishlist_json = json_encode($wishlist_ids);
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-[#24B25D] opacity-50"></span>
-                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-['Inter']">Premium Select</p>
+                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-sans">Premium Select</p>
                                     </div>
-                                    <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
+                                    <h3 class="text-2xl font-black font-heading text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
                                     <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
                                         <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
                                         <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest ml-1">(4.9)</span>
@@ -831,7 +831,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                     <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
                                         <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
                                     <?php endif; ?>
-                                    <span class="text-xl md:text-3xl font-black text-gray-900 font-['Crimson_Pro'] tracking-tighter">₹<?php echo $p['price']; ?></span>
+                                    <span class="text-xl md:text-3xl font-black text-gray-900 font-heading tracking-tighter">₹<?php echo $p['price']; ?></span>
                                  </div>
 
                                  <div class="flex gap-1 md:gap-2">
@@ -895,10 +895,10 @@ $wishlist_json = json_encode($wishlist_ids);
                         <div class="inline-block bg-[#24B25D] text-black text-[10px] md:text-xs font-bold px-3 py-1 rounded-full mb-3 md:mb-4 uppercase tracking-widest transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">
                             Watch Brand Story
                         </div>
-                        <h2 class="text-2xl md:text-5xl font-['Crimson_Pro'] font-bold text-white mb-2 md:mb-4 leading-tight transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-200">
+                        <h2 class="text-2xl md:text-5xl font-heading font-bold text-white mb-2 md:mb-4 leading-tight transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-200">
                             <?php echo nl2br(htmlspecialchars($vid_sec['heading'])); ?>
                         </h2>
-                        <p class="text-gray-200 font-['Inter'] text-sm md:text-xl max-w-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-300 hidden md:block">
+                        <p class="text-gray-200 font-sans text-sm md:text-xl max-w-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-300 hidden md:block">
                             <?php echo nl2br(htmlspecialchars($vid_sec['subheading'])); ?>
                         </p>
                     </div>
@@ -954,12 +954,12 @@ $wishlist_json = json_encode($wishlist_ids);
                          <?php for($i=0; $i<$t['rating']; $i++) echo '<i class="fas fa-star"></i>'; ?>
                     </div>
                     
-                    <h2 class="text-xl md:text-5xl lg:text-6xl font-['Crimson_Pro'] font-bold leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center p-4">
+                    <h2 class="text-xl md:text-5xl lg:text-6xl font-heading font-bold leading-tight mb-6 md:mb-10 min-h-[120px] md:min-h-auto flex items-center justify-center p-4">
                         "<?php echo $t['message']; ?>"
                     </h2>
                     
                     <div class="flex flex-col items-center">
-                        <h4 class="text-lg md:text-xl font-bold font-['Inter']"><?php echo $t['name']; ?></h4>
+                        <h4 class="text-lg md:text-xl font-bold font-sans"><?php echo $t['name']; ?></h4>
                         <?php if(!empty($t['location'])): ?>
                             <span class="text-gray-500 text-xs md:text-sm font-bold uppercase tracking-widest mt-1"><?php echo $t['location']; ?></span>
                         <?php endif; ?>
@@ -1036,7 +1036,7 @@ $wishlist_json = json_encode($wishlist_ids);
         }
         
         // Auto Play
-        setInterval(nextReview, 6000);
+        setFigtreeval(nextReview, 6000);
     </script>
 
 

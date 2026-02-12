@@ -56,8 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
             <a href="<?php echo get_url('index'); ?>" class="inline-block mb-6">
                 <img src="assets/images/logo.svg" alt="Driyum Logo" class="w-24 mx-auto">
             </a>
-            <h1 class="text-3xl font-['Crimson_Pro'] font-bold text-gray-900">Set New Password</h1>
-            <p class="text-gray-500 font-['Inter'] mt-2">Almost there! Choose a strong password.</p>
+            <h1 class="text-3xl font-heading font-bold text-gray-900">Set New Password</h1>
+            <p class="text-gray-500 font-sans mt-2">Almost there! Choose a strong password.</p>
         </div>
 
         <?php if($error): ?>
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$error) {
             </form>
         <?php endif; ?>
 
-        <div class="mt-8 text-center text-gray-500 font-['Inter']">
+        <div class="mt-8 text-center text-gray-500 font-sans">
             Back to <a href="<?php echo get_url('login'); ?>" class="text-black font-bold hover:text-[#24B25D] underline decoration-wavy">Log In</a>
         </div>
         

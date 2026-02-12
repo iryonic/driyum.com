@@ -122,7 +122,7 @@ try {
     }
 
     .loader-funny-text {
-        font-family: 'Fredoka', sans-serif;
+        font-family: 'Delius', cursive;
         font-weight: 700;
         color: #111827;
         font-size: 15px;
@@ -236,7 +236,7 @@ try {
 </script>
 
 <!-- INFINITE MARQUEE -->
-<div class="text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30" style="background-color: <?php echo $announcement_bg; ?>;">
+<div class="text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30 font-cute" style="background-color: <?php echo $announcement_bg; ?>;">
     <!-- Gradient Overlay for fade effect on edges -->
     <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
     <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
@@ -246,7 +246,7 @@ try {
             <?php foreach($announcement_parts as $msg): ?>
                 <div class="flex items-center gap-3 mx-6">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#19DC7E] animate-pulse"></span>
-                    <span class="font-['Crimson'] font-bold text-xs tracking-widest uppercase text-white">
+                    <span class="font-heading font-bold text-xs tracking-widest uppercase text-white">
                         <?php echo trim($msg); ?>
                     </span>
                     <i class="fas fa-star text-[8px] text-[#19DC7E]/50 ml-3"></i>
@@ -271,13 +271,13 @@ try {
 
         <!-- Navigation with Mega Menu -->
         <nav class="h-full flex items-center gap-3 lg:gap-8 overflow-hidden" aria-label="Desktop Navigation">
-            <a href="<?php echo get_url(''); ?>" class="font-['Fredoka'] font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Home</a>
-            <a href="<?php echo get_url('shop'); ?>" class="font-['Fredoka'] font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Shop</a>
-            <a href="<?php echo get_url('about'); ?>" class="font-['Fredoka'] font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Story</a>
+            <a href="<?php echo get_url(''); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Home</a>
+            <a href="<?php echo get_url('shop'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Shop</a>
+            <a href="<?php echo get_url('about'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Story</a>
             
             <!-- MEGA MENU TRIGGER -->
             <div class="mega-menu-trigger h-full flex items-center cursor-pointer group">
-                <a href="<?php echo get_url('shop'); ?>" class="font-['Fredoka'] font-semibold text-gray-600 group-hover:text-[#19DC7E] transition py-2 whitespace-nowrap text-sm lg:text-base">
+                <a href="<?php echo get_url('shop'); ?>" class="font-heading font-semibold text-gray-600 group-hover:text-[#19DC7E] transition py-2 whitespace-nowrap text-sm lg:text-base">
                      Categories <i class="fas fa-chevron-down ml-1 text-[10px] opacity-50" aria-hidden="true"></i>
                 </a>
                 
@@ -290,8 +290,8 @@ try {
                             foreach($header_cats as $cat): 
                             ?>
                             <div>
-                                <h4 class="text-[#19DC7E] mb-4 text-lg font-['Fredoka']"><?php echo htmlspecialchars($cat['name']); ?></h4>
-                                <ul class="space-y-2 font-['Outfit'] text-gray-500">
+                                <h4 class="text-[#19DC7E] mb-4 text-lg font-heading"><?php echo htmlspecialchars($cat['name']); ?></h4>
+                                <ul class="space-y-2 font-sans text-gray-500">
                                     <?php 
                                     $cat_prods = fetch_all("SELECT id, name, slug FROM products WHERE category_id = ? AND is_active = 1 LIMIT 3", [$cat['id']]);
                                     if(empty($cat_prods)):
@@ -317,7 +317,7 @@ try {
                             <div class="bg-[#f0fdf4] rounded-2xl p-6 flex gap-4 items-center border border-[#19DC7E]/20">
                                 <div class="flex-1">
                                     <span class="badge bg-[#19DC7E] text-white mb-2 inline-block">FEATURED</span>
-                                    <h3 class="text-xl mb-2 font-['Fredoka'] line-clamp-2"><?php echo $highlight['name']; ?></h3>
+                                    <h3 class="text-xl mb-2 font-heading line-clamp-2"><?php echo $highlight['name']; ?></h3>
                                     <a href="<?php echo get_url('product/' . $highlight['slug']); ?>" class="btn-chunky bg-white text-black text-[10px] py-2 px-4 shadow-sm border-2 border-gray-100 hover:border-[#19DC7E]">Shop Now</a>
                                 </div>
                                 <img src="<?php echo get_url(ltrim($highlight['image'], './')); ?>" alt="<?php echo $highlight['name']; ?>" width="80" height="80" class="w-20 h-20 object-contain rounded-xl mix-blend-multiply">
@@ -334,8 +334,8 @@ try {
                 </div>
             </div>
 
-            <a href="<?php echo get_url('track'); ?>" class="font-['Fredoka'] font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base hidden xl:block">Track Order</a>
-            <a href="<?php echo get_url('contact'); ?>" class="font-['Fredoka'] font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base hidden xl:block">Contact</a>
+            <a href="<?php echo get_url('track'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base hidden xl:block">Track Order</a>
+            <a href="<?php echo get_url('contact'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base hidden xl:block">Contact</a>
         </nav>
 
         <!-- Actions -->
@@ -419,7 +419,7 @@ try {
                         <div class="w-10 h-10 rounded-xl bg-[#19DC7E] text-black flex items-center justify-center text-sm shadow-sm group-hover:rotate-12 transition-transform">
                             <i class="fas fa-home"></i>
                         </div>
-                        <span class="text-xl font-['Fredoka'] font-bold">Home</span>
+                        <span class="text-xl font-heading font-bold">Home</span>
                     </a>
                 </li>
                 <li>
@@ -427,7 +427,7 @@ try {
                         <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
                             <i class="fas fa-shopping-bag"></i>
                         </div>
-                        <span class="text-xl font-['Fredoka'] font-bold">Shop Packs</span>
+                        <span class="text-xl font-heading font-bold">Shop Packs</span>
                     </a>
                 </li>
                 <li>
@@ -435,7 +435,7 @@ try {
                         <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
                             <i class="fas fa-truck-fast"></i>
                         </div>
-                        <span class="text-xl font-['Fredoka'] font-bold">Track Order</span>
+                        <span class="text-xl font-heading font-bold">Track Order</span>
                     </a>
                 </li>
                 <li>
@@ -443,7 +443,7 @@ try {
                         <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
                             <i class="fas fa-leaf"></i>
                         </div>
-                        <span class="text-xl font-['Fredoka'] font-bold">Our Story</span>
+                        <span class="text-xl font-heading font-bold">Our Story</span>
                     </a>
                 </li>
                 <li>
@@ -451,7 +451,7 @@ try {
                         <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
                             <i class="fas fa-heart"></i>
                         </div>
-                        <span class="text-xl font-['Fredoka'] font-bold">Wishlist</span>
+                        <span class="text-xl font-heading font-bold">Wishlist</span>
                     </a>
                 </li>
                 <li>
@@ -459,7 +459,7 @@ try {
                         <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
                             <i class="fas fa-headset"></i>
                         </div>
-                        <span class="text-xl font-['Fredoka'] font-bold">Support</span>
+                        <span class="text-xl font-heading font-bold">Support</span>
                     </a>
                 </li>
             </ul>
@@ -488,7 +488,7 @@ try {
                             <div class="w-10 h-10 rounded-full bg-[#19DC7E] flex items-center justify-center text-black font-black uppercase text-sm">
                                 <?php echo substr($_SESSION['user_name'], 0, 1); ?>
                             </div>
-                            <h4 class="text-lg font-['Fredoka'] font-black leading-none">Hi, <?php echo explode(' ', htmlspecialchars($_SESSION['user_name']))[0]; ?>!</h4>
+                            <h4 class="text-lg font-heading font-black leading-none">Hi, <?php echo explode(' ', htmlspecialchars($_SESSION['user_name']))[0]; ?>!</h4>
                         </div>
                         <div class="grid grid-cols-1 gap-2">
                             <?php if($_SESSION['is_admin'] == 1): ?>
@@ -506,7 +506,7 @@ try {
                     </div>
                 <?php else: ?>
                     <div class="relative z-10">
-                        <h4 class="text-xl font-['Fredoka'] font-black mb-2">Join the Club</h4>
+                        <h4 class="text-xl font-heading font-black mb-2">Join the Club</h4>
                         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-6">Earn points on every bite.</p>
                         <div class="flex gap-2">
                             <a href="<?php echo get_url('login'); ?>" class="flex-1 bg-white text-black text-center py-3 rounded-xl font-black text-xs hover:scale-105 transition-transform">Login</a>
@@ -592,7 +592,7 @@ try {
     <div class="px-6 md:px-8 pt-safe-top pt-8 md:pt-12 pb-6 md:pb-8 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
         <div>
             <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#19DC7E] mb-1 block">Your Stash</span>
-            <h2 class="text-2xl md:text-3xl font-['Fredoka'] font-black text-gray-900">Shopping Bag.</h2>
+            <h2 class="text-2xl md:text-3xl font-heading font-black text-gray-900">Shopping Bag.</h2>
         </div>
         <button onclick="closeCartSidebar()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all" aria-label="Close Shopping Bag">
             <i class="fas fa-times text-lg md:text-xl"></i>
@@ -620,7 +620,7 @@ try {
                 <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Subtotal</span>
                 <span class="text-[10px] md:text-xs text-gray-300 font-bold hidden md:block">Tax & shipping calculated at checkout</span>
             </div>
-            <span id="cart-total" class="text-3xl md:text-4xl font-['Fredoka'] font-black tracking-tighter text-gray-900">₹0</span>
+            <span id="cart-total" class="text-3xl md:text-4xl font-heading font-black tracking-tighter text-gray-900">₹0</span>
         </div>
         <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-[#111827] text-white p-5 md:p-6 rounded-[24px] hover:bg-[#19DC7E] hover:text-black transition-all group shadow-2xl hover:shadow-[#19DC7E]/20 hover:-translate-y-1">
             <span class="text-lg md:text-xl font-black">Secure Checkout</span>

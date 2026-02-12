@@ -7,6 +7,12 @@ if ($host == 'localhost' || $host == '127.0.0.1') {
     define('DB_USER', 'root');
     define('DB_PASS', '');
     define('DB_NAME', 'driyum_db');
+
+    // Mail Configuration (SMTP)
+    define('MAIL_HOST', 'smtp.hostinger.com');
+    define('MAIL_USER', 'contact@driyum.com');
+    define('MAIL_PASS', 'Driyum@123'); // Often matches DB pass or is unique - placeholder if different
+    define('MAIL_PORT', 465);
 } else {
     // PRODUCTION
     define('DB_HOST', 'localhost');
@@ -21,7 +27,7 @@ if ($host == 'localhost' || $host == '127.0.0.1') {
     // Mail Configuration (SMTP)
     define('MAIL_HOST', 'smtp.hostinger.com');
     define('MAIL_USER', 'contact@driyum.com');
-    define('MAIL_PASS', 'DriyuM@1234'); // Often matches DB pass or is unique - placeholder if different
+    define('MAIL_PASS', 'Driyum@123'); // Often matches DB pass or is unique - placeholder if different
     define('MAIL_PORT', 465);
 }       
 

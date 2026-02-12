@@ -46,7 +46,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         }
     </style>
 </head>
-<body class="bg-[#FFFEDC] font-['Inter']">
+<body class="bg-[#FFFEDC] font-sans">
 
     <?php include 'includes/header.php'; ?>
 
@@ -60,19 +60,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                     </div>
                     <div>
-                        <h1 class="text-3xl md:text-5xl font-['Crimson_Pro'] font-black mb-2">Hello, <?php echo explode(' ', $user['name'])[0]; ?>!</h1>
+                        <h1 class="text-3xl md:text-5xl font-heading font-black mb-2">Hello, <?php echo explode(' ', $user['name'])[0]; ?>!</h1>
                         <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Premium Member • Since <?php echo date('M Y', strtotime($user['created_at'])); ?></p>
                     </div>
                 </div>
                 
                 <div class="flex gap-4 md:gap-12">
                     <div class="text-center group">
-                        <div class="text-3xl md:text-4xl font-['Crimson_Pro'] font-black text-[#24B25D] group-hover:scale-110 transition-transform">₹<?php echo number_format($total_spent); ?></div>
+                        <div class="text-3xl md:text-4xl font-heading font-black text-[#24B25D] group-hover:scale-110 transition-transform">₹<?php echo number_format($total_spent); ?></div>
                         <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mt-1">Total Spent</div>
                     </div>
                     <div class="w-px h-12 bg-white/10 hidden md:block"></div>
                     <div class="text-center group">
-                        <div class="text-3xl md:text-4xl font-['Crimson_Pro'] font-black text-[#24B25D] group-hover:scale-110 transition-transform"><?php echo count($all_orders); ?></div>
+                        <div class="text-3xl md:text-4xl font-heading font-black text-[#24B25D] group-hover:scale-110 transition-transform"><?php echo count($all_orders); ?></div>
                         <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mt-1">Purchases</div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <div class="w-20 h-20 bg-gray-50 rounded-3xl mx-auto mb-4 flex items-center justify-center text-2xl group-hover:bg-[#24B25D] group-hover:text-white transition-all duration-500">
                         <i class="far fa-user"></i>
                     </div>
-                    <h3 class="font-['Crimson_Pro'] font-black text-xl text-gray-900"><?php echo $user['name']; ?></h3>
+                    <h3 class="font-heading font-black text-xl text-gray-900"><?php echo $user['name']; ?></h3>
                     <p class="text-sm text-gray-400 font-medium mb-6"><?php echo $user['email']; ?></p>
                     <div class="flex justify-center gap-2">
                          <span class="px-3 py-1 bg-gray-50 text-gray-400 text-[9px] font-black uppercase tracking-tighter rounded-full border border-gray-100">Classic Account</span>
@@ -150,7 +150,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                          <div class="w-12 h-12 bg-[#24B25D] text-black rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-green-500/20 group-hover:rotate-12 transition-transform">
                             <i class="fas fa-crown text-xl"></i>
                          </div>
-                         <h3 class="font-['Crimson_Pro'] font-black text-2xl mb-1">Store Admin</h3>
+                         <h3 class="font-heading font-black text-2xl mb-1">Store Admin</h3>
                          <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest group-hover:text-[#24B25D] transition-colors">Complete Management Access</p>
                     </div>
                 </a>
@@ -164,7 +164,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <div>
                     <div class="flex justify-between items-end mb-8">
                         <div>
-                            <h2 class="text-3xl font-['Crimson_Pro'] font-black text-gray-900">Your Orders.</h2>
+                            <h2 class="text-3xl font-heading font-black text-gray-900">Your Orders.</h2>
                             <p class="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-1">Most recent orders & history</p>
                         </div>
                     </div>
@@ -176,7 +176,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             
                             <div class="relative z-10">
                                 <div class="text-8xl mb-8 animate-bounce">📦</div>
-                                <h3 class="text-2xl font-black font-['Crimson_Pro'] text-gray-900 mb-2">No Snacks Here!</h3>
+                                <h3 class="text-2xl font-black font-heading text-gray-900 mb-2">No Snacks Here!</h3>
                                 <p class="text-gray-500 font-medium mb-10 max-w-sm mx-auto">Your order history is currently empty. Head over to our shop to explore some dried goodness.</p>
                                 <a href="<?php echo get_url('shop.php'); ?>" class="btn-chunky bg-[#111827] text-white px-12 py-5 shadow-2xl hover:bg-[#24B25D] hover:text-black transition-all">Start Your First Order</a>
                             </div>
@@ -208,7 +208,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                     <div class="w-full md:w-auto flex items-center justify-between md:justify-end gap-12 border-t md:border-t-0 border-gray-50 pt-8 md:pt-0">
                                         <div class="text-right">
                                             <p class="text-[10px] font-black uppercase text-gray-400 mb-0.5">Order Value</p>
-                                            <p class="text-3xl font-['Crimson_Pro'] font-black text-gray-900">₹<?php echo number_format($order['total']); ?></p>
+                                            <p class="text-3xl font-heading font-black text-gray-900">₹<?php echo number_format($order['total']); ?></p>
                                         </div>
                                         <a href="<?php echo get_url('track.php?id=' . $order['order_number']); ?>" class="btn-chunky bg-[#111827] text-white px-10 py-3.5 shadow-xl group-hover:bg-[#24B25D] group-hover:text-black transition-all">View Details</a>
                                     </div>
@@ -226,7 +226,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <div class="bg-gray-900 rounded-[50px] p-10 md:p-16 text-white shadow-3xl shadow-green-900/10 flex flex-col md:flex-row justify-between items-center gap-12 relative overflow-hidden">
                     <div class="relative z-10 flex-1">
                         <span class="w-12 h-1 bg-[#24B25D] block mb-8 rounded-full"></span>
-                        <h2 class="text-4xl font-['Crimson_Pro'] font-black mb-4">Account Security.</h2>
+                        <h2 class="text-4xl font-heading font-black mb-4">Account Security.</h2>
                         <p class="text-gray-400 font-medium text-lg leading-relaxed max-w-md">We're building more tools to help you manage your profile, saved addresses, and payment methods. Stay tuned for our next platform drop!</p>
                     </div>
                     

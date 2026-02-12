@@ -22,7 +22,7 @@ if (!isset($page_description) && isset($description)) $page_description = $descr
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Delius&family=Figtree:wght@300..900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
 
 <script>
     window.APP_CONFIG = {
@@ -47,6 +47,11 @@ if (function_exists('render_seo_tags')) {
     tailwind.config = {
         theme: {
             extend: {
+                fontFamily: {
+                    sans: ['Figtree', 'sans-serif'],
+                    heading: ['Montserrat', 'sans-serif'],
+                    cute: ['Delius', 'cursive'],
+                },
                 colors: {
                     brand: {
                         dark: '#004F42',

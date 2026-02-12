@@ -53,11 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <!-- RIGHT: ARTWORK -->
         <div class="w-full md:w-1/2 bg-[#24B25D] p-12 flex flex-col justify-between relative overflow-hidden text-white">
-            <a href="<?php echo get_url(''); ?>" class="font-['Crimson_Pro'] font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
+            <a href="<?php echo get_url(''); ?>" class="font-heading font-bold text-2xl relative z-10"><i class="fas fa-arrow-left mr-2"></i> Back to Shop</a>
             
             <div class="relative z-10">
-                <h1 class="text-5xl font-['Crimson_Pro'] font-bold mb-4">Join the Crunch Club.</h1>
-                <p class="text-lg font-['Inter'] opacity-80">Get exclusive deals, new harvest alerts, and faster checkout.</p>
+                <h1 class="text-5xl font-heading font-bold mb-4">Join the Crunch Club.</h1>
+                <p class="text-lg font-sans opacity-80">Get exclusive deals, new harvest alerts, and faster checkout.</p>
             </div>
             
             <!-- Decor -->
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- LEFT: FORM -->
         <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
             
-            <h2 class="text-3xl font-['Crimson_Pro'] font-bold text-white mb-8">Create Account</h2>
+            <h2 class="text-3xl font-heading font-bold text-white mb-8">Create Account</h2>
             
             <?php if($error): ?>
                 <div class="bg-red-50 text-red-500 p-4 rounded-xl mb-6 font-bold flex items-center gap-2">
@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
             </form>
 
-            <div class="mt-8 text-center text-gray-500 font-['Inter']">
+            <div class="mt-8 text-center text-gray-500 font-sans">
                 Already have an account? <a href="<?php echo get_url('login'); ?>" class=" font-bold text-black hover:text-[#24B25D] underline decoration-wavy">Log In</a>
             </div>
             

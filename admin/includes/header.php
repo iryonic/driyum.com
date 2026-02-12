@@ -46,10 +46,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/chunky.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600;700&family=Figtree:wght@300;400;500;600;700;800;900&display=swap');
         
-        body { font-family: 'Inter', sans-serif; background-color: #fcfdfe; color: #1e293b; }
-        .crimson-pro { font-family: 'Crimson Pro', sans-serif; }
+        body { font-family: 'Figtree', sans-serif; background-color: #fcfdfe; color: #1e293b; }
+        .crimson-pro { font-family: 'Montserrat', sans-serif; }
         
         .admin-sidebar { 
             height: 100vh; 
@@ -151,14 +151,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="w-9 h-9 bg-[#24B25D] rounded-xl flex items-center justify-center text-black shadow-[0_0_20px_rgba(25,220,126,0.3)]">
                     <i class="fas fa-bolt text-xs"></i>
                 </div>
-                <span class="font-['Crimson_Pro'] font-bold text-xl tracking-tight">Driyum<span class="text-[#24B25D]">.</span></span>
+                <span class="font-heading font-bold text-xl tracking-tight">Driyum<span class="text-[#24B25D]">.</span></span>
             </div>
             <button onclick="toggleSidebar(false)" class="lg:hidden text-gray-500 hover:text-white">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <nav class="space-y-6 flex-1 font-['Inter']">
+        <nav class="space-y-6 flex-1 font-sans">
             
             <div>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Main</h4>
@@ -402,7 +402,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             const now = new Date();
             el.textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
-        setInterval(updateHeaderClock, 1000);
+        setFigtreeval(updateHeaderClock, 1000);
         updateHeaderClock();
 
         async function markRead(id) {

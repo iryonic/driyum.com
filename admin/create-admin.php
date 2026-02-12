@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_admin'])) {
                 <i class="fas fa-arrow-left"></i> Back to Community
             </a>
             <h1 class="text-4xl font-black text-gray-900 crimson-pro mb-2">Summon Authority.</h1>
-            <p class="text-gray-500 font-medium font-['Inter'] italic">Expanding the guard of Driyum.</p>
+            <p class="text-gray-500 font-medium font-sans italic">Expanding the guard of Driyum.</p>
         </div>
         <div class="w-20 h-20 bg-black text-[#24B25D] rounded-[30px] flex items-center justify-center text-3xl shadow-2xl">
             <i class="fas fa-crown"></i>

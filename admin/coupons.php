@@ -101,7 +101,7 @@ $coupons = $pagination['records'];
                     <?php echo $c['is_active'] ? 'Active' : 'Paused'; ?>
                 </span>
             </div>
-            <div class="text-[8px] font-black uppercase text-gray-300 font-['Inter']">Min. Order: ₹<?php echo $c['min_order_value']; ?></div>
+            <div class="text-[8px] font-black uppercase text-gray-300 font-sans">Min. Order: ₹<?php echo $c['min_order_value']; ?></div>
         </div>
     </div>
     <?php endforeach; ?>

@@ -143,7 +143,7 @@ $affiliates = $pagination['records'];
 
 <div class="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
     <div>
-        <h1 class="text-3xl font-['Crimson_Pro'] font-bold text-gray-900">Creator Partnerships</h1>
+        <h1 class="text-3xl font-heading font-bold text-gray-900">Creator Partnerships</h1>
         <p class="text-gray-500 text-sm">Manage influencers and affiliate partners.</p>
     </div>
     <button onclick="document.getElementById('add-modal').classList.remove('hidden')" class="btn-chunky bg-black text-white px-6 py-3 shadow-lg hover:bg-[#24B25D] hover:text-black transition">
@@ -158,7 +158,7 @@ $affiliates = $pagination['records'];
             <i class="fas fa-times text-xl"></i>
         </button>
         
-        <h2 class="text-2xl font-black font-['Crimson_Pro'] mb-6">Add New Influencer</h2>
+        <h2 class="text-2xl font-black font-heading mb-6">Add New Influencer</h2>
         
         <form method="POST" class="space-y-4">
             <input type="hidden" name="add_influencer" value="1">
@@ -204,7 +204,7 @@ $affiliates = $pagination['records'];
             <i class="fas fa-times text-xl"></i>
         </button>
         
-        <h2 class="text-2xl font-black font-['Crimson_Pro'] mb-6">Edit Influencer</h2>
+        <h2 class="text-2xl font-black font-heading mb-6">Edit Influencer</h2>
         
         <form method="POST" class="space-y-4">
             <input type="hidden" name="edit_influencer" value="1">
@@ -279,7 +279,7 @@ $affiliates = $pagination['records'];
                         <th class="p-6 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="text-sm text-gray-600 font-['Inter']">
+                <tbody class="text-sm text-gray-600 font-sans">
                     <?php foreach ($affiliates as $aff): ?>
                     <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
                         <td class="p-6">

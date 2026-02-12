@@ -12,7 +12,7 @@ require_once 'includes/functions.php';
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFEDC] font-['Inter']">
+<body class="bg-[#FFFEDC] font-sans">
 
     <?php include 'includes/header.php'; ?>
 
@@ -20,7 +20,7 @@ require_once 'includes/functions.php';
     <section class="pt-32 pb-20 px-6 relative overflow-hidden">
         <div class="container mx-auto max-w-5xl text-center relative z-10 px-4">
             <span class="bg-[#24B25D]/10 text-[#24B25D] text-[10px] md:text-xs font-black px-6 py-2 rounded-full uppercase tracking-widest mb-6 inline-block anim-up"><?php echo get_setting('about_hero_subtitle', 'The Driyum Journey'); ?></span>
-            <h1 class="text-[clamp(2.5rem,8vw,6rem)] font-['Crimson_Pro'] font-black text-gray-900 mb-8 anim-up delay-100 leading-[1.1] tracking-tighter"><?php echo get_setting('about_hero_title', 'Born from <span class="text-[#24B25D]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.'); ?></h1>
+            <h1 class="text-[clamp(2.5rem,8vw,6rem)] font-heading font-black text-gray-900 mb-8 anim-up delay-100 leading-[1.1] tracking-tighter"><?php echo get_setting('about_hero_title', 'Born from <span class="text-[#24B25D]">Frustration</span>,<br>Dried to <span class="text-amber-500">Perfection</span>.'); ?></h1>
             <p class="text-lg md:text-2xl text-gray-500 font-medium max-w-3xl mx-auto anim-up delay-200 leading-relaxed px-4"><?php echo get_setting('about_hero_desc', "We're on a mission to prove that healthy snacking shouldn't cost the earth or your health."); ?></p>
         </div>
         
@@ -40,7 +40,7 @@ require_once 'includes/functions.php';
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 space-y-8 anim-up delay-200">
-                    <h2 class="text-4xl md:text-5xl font-['Crimson_Pro'] font-black text-gray-900 leading-tight"><?php echo get_setting('about_story_title', 'The "Aha!" Moment'); ?></h2>
+                    <h2 class="text-4xl md:text-5xl font-heading font-black text-gray-900 leading-tight"><?php echo get_setting('about_story_title', 'The "Aha!" Moment'); ?></h2>
                     <div class="text-lg text-gray-500 leading-relaxed space-y-6 font-medium">
                         <?php 
                         $story_text = get_setting('about_story_text', "Our whole journey started with a simple frustration: why were all the truly healthy snacks so expensive, while the cheap ones were loaded with processed ingredients?\n\nIt felt like we were filling our bodies with chemical experiments and guilt rather than a snack. We realized the market was missing something. So, we took matters into our own hands, deciding to create the perfect alternative.");
@@ -56,7 +56,7 @@ require_once 'includes/functions.php';
     <!-- TRADITION SECTION: HOKH SUIN -->
     <section class="py-32 px-6 bg-white rounded-[60px] md:rounded-[100px] shadow-sm my-20">
         <div class="container mx-auto max-w-6xl text-center mb-16 px-6">
-             <h2 class="text-[clamp(2.5rem,7vw,5rem)] font-['Crimson_Pro'] font-black text-gray-900 mb-6 leading-none"><?php echo get_setting('about_tradition_title', 'HOKH SUIN'); ?></h2>
+             <h2 class="text-[clamp(2.5rem,7vw,5rem)] font-heading font-black text-gray-900 mb-6 leading-none"><?php echo get_setting('about_tradition_title', 'HOKH SUIN'); ?></h2>
              <span class="text-[#24B25D] font-black uppercase tracking-[0.3em] text-xs md:text-sm">A piece of Kashmiri heritage</span>
         </div>
 
@@ -69,7 +69,7 @@ require_once 'includes/functions.php';
                         echo nl2br(htmlspecialchars($trad_text));
                         ?>
                         <div class="bg-[#FFFEDC] p-8 rounded-[40px] border border-amber-100">
-                            <h4 class="font-black text-gray-900 mb-2 font-['Crimson_Pro']"><?php echo get_setting('about_twist_title', 'Modern Twist on Ancient Traditions'); ?></h4>
+                            <h4 class="font-black text-gray-900 mb-2 font-heading"><?php echo get_setting('about_twist_title', 'Modern Twist on Ancient Traditions'); ?></h4>
                             <p class="text-sm"><?php echo get_setting('about_twist_text', 'Prepared from fresh vegetables, Hokh suin is traditionally dehydrated, but unlike earlier times, it is handled with modern hygiene standards and packed carefully to ensure safety, quality, and convenience.'); ?></p>
                         </div>
                     </div>
@@ -96,7 +96,7 @@ require_once 'includes/functions.php';
                 <div class="relative z-10 flex flex-col md:flex-row items-center gap-12">
                     <div class="text-6xl">🥘</div>
                     <div>
-                        <h3 class="text-3xl font-['Crimson_Pro'] font-black mb-4"><?php echo get_setting('about_tip_title', 'A Quick Tip for the Perfect Meal'); ?></h3>
+                        <h3 class="text-3xl font-heading font-black mb-4"><?php echo get_setting('about_tip_title', 'A Quick Tip for the Perfect Meal'); ?></h3>
                         <p class="text-gray-400 text-lg max-w-3xl leading-relaxed"><?php echo get_setting('about_tip_text', 'In dried form, the vegetables may feel hard or chewy, which is natural. Once soaked or cooked, they soften and become ready for use in rice dishes, curries, and traditional meals. It is not just dehydrated vegetables — it is a piece of Kashmiri heritage, thoughtfully prepared and delivered to your doorstep.'); ?></p>
                     </div>
                 </div>
@@ -116,7 +116,7 @@ require_once 'includes/functions.php';
                     <div class="w-20 h-20 bg-[#24B25D]/10 rounded-3xl flex items-center justify-center text-[#24B25D] text-4xl mb-10 group-hover:scale-110 transition-transform">
                         <i class="fas fa-rocket"></i>
                     </div>
-                    <h2 class="text-4xl font-['Crimson_Pro'] font-black text-gray-900 mb-6">Our Mission</h2>
+                    <h2 class="text-4xl font-heading font-black text-gray-900 mb-6">Our Mission</h2>
                     <p class="text-xl text-gray-500 leading-relaxed font-medium"><?php echo get_setting('about_mission', 'Our mission is to make healthy snacking affordable, accessible, and convenient for everyone.'); ?></p>
                 </div>
 
@@ -125,7 +125,7 @@ require_once 'includes/functions.php';
                     <div class="w-20 h-20 bg-[#24B25D] rounded-3xl flex items-center justify-center text-black text-4xl mb-10 group-hover:rotate-12 transition-transform shadow-lg shadow-green-500/20">
                         <i class="fas fa-eye"></i>
                     </div>
-                    <h2 class="text-4xl font-['Crimson_Pro'] font-black text-white mb-6">Our Vision</h2>
+                    <h2 class="text-4xl font-heading font-black text-white mb-6">Our Vision</h2>
                     <p class="text-xl text-gray-400 leading-relaxed font-medium"><?php echo get_setting('about_vision', 'To build Driyum into one of India’s leading healthy snacking brands, starting from Kashmir and reaching across the country.'); ?></p>
                 </div>
 
@@ -162,7 +162,7 @@ require_once 'includes/functions.php';
         <div class="container mx-auto max-w-6xl">
             <div class="bg-[#24B25D] rounded-[60px] p-12 md:p-20 text-center relative overflow-hidden anim-up">
                 <div class="relative z-10">
-                    <h2 class="text-5xl md:text-7xl font-['Crimson_Pro'] font-black text-black mb-8">Ready to snack better?</h2>
+                    <h2 class="text-5xl md:text-7xl font-heading font-black text-black mb-8">Ready to snack better?</h2>
                     <a href="<?php echo get_url('shop'); ?>" class="btn-chunky bg-black text-white px-12 py-6 text-xl shadow-2xl hover:bg-white hover:text-black transition-all">Explore the Collection</a>
                 </div>
                 

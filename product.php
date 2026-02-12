@@ -154,7 +154,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <?php include 'includes/header.php'; ?>
 
-    <div class="container mx-auto px-6 py-8 relative z-10 font-['Outfit']">
+    <div class="container mx-auto px-6 py-8 relative z-10 font-sans">
         
         <!-- BREADCRUMBS -->
         <nav class="flex items-center gap-2 mb-10 text-[10px] font-black tracking-[0.2em] uppercase text-gray-400">
@@ -246,10 +246,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                         <span class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">4.5 (<?php echo count($reviews); ?> Reviews)</span>
                     </div>
-                    <h1 class="text-[clamp(2.5rem,10vw,8rem)] font-['Fredoka'] font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>
+                    <h1 class="text-[clamp(2.5rem,10vw,8rem)] font-heading font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>
                     
                     <div class="flex items-center gap-6">
-                        <span class="text-5xl sm:text-7xl font-black text-gray-900 font-['Fredoka'] tracking-tighter leading-none">₹<?php echo $product['price']; ?></span>
+                        <span class="text-5xl sm:text-7xl font-black text-gray-900 font-heading tracking-tighter leading-none">₹<?php echo $product['price']; ?></span>
                         <?php if($product['original_price'] > $product['price']): ?>
                             <div class="flex flex-col">
                                 <span class="text-xl sm:text-2xl text-gray-300 line-through font-bold leading-none italic">₹<?php echo $product['original_price']; ?></span>
@@ -259,7 +259,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 </div>
 
-                <p class="text-xl sm:text-2xl text-gray-500 font-medium mb-12 leading-relaxed max-w-xl font-['Fredoka'] tracking-tight">
+                <p class="text-xl sm:text-2xl text-gray-500 font-medium mb-12 leading-relaxed max-w-xl font-heading tracking-tight">
                     <?php echo $product['description']; ?>
                 </p>
 
@@ -380,7 +380,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                 <?php endforeach; ?>
                                             </div>
                                         <?php else: ?>
-                                            <p class="text-xl text-gray-800 font-['Fredoka'] font-medium leading-normal bg-gray-50/50 p-6 rounded-3xl border border-dashed border-gray-100"><?php echo nl2br(htmlspecialchars($product['ingredients'])); ?></p>
+                                            <p class="text-xl text-gray-800 font-heading font-medium leading-normal bg-gray-50/50 p-6 rounded-3xl border border-dashed border-gray-100"><?php echo nl2br(htmlspecialchars($product['ingredients'])); ?></p>
                                         <?php endif; ?>
                                 </div>
                             <?php endif; ?>
@@ -419,7 +419,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     <i class="fas <?php echo $icon; ?> <?php echo strpos($color, '-') ? 'text-'.$color : 'text-'.$color.'-500'; ?> text-xs"></i>
                                                 </div>
                                                 <span class="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1"><?php echo htmlspecialchars($label); ?></span>
-                                                <span class="text-xl font-black text-gray-900 font-['Fredoka'] tracking-tight"><?php echo htmlspecialchars($value); ?></span>
+                                                <span class="text-xl font-black text-gray-900 font-heading tracking-tight"><?php echo htmlspecialchars($value); ?></span>
                                             </div>
                                         <?php 
                                                 endforeach;
@@ -432,7 +432,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <div class="p-6 bg-gray-50/50 rounded-[32px] border border-transparent hover:bg-white hover:border-gray-100 transition-all">
                                                 <?php if(count($parts) === 2): ?>
                                                     <span class="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1 block"><?php echo htmlspecialchars(trim($parts[0])); ?></span>
-                                                    <span class="text-xl font-black text-gray-900 font-['Fredoka']"><?php echo htmlspecialchars(trim($parts[1])); ?></span>
+                                                    <span class="text-xl font-black text-gray-900 font-heading"><?php echo htmlspecialchars(trim($parts[1])); ?></span>
                                                 <?php else: ?>
                                                     <span class="text-sm font-bold text-gray-800"><?php echo htmlspecialchars(trim($line)); ?></span>
                                                 <?php endif; ?>
@@ -467,12 +467,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="flex flex-col lg:flex-row gap-20 items-start">
                     <!-- Sidebar Summary -->
                     <div class="lg:w-1/3 lg:sticky lg:top-32">
-                        <h2 class="text-6xl sm:text-8xl font-['Fredoka'] font-black text-gray-900 mb-10 leading-[0.8] tracking-tighter anim-up">
+                        <h2 class="text-6xl sm:text-8xl font-heading font-black text-gray-900 mb-10 leading-[0.8] tracking-tighter anim-up">
                             THE <br><span class="text-[#19DC7E]">DRIYUM</span> <br>DEBATE.
                         </h2>
                         <div class="bg-white rounded-[60px] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.06)] border border-gray-50 relative overflow-hidden group hover:shadow-2xl transition-all duration-700 anim-up text-center">
                             <div class="inline-flex items-baseline gap-2 mb-4">
-                                <span class="text-8xl font-black text-gray-900 font-['Fredoka'] tracking-tighter">4.9</span>
+                                <span class="text-8xl font-black text-gray-900 font-heading tracking-tighter">4.9</span>
                                 <span class="text-2xl font-black text-[#19DC7E]">/5</span>
                             </div>
                             <div class="flex justify-center text-[#FFD700] text-lg gap-1 mb-6">
@@ -521,7 +521,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                     <input type="checkbox" name="review_ids[]" value="<?php echo $r['id']; ?>" class="review-selector w-6 h-6 rounded-lg border-gray-100 bg-gray-50 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer">
                                                 <?php endif; ?>
                                                 <div class="w-16 h-16 md:w-20 md:h-20 rounded-[28px] bg-gradient-to-br from-[#19DC7E] to-[#14c06e] p-[2px]">
-                                                    <div class="w-full h-full bg-white rounded-[26px] flex items-center justify-center font-['Fredoka'] font-black text-2xl text-gray-900">
+                                                    <div class="w-full h-full bg-white rounded-[26px] flex items-center justify-center font-heading font-black text-2xl text-gray-900">
                                                         <?php echo strtoupper(substr($r['user_name'],0,1)); ?>
                                                     </div>
                                                 </div>
@@ -546,7 +546,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                 </div>
                                             </div>
                                         </div>
-                                        <p class="text-3xl md:text-5xl text-gray-800 font-['Fredoka'] font-black leading-tight tracking-tighter">
+                                        <p class="text-3xl md:text-5xl text-gray-800 font-heading font-black leading-tight tracking-tighter">
                                             "<?php echo htmlspecialchars($r['comment']); ?>"
                                         </p>
                                     </div>
@@ -565,7 +565,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                         <!-- Review Form -->
                         <div id="review-form-container" class="mt-32 pt-32 border-t border-gray-100/50">
-                            <h3 class="text-4xl sm:text-5xl font-['Fredoka'] font-black text-gray-900 mb-6 tracking-tighter">YOUR <span class="text-[#19DC7E]">VERDICT.</span></h3>
+                            <h3 class="text-4xl sm:text-5xl font-heading font-black text-gray-900 mb-6 tracking-tighter">YOUR <span class="text-[#19DC7E]">VERDICT.</span></h3>
                             <p class="text-gray-400 text-lg sm:text-xl font-medium mb-12 max-w-md">Your words echo in the valley. How was the drop?</p>
                             
                             <?php if(is_logged_in()): ?>
@@ -580,7 +580,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             </label>
                                         <?php endfor; ?>
                                     </div>
-                                    <textarea name="comment" rows="5" placeholder="Spill the tea... What makes this snack special?" class="w-full bg-white border-none rounded-[30px] md:rounded-[40px] p-6 md:p-10 font-['Fredoka'] font-medium text-lg md:text-2xl focus:ring-4 focus:ring-[#19DC7E]/10 transition-all placeholder:text-gray-200 shadow-xl"></textarea>
+                                    <textarea name="comment" rows="5" placeholder="Spill the tea... What makes this snack special?" class="w-full bg-white border-none rounded-[30px] md:rounded-[40px] p-6 md:p-10 font-heading font-medium text-lg md:text-2xl focus:ring-4 focus:ring-[#19DC7E]/10 transition-all placeholder:text-gray-200 shadow-xl"></textarea>
                                     <button type="submit" class="w-full md:w-auto bg-black text-white px-12 md:px-20 py-6 md:py-8 hover:bg-[#19DC7E] hover:text-black font-black tracking-widest uppercase rounded-3xl md:rounded-full shadow-2xl transition-all active:scale-95">Post Verdict</button>
                                 </form>
                             <?php else: ?>
@@ -602,7 +602,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="flex items-end justify-between mb-16">
                 <div class="mb-10 md:mb-0">
                     <span class="text-[#19DC7E] font-black tracking-widest uppercase text-[10px] md:text-xs mb-4 block">Wait, there's more!</span>
-                    <h3 class="text-4xl sm:text-6xl font-['Fredoka'] font-black text-gray-900 tracking-tighter leading-none">PEOPLE <br>ALSO GRABBED.</h3>
+                    <h3 class="text-4xl sm:text-6xl font-heading font-black text-gray-900 tracking-tighter leading-none">PEOPLE <br>ALSO GRABBED.</h3>
                 </div>
                 <a href="<?php echo get_url('shop'); ?>" class="bg-black text-white px-8 py-4 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all">Hunt All</a>
             </div>
@@ -619,9 +619,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <img src="<?php echo get_url(ltrim($rp['image'], './')); ?>" class="w-full h-full object-contain group-hover:scale-110 transition duration-1000">
                                 <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
                             </div>
-                            <h4 class="text-2xl font-black font-['Fredoka'] text-gray-900 mb-2 truncate group-hover:text-[#19DC7E] transition"><?php echo $rp['name']; ?></h4>
+                            <h4 class="text-2xl font-black font-heading text-gray-900 mb-2 truncate group-hover:text-[#19DC7E] transition"><?php echo $rp['name']; ?></h4>
                             <div>
-                                <span class="text-3xl font-black text-gray-900 font-['Fredoka']">₹<?php echo $rp['price']; ?></span>
+                                <span class="text-3xl font-black text-gray-900 font-heading">₹<?php echo $rp['price']; ?></span>
                             </div>
                         </a>
                     </div>

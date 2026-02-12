@@ -57,7 +57,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
     include 'includes/head.php'; 
     ?>
 </head>
-<body class="bg-[#FFFEDC] font-['Inter']">
+<body class="bg-[#FFFEDC] font-sans">
 
     <?php include 'includes/header.php'; ?>
 
@@ -71,7 +71,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
                 </div>
                 <div>
                     <span class="text-xs font-black uppercase tracking-widest text-[#24B25D]">Driyum Creator</span>
-                    <h1 class="text-4xl md:text-5xl font-['Crimson_Pro'] font-black text-gray-900">Dashboard</h1>
+                    <h1 class="text-4xl md:text-5xl font-heading font-black text-gray-900">Dashboard</h1>
                 </div>
             </div>
             
@@ -91,7 +91,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
             <div class="bg-black text-white p-10 rounded-[40px] shadow-2xl relative overflow-hidden group">
                 <div class="relative z-10">
                     <div class="text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Total Earnings</div>
-                    <div class="text-5xl font-['Crimson_Pro'] font-black text-[#24B25D]">₹<?php echo number_format($total_earned); ?></div>
+                    <div class="text-5xl font-heading font-black text-[#24B25D]">₹<?php echo number_format($total_earned); ?></div>
                     <div class="mt-4 text-xs font-bold text-gray-400">+₹<?php echo number_format($pending_comm); ?> pending</div>
                 </div>
                 <!-- Decor -->
@@ -104,7 +104,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Total Orders</div>
-                <div class="text-4xl font-['Crimson_Pro'] font-black text-gray-900"><?php echo $total_orders; ?></div>
+                <div class="text-4xl font-heading font-black text-gray-900"><?php echo $total_orders; ?></div>
             </div>
 
             <!-- Commission Rate -->
@@ -113,14 +113,14 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
                     <i class="fas fa-percentage"></i>
                 </div>
                 <div class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Your Rate</div>
-                <div class="text-4xl font-['Crimson_Pro'] font-black text-gray-900"><?php echo floatval($aff['commission_rate']); ?>%</div>
+                <div class="text-4xl font-heading font-black text-gray-900"><?php echo floatval($aff['commission_rate']); ?>%</div>
                 <div class="mt-2 text-[10px] font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full inline-block">Code: <?php echo $aff['code']; ?></div>
             </div>
         </div>
 
         <!-- RECENT ACTIVITY -->
         <div class="bg-white rounded-[50px] p-8 md:p-12 shadow-sm border border-gray-100 anim-up delay-200">
-            <h3 class="text-2xl font-['Crimson_Pro'] font-black mb-8 text-gray-900">Recent Referrals</h3>
+            <h3 class="text-2xl font-heading font-black mb-8 text-gray-900">Recent Referrals</h3>
             
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -133,7 +133,7 @@ $referral_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "http
                             <th class="pb-6 text-right pr-4">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="font-['Inter'] font-bold text-gray-600">
+                    <tbody class="font-sans font-bold text-gray-600">
                         <?php foreach($orders as $o): ?>
                         <tr class="border-b border-gray-50 hover:bg-gray-50 transition group">
                             <td class="py-6 pl-4 text-sm"><?php echo date('M d, Y', strtotime($o['created_at'])); ?></td>

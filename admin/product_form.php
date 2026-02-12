@@ -153,7 +153,7 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
 <div class="max-w-6xl mx-auto pb-20">
     <div class="mb-8 flex justify-between items-center">
         <div>
-             <h1 class="text-3xl font-['Crimson_Pro'] font-bold text-gray-900"><?php echo $id ? 'Edit Snack' : 'New Snack'; ?></h1>
+             <h1 class="text-3xl font-heading font-bold text-gray-900"><?php echo $id ? 'Edit Snack' : 'New Snack'; ?></h1>
              <a href="products.php" class="text-gray-500 hover:text-black mt-1 inline-block"><i class="fas fa-arrow-left"></i> Back to List</a>
         </div>
         <div class="flex gap-2">
