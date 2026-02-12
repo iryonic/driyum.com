@@ -70,7 +70,7 @@ $wishlist_json = json_encode($wishlist_ids);
 <head>
     <?php 
     $page_title = 'Your New Healthy Habit';
-    $page_description = "Experience 100% natural, premium healthy snacks from the heart of Kashmir. No added sugar, no guilt—just pure, crunchy indulgence delivered to your door.";
+    $page_description = "Experience 100% natural, premium healthy snacks from the heart of Kashmir. No added sugar, no guilt—just pure indulgence delivered to your door.";
     include 'includes/head.php'; 
     ?>
     <!-- Custom Scroll Styles -->       
@@ -81,6 +81,15 @@ $wishlist_json = json_encode($wishlist_ids);
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .snap-x-mandatory { scroll-snap-type: x mandatory; }
         .snap-center { scroll-snap-align: center; }
+
+        .briry{
+           border-radius: 40% 10px 40% 10px;
+        }
+       /* @media (max-width: 1024px) {
+        .briry{
+          border-radius: 30% 30% 10px 10px;
+        }
+       } */
     </style>
     <!-- HERO LOGIC: VIVID SCENE SWITCHER -->
     <script>
@@ -358,7 +367,7 @@ $wishlist_json = json_encode($wishlist_ids);
                         <div class="anim-reveal-up" id="hero-atc-wrap" style="animation-delay: 0.35s;">
                             <button id="hero-atc-btn" 
                                     onclick="addToCart(<?php echo $hero_variants[0]['product_id']; ?>, this, 1)"
-                                    class="bg-[#19DC7E] px-6 lg:px-10 py-3 lg:py-4 rounded-2xl md:rounded-3xl flex items-center gap-3 lg:gap-4 text-[#002A23] shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group">
+                                    class="bg-[#19DC7E] px-6 lg:px-10 py-3 lg:py-5 rounded-2xl md:rounded-3xl flex items-center gap-3 lg:gap-4 text-[#002A23] shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group">
                                 <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#002A23] flex items-center justify-center text-white group-hover:bg-[#19DC7E] group-hover:text-[#002A23] transition-colors">
                                     <i class="fas fa-shopping-basket text-[10px] lg:text-sm"></i>
                                 </div>
@@ -427,7 +436,7 @@ $wishlist_json = json_encode($wishlist_ids);
                         <!-- The Image -->
                         <img id="hero-main-img" 
                              src="<?php echo get_url($hero_variants[0]['image']); ?>" 
-                             class="w-full max-w-[280px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] h-auto drop-shadow-[0_45px_75px_rgba(0,0,0,0.4)] anim-float-slow transform group-hover/main:scale-105 transition-all duration-1000" 
+                             class="w-full max-w-[280px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] h-auto drop-shadow-[0_45px_75px_rgba(0,0,0,0.4)] anim-float-slow transform group-hover/main:scale-105 transition-all duration-1000 briry" 
                              alt="Premium Snack">
                         
                         <!-- Wishlist Toggle -->
@@ -733,7 +742,7 @@ $wishlist_json = json_encode($wishlist_ids);
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
                 <div>
                     <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-sans">Fresh From The Farm</span>
-                    <h2 class="text-4xl md:text-7xl font-heading font-black text-gray-900 leading-none">Hot Drops <span class="text-[#24B25D]">🔥</span></h2>
+                    <h2 class="text-3xl md:text-5xl font-heading font-black text-gray-900 leading-none">Hot Drops <span class="text-[#24B25D]">🔥</span></h2>
                 </div>
                 <!-- Slider Controls -->
                 <div class="flex gap-3">

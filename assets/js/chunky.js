@@ -107,9 +107,9 @@ function renderSearchResults(results, container) {
             </div>
             
             <div class="flex-1 min-w-0">
-                <h4 class="text-white font-['Fredoka'] font-bold text-xl truncate group-hover:text-[#24B25D] transition-colors">${product.name}</h4>
+                <h4 class="text-white font-heading font-bold text-xl truncate group-hover:text-[#24B25D] transition-colors">${product.name}</h4>
                 <div class="flex items-center gap-2 mt-1">
-                    <span class="text-[#24B25D] font-black text-lg">₹${product.price}</span>
+                    <span class="text-[#24B25D] font-black text-lg">₹ ${product.price}</span>
                     <span class="text-white/40 text-xs uppercase font-bold tracking-widest hidden sm:inline-block">View Product</span>
                 </div>
             </div>
@@ -406,7 +406,7 @@ window.loadCartItems = async function (isUpdate = false) {
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-full px-12 text-center">
                         <div class="w-32 h-32 bg-white rounded-[40px] shadow-2xl flex items-center justify-center text-5xl mb-8">🛍️</div>
-                        <h3 class="text-3xl font-['Fredoka'] font-black text-gray-900 mb-4">Bag is empty!</h3>
+                        <h3 class="text-3xl font-heading font-black text-gray-900 mb-4">Bag is empty!</h3>
                         <p class="text-gray-400 font-medium mb-10 leading-relaxed">It seems your snack vault is empty.</p>
                         <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop'" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#24B25D] hover:text-black transition-all shadow-xl active:scale-95">Explore Snacks</button>
                     </div>`;
@@ -424,7 +424,7 @@ window.loadCartItems = async function (isUpdate = false) {
                         
                         <div class="flex-1 min-w-0 pr-6">
                             <a href="${BASE_URL}product/${item.id}" class="block">
-                                <h4 class="font-black text-gray-900 truncate font-['Fredoka'] text-lg mb-0.5 leading-tight group-hover:text-[#24B25D] transition-colors">${item.name}</h4>
+                                <h4 class="font-black text-gray-900 truncate font-heading text-lg mb-0.5 leading-tight group-hover:text-[#24B25D] transition-colors">${item.name}</h4>
                                 <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-3">500g Pack</p>
                             </a>
                             

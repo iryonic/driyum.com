@@ -26,14 +26,37 @@ $show_choice_modal = !is_logged_in() && !isset($_SESSION['checkout_mode']);
 
 $conn = get_db_connection();
 
-// Calculate Totals
+// Calculate Totals and Filter Cart
 $subtotal = 0;
-$ids = implode(',', array_keys($_SESSION['cart']));
-$products_result = $conn->query("SELECT * FROM products WHERE id IN ($ids)");
-$products_data = [];
-while($row = $products_result->fetch_assoc()) {
-    $products_data[$row['id']] = $row;
-    $subtotal += $row['price'] * $_SESSION['cart'][$row['id']];
+$cart_keys = array_keys($_SESSION['cart']);
+
+if (!empty($cart_keys)) {
+    $ids = implode(',', $cart_keys);
+    $products_result = $conn->query("SELECT * FROM products WHERE id IN ($ids)");
+    $products_data = [];
+    $valid_pids = [];
+    
+    while($row = $products_result->fetch_assoc()) {
+        $products_data[$row['id']] = $row;
+        $subtotal += $row['price'] * $_SESSION['cart'][$row['id']];
+        $valid_pids[] = $row['id'];
+    }
+
+    // Remove invalid products from cart to prevent crashes later
+    foreach ($_SESSION['cart'] as $pid => $qty) {
+        if (!in_array($pid, $valid_pids)) {
+            unset($_SESSION['cart'][$pid]);
+        }
+    }
+
+    // Re-check if cart is now empty
+    if (empty($_SESSION['cart'])) {
+        header("Location: " . get_url('shop.php'));
+        exit;
+    }
+} else {
+    header("Location: " . get_url('shop.php'));
+    exit;
 }
 
 // Coupon Logic
@@ -243,6 +266,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         // Insert Order Items
         $stmt_item = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)");
         foreach ($_SESSION['cart'] as $pid => $qty) {
+            if (!isset($products_data[$pid])) continue; // Skip deleted items
             $price = $products_data[$pid]['price'];
             $line_subtotal = $price * $qty;
             $stmt_item->bind_param("iiidd", $order_id, $pid, $qty, $price, $line_subtotal);
@@ -259,6 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         // Update product stock
         $stmt_stock = $conn->prepare("UPDATE products SET stock = stock - ? WHERE id = ?");
         foreach ($_SESSION['cart'] as $pid => $qty) {
+            if (!isset($products_data[$pid])) continue;
             $stmt_stock->bind_param("ii", $qty, $pid);
             $stmt_stock->execute();
         }
@@ -366,7 +391,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     </div>
                 </div>
 
-                <form method="POST" id="checkout-form" onsubmit="return handleFormSubmit(event)">
+                <form method="POST" id="checkout-form">
                     <input type="hidden" name="place_order" value="1">
 
                     <!-- STEP 1: SHIPPING -->
@@ -808,9 +833,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function handleFormSubmit(e) {
+        // Flag to prevent multiple submissions
+        let isProcessing = false;
+
+        document.getElementById('checkout-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const form = document.getElementById('checkout-form');
+            
+            if (isProcessing) return;
+            isProcessing = true;
+
+            const form = this;
             const method = form.payment_method.value;
 
             // Show Overlay
@@ -892,7 +924,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 // COD or other direct methods
                 form.submit();
             }
-        }
+        });
 
         // Radio click visual enhancer
         document.querySelectorAll('.payment-radio').forEach(radio => {

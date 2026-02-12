@@ -668,9 +668,14 @@ async function performBulkAction(action, extraParams = {}) {
 }
 
 async function updateOrderStatus(id, status, el) {
+    if (el.getAttribute('data-processing') === 'true') return;
+    
     const container = el.closest('.status-dropdown-container');
     const btn = container.querySelector('.status-btn');
-    const icon = btn.querySelector('.fa-chevron-down');
+    
+    // Set processing state
+    el.setAttribute('data-processing', 'true');
+    btn.disabled = true;
     
     // Show loading state
     const originalContent = btn.innerHTML;
@@ -718,11 +723,16 @@ async function updateOrderStatus(id, status, el) {
         console.error('AJAX Error:', error);
         alert('An error occurred while updating status. Check console for details.');
         btn.innerHTML = originalContent;
+    } finally {
+        // Reset processing state
+        el.setAttribute('data-processing', 'false');
+        btn.disabled = false;
+        
+        // Close menu
+        container.querySelector('.status-menu').classList.add('hidden');
+        const icon = btn.querySelector('.fa-chevron-down');
+        if (icon) icon.classList.remove('rotate-180');
     }
-    
-    // Close menu
-    container.querySelector('.status-menu').classList.add('hidden');
-    icon.classList.remove('rotate-180');
 }
 
 function openDispatchModal(id, number, tracking = '', note = '') {

@@ -271,13 +271,13 @@ try {
 
         <!-- Navigation with Mega Menu -->
         <nav class="h-full flex items-center gap-3 lg:gap-8 overflow-hidden" aria-label="Desktop Navigation">
-            <a href="<?php echo get_url(''); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Home</a>
-            <a href="<?php echo get_url('shop'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Shop</a>
-            <a href="<?php echo get_url('about'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base">Story</a>
+            <a href="<?php echo get_url(''); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm ">Home</a>
+            <a href="<?php echo get_url('shop'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm ">Shop</a>
+            <a href="<?php echo get_url('about'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm ">Story</a>
             
             <!-- MEGA MENU TRIGGER -->
             <div class="mega-menu-trigger h-full flex items-center cursor-pointer group">
-                <a href="<?php echo get_url('shop'); ?>" class="font-heading font-semibold text-gray-600 group-hover:text-[#19DC7E] transition py-2 whitespace-nowrap text-sm lg:text-base">
+                <a href="<?php echo get_url('shop'); ?>" class="font-heading font-semibold text-gray-600 group-hover:text-[#19DC7E] transition py-2 whitespace-nowrap text-sm ">
                      Categories <i class="fas fa-chevron-down ml-1 text-[10px] opacity-50" aria-hidden="true"></i>
                 </a>
                 
@@ -334,23 +334,23 @@ try {
                 </div>
             </div>
 
-            <a href="<?php echo get_url('track'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base hidden xl:block">Track Order</a>
-            <a href="<?php echo get_url('contact'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm lg:text-base hidden xl:block">Contact</a>
+            <a href="<?php echo get_url('track'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm  hidden xl:block">Track Order</a>
+            <a href="<?php echo get_url('contact'); ?>" class="font-heading font-semibold text-gray-600 hover:text-[#19DC7E] transition whitespace-nowrap text-sm  hidden xl:block">Contact</a>
         </nav>
 
         <!-- Actions -->
         <div class="flex items-center gap-2 lg:gap-4 shrink-0">
             <button onclick="toggleSearch()" class="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white border-2 border-gray-100 flex items-center justify-center text-gray-600 hover:border-[#19DC7E] hover:text-[#19DC7E] transition" aria-label="Open search">
-                <i class="fas fa-search text-sm lg:text-base"></i>
+                <i class="fas fa-search text-sm "></i>
             </button>
             <a href="<?php echo get_url('wishlist'); ?>" class="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white border-2 border-gray-100 flex items-center justify-center text-gray-600 hover:border-[#19DC7E] hover:text-red-500 transition" aria-label="View Favorites">
-                <i class="far fa-heart text-sm lg:text-base"></i>
+                <i class="far fa-heart text-sm "></i>
             </a>
 
             <!-- Account Dropdown -->
             <div class="relative group">
                 <button class="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white border-2 border-gray-100 flex items-center justify-center text-gray-600 hover:border-[#19DC7E] hover:text-[#19DC7E] transition" aria-label="Account menu">
-                    <i class="fas fa-user text-sm lg:text-base"></i>
+                    <i class="fas fa-user text-sm "></i>
                 </button>
                 <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform z-50">
                     <?php if ($is_logged_in): ?>
@@ -375,7 +375,7 @@ try {
 
             <!-- Cart Trigger -->
             <button onclick="openCartSidebar()" class="relative btn-chunky bg-[#111827] text-white hover:bg-[#19DC7E] border-none px-4 lg:px-6 py-2 shrink-0 h-10 lg:h-12 flex items-center" aria-label="Open shopping bag">
-                <i class="fas fa-shopping-bag mr-2 text-sm lg:text-base" aria-hidden="true"></i>
+                <i class="fas fa-shopping-bag mr-2 text-sm " aria-hidden="true"></i>
                 <span id="cart-count" class="text-xs lg:text-sm font-bold">Bag</span>
             </button>
         </div>

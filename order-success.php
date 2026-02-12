@@ -140,10 +140,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div class="absolute top-0 left-0 h-full bg-[#19DC7E] w-[15%] rounded-full shadow-[0_0_15px_rgba(25,220,126,0.6)]"></div>
                 </div>
                 <div class="grid grid-cols-4 text-[9px] font-black uppercase tracking-widest text-[#004F42]/40">
-                    <span class="text-[#14B86A]">Ordered</span>
-                    <span class="text-center">Packed</span>
-                    <span class="text-center">Transit</span>
-                    <span class="text-right">Home</span>
+                    <span class="text-[#14B86A]">Placed</span>
+                    <span class="text-center">Confirmed</span>
+                    <span class="text-center">Shipped</span>
+                    <span class="text-right">Delivered</span>
                 </div>
             </div>
 

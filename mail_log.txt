@@ -332,3 +332,9 @@
 ----------------------------------------
 [2026-02-12 11:02:10] To: admin@driyum.com | Subject: Order #ORD-698B607EDB5DE Status Update: CONFIRMED
 ----------------------------------------
+[2026-02-12 12:11:49] To: admin@driyum.com | Subject: Order #ORD-698B607EDB5DE Status Update: SHIPPED
+----------------------------------------
+[2026-02-12 12:12:20] To: admin@driyum.com | Subject: Your Driyum snacks are waiting! 🍎
+----------------------------------------
+[2026-02-12 14:19:23] To: admin@driyum.com | Subject: Driyum Order Confirmed! #ORD-698D94135801B
+----------------------------------------
