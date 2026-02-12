@@ -104,7 +104,7 @@ if ($id) {
                     </div>
                 </div>
                 <div class="relative w-full">
-                    <input type="file" name="image" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewImage(this, 'cat-preview'); document.getElementById('cat-placeholder').classList.add('hidden'); document.getElementById('cat-preview').classList.remove('hidden');">
+                    <input type="file" name="image" class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewImage(this, 'cat-preview')">
                     <div class="w-full py-3 bg-white rounded-xl border-2 border-gray-100 text-center text-xs font-bold text-gray-500 group-hover:bg-[#24B25D] group-hover:text-black group-hover:border-[#24B25D] transition-all">
                         <i class="fas fa-upload mr-2"></i> Choose Category Icon
                     </div>
@@ -119,6 +119,24 @@ if ($id) {
         </div>
     </form>
 </div>
+
+<script>
+function previewImage(input, previewId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById(previewId);
+            const placeholder = document.getElementById('cat-placeholder');
+            
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
+            if(placeholder) placeholder.classList.add('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
 </body>
 </html>
 
