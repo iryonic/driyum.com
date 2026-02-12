@@ -32,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         'maintenance_end_date',
         'maintenance_countdown_label',
         'payment_cod_enabled',
-        'payment_online_enabled'
+        'payment_online_enabled',
+        'backup_frequency'
     ];
 
     $error_found = false;
@@ -107,7 +108,9 @@ $s = [
     'm_countdown_label' => get_setting('maintenance_countdown_label', 'WE WILL BE BACK SUBSCRIBE US TILL THEN'),
     'logo' => get_setting('site_logo', ''),
     'favicon' => get_setting('site_favicon', ''),
-    'm_show_timer' => get_setting('maintenance_show_timer', 'on')
+    'm_show_timer' => get_setting('maintenance_show_timer', 'on'),
+    'backup_freq' => get_setting('backup_frequency', 'manual'),
+    'last_backup' => get_setting('last_backup_at', 'Never')
 ];
 ?>
 
@@ -293,6 +296,43 @@ $s = [
                 <div class="space-y-1">
                     <label class="text-[10px] font-black uppercase text-gray-500 tracking-widest ml-3">Meta Description</label>
                     <textarea name="seo_description" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-gray-300 outline-none focus:border-[#24B25D] transition-all h-28 resize-none"><?php echo htmlspecialchars($s['seo_desc']); ?></textarea>
+                </div>
+            </div>
+
+            <!-- Data Backup -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900">Data & Backups</h3>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Auto Backup Frequency</label>
+                        <select name="backup_frequency" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all">
+                            <option value="manual" <?php echo $s['backup_freq'] == 'manual' ? 'selected' : ''; ?>>Manual Only</option>
+                            <option value="daily" <?php echo $s['backup_freq'] == 'daily' ? 'selected' : ''; ?>>Daily (Recommended)</option>
+                            <option value="weekly" <?php echo $s['backup_freq'] == 'weekly' ? 'selected' : ''; ?>>Weekly</option>
+                            <option value="monthly" <?php echo $s['backup_freq'] == 'monthly' ? 'selected' : ''; ?>>Monthly</option>
+                        </select>
+                    </div>
+
+                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <p class="text-[10px] font-black uppercase text-gray-400">Last Backup</p>
+                                <p class="text-xs font-bold text-gray-900"><?php echo $s['last_backup']; ?></p>
+                            </div>
+                            <a href="backup_db.php?action=generate" class="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-600 transition-colors">
+                                <i class="fas fa-download mr-1"></i> Dump SQL
+                            </a>
+                        </div>
+                        <p class="text-[9px] text-gray-500 leading-relaxed">
+                            <i class="fas fa-info-circle mr-1"></i> Generating a backup will download a complete SQL file of your database including orders, products, and user data.
+                        </p>
+                    </div>
                 </div>
             </div>
 
