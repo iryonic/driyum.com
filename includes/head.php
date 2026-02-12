@@ -24,7 +24,7 @@ require_once __DIR__ . '/activity_tracker.php';
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-<link href="https://fonts.googleapis.com/css2?family=Delius&family=Figtree:wght@300..900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Delius&family=Figtree:wght@300..900&family=Montserrat:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 
 <script>
     window.APP_CONFIG = {

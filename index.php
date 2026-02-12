@@ -289,7 +289,7 @@ $wishlist_json = json_encode($wishlist_ids);
                     <span class="w-2 h-2 rounded-full bg-[#002A23] animate-ping"></span>
                     <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#002A23]/60 italic">Live Sale</span>
                 </div>
-                <h3 class="text-xs md:text-sm lg:text-base font-black text-[#002A23] uppercase tracking-tighter text-center md:text-left">
+                <h3 class="text-xs md:text-sm lg:text-base font-black text-[#002A23] uppercase tracking-tighter text-center md:text-left font-heading">
                     <?php echo htmlspecialchars($active_sale['title']); ?>
                 </h3>
             </div>
@@ -342,7 +342,7 @@ $wishlist_json = json_encode($wishlist_ids);
                     </span>
                     
                     <!-- Main Catchy Headline (Fluid Typography) -->
-                    <h1 id="hero-main-title" class="text-[clamp(2.5rem,8vw,6rem)] font-black leading-[0.95] text-white tracking-tighter uppercase mb-6 lg:mb-12 anim-reveal-up" style="animation-delay: 0.2s">
+                    <h1 id="hero-main-title" class="text-[clamp(2.5rem,8vw,6rem)] font-black leading-[0.95] text-white tracking-tighter uppercase mb-6 lg:mb-12 anim-reveal-up font-heading" style="animation-delay: 0.2s">
                         <?php 
                             $first_title = $hero_variants[0]['name'] ?? 'PURE CRUNCH';
                             $words = explode(' ', strtoupper($first_title));
@@ -511,9 +511,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
     <!-- MODERN HERO SPECIFIC STYLES -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@900&display=swap');
-
-        #modern-hero { font-family: 'Outfit', sans-serif; }
+        #modern-hero { font-family: 'Montserrat', sans-serif; }
 
         @keyframes revealUp {
             from { transform: translateY(30px); opacity: 0; filter: blur(5px); }

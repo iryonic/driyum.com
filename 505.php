@@ -6,7 +6,7 @@
     <title>505 - Recipe Mismatch | DRIYUM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Figtree:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Figtree:wght@300..900&display=swap" rel="stylesheet">
     <?php
     require_once 'config/database.php';
     require_once 'includes/functions.php';
