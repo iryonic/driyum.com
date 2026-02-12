@@ -359,7 +359,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Manage infinite scrolling trust badges</p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('add-badge-modal').classList.remove('hidden')" class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg flex items-center gap-2">
+                <button onclick="showModal('badge-modal')" class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add New Badge
                 </button>
             </div>
@@ -446,7 +446,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Manage multiple hero banners</p>
                     </div>
                 </div>
-                <button onclick="document.getElementById('add-slide-modal').classList.remove('hidden')" class="bg-black text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#24B25D] hover:text-black transition-all shadow-lg flex items-center gap-2">
+                <button onclick="showModal('add-slide-modal')" class="bg-black text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#24B25D] hover:text-black transition-all shadow-lg flex items-center gap-2">
                     <i class="fas fa-plus"></i> Add New Slide
                 </button>
             </div>
@@ -528,535 +528,7 @@ $show_stats = get_setting('show_hero_stats', 'on');
             </div>
         </div>
 
-        <!-- ADD SLIDE MODAL -->
-        <div id="add-slide-modal" class="fixed inset-0 z-[9999] flex items-start justify-center p-4 md:p-10  backdrop-blur-sm hidden overflow-y-auto">
-            <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden anim-up border border-gray-100">
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
-                    <h3 class="text-lg font-bold text-gray-900">Add New Slide</h3>
-                    <button onclick="document.getElementById('add-slide-modal').classList.add('hidden')" class="text-gray-400 hover:text-black transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
 
-                <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
-                    <input type="hidden" name="add_slide" value="1">
-                    
-                    <!-- Live Preview: Reimagined for Split-Screen Hero -->
-                    <div class="relative h-[250px] rounded-2xl overflow-hidden bg-[#002A23] border border-gray-100 shadow-inner flex flex-row group/preview">
-                        <!-- LEFT PANEL PREVIEW -->
-                        <div class="w-[60%] h-full p-6 flex flex-col justify-center relative z-10">
-                            <span class="text-[#19DC7E] font-black uppercase tracking-[0.2em] text-[6px] mb-1 transition-opacity opacity-0" id="add-preview-tagline-val" style="opacity: 1;">DRIYUM IS...</span>
-                            <h1 id="add-preview-title" class="text-white font-black leading-tight text-xl uppercase tracking-tighter mb-2">YOUR<br>HEADLINE</h1>
-                            
-                            <!-- Badges Preview -->
-                            <div class="flex items-center gap-2 mb-3">
-                                <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 flex flex-col items-center">
-                                    <span class="text-white font-black text-[10px]" id="add-preview-price">₹249</span>
-                                    <span class="text-[5px] text-white/40 font-black uppercase tracking-widest">PRICE</span>
-                                </div>
-                                <div class="bg-white px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                    <div class="w-4 h-4 rounded-full bg-[#002A23] flex items-center justify-center text-white">
-                                        <i class="fas fa-truck-fast text-[7px]"></i>
-                                    </div>
-                                    <span class="text-[7px] font-black text-[#002A23]">FREE</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Thumbnails Placeholder -->
-                            <div class="flex gap-1.5">
-                                <div class="w-6 h-6 rounded-md bg-white/5 border border-white/10"></div>
-                                <div class="w-6 h-6 rounded-md bg-white/5 border border-white/10"></div>
-                                <div class="w-6 h-6 rounded-md bg-white/5 border border-white/10 opacity-30"></div>
-                            </div>
-                        </div>
-
-                        <!-- RIGHT PANEL: ACCENT & PRODUCT -->
-                        <div class="w-[40%] h-full relative flex items-center justify-center">
-                            <!-- ACCENT BG -->
-                            <div id="add-preview-accent" class="absolute inset-y-0 right-0 w-[85%] bg-[#19DC7E] rounded-l-[30px] transition-all duration-500"></div>
-                            
-                            <!-- V-TEXT -->
-                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-10">
-                                <span id="add-preview-v1" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">SNACKING</span>
-                                <span id="add-preview-v2" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">DRIYUM</span>
-                            </div>
-
-                            <!-- MAIN IMAGE -->
-                            <img id="add-preview-bg" src="../assets/images/hero.jpg" class="relative z-10 w-full max-w-[120px] h-auto drop-shadow-2xl transform hover:scale-105 transition-transform duration-500">
-
-                            <!-- CTA OVERLAY (Preview) -->
-                            <div class="absolute bottom-4 right-4 z-20 transition-opacity" id="add-preview-cta-wrap">
-                                <div id="add-preview-cta" class="bg-black text-white px-4 py-1.5 rounded-lg font-black text-[7px] uppercase tracking-widest shadow-xl">SHOP NOW</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <!-- Main Identity -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
-                                <div class="flex items-center justify-between mb-1 ml-1">
-                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Main Heading (Displays on Left)</label>
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" name="show_title" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
-                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                    </label>
-                                </div>
-                                <textarea name="slide_title" id="add-slide-title" placeholder="e.g. SIGNATURE ALMONDS" rows="2" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
-                            </div>
-                            <div class="col-span-2">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Linked Product (For Add to Cart)</label>
-                                <select name="product_id" id="add-product-id" onchange="onProductChange('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm bg-white">
-                                    <option value="">-- No Product Linked --</option>
-                                    <?php foreach($all_products as $p): ?>
-                                        <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Brand Pitch & Metadata -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <div class="flex items-center justify-between mb-1 ml-1">
-                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Brand Pitch (Top Green)</label>
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" name="show_badge" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
-                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                    </label>
-                                </div>
-                                <input type="text" name="badge_text" id="add-badge-text" placeholder="e.g. DRIYUM IS..." oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                            </div>
-                            <!-- <div>
-                                <div class="flex items-center justify-between mb-1 ml-1">
-                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-40">Extra Tagline (Hidden)</label>
-                                    <label class="flex items-center gap-1.5 cursor-not-allowed">
-                                        <input type="checkbox" name="show_subtitle" value="0" disabled class="w-3.5 h-3.5 rounded border-gray-200 text-gray-200">
-                                    </label>
-                                </div>
-                                <input type="text" name="slide_subtitle" placeholder="(Archived field)" disabled class="w-full border border-gray-100 bg-gray-50 rounded-lg px-3 py-2 outline-none text-gray-400 font-bold text-xs">
-                            </div> -->
-                        </div>
-
-                        <!-- Button Context (Archived/Hidden in UI) -->
-                        <div class="hidden">
-                             <input type="checkbox" name="show_cta" value="0">
-                             <input type="text" name="slide_cta_text" value="">
-                             <input type="text" name="slide_cta_link" value="">
-                        </div>
-
-                        <!-- Image & Price -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Price (₹)</label>
-                                <input type="number" step="0.01" name="price" id="add-price" value="249" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Plate Color</label>
-                                <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                                    <input type="color" name="accent_color" id="add-accent-color" value="#19DC7E" oninput="updatePreview('add')" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                                    <span class="text-[10px] font-black text-gray-400 uppercase" id="add-accent-hex">#19DC7E</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Vertical Watermarks -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Large Watermark 1</label>
-                                <input type="text" name="v_text_1" id="add-v-text-1" value="SNACKING" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-xs uppercase tracking-widest">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Large Watermark 2</label>
-                                <input type="text" name="v_text_2" id="add-v-text-2" value="REIMAGINED" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-xs uppercase tracking-widest">
-                            </div>
-                        </div>
-
-                        <!-- Image & Sort -->
-                        <div class="grid grid-cols-2 gap-4 items-end">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Slide Photo</label>
-                                <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
-                                <label for="add-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
-                                    <i class="fas fa-camera mr-2"></i> Choose File
-                                </label>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Number</label>
-                                <input type="number" name="slide_sort_order" value="0" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-center">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-[0.2em] hover:bg-black transition-all shadow-xl">Save New Slide</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- EDIT SLIDE MODAL -->
-        <div id="edit-slide-modal" class="fixed inset-0 z-[9999] flex items-start justify-center p-4  backdrop-blur-sm hidden overflow-y-auto">
-            <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden anim-up border border-gray-100">
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
-                    <h3 class="text-lg font-bold text-gray-900">Edit Slide</h3>
-                    <button onclick="document.getElementById('edit-slide-modal').classList.add('hidden')" class="text-gray-400 hover:text-black transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
-                    <input type="hidden" name="edit_slide" value="1">
-                    <input type="hidden" name="slide_id" id="edit-slide-id">
-                    <input type="hidden" name="current_image" id="edit-current-image">
-                    
-                    <!-- Live Preview: Reimagined for Split-Screen Hero -->
-                    <div class="relative h-[250px] rounded-2xl overflow-hidden bg-[#002A23] border border-gray-100 shadow-inner flex flex-row group/preview">
-                        <!-- LEFT PANEL PREVIEW -->
-                        <div class="w-[60%] h-full p-6 flex flex-col justify-center relative z-10">
-                            <span class="text-[#19DC7E] font-black uppercase tracking-[0.2em] text-[6px] mb-1 transition-opacity opacity-0" id="edit-preview-tagline-val" style="opacity: 1;">DRIYUM IS...</span>
-                            <h1 id="edit-preview-title" class="text-white font-black leading-tight text-xl uppercase tracking-tighter mb-2">HEADLINE</h1>
-                            
-                            <!-- Badges Preview -->
-                            <div class="flex items-center gap-2 mb-3">
-                                <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 flex flex-col items-center">
-                                    <span class="text-white font-black text-[10px]" id="edit-preview-price">₹249</span>
-                                    <span class="text-[5px] text-white/40 font-black uppercase tracking-widest">PRICE</span>
-                                </div>
-                                <div class="bg-white px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                    <div class="w-4 h-4 rounded-full bg-[#002A23] flex items-center justify-center text-white">
-                                        <i class="fas fa-truck-fast text-[7px]"></i>
-                                    </div>
-                                    <span class="text-[7px] font-black text-[#002A23]">FREE</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- RIGHT PANEL: ACCENT & PRODUCT -->
-                        <div class="w-[40%] h-full relative flex items-center justify-center">
-                            <!-- ACCENT BG -->
-                            <div id="edit-preview-accent" class="absolute inset-y-0 right-0 w-[85%] bg-[#19DC7E] rounded-l-[30px] transition-all duration-500"></div>
-                            
-                            <!-- V-TEXT -->
-                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-10">
-                                <span id="edit-preview-v1" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">TEXT</span>
-                                <span id="edit-preview-v2" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">HERE</span>
-                            </div>
-
-                            <!-- MAIN IMAGE -->
-                            <img id="edit-preview-bg" src="" class="relative z-10 w-full max-w-[120px] h-auto drop-shadow-2xl">
-
-                            <!-- CTA OVERLAY (Preview) -->
-                            <div class="absolute bottom-4 right-4 z-20 transition-opacity" id="edit-preview-cta-wrap">
-                                <div id="edit-preview-cta" class="bg-black text-white px-4 py-1.5 rounded-lg font-black text-[7px] uppercase tracking-widest shadow-xl">SHOP NOW</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <!-- Main Identity -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
-                                <div class="flex items-center justify-between mb-1 ml-1">
-                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Product Heading (Displays on Left)</label>
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" name="show_title" id="edit-show-title" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
-                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                    </label>
-                                </div>
-                                <textarea name="slide_title" id="edit-slide-title" placeholder="Banner text..." rows="2" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
-                            </div>
-                            <div class="col-span-2">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Linked Product (For Add to Cart)</label>
-                                <select name="product_id" id="edit-product-id" onchange="onProductChange('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm bg-white">
-                                    <option value="">-- No Product Linked --</option>
-                                    <?php foreach($all_products as $p): ?>
-                                        <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Brand Pitch & Metadata -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <div class="flex items-center justify-between mb-1 ml-1">
-                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Brand Pitch (Top Green)</label>
-                                    <label class="flex items-center gap-1.5 cursor-pointer">
-                                        <input type="checkbox" name="show_badge" id="edit-show-badge" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500 cursor-pointer">
-                                        <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                    </label>
-                                </div>
-                                <input type="text" name="badge_text" id="edit-badge-text" placeholder="e.g. DRIYUM IS..." oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                            </div>
-                            <!-- <div>
-                                <div class="flex items-center justify-between mb-1 ml-1">
-                                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-40">Extra Tagline (Hidden)</label>
-                                    <label class="flex items-center gap-1.5 cursor-not-allowed">
-                                        <input type="checkbox" name="show_subtitle" id="edit-show-subtitle" value="0" disabled class="w-3.5 h-3.5 rounded border-gray-200 text-gray-200">
-                                    </label>
-                                </div>
-                                <input type="text" name="slide_subtitle" id="edit-slide-subtitle" placeholder="(Archived)" disabled class="w-full border border-gray-100 bg-gray-50 rounded-lg px-3 py-2 outline-none text-gray-400 font-bold text-xs opacity-50">
-                            </div> -->
-                        </div>
-
-                        <!-- Button Context (Archived/Hidden in UI) -->
-                        <div class="hidden">
-                             <input type="checkbox" name="show_cta" id="edit-show-cta" value="0">
-                             <input type="text" name="slide_cta_text" id="edit-slide-cta-text" value="">
-                             <input type="text" name="slide_cta_link" id="edit-slide-cta-link" value="">
-                        </div>
-
-                        <!-- Image & Price -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Price (₹)</label>
-                                <input type="number" step="0.01" name="price" id="edit-price" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Plate Color</label>
-                                <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                                    <input type="color" name="accent_color" id="edit-accent-color" oninput="updatePreview('edit')" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                                    <span class="text-[10px] font-black text-gray-400 uppercase" id="edit-accent-hex">#19DC7E</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Vertical Watermarks -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Large Watermark 1</label>
-                                <input type="text" name="v_text_1" id="edit-v-text-1" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-xs uppercase tracking-widest">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Large Watermark 2</label>
-                                <input type="text" name="v_text_2" id="edit-v-text-2" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-xs uppercase tracking-widest">
-                            </div>
-                        </div>
-
-                        <!-- Image & Sort -->
-                        <div class="grid grid-cols-2 gap-4 items-end">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Swap Photo (Optional)</label>
-                                <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
-                                <label for="edit-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
-                                    <i class="fas fa-camera mr-2"></i> Update Image
-                                </label>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Number</label>
-                                <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-center">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-black text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-green-500 transition-all shadow-xl">Save Changes</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- ADD/EDIT BADGE MODAL -->
-        <div id="badge-modal" class="bg-gray-500/20 fixed inset-0 z-[10000] max-h-[80vh] flex items-start justify-center p-4 backdrop-blur-md hidden overflow-y-auto">
-            <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden anim-up border border-gray-100">
-                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white">
-                    <h3 class="text-lg font-bold text-gray-900" id="badge-modal-title">Add Trust Badge</h3>
-                    <button onclick="closeBadgeModal()" class="text-gray-400 hover:text-black transition-colors">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-
-                <form method="POST" class="p-6 space-y-5">
-                    <input type="hidden" name="badge_id" id="modal-badge-id">
-                    <input type="hidden" name="add_badge" id="modal-badge-action-add" value="1">
-                    <input type="hidden" name="edit_badge" id="modal-badge-action-edit" value="1" disabled>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Badge Title (e.g. 100% Organic)</label>
-                            <input type="text" name="badge_title" id="modal-badge-title" placeholder="Main Highlight" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm" required>
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Subtitle (e.g. Kashmiri Harvest)</label>
-                            <input type="text" name="badge_subtitle" id="modal-badge-subtitle" placeholder="Secondary Info" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Icon Class (FA)</label>
-                            <input type="text" name="badge_icon" id="modal-badge-icon" placeholder="fas fa-leaf" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Order</label>
-                            <input type="number" name="sort_order" id="modal-badge-sort" value="0" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm text-center">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Card Color</label>
-                            <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                                <input type="color" name="badge_bg_color" id="modal-badge-bg" value="#FFFEDC" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                                <span class="text-[10px] font-black text-gray-400 uppercase" id="badge-bg-hex">#FFFEDC</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Icon Color</label>
-                            <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                                <input type="color" name="badge_icon_color" id="modal-badge-icon-color" value="#19DC7E" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                                <span class="text-[10px] font-black text-gray-400 uppercase" id="badge-icon-hex">#19DC7E</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 flex gap-3">
-                        <button type="button" onclick="closeBadgeModal()" class="flex-1 px-6 py-3 rounded-xl border border-gray-200 font-black text-[10px] uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition-all">Cancel</button>
-                        <button type="submit" id="badge-modal-submit" class="flex-1 px-6 py-3 rounded-xl bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">Save Badge</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <script>
-        function openEditBadge(badge) {
-            document.getElementById('badge-modal-title').innerText = 'Edit Trust Badge';
-            document.getElementById('modal-badge-id').value = badge.id;
-            document.getElementById('modal-badge-title').value = badge.title;
-            document.getElementById('modal-badge-subtitle').value = badge.subtitle;
-            document.getElementById('modal-badge-icon').value = badge.icon;
-            
-            // Clean legacy formatting if present
-            const bgHex = badge.bg_color.includes('[') ? badge.bg_color.match(/#([a-fA-F0-9]{6})/)[0] : badge.bg_color;
-            const icHex = badge.icon_color.includes('[') ? badge.icon_color.match(/#([a-fA-F0-9]{6})/)[0] : badge.icon_color;
-            
-            document.getElementById('modal-badge-bg').value = bgHex;
-            document.getElementById('badge-bg-hex').innerText = bgHex.toUpperCase();
-            document.getElementById('modal-badge-icon-color').value = icHex;
-            document.getElementById('badge-icon-hex').innerText = icHex.toUpperCase();
-            
-            document.getElementById('modal-badge-sort').value = badge.sort_order;
-            
-            document.getElementById('modal-badge-action-add').disabled = true;
-            document.getElementById('modal-badge-action-edit').disabled = false;
-            
-            document.getElementById('badge-modal').classList.remove('hidden');
-        }
-
-        function closeBadgeModal() {
-            document.getElementById('badge-modal').classList.add('hidden');
-            // Reset for Add
-            document.getElementById('badge-modal-title').innerText = 'Add Trust Badge';
-            document.getElementById('modal-badge-action-add').disabled = false;
-            document.getElementById('modal-badge-action-edit').disabled = true;
-            document.getElementById('modal-badge-id').value = '';
-        }
-
-        // Keep modal trigger consistent
-        document.querySelector('[onclick*="add-badge-modal"]').setAttribute('onclick', "document.getElementById('badge-modal').classList.remove('hidden')");
-
-        // Sync Hex labels
-        document.getElementById('modal-badge-bg').oninput = function() { document.getElementById('badge-bg-hex').innerText = this.value.toUpperCase(); };
-        document.getElementById('modal-badge-icon-color').oninput = function() { document.getElementById('badge-icon-hex').innerText = this.value.toUpperCase(); };
-        
-        const allProducts = <?php echo json_encode($all_products); ?>;
-
-        function onProductChange(type) {
-            const prefix = type === 'add' ? 'add' : 'edit';
-            const select = document.getElementById(prefix + '-product-id');
-            const titleInput = type === 'add' ? document.querySelector('#add-slide-modal [name="slide_title"]') : document.getElementById('edit-slide-title');
-            const priceInput = document.getElementById(prefix + '-price');
-            
-            const productId = select.value;
-            if(!productId) return;
-
-            const product = allProducts.find(p => p.id == productId);
-            if(product) {
-                // Auto-fill Title if empty or very short
-                if(!titleInput.value || titleInput.value.length < 3) {
-                    titleInput.value = product.name.toUpperCase();
-                }
-                // Auto-fill Price
-                priceInput.value = product.price;
-                
-                updatePreview(type);
-            }
-        }
-
-        function updatePreview(type) {
-            const container = type === 'add' ? document.getElementById('add-slide-modal') : document.getElementById('edit-slide-modal');
-            const prefix = type === 'add' ? 'add' : 'edit';
-            
-            const badge = container.querySelector('[name="badge_text"]').value;
-            const title = container.querySelector('[name="slide_title"]').value;
-            const price = container.querySelector('[name="price"]').value;
-            const accent = container.querySelector('[name="accent_color"]').value;
-            const v1 = container.querySelector('[name="v_text_1"]').value;
-            const v2 = container.querySelector('[name="v_text_2"]').value;
-            
-            const showBadge = container.querySelector('[name="show_badge"]').checked;
-            const showTitle = container.querySelector('[name="show_title"]').checked;
-            const showCta = container.querySelector('[name="show_cta"]') ? container.querySelector('[name="show_cta"]').checked : false;
-            
-            const taglineEl = document.getElementById(prefix + '-preview-tagline-val');
-            if(taglineEl) {
-                taglineEl.innerText = badge || 'DRIYUM IS...';
-                taglineEl.style.opacity = showBadge ? '1' : '0.1';
-            }
-            
-            if(document.getElementById(prefix + '-preview-title'))
-                document.getElementById(prefix + '-preview-title').innerHTML = (title || 'YOUR HEADLINE').replace(/\n/g, '<br>');
-            
-            if(document.getElementById(prefix + '-preview-price'))
-                document.getElementById(prefix + '-preview-price').innerText = '₹' + (price || '249');
-
-            if(document.getElementById(prefix + '-preview-accent'))
-                document.getElementById(prefix + '-preview-accent').style.backgroundColor = accent;
-            
-            if(document.getElementById(prefix + '-preview-v1'))
-                document.getElementById(prefix + '-preview-v1').innerText = v1 || 'SNACKING';
-            
-            if(document.getElementById(prefix + '-preview-v2'))
-                document.getElementById(prefix + '-preview-v2').innerText = v2 || 'REIMAGINED';
-
-            const hex = document.getElementById(prefix + '-accent-hex');
-            if(hex) hex.innerText = accent.toUpperCase();
-            
-            if(document.getElementById(prefix + '-preview-title'))
-                 document.getElementById(prefix + '-preview-title').style.opacity = showTitle ? '1' : '0.1';
-            
-            if(document.getElementById(prefix + '-preview-cta-wrap'))
-                 document.getElementById(prefix + '-preview-cta-wrap').style.opacity = showCta ? '1' : '0';
-        }
-
-        function previewSlideFile(input, type) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(type + '-preview-bg').src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function openEditSlide(slide) {
-            document.getElementById('edit-slide-id').value = slide.id;
-            document.getElementById('edit-current-image').value = slide.image;
-            document.getElementById('edit-badge-text').value = slide.badge_text || '';
-            document.getElementById('edit-slide-title').value = slide.title || '';
-            document.getElementById('edit-price').value = slide.price || 0;
-            document.getElementById('edit-accent-color').value = slide.accent_color || '#19DC7E';
-            document.getElementById('edit-v-text-1').value = slide.v_text_1 || 'SNACKING';
-            document.getElementById('edit-v-text-2').value = slide.v_text_2 || 'REIMAGINED';
-            document.getElementById('edit-product-id').value = slide.product_id || '';
-            document.getElementById('edit-slide-sort').value = slide.sort_order;
-
-            document.getElementById('edit-preview-bg').src = '../' + slide.image;
-            
-            document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
-            document.getElementById('edit-show-title').checked = slide.show_title == 1;
-            
-            updatePreview('edit');
-            document.getElementById('edit-slide-modal').classList.remove('hidden');
-        }
-        </script>
 
         <!-- TWO COLUMN GRID FOR SMALLER SECTIONS -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1212,63 +684,457 @@ $show_stats = get_setting('show_hero_stats', 'on');
     </div>
 </div>
 
+
+<!-- MODALS SECTION -->
+<div id="add-slide-modal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="hideModal('add-slide-modal')"></div>
+    <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden anim-up border border-gray-100 relative z-10 max-h-[90vh] flex flex-col">
+        <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+            <div>
+                <h3 class="text-xl font-black text-gray-900 font-heading">Add New Slide</h3>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Configure your hero masterpiece</p>
+            </div>
+            <button onclick="hideModal('add-slide-modal')" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="overflow-y-auto custom-scrollbar flex-1">
+            <form method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
+                <input type="hidden" name="add_slide" value="1">
+                <div class="relative h-[250px] rounded-2xl overflow-hidden bg-[#002A23] border border-gray-100 shadow-inner flex flex-row group/preview">
+                    <div class="w-[60%] h-full p-6 flex flex-col justify-center relative z-10">
+                        <span class="text-[#19DC7E] font-black uppercase tracking-[0.2em] text-[6px] mb-1 transition-opacity opacity-0" id="add-preview-tagline-val" style="opacity: 1;">DRIYUM IS...</span>
+                        <h1 id="add-preview-title" class="text-white font-black leading-tight text-xl uppercase tracking-tighter mb-2">YOUR<br>HEADLINE</h1>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 flex flex-col items-center">
+                                <span class="text-white font-black text-[10px]" id="add-preview-price">₹249</span>
+                                <span class="text-[5px] text-white/40 font-black uppercase tracking-widest">PRICE</span>
+                            </div>
+                            <div class="bg-white px-3 py-1.5 rounded-lg flex items-center gap-2">
+                                <div class="w-4 h-4 rounded-full bg-[#002A23] flex items-center justify-center text-white">
+                                    <i class="fas fa-truck-fast text-[7px]"></i>
+                                </div>
+                                <span class="text-[7px] font-black text-[#002A23]">FREE</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-[40%] h-full relative flex items-center justify-center">
+                        <div id="add-preview-accent" class="absolute inset-y-0 right-0 w-[85%] bg-[#19DC7E] rounded-l-[30px] transition-all duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-10">
+                            <span id="add-preview-v1" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">SNACKING</span>
+                            <span id="add-preview-v2" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">DRIYUM</span>
+                        </div>
+                        <img id="add-preview-bg" src="../assets/images/hero.jpg" class="relative z-10 w-full max-w-[120px] h-auto drop-shadow-2xl transition-transform duration-500">
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <div class="flex items-center justify-between mb-1 ml-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Main Heading</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_title" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                </label>
+                            </div>
+                            <textarea name="slide_title" id="add-slide-title" placeholder="e.g. SIGNATURE ALMONDS" rows="2" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Linked Product</label>
+                            <select name="product_id" id="add-product-id" onchange="onProductChange('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm bg-white">
+                                <option value="">-- No Product Linked --</option>
+                                <?php foreach($all_products as $p): ?>
+                                    <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-1 ml-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Brand Pitch</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_badge" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                </label>
+                            </div>
+                            <input type="text" name="badge_text" id="add-badge-text" placeholder="e.g. DRIYUM IS..." oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Price (₹)</label>
+                            <input type="number" step="0.01" name="price" id="add-price" value="249" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Color</label>
+                            <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
+                                <input type="color" name="accent_color" id="add-accent-color" value="#19DC7E" oninput="updatePreview('add')" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
+                                <span class="text-[10px] font-black text-gray-400 uppercase" id="add-accent-hex">#19DC7E</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Slide Photo</label>
+                            <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
+                            <label for="add-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
+                                <i class="fas fa-camera mr-2"></i> Choose File
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-[#24B25D] text-black py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-black hover:text-white transition-all shadow-xl active:scale-95">
+                       <i class="fas fa-save mr-2"></i> Deploy New Slide
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="edit-slide-modal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="hideModal('edit-slide-modal')"></div>
+    <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden anim-up border border-gray-100 relative z-10 max-h-[90vh] flex flex-col">
+        <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+            <div>
+                <h3 class="text-xl font-black text-gray-900 font-heading">Edit Slide</h3>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Refining the experience</p>
+            </div>
+            <button onclick="hideModal('edit-slide-modal')" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="overflow-y-auto custom-scrollbar flex-1">
+            <form method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
+                <input type="hidden" name="edit_slide" value="1">
+                <input type="hidden" name="slide_id" id="edit-slide-id">
+                <input type="hidden" name="current_image" id="edit-current-image">
+                <div class="relative h-[250px] rounded-2xl overflow-hidden bg-[#002A23] border border-gray-100 shadow-inner flex flex-row group/preview">
+                    <div class="w-[60%] h-full p-6 flex flex-col justify-center relative z-10">
+                        <span class="text-[#19DC7E] font-black uppercase tracking-[0.2em] text-[6px] mb-1 transition-opacity opacity-0" id="edit-preview-tagline-val" style="opacity: 1;">DRIYUM IS...</span>
+                        <h1 id="edit-preview-title" class="text-white font-black leading-tight text-xl uppercase tracking-tighter mb-2">HEADLINE</h1>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 flex flex-col items-center">
+                                <span class="text-white font-black text-[10px]" id="edit-preview-price">₹249</span>
+                                <span class="text-[5px] text-white/40 font-black uppercase tracking-widest">PRICE</span>
+                            </div>
+                            <div class="bg-white px-3 py-1.5 rounded-lg flex items-center gap-2">
+                                <div class="w-4 h-4 rounded-full bg-[#002A23] flex items-center justify-center text-white">
+                                    <i class="fas fa-truck-fast text-[7px]"></i>
+                                </div>
+                                <span class="text-[7px] font-black text-[#002A23]">FREE</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-[40%] h-full relative flex items-center justify-center">
+                        <div id="edit-preview-accent" class="absolute inset-y-0 right-0 w-[85%] bg-[#19DC7E] rounded-l-[30px] transition-all duration-500"></div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-10">
+                            <span id="edit-preview-v1" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">TEXT</span>
+                            <span id="edit-preview-v2" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">HERE</span>
+                        </div>
+                        <img id="edit-preview-bg" src="" class="relative z-10 w-full max-w-[120px] h-auto drop-shadow-2xl">
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <div class="flex items-center justify-between mb-1 ml-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Product Heading</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_title" id="edit-show-title" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                </label>
+                            </div>
+                            <textarea name="slide_title" id="edit-slide-title" placeholder="Banner text..." rows="2" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Linked Product</label>
+                            <select name="product_id" id="edit-product-id" onchange="onProductChange('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm bg-white">
+                                <option value="">-- No Product Linked --</option>
+                                <?php foreach($all_products as $p): ?>
+                                    <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-1 ml-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Brand Pitch</label>
+                                <label class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="checkbox" name="show_badge" id="edit-show-badge" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
+                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
+                                </label>
+                            </div>
+                            <input type="text" name="badge_text" id="edit-badge-text" placeholder="e.g. DRIYUM IS..." oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Price (₹)</label>
+                            <input type="number" step="0.01" name="price" id="edit-price" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Plate Color</label>
+                            <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
+                                <input type="color" name="accent_color" id="edit-accent-color" oninput="updatePreview('edit')" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
+                                <span class="text-[10px] font-black text-gray-400 uppercase" id="edit-accent-hex">#19DC7E</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Swap Photo</label>
+                            <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
+                            <label for="edit-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
+                                <i class="fas fa-camera mr-2"></i> Update Image
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-[#24B25D] hover:text-black transition-all shadow-xl active:scale-95">
+                        <i class="fas fa-check-circle mr-2"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="badge-modal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeBadgeModal()"></div>
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.25)] overflow-hidden anim-up border border-gray-100 relative z-10">
+        <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+            <div>
+                <h3 class="text-xl font-black text-gray-900 font-heading" id="badge-modal-title">Add Trust Badge</h3>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Enhance site credibility</p>
+            </div>
+            <button onclick="closeBadgeModal()" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all shadow-sm">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form method="POST" class="p-10 space-y-6">
+            <input type="hidden" name="badge_id" id="modal-badge-id">
+            <input type="hidden" name="add_badge" id="modal-badge-action-add" value="1">
+            <input type="hidden" name="edit_badge" id="modal-badge-action-edit" value="1" disabled>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Badge Title</label>
+                    <input type="text" name="badge_title" id="modal-badge-title" placeholder="Main Highlight" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm" required>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Subtitle</label>
+                    <input type="text" name="badge_subtitle" id="modal-badge-subtitle" placeholder="Secondary Info" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Icon Class (FA)</label>
+                    <input type="text" name="badge_icon" id="modal-badge-icon" placeholder="fas fa-leaf" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm" required>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Order</label>
+                    <input type="number" name="sort_order" id="modal-badge-sort" value="0" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm text-center">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Card Color</label>
+                    <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
+                        <input type="color" name="badge_bg_color" id="modal-badge-bg" value="#FFFEDC" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
+                        <span class="text-[10px] font-black text-gray-400 uppercase" id="badge-bg-hex">#FFFEDC</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Icon Color</label>
+                    <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
+                        <input type="color" name="badge_icon_color" id="modal-badge-icon-color" value="#19DC7E" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
+                        <span class="text-[10px] font-black text-gray-400 uppercase" id="badge-icon-hex">#19DC7E</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-6 flex gap-4">
+                <button type="button" onclick="closeBadgeModal()" class="flex-1 px-6 py-4 rounded-2xl border border-gray-100 font-black text-[10px] uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition-all shadow-sm">Cancel</button>
+                <button type="submit" id="badge-modal-submit" class="flex-1 px-6 py-4 rounded-2xl bg-black text-white font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl transition-all active:scale-95">Save Badge</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <style>
     @keyframes slideIn {
         from { transform: translateY(-20px); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
     }
+    .anim-up { animation: slideIn 0.4s ease-out forwards; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
 </style>
 
 <script>
-// --- LIVE TEXT PREVIEW ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Hero Text
-    const heroHeadIn = document.getElementById('hero-head-input');
-    const heroSubIn = document.querySelector('input[name="hero_subheading"]');
-    const heroHeadPre = document.getElementById('hero-head-preview');
-    const heroSubPre = document.getElementById('hero-sub-preview');
+// --- MODAL CORE ---
+function showModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+}
 
-    if(heroHeadIn) heroHeadIn.oninput = (e) => heroHeadPre.innerHTML = e.target.value.replace(/\n/g, '<br>');
-    if(heroSubIn) heroSubIn.oninput = (e) => heroSubPre.innerText = e.target.value;
+function hideModal(id) {
+    document.getElementById(id).classList.add('hidden');
+    if(!document.querySelector('.fixed:not(.hidden)')) {
+        document.body.classList.remove('overflow-hidden');
+    }
+}
 
-    // Video Section Text
-    const vidHeadIn = document.querySelector('textarea[name="heading"]');
-    const vidHeadPre = document.getElementById('vid-head-preview');
+// --- TRUST BADGE LOGIC ---
+function openEditBadge(badge) {
+    document.getElementById('badge-modal-title').innerText = 'Edit Trust Badge';
+    document.getElementById('modal-badge-id').value = badge.id;
+    document.getElementById('modal-badge-title').value = badge.title;
+    document.getElementById('modal-badge-subtitle').value = badge.subtitle;
+    document.getElementById('modal-badge-icon').value = badge.icon;
+    const bgHex = badge.bg_color.includes('[') ? badge.bg_color.match(/#([a-fA-F0-9]{6})/)[0] : badge.bg_color;
+    const icHex = badge.icon_color.includes('[') ? badge.icon_color.match(/#([a-fA-F0-9]{6})/)[0] : badge.icon_color;
+    document.getElementById('modal-badge-bg').value = bgHex;
+    document.getElementById('badge-bg-hex').innerText = bgHex.toUpperCase();
+    document.getElementById('modal-badge-icon-color').value = icHex;
+    document.getElementById('badge-icon-hex').innerText = icHex.toUpperCase();
+    document.getElementById('modal-badge-sort').value = badge.sort_order;
+    document.getElementById('modal-badge-action-add').disabled = true;
+    document.getElementById('modal-badge-action-edit').disabled = false;
+    showModal('badge-modal');
+}
 
-    if(vidHeadIn) vidHeadIn.oninput = (e) => vidHeadPre.innerHTML = e.target.value.replace(/\n/g, '<br>');
-});
+function closeBadgeModal() {
+    hideModal('badge-modal');
+    setTimeout(() => {
+        document.getElementById('badge-modal-title').innerText = 'Add Trust Badge';
+        document.getElementById('modal-badge-action-add').disabled = false;
+        document.getElementById('modal-badge-action-edit').disabled = true;
+        document.getElementById('modal-badge-id').value = '';
+    }, 300);
+}
 
-// --- ENHANCED MEDIA PREVIEW (Image & Video) ---
+// Sync Hex labels
+if(document.getElementById('modal-badge-bg')) {
+    document.getElementById('modal-badge-bg').oninput = function() { document.getElementById('badge-bg-hex').innerText = this.value.toUpperCase(); };
+}
+if(document.getElementById('modal-badge-icon-color')) {
+    document.getElementById('modal-badge-icon-color').oninput = function() { document.getElementById('badge-icon-hex').innerText = this.value.toUpperCase(); };
+}
+
+// --- HERO SLIDE LOGIC ---
+const allProducts = <?php echo json_encode($all_products); ?>;
+
+function onProductChange(type) {
+    const prefix = type === 'add' ? 'add' : 'edit';
+    const select = document.getElementById(prefix + '-product-id');
+    const titleInput = type === 'add' ? document.getElementById('add-slide-title') : document.getElementById('edit-slide-title');
+    const priceInput = document.getElementById(prefix + '-price');
+    const productId = select.value;
+    if(!productId) return;
+    const product = allProducts.find(p => p.id == productId);
+    if(product) {
+        if(!titleInput.value || titleInput.value.length < 3) titleInput.value = product.name.toUpperCase();
+        priceInput.value = product.price;
+        updatePreview(type);
+    }
+}
+
+function updatePreview(type) {
+    const container = type === 'add' ? document.getElementById('add-slide-modal') : document.getElementById('edit-slide-modal');
+    const prefix = type === 'add' ? 'add' : 'edit';
+    const badge = container.querySelector('[name="badge_text"]').value;
+    const title = container.querySelector('[name="slide_title"]').value;
+    const price = container.querySelector('[name="price"]').value;
+    const accent = container.querySelector('[name="accent_color"]').value;
+    const showBadge = container.querySelector('[name="show_badge"]').checked;
+    const showTitle = container.querySelector('[name="show_title"]').checked;
+    
+    const taglineEl = document.getElementById(prefix + '-preview-tagline-val');
+    if(taglineEl) {
+        taglineEl.innerText = badge || 'DRIYUM IS...';
+        taglineEl.style.opacity = showBadge ? '1' : '0.1';
+    }
+    if(document.getElementById(prefix + '-preview-title'))
+        document.getElementById(prefix + '-preview-title').innerHTML = (title || 'YOUR HEADLINE').replace(/\n/g, '<br>');
+    if(document.getElementById(prefix + '-preview-price'))
+        document.getElementById(prefix + '-preview-price').innerText = '₹' + (price || '249');
+    if(document.getElementById(prefix + '-preview-accent'))
+        document.getElementById(prefix + '-preview-accent').style.backgroundColor = accent;
+    const hex = document.getElementById(prefix + '-accent-hex');
+    if(hex) hex.innerText = accent.toUpperCase();
+    if(document.getElementById(prefix + '-preview-title'))
+         document.getElementById(prefix + '-preview-title').style.opacity = showTitle ? '1' : '0.1';
+}
+
+function previewSlideFile(input, type) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) { document.getElementById(type + '-preview-bg').src = e.target.result; }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function openEditSlide(slide) {
+    document.getElementById('edit-slide-id').value = slide.id;
+    document.getElementById('edit-current-image').value = slide.image;
+    document.getElementById('edit-badge-text').value = slide.badge_text || '';
+    document.getElementById('edit-slide-title').value = slide.title || '';
+    document.getElementById('edit-price').value = slide.price || 0;
+    document.getElementById('edit-accent-color').value = slide.accent_color || '#19DC7E';
+    document.getElementById('edit-product-id').value = slide.product_id || '';
+    document.getElementById('edit-preview-bg').src = '../' + slide.image;
+    document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
+    document.getElementById('edit-show-title').checked = slide.show_title == 1;
+    updatePreview('edit');
+    showModal('edit-slide-modal');
+}
+
+// --- MEDIA PREVIEW (Video Section) ---
 function previewMedia(input, previewId) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
         const preview = document.getElementById(previewId);
-        const reader = new FileReader();
-
-        // Handle Video Selection
         if (file.type.startsWith('video/')) {
             const videoPreview = document.getElementById('vid-file-preview');
             if (videoPreview) {
                 videoPreview.src = URL.createObjectURL(file);
                 videoPreview.classList.remove('hidden');
-                // Optional: Hide the thumbnail image when video is selected
-                if(preview && preview.tagName === 'IMG') preview.style.opacity = '0.3';
+                document.getElementById('vid-cover-preview').style.opacity = '0.3';
             }
-            return;
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.setAttribute('src', e.target.result);
+                preview.style.opacity = '1';
+                const videoPreview = document.getElementById('vid-file-preview');
+                if (videoPreview) videoPreview.classList.add('hidden');
+            }
+            reader.readAsDataURL(file);
         }
-
-        // Handle Image Selection
-        reader.onload = function(e) {
-            preview.setAttribute('src', e.target.result);
-            preview.style.opacity = '0.6'; // Keep overlay readable
-            
-            // If it was a video preview being replaced, hide video
-            const videoPreview = document.getElementById('vid-file-preview');
-            if (videoPreview) videoPreview.classList.add('hidden');
-        }
-        reader.readAsDataURL(file);
     }
 }
+
+// --- LIVE TEXT PREVIEW ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Standardize modal triggers
+    const triggers = [
+        { sel: '[onclick*="add-badge-modal"]', id: 'badge-modal' },
+        { sel: '[onclick*="add-slide-modal"]', id: 'add-slide-modal' }
+    ];
+    triggers.forEach(t => {
+        const el = document.querySelector(t.sel);
+        if(el) el.setAttribute('onclick', `showModal('${t.id}')`);
+    });
+
+    const heroHeadIn = document.getElementById('hero-head-input');
+    const heroHeadPre = document.getElementById('hero-head-preview');
+    if(heroHeadIn) heroHeadIn.oninput = (e) => heroHeadPre.innerHTML = e.target.value.replace(/\n/g, '<br>');
+    const vidHeadIn = document.querySelector('textarea[name="heading"]');
+    const vidHeadPre = document.getElementById('vid-head-preview');
+    if(vidHeadIn) vidHeadIn.oninput = (e) => vidHeadPre.innerHTML = e.target.value.replace(/\n/g, '<br>');
+});
 </script>
 
 </body>
