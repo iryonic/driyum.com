@@ -340,3 +340,35 @@
 ----------------------------------------
 [2026-02-12 16:37:45] To: admin@driyum.com | Subject: Driyum Order Confirmed! #ORD-698DB481DC131
 ----------------------------------------
+[2026-02-13 10:05:41] To: drop.mail.iry@gmail.com | Subject: Your Driyum snacks are waiting! 🍎
+----------------------------------------
+[2026-02-13 10:08:40] To: drop.mail.iry@gmail.com | Subject: Order #ORD-696B2AB8D0085 Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:08:48] To: drop.mail.iry@gmail.com | Subject: Order #ORD-696B2B8364365 Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:08:53] To: drop.mail.iry@gmail.com | Subject: Order #ORD-696BA2A2345E2 Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:11:20] To: drop.mail.iry@gmail.com | Subject: Order #ORD-696BA431DFDFA Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:11:26] To: drop.mail.iry@gmail.com | Subject: Order #ORD-696DF621C44E6 Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:11:31] To: drop.mail.iry@gmail.com | Subject: Order #ORD-696E06D28F1C5 Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:11:52] To: drop.mail.iry@gmail.com | Subject: Order #ORD-69711BF09CC2F Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:11:56] To: drop.mail.iry@gmail.com | Subject: Order #ORD-697121A9A4E4A Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:12:00] To: drop.mail.iry@gmail.com | Subject: Order #ORD-6971FEB00D7F6 Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:34:33] To: drop.mail.iry@gmail.com | Subject: Order #ORD-6972214827268 Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:34:37] To: drop.mail.iry@gmail.com | Subject: Order #ORD-6972466368CEF Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:34:42] To: drop.mail.iry@gmail.com | Subject: Order #ORD-69735E6875CBB Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:34:56] To: bfuzail606@gmail.com | Subject: Order #ORD-6974C93E7904D Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:35:01] To: admin@driyum.com | Subject: Order #ORD-698B607EDB5DE Status Update: SHIPPED
+----------------------------------------
+[2026-02-13 10:35:06] To: admin@driyum.com | Subject: Order #ORD-698B617CD7AC5 Status Update: SHIPPED
+----------------------------------------

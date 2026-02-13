@@ -150,6 +150,15 @@ $address = json_decode($order['shipping_address'], true);
                     <span>Shipping:</span>
                     <span>₹<?php echo number_format($order['shipping_cost'], 2); ?></span>
                 </div>
+                <?php 
+                $tax = $order['total'] - ($order['subtotal'] - $order['discount'] + $order['shipping_cost']);
+                if ($tax > 0): 
+                ?>
+                <div class="total-row">
+                    <span>Processing Tax:</span>
+                    <span>₹<?php echo number_format($tax, 2); ?></span>
+                </div>
+                <?php endif; ?>
                 <div class="total-row grand-total">
                     <span>Total:</span>
                     <span>₹<?php echo number_format($order['total'], 2); ?></span>

@@ -425,7 +425,7 @@ window.loadCartItems = async function (isUpdate = false) {
                         <div class="flex-1 min-w-0 pr-6">
                             <a href="${BASE_URL}product/${item.id}" class="block">
                                 <h4 class="font-black text-gray-900 truncate font-heading text-lg mb-0.5 leading-tight group-hover:text-[#24B25D] transition-colors">${item.name}</h4>
-                                <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-3">500g Pack</p>
+                                <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-3">${item.weight ? (parseFloat(item.weight) < 10 ? (parseFloat(item.weight) * 1000) + 'G' : item.weight) : 'Premium Pack'}</p>
                             </a>
                             
                             <div class="flex items-center justify-between">

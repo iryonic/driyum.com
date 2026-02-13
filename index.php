@@ -83,7 +83,7 @@ $wishlist_json = json_encode($wishlist_ids);
         .snap-center { scroll-snap-align: center; }
 
         .briry{
-           border-radius: 40% 10px 40% 10px;
+           border-radius: 20% 10px 20% 10px;
         }
        /* @media (max-width: 1024px) {
         .briry{

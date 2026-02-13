@@ -117,7 +117,7 @@ if (isset($_SESSION['coupon'])) {
                         <!-- Details -->
                         <div class="flex-1 text-center sm:text-left">
                             <a href="<?php echo product_url($p['slug']); ?>" class="font-bold text-xl font-heading text-gray-900 hover:text-[#24B25D] transition"><?php echo $p['name']; ?></a>
-                            <p class="text-gray-500 text-sm font-sans mb-2"><?php echo $p['weight']; ?></p>
+                            <p class="text-gray-500 text-sm font-sans mb-2"><?php echo (is_numeric($p['weight']) && $p['weight'] < 10) ? ($p['weight'] * 1000) . 'G' : $p['weight']; ?></p>
                             <div class="text-gray-400 font-bold text-sm">Unit: ₹<?php echo $p['price']; ?></div>
                         </div>
 

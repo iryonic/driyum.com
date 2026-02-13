@@ -253,6 +253,15 @@ if ($query) {
                                 <span class="text-gray-500">Shipping</span>
                                 <span><?php echo $order['shipping_cost'] == 0 ? 'FREE' : '₹' . $order['shipping_cost']; ?></span>
                             </div>
+                            <?php 
+                            $tax = $order['total'] - ($order['subtotal'] - $order['discount'] + $order['shipping_cost']);
+                            if ($tax > 0): 
+                            ?>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Processing Tax</span>
+                                <span>₹<?php echo number_format($tax, 2); ?></span>
+                            </div>
+                            <?php endif; ?>
                             <div class="flex justify-between pt-4 border-t border-white/10 text-xl font-heading font-black">
                                 <span class="text-gray-400">Total</span>
                                 <span class="text-[#24B25D]">₹<?php echo $order['total']; ?></span>

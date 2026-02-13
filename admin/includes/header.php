@@ -128,6 +128,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .anim-up { animation: slideIn 0.3s ease-out forwards; }
     </style>
     <script>
         const BASE_URL = "<?php echo get_url(''); ?>";
@@ -259,9 +264,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </aside>
 
     <main class="admin-content">
+        <!-- Global Toast Container -->
+        <div id="toast-container" class="fixed top-24 right-8 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
+
         <!-- Flash Messages -->
         <?php if (isset($_SESSION['success'])): ?>
-            <div id="flash-success" class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl font-bold flex items-center justify-between anim-up shadow-sm">
+            <div id="flash-success" class="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl font-bold flex items-center justify-between anim-up shadow-sm flash-msg">
                 <div class="flex items-center gap-3">
                     <i class="fas fa-check-circle"></i>
                     <span class="text-xs"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></span>
@@ -271,7 +279,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['error'])): ?>
-            <div id="flash-error" class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl font-bold flex items-center justify-between anim-up shadow-sm">
+            <div id="flash-error" class="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl font-bold flex items-center justify-between anim-up shadow-sm flash-msg">
                 <div class="flex items-center gap-3">
                     <i class="fas fa-exclamation-circle"></i>
                     <span class="text-xs"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></span>
@@ -488,6 +496,40 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if (!document.getElementById('notif-dropdown').contains(e.target)) document.getElementById('notif-dropdown-content').classList.add('hidden');
             if (!document.getElementById('user-menu-dropdown').contains(e.target)) document.getElementById('user-menu-content').classList.add('hidden');
         });
+
+        // Toast & Auto-hide Logic
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-2xl shadow-xl border flex items-center gap-3 anim-up pointer-events-auto min-w-[300px] ${type === 'success' ? 'bg-black text-white border-white/10' : 'bg-red-50 text-red-600 border-red-100'}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle text-[#24B25D]' : 'fa-exclamation-circle'}"></i>
+                <span class="text-[11px] font-bold">${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => toast.remove(), 500);
+            }, 5000);
+        }
+
+        // Auto-hide existing flash messages
+        document.querySelectorAll('.flash-msg').forEach(msg => {
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateY(-20px)';
+                setTimeout(() => msg.remove(), 500);
+            }, 6000);
+        });
+
+        // Background Queue Trigger
+        setTimeout(() => {
+            fetch('<?php echo get_url('process_queue.php'); ?>')
+                .then(r => r.json())
+                .then(data => {
+                    if(data.processed > 0) console.log(`Background queue processed ${data.processed} items.`);
+                }).catch(e => {});
+        }, 2000);
         </script>
 
 

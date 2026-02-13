@@ -73,8 +73,8 @@ if ((isset($_GET['status']) || isset($_POST['ajax_action'])) && isset($_REQUEST[
         $notes = "Order status updated to $status by admin via " . (isset($_POST['ajax_action']) ? 'AJAX' : 'Direct Link');
         execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)", [$id, $status, $notes]);
         
-        // Send email notification to customer (Immediate, not queued)
-        send_order_status_email($id, $status, false); 
+        // Send email notification to customer (queued for speed)
+        send_order_status_email($id, $status, true); 
         
         if (isset($_POST['ajax_action'])) {
             header('Content-Type: application/json');

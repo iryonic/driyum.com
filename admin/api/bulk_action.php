@@ -77,32 +77,49 @@ try {
         }
         $conn->query("INSERT INTO order_status_history (order_id, status, notes) VALUES " . implode(',', $history_values));
 
-        // Prepare response
+        // Respond to client as fast as possible
         $response = json_encode(['success' => true, 'count' => count($ids)]);
         
-        // Respond to client as fast as possible
-        ob_clean();
-        header('Content-Type: application/json');
-        
-        if (function_exists('fastcgi_finish_request')) {
-            echo $response;
-            fastcgi_finish_request();
-        } else {
-            // Fallback for non-FPM environments (like some Apache setups)
-            // Note: This isn't always reliable but better than nothing
-            ignore_user_abort(true);
-            set_time_limit(300);
-            
-            echo $response;
-            header('Connection: close');
-            header('Content-Length: ' . ob_get_length());
-            ob_end_flush();
-            flush();
+        // Critical: Release session lock so the browser can reload immediately
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
         }
 
-        // Now process emails after the user sees "Success"
-        foreach ($ids as $id) {
-            send_order_status_email($id, $status, true); // true = add to queue
+        // Fast response headers
+        header('Content-Type: application/json');
+        header('Content-Length: ' . strlen($response));
+        header('Connection: close');
+        echo $response;
+        
+        // Flush output to browser
+        if (ob_get_level()) ob_end_flush();
+        flush();
+        
+        // Background-style processing starts here
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } else {
+            ignore_user_abort(true);
+            set_time_limit(600);
+        }
+
+        // Now process emails
+        if ($status !== 'delivered') {
+            // Optimization: Fetch only needed data for simple statuses in one query
+            $results = fetch_all("SELECT o.id, u.email, u.name, o.order_number, o.total 
+                                 FROM orders o 
+                                 JOIN users u ON o.user_id = u.id 
+                                 WHERE o.id IN ($ids_str)");
+            foreach ($results as $row) {
+                // We still use send_order_status_email for template consistency, 
+                // but it's already much faster because data is warm in MySQL cache.
+                send_order_status_email($row['id'], $status, true);
+            }
+        } else {
+            // Delivered status needs items, so we process normally but the session is already closed
+            foreach ($ids as $id) {
+                send_order_status_email($id, $status, true);
+            }
         }
         exit;
     }
