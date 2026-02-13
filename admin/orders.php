@@ -38,7 +38,7 @@ if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_statu
             
             // Add history and send emails for each
             foreach ($ids as $id) {
-                $notes = "Order status updated to $status via bulk action by admin";
+                $notes = "Your order status has been updated to " . ucfirst(str_replace('_', ' ', $status));
                 execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)", [$id, $status, $notes]);
                 // Pass true for $queue to avoid waiting for SMTP
                 send_order_status_email($id, $status, true);
@@ -70,7 +70,7 @@ if ((isset($_GET['status']) || isset($_POST['ajax_action'])) && isset($_REQUEST[
 
         execute_query("UPDATE orders SET order_status = ? WHERE id = ?", [$status, $id]);
         
-        $notes = "Order status updated to $status by admin via " . (isset($_POST['ajax_action']) ? 'AJAX' : 'Direct Link');
+        $notes = "Your order status has been updated to " . ucfirst(str_replace('_', ' ', $status));
         execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, ?, ?)", [$id, $status, $notes]);
         
         // Send email notification to customer (queued for speed)

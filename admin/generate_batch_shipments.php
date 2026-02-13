@@ -210,15 +210,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <span class="small-text"><img src="../assets/images/logo.svg" alt="logo" width="100"></span>
                     <span class="small-text"></span>
                 </div>
-                <div class="label-section">
-                    <div class="small-text">Ship From:</div>
-                    <div style="font-size: 9px; font-weight: bold;">
-                        DRIYUM <br>
-                        BAGHI MEHTAB SRINAGAR, J&K 190019 <br>
-                        PHONE : 9149809801
-                    </div>
-                </div>
-                <div class="label-recipient">
+                <div class="label-recipient" style="border-bottom: 1px solid #000;">
                     <div class="small-text">Deliver To:</div>
                     <h1><?php echo htmlspecialchars($address['name'] ?? 'N/A'); ?></h1>
                     <p>
@@ -226,6 +218,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <?php echo htmlspecialchars($address['city'] ?? ''); ?>, <?php echo htmlspecialchars($address['state'] ?? ''); ?> - <?php echo htmlspecialchars($address['zip'] ?? ''); ?><br>
                         <strong style="display: block; margin-top: 5px;">Phone: <?php echo htmlspecialchars($address['phone'] ?? ''); ?></strong>
                     </p>
+                </div>
+                <div class="label-section">
+                    <div class="small-text">Ship From:</div>
+                    <div style="font-size: 9px; font-weight: bold;">
+                        DRIYUM <br>
+                        BAGHI MEHTAB SRINAGAR, J&K 190019 <br>
+                        PHONE : 9149809801
+                    </div>
                 </div>
                 <div class="label-section" style="margin-top: auto; border-bottom: none;">
                     <?php if(strtoupper($order['payment_method']) == 'COD'): ?>
@@ -313,6 +313,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <span style="color: #64748b;">Shipping:</span>
                         <span style="font-weight: 700;">₹<?php echo number_format($order['shipping_cost'], 2); ?></span>
                     </div>
+                    <?php 
+                    $tax = $order['total'] - ($order['subtotal'] - $order['discount'] + $order['shipping_cost']);
+                    if ($tax > 0): 
+                    ?>
+                    <div class="total-row">
+                        <span style="color: #64748b;">Processing Tax:</span>
+                        <span style="font-weight: 700;">₹<?php echo number_format($tax, 2); ?></span>
+                    </div>
+                    <?php endif; ?>
                     <div class="total-row grand-total">
                         <span>Total:</span>
                         <span>₹<?php echo number_format($order['total'], 2); ?></span>

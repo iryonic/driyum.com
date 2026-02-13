@@ -65,16 +65,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <span></span>
         </div>
 
-        <div class="section">
-            <div class="small-text">Ship From:</div>
-            <div style="font-size: 10px; font-weight: bold;">
-                DRIYUM <br>
-                BAGHI MEHTAB SRINAGAR, J&K 190019 <br>
-                PHONE  : 9149809801
-            </div>
-        </div>
-
-        <div class="recipient">
+        <div class="recipient" style="border-bottom: 1px solid #000;">
             <div class="small-text">Deliver To:</div>
             <h1><?php echo htmlspecialchars($address['name'] ?? 'N/A'); ?></h1>
             <p>
@@ -82,6 +73,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <?php echo htmlspecialchars($address['city'] ?? ''); ?>, <?php echo htmlspecialchars($address['state'] ?? ''); ?> - <?php echo htmlspecialchars($address['zip'] ?? ''); ?><br>
                 <strong>Phone: <?php echo htmlspecialchars($address['phone'] ?? ''); ?></strong>
             </p>
+        </div>
+
+        <div class="section">
+            <div class="small-text">Ship From:</div>
+            <div style="font-size: 10px; font-weight: bold;">
+                DRIYUM <br>
+                BAGHI MEHTAB SRINAGAR, J&K 190019 <br>
+                PHONE  : 9149809801
+            </div>
         </div>
 
         <div class="section last-section" style="margin-top: auto;">

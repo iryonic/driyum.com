@@ -71,7 +71,7 @@ try {
         
         // 2. Add history records in ONE query
         $history_values = [];
-        $notes = "Order status updated to $status via bulk action by admin";
+        $notes = "Your order status has been updated to " . ucfirst(str_replace('_', ' ', $status));
         foreach ($ids as $id) {
             $history_values[] = "(" . (int)$id . ", '" . $conn->real_escape_string($status) . "', '" . $conn->real_escape_string($notes) . "')";
         }
