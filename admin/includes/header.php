@@ -37,11 +37,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driyum Admin</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo get_url('assets/images/favicon_io/apple-touch-icon.png'); ?>">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo get_url('assets/images/favicon_io/favicon-32x32.png'); ?>">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo get_url('assets/images/favicon_io/favicon-16x16.png'); ?>">
-    <link rel="manifest" href="<?php echo get_url('assets/images/favicon_io/site.webmanifest'); ?>">
-    <link rel="shortcut icon" href="<?php echo get_url('assets/images/favicon_io/favicon.ico'); ?>">
+    <link rel="icon" type="image/png" href="<?php echo get_url('assets/images/logo.svg'); ?>">
+    <link rel="apple-touch-icon" href="<?php echo get_url('assets/images/logo.svg'); ?>">
+    <link rel="shortcut icon" href="<?php echo get_url('assets/images/logo.svg'); ?>" type="image/x-icon">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/chunky.css">
