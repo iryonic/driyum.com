@@ -372,8 +372,8 @@ $wishlist_json = json_encode($wishlist_ids);
                                     <i class="fas fa-shopping-basket text-[10px] lg:text-sm"></i>
                                 </div>
                                 <div class="flex flex-col items-start">
-                                    <span class="text-[9px] lg:text-xs font-black uppercase tracking-widest leading-none">ADD TO</span>
-                                    <span class="text-[7px] lg:text-[10px] font-black uppercase tracking-widest opacity-60">BASKET</span>
+                                    <span class="text-[9px] lg:text-xs font-black uppercase tracking-widest leading-none">BUY</span>
+                                    <span class="text-[7px] lg:text-[10px] font-black uppercase tracking-widest opacity-60">NOW</span>
                                 </div>
                             </button>
                         </div>
