@@ -5,8 +5,23 @@ require_once 'includes/functions.php';
 
 // If cart is empty, redirect
 if (empty($_SESSION['cart'])) {
-    header("Location: " . get_url('shop.php'));
-    exit;
+    // Attempt to restore from snapshot (Post-payment recovery)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['cart_snapshot'])) {
+        $snapshot = json_decode($_POST['cart_snapshot'], true);
+        if ($snapshot && !empty($snapshot['cart'])) {
+            $_SESSION['cart'] = $snapshot['cart'];
+            if (isset($snapshot['coupon'])) $_SESSION['coupon'] = $snapshot['coupon'];
+            if (isset($snapshot['affiliate'])) $_SESSION['affiliate'] = $snapshot['affiliate'];
+            if (isset($snapshot['shipping_cost'])) $_SESSION['shipping_cost'] = $snapshot['shipping_cost'];
+            if (isset($snapshot['shipping_method_id'])) $_SESSION['shipping_method_id'] = $snapshot['shipping_method_id'];
+        } else {
+            header("Location: " . get_url('shop.php'));
+            exit;
+        }
+    } else {
+        header("Location: " . get_url('shop.php'));
+        exit;
+    }
 }
 
 // Optional Guest Checkout Logic
@@ -262,24 +277,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         // Final Total Discount for DB
         $total_discount_db = $final_coupon_discount + $final_affiliate_discount;
 
-        // Insert Order
-        $stmt = $conn->prepare("INSERT INTO orders (order_number, user_id, affiliate_id, subtotal, discount, affiliate_commission, shipping_cost, total, payment_method, order_status, shipping_address, shipping_method_id, razorpay_payment_id, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("siidddddsssiss", $order_number, $user_id, $final_affiliate_id, $subtotal, $total_discount_db, $final_affiliate_commission, $shipping, $total, $method, $status, $shipping_details, $shipping_method_id, $razorpay_payment_id, $payment_status);
-        
-        if (!$stmt->execute()) {
-            throw new Exception("Failed to insert order: " . $stmt->error);
-        }
-        
-        $order_id = $stmt->insert_id;
+        $existing_order_id = $_POST['existing_order_id'] ?? null;
+        if ($existing_order_id) {
+            // Update Existing Draft Order
+            $stmt = $conn->prepare("UPDATE orders SET razorpay_payment_id = ?, payment_status = ?, order_status = ?, created_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $paid_status = 'paid';
+            $pending_status = 'pending';
+            $stmt->bind_param("sssi", $razorpay_payment_id, $paid_status, $pending_status, $existing_order_id);
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to update order: " . $stmt->error);
+            }
+            $order_id = $existing_order_id;
+            
+            // Re-fetch order number for redirect
+            $order_info = fetch_one("SELECT order_number FROM orders WHERE id = ?", [$order_id]);
+            $order_number = $order_info['order_number'];
+        } else {
+            // Insert New Order (COD or fallback)
+            $stmt = $conn->prepare("INSERT INTO orders (order_number, user_id, affiliate_id, subtotal, discount, affiliate_commission, shipping_cost, total, payment_method, order_status, shipping_address, shipping_method_id, razorpay_payment_id, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("siidddddsssiss", $order_number, $user_id, $final_affiliate_id, $subtotal, $total_discount_db, $final_affiliate_commission, $shipping, $total, $method, $status, $shipping_details, $shipping_method_id, $razorpay_payment_id, $payment_status);
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to insert order: " . $stmt->error);
+            }
+            $order_id = $stmt->insert_id;
 
-        // Insert Order Items
-        $stmt_item = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)");
-        foreach ($_SESSION['cart'] as $pid => $qty) {
-            if (!isset($products_data[$pid])) continue; // Skip deleted items
-            $price = $products_data[$pid]['price'];
-            $line_subtotal = $price * $qty;
-            $stmt_item->bind_param("iiidd", $order_id, $pid, $qty, $price, $line_subtotal);
-            $stmt_item->execute();
+            // Insert Order Items (Only for New Orders)
+            $stmt_item = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)");
+            foreach ($_SESSION['cart'] as $pid => $qty) {
+                if (!isset($products_data[$pid])) continue; // Skip deleted items
+                $price = $products_data[$pid]['price'];
+                $line_subtotal = $price * $qty;
+                $stmt_item->bind_param("iiidd", $order_id, $pid, $qty, $price, $line_subtotal);
+                $stmt_item->execute();
+            }
         }
 
         // Notify Admin of New Order
@@ -402,6 +433,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
                 <form method="POST" id="checkout-form">
                     <input type="hidden" name="place_order" value="1">
+                    <input type="hidden" name="cart_snapshot" value='<?php echo json_encode([
+                        "cart" => $_SESSION["cart"],
+                        "coupon" => $_SESSION["coupon"] ?? null,
+                        "affiliate" => $_SESSION["affiliate"] ?? null,
+                        "shipping_cost" => $_SESSION["shipping_cost"] ?? 0,
+                        "shipping_method_id" => $_SESSION["shipping_method_id"] ?? 0
+                    ]); ?>'>
 
                     <!-- STEP 1: SHIPPING -->
                     <div id="step-1" class="checkout-step active anim-slide">
@@ -876,9 +914,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             if (method === 'razorpay') {
                 try {
                     // 1. Create Order on Server
-                    const shippingCost = document.getElementById('shipping_cost_input').value;
-                    const fd = new FormData();
-                    fd.append('shipping_cost', shippingCost);
+                    const fd = new FormData(form);
+                    // Add shipping cost explicitly just in case
+                    fd.append('shipping_cost', document.getElementById('shipping_cost_input').value);
 
                     const res = await fetch(BASE_URL + 'api/razorpay.php?action=create_order', { method: 'POST', body: fd });
                     const rData = await res.json();
@@ -886,6 +924,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     if (!rData.success) {
                         alert("Razorpay Error: " + rData.message);
                         overlay.classList.add('hidden');
+                        isProcessing = false;
                         return false;
                     }
 
@@ -909,17 +948,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                             const vData = await vRes.json();
 
                             if (vData.success) {
-                                // Add payment ID to form and submit
+                                // Add payment ID and internal ID to form and submit
                                 const payIdInput = document.createElement('input');
                                 payIdInput.type = 'hidden';
                                 payIdInput.name = 'razorpay_payment_id';
                                 payIdInput.value = response.razorpay_payment_id;
                                 form.appendChild(payIdInput);
+
+                                const internalIdInput = document.createElement('input');
+                                internalIdInput.type = 'hidden';
+                                internalIdInput.name = 'existing_order_id';
+                                internalIdInput.value = rData.internal_id;
+                                form.appendChild(internalIdInput);
                                 
                                 form.submit();
                             } else {
                                 alert("Verification Failed: " + vData.message);
                                 overlay.classList.add('hidden');
+                                isProcessing = false;
                             }
                         },
                         "prefill": {

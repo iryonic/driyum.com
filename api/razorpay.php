@@ -41,11 +41,68 @@ if ($action === 'create_order') {
     $api = new Api(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET);
 
     try {
+        $first_name = sanitize_input($_POST['first_name'] ?? '');
+        $last_name = sanitize_input($_POST['last_name'] ?? '');
+        $email = sanitize_input($_POST['email'] ?? '');
+        $phone = sanitize_input($_POST['phone'] ?? '');
+        $address = sanitize_input($_POST['address'] ?? '');
+        $city = sanitize_input($_POST['city'] ?? '');
+        $state = sanitize_input($_POST['state'] ?? '');
+        $zip_code = sanitize_input($_POST['zip'] ?? '');
+        $shipping_method_id = (int)($_POST['shipping_method_id'] ?? 0);
+
+        $order_number = 'ORD-' . strtoupper(uniqid());
+        $user_id = is_logged_in() ? $_SESSION['user_id'] : null;
+
+        $shipping_details = json_encode([
+            'name' => $first_name . ' ' . $last_name,
+            'email' => $email,
+            'phone' => $phone,
+            'address' => $address,
+            'city' => $city,
+            'state' => $state,
+            'zip' => $zip_code
+        ]);
+
+        $final_affiliate_id = null;
+        $final_affiliate_commission = 0;
+        $final_affiliate_discount = 0;
+        if (isset($_SESSION['affiliate'])) {
+            $aff_data = $_SESSION['affiliate'];
+            $final_affiliate_id = $aff_data['id'];
+            $final_affiliate_discount = floor($subtotal * ($aff_data['discount'] / 100));
+            $d_subtotal = $subtotal - $final_affiliate_discount - $coupon_discount;
+            $final_affiliate_commission = floor(max(0, $d_subtotal) * ($aff_data['commission'] / 100));
+        }
+
+        $total_discount_db = $coupon_discount + $final_affiliate_discount;
+
+        $stmt = $conn->prepare("INSERT INTO orders (order_number, user_id, affiliate_id, subtotal, discount, affiliate_commission, shipping_cost, total, payment_method, order_status, shipping_address, shipping_method_id, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'razorpay', 'pending_payment', ?, ?, 'pending')");
+        $stmt->bind_param("siidddddsi", $order_number, $user_id, $final_affiliate_id, $subtotal, $total_discount_db, $final_affiliate_commission, $shipping, $final_total, $shipping_details, $shipping_method_id);
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Draft order creation failed: " . $stmt->error);
+        }
+        $internal_order_id = $stmt->insert_id;
+
+        // Insert Items
+        foreach($products as $p) {
+            $pid = $p['id'];
+            $qty = $_SESSION['cart'][$pid];
+            $price = $p['price'];
+            $line_subtotal = $price * $qty;
+            execute_query("INSERT INTO order_items (order_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)", [$internal_order_id, $pid, $qty, $price, $line_subtotal]);
+        }
+
         $orderData = [
-            'receipt'         => 'rcpt_' . uniqid(),
-            'amount'          => round($final_total * 100), // in paise
+            'receipt'         => $order_number,
+            'amount'          => round($final_total * 100),
             'currency'        => RAZORPAY_CURRENCY,
-            'payment_capture' => 1 // auto capture
+            'payment_capture' => 1,
+            'notes'           => [
+                'internal_order_id' => $internal_order_id,
+                'order_number' => $order_number
+            ]
         ];
 
         $razorpayOrder = $api->order->create($orderData);
@@ -53,6 +110,7 @@ if ($action === 'create_order') {
         echo json_encode([
             'success' => true,
             'order_id' => $razorpayOrder['id'],
+            'internal_id' => $internal_order_id,
             'amount' => $orderData['amount'],
             'currency' => RAZORPAY_CURRENCY,
             'key' => RAZORPAY_KEY_ID,
