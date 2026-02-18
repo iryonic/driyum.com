@@ -80,7 +80,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div style="font-size: 10px; font-weight: bold;">
                 DRIYUM <br>
                 BAGHI MEHTAB SRINAGAR, J&K 190019 <br>
-                PHONE  : 9149809801
+                PHONE  : 9419809801
             </div>
         </div>
 
