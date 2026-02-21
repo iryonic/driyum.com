@@ -1286,23 +1286,33 @@ function send_order_confirmation_email($order_id) {
 /**
  * Send Abandoned Cart Reminder Email
  */
-function send_abandoned_cart_reminder($cart_id) {
+/**
+ * Build Content for Abandoned Cart Email
+ */
+function get_abandoned_cart_email_content($cart_id) {
     $cart = fetch_one("SELECT ac.*, u.email, u.name 
                       FROM abandoned_carts ac
-                      JOIN users u ON ac.user_id = u.id
+                      LEFT JOIN users u ON ac.user_id = u.id
                       WHERE ac.id = ?", [$cart_id]);
     
-    if (!$cart) return false;
+    if (!$cart || empty($cart['email'])) return null;
 
     $cart_items_data = json_decode($cart['cart_data'], true);
-    if (empty($cart_items_data)) return false;
+    if (empty($cart_items_data)) return null;
 
     $subject = "Your Driyum snacks are waiting! 🍎";
     $items_html = "";
     $subtotal = 0;
     
+    // Batch fetch products for performance
+    $product_ids = array_keys($cart_items_data);
+    $placeholders = implode(',', array_fill(0, count($product_ids), '?'));
+    $products = fetch_all("SELECT id, name, price FROM products WHERE id IN ($placeholders)", $product_ids);
+    $products_indexed = [];
+    foreach($products as $p) $products_indexed[$p['id']] = $p;
+
     foreach($cart_items_data as $pid => $qty) {
-        $p = fetch_one("SELECT name, price FROM products WHERE id = ?", [$pid]);
+        $p = $products_indexed[$pid] ?? null;
         if($p) {
             $total = $p['price'] * $qty;
             $subtotal += $total;
@@ -1315,11 +1325,12 @@ function send_abandoned_cart_reminder($cart_id) {
     }
 
     $checkout_url = FULL_BASE_URL . "checkout";
+    $user_name = strtoupper($cart['name'] ?? 'FRIEND');
 
     $message = "
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);'>
         <div style='background: #000; padding: 40px; text-align: center;'>
-            <h1 style='color: #24B25D; margin: 0; font-size: 28px;'>HEY " . strtoupper($cart['name']) . "!</h1>
+            <h1 style='color: #24B25D; margin: 0; font-size: 28px;'>HEY $user_name!</h1>
             <p style='color: #fff; opacity: 0.7; margin: 10px 0 0 0;'>Did you forget something delicious?</p>
         </div>
         
@@ -1356,83 +1367,25 @@ function send_abandoned_cart_reminder($cart_id) {
         </div>
     </div>";
 
-    return send_email($cart['email'], $subject, $message);
+    return ['to' => $cart['email'], 'subject' => $subject, 'message' => $message];
+}
+
+/**
+ * Send Abandoned Cart Reminder Email
+ */
+function send_abandoned_cart_reminder($cart_id) {
+    $content = get_abandoned_cart_email_content($cart_id);
+    if (!$content) return false;
+    return send_email($content['to'], $content['subject'], $content['message']);
 }
 
 /**
  * Queue Abandoned Cart Reminder Email
  */
 function queue_abandoned_cart_reminder($cart_id) {
-    $cart = fetch_one("SELECT ac.*, u.email, u.name 
-                      FROM abandoned_carts ac
-                      JOIN users u ON ac.user_id = u.id
-                      WHERE ac.id = ?", [$cart_id]);
-    
-    if (!$cart) return false;
-
-    $cart_items_data = json_decode($cart['cart_data'], true);
-    if (empty($cart_items_data)) return false;
-
-    $subject = "Your Driyum snacks are waiting! 🍎";
-    $items_html = "";
-    $subtotal = 0;
-    
-    foreach($cart_items_data as $pid => $qty) {
-        $p = fetch_one("SELECT name, price FROM products WHERE id = ?", [$pid]);
-        if($p) {
-            $total = $p['price'] * $qty;
-            $subtotal += $total;
-            $items_html .= "<tr>
-                <td style='padding: 10px; border-bottom: 1px solid #eee;'>{$p['name']}</td>
-                <td style='padding: 10px; border-bottom: 1px solid #eee;'>x $qty</td>
-                <td style='padding: 10px; border-bottom: 1px solid #eee; text-align: right;'>₹" . number_format($total, 2) . "</td>
-            </tr>";
-        }
-    }
-
-    $checkout_url = FULL_BASE_URL . "checkout";
-
-    $message = "
-    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);'>
-        <div style='background: #000; padding: 40px; text-align: center;'>
-            <h1 style='color: #24B25D; margin: 0; font-size: 28px;'>HEY " . strtoupper($cart['name']) . "!</h1>
-            <p style='color: #fff; opacity: 0.7; margin: 10px 0 0 0;'>Did you forget something delicious?</p>
-        </div>
-        
-        <div style='padding: 40px; color: #333;'>
-            <p>We noticed you left some premium snacks in your cart. They are still here, perfectly preserved and waiting for you to hit that checkout button!</p>
-            
-            <table style='width: 100%; border-collapse: collapse; margin: 30px 0;'>
-                <thead>
-                    <tr style='background: #f9f9f9;'>
-                        <th style='padding: 12px 10px; text-align: left; font-size: 11px; text-transform: uppercase; color: #999;'>Item</th>
-                        <th style='padding: 12px 10px; text-align: left; font-size: 11px; text-transform: uppercase; color: #999;'>Qty</th>
-                        <th style='padding: 12px 10px; text-align: right; font-size: 11px; text-transform: uppercase; color: #999;'>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    $items_html
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan='2' style='padding: 20px 10px; font-weight: bold; text-align: right;'>Subtotal:</td>
-                        <td style='padding: 20px 10px; font-weight: bold; text-align: right; color: #24B25D; font-size: 18px;'>₹" . number_format($subtotal, 2) . "</td>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <div style='text-align: center; margin-top: 20px;'>
-                <a href='$checkout_url' style='background: #24B25D; color: #000; padding: 18px 35px; text-decoration: none; border-radius: 50px; font-weight: 900; display: inline-block; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;'>Secure My Snacks</a>
-            </div>
-            
-            <p style='margin-top: 40px; font-size: 12px; color: #999; text-align: center; line-height: 1.6;'>
-                Need help? Just reply to this email or visit our support center.<br>
-                &copy; " . date('Y') . " DRIYUM. All Rights Reserved.
-            </p>
-        </div>
-    </div>";
-
-    return queue_email($cart['email'], $subject, $message);
+    $content = get_abandoned_cart_email_content($cart_id);
+    if (!$content) return false;
+    return queue_email($content['to'], $content['subject'], $content['message']);
 }
 
 

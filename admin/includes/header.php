@@ -17,10 +17,6 @@ $unread_count = count($unread_notifs);
 $total_orders_today = fetch_one("SELECT COUNT(*) as count FROM orders WHERE DATE(created_at) = CURDATE()")['count'];
 $low_stock_count = fetch_one("SELECT COUNT(*) as count FROM products WHERE stock < 10")['count'];
 
-// Process a small batch of queued emails on every admin page load
-if (function_exists('process_email_queue')) {
-    process_email_queue(3);
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">

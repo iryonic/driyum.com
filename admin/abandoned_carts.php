@@ -2,6 +2,12 @@
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
+// Security Check
+if (!is_admin()) {
+    header("Location: ../login.php");
+    exit;
+}
+
 // Handle Action
 if (isset($_GET['mark_reminded'])) {
     $id = (int)$_GET['mark_reminded'];
@@ -29,14 +35,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_ids']) && is_arr
     $success_count = 0;
     
     if (isset($_POST['bulk_remind'])) {
+        $processed_ids = [];
         foreach ($ids as $id) {
             $id = (int)$id;
             if (queue_abandoned_cart_reminder($id)) {
-                execute_query("UPDATE abandoned_carts SET is_reminded = 1 WHERE id = ?", [$id]);
+                $processed_ids[] = $id;
                 $success_count++;
             }
         }
-        if ($success_count > 0) $_SESSION['success'] = "Queued $success_count reminders for background delivery!";
+        if (!empty($processed_ids)) {
+            $id_list = implode(',', $processed_ids);
+            execute_query("UPDATE abandoned_carts SET is_reminded = 1 WHERE id IN ($id_list)");
+            $_SESSION['success'] = "Queued $success_count reminders for background delivery!";
+        }
     }
 
     if (isset($_POST['bulk_delete'])) {
@@ -54,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_ids']) && is_arr
 
 $query = "SELECT ac.*, u.name as user_name, u.email as user_email 
           FROM abandoned_carts ac 
-          JOIN users u ON ac.user_id = u.id 
+          LEFT JOIN users u ON ac.user_id = u.id 
           ORDER BY ac.last_updated DESC";
 
 $pagination = get_pagination_data($query, [], 15);
@@ -70,12 +81,6 @@ include 'includes/header.php';
     </div>
 </div>
 
-<?php if(isset($_SESSION['success'])): ?>
-    <div class="mb-6 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-100 font-bold text-xs anim-up flex items-center gap-3">
-        <i class="fas fa-check-circle"></i> <?php echo $_SESSION['success']; ?>
-    </div>
-    <?php unset($_SESSION['success']); ?>
-<?php endif; ?>
 
 <form id="bulkActionForm" method="POST">
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
@@ -104,7 +109,8 @@ include 'includes/header.php';
                     </tr>
                     <?php endif; ?>
                     <?php foreach ($carts as $c): 
-                        $items = json_decode($c['cart_data'], true);
+                        $items = json_decode($c['cart_data'] ?? '', true);
+                        if (!is_array($items)) $items = [];
                         $total_val = 0;
                         $item_count = 0;
                         $parts = [];
@@ -122,8 +128,8 @@ include 'includes/header.php';
                             <input type="checkbox" name="cart_ids[]" value="<?php echo $c['id']; ?>" class="cart-checkbox w-4 h-4 rounded border-gray-200 text-black focus:ring-black cursor-pointer">
                         </td>
                         <td class="p-4 pl-0">
-                            <div class="font-bold text-gray-900"><?php echo htmlspecialchars($c['user_name']); ?></div>
-                            <div class="text-[9px] font-bold text-gray-400"><?php echo htmlspecialchars($c['user_email']); ?></div>
+                            <div class="font-bold text-gray-900"><?php echo htmlspecialchars($c['user_name'] ?? 'Deleted User'); ?></div>
+                            <div class="text-[9px] font-bold text-gray-400"><?php echo htmlspecialchars($c['user_email'] ?? 'N/A'); ?></div>
                         </td>
                         <td class="p-4">
                             <div class="font-black text-gray-900">₹<?php echo number_format($total_val); ?></div>
@@ -152,7 +158,7 @@ include 'includes/header.php';
                                         <i class="fas fa-bell text-[10px]"></i>
                                     </a>
                                 <?php endif; ?>
-                                <a href="mailto:<?php echo $c['user_email']; ?>?subject=We fixed your cart!&body=Your snacks are still waiting for you... Come back and complete your order!" class="w-8 h-8 bg-[#24B25D] text-black flex items-center justify-center rounded-lg hover:scale-105 transition-all" title="Send Email">
+                                 <a href="mailto:<?php echo $c['user_email']; ?>?subject=<?php echo rawurlencode('We fixed your cart!'); ?>&body=<?php echo rawurlencode('Your snacks are still waiting for you... Come back and complete your order!'); ?>" class="w-8 h-8 bg-[#24B25D] text-black flex items-center justify-center rounded-lg hover:scale-105 transition-all" title="Send Email">
                                     <i class="fas fa-paper-plane text-[10px]"></i>
                                 </a>
                                 <a href="?delete=<?php echo $c['id']; ?>" onclick="return confirm('Delete this cart?')" class="w-8 h-8 bg-red-50 text-red-400 flex items-center justify-center rounded-lg hover:bg-red-500 hover:text-white transition-all">
