@@ -253,6 +253,9 @@ $orders = $pagination['records'];
                 <option value="cancelled" <?php echo $status_filter == 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
             </select>
         </form>
+        <button onclick="exportOrders()" class="flex-1 sm:flex-none bg-black text-[#24B25D] px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-black/5 flex items-center justify-center gap-2">
+            <i class="fas fa-file-export"></i> Export
+        </button>
     </div>
 </div>
 
@@ -299,13 +302,15 @@ $orders = $pagination['records'];
                 <i class="fas fa-shipping-fast text-blue-400 group-hover:scale-110 transition-transform"></i> <span class="hidden md:inline">Print</span> Label
             </button>
 
+            <button onclick="exportOrders()" class="flex-1 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 text-white px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 group">
+                <i class="fas fa-file-export text-emerald-400 group-hover:scale-110 transition-transform"></i> <span class="hidden md:inline">Export</span>
+            </button>
+
             <button onclick="applyBulkDelete()" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-500 p-2.5 rounded-xl transition-all flex items-center justify-center group" title="Delete Selected">
                 <i class="fas fa-trash-alt text-xs group-hover:rotate-12 transition-transform"></i>
             </button>
         </div>
     </div>
-        <i class="fas fa-trash-alt text-xs"></i>
-    </button>
 </div>
 
 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
@@ -841,6 +846,28 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.status-menu').forEach(m => m.classList.add('hidden'));
     document.querySelectorAll('.fa-chevron-down').forEach(i => i.classList.remove('rotate-180'));
 });
+function exportOrders() {
+    let url = 'export_orders.php';
+    const params = new URLSearchParams();
+    const tracked = Array.from(getTracked());
+    
+    if (isAllSelectedAcrossPages) {
+        params.append('all', '1');
+        params.append('q', FILTERS.q);
+        params.append('status_filter', FILTERS.status_filter);
+        params.append('user_id', FILTERS.user_id);
+    } else if (tracked.length > 0) {
+        params.append('ids', tracked.join(','));
+    } else {
+        // If nothing selected, export all matches (or all if no filters)
+        params.append('all', '1');
+        params.append('q', FILTERS.q);
+        params.append('status_filter', FILTERS.status_filter);
+        params.append('user_id', FILTERS.user_id);
+    }
+    
+    window.location.href = url + '?' + params.toString();
+}
 </script>
 
 <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>

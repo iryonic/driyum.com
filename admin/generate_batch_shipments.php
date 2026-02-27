@@ -137,15 +137,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
 
             .label-page { 
-                width: 49%; 
-                height: 13.5cm; /* Reduced to fit 2 rows (4 labels) on A4 */
-                margin: 0.5mm; 
-                padding: 2mm; 
+                width: 50%; 
+                height: 14.3cm; /* Adjusted to fit exactly 2 rows (4 labels) on A4 (29.7cm height) */
+                margin: 0; 
+                padding: 1mm; 
                 box-sizing: border-box;
-                border: 1px dotted #e2e8f0; 
+                border: 0.5px solid #eee; /* Light border for cutting guide */
                 page-break-inside: avoid;
                 page-break-after: auto;
-                float: none;
+                float: left;
+                display: block;
             }
             
             .label-container {
@@ -154,6 +155,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 border: 2px solid #000;
                 display: flex;
                 flex-direction: column;
+                padding: 0;
+                margin: 0;
             }
         }
     </style>
