@@ -382,7 +382,7 @@ $wishlist_json = json_encode($wishlist_ids);
         <div class="flex-grow flex flex-col-reverse lg:flex-row relative z-10 w-full h-full">
             
             <!-- LEFT AREA: TEXT & ACTIONS -->
-            <div class="w-full lg:w-[55%] flex flex-col justify-center px-6 lg:px-24 pb-[var(--mobile-dock-h)] lg:pb-0 py-4 lg:py-0 relative z-20 text-center lg:text-left h-[60%] lg:h-full">
+            <div class="w-full lg:w-[55%] flex flex-col justify-center px-6 lg:px-24 pb-[var(--mobile-dock-h)] lg:pb-0 py-4 lg:py-0 relative z-20 text-center lg:text-left h-[52%] lg:h-full">
                 <div class="max-w-2xl mx-auto lg:mx-0">
                     <!-- Top Tagline -->
                     <span class="text-[#19DC7E] font-black uppercase tracking-[0.4em] text-[10px] sm:text-xs lg:text-sm mb-4 block anim-reveal-up" style="animation-delay: 0.1s">
@@ -457,7 +457,7 @@ $wishlist_json = json_encode($wishlist_ids);
             </div>
 
             <!-- RIGHT AREA: IMAGE AREA -->
-            <div class="w-full lg:w-[45%] relative h-[40%] lg:h-full flex items-center justify-center overflow-hidden">
+            <div class="w-full lg:w-[45%] relative h-[48%] lg:h-full flex items-center justify-center overflow-hidden">
                 
                 <!-- ACCENT BACKGROUND (Dynamic Fluid Shape) -->
                 <div id="hero-accent-panel" class="absolute inset-y-0 right-0 w-full lg:w-[85%] lg:rounded-l-[100px] xl:rounded-l-[150px] transform transition-all duration-1000 ease-out z-0" style="background-color: <?php echo $hero_variants[0]['bg'] ?? '#19DC7E'; ?>"></div>
@@ -475,7 +475,7 @@ $wishlist_json = json_encode($wishlist_ids);
                 </div>
 
                 <!-- MAIN PRODUCT (Enhanced Center/Mobile Composition) -->
-                <div id="hero-main-img-container" class="relative z-20 w-full flex items-center justify-center p-4 sm:p-12 lg:p-0">
+                <div id="hero-main-img-container" class="relative z-20 w-full flex items-center justify-center p-1 sm:p-12 lg:p-0">
                     <div class="relative group/main max-w-[400px] sm:max-w-none">
                         <!-- Bottom Shadow -->
                         <div class="absolute -bottom-6 md:-bottom-12 left-1/2 -translate-x-1/2 w-[70%] h-12 bg-black/30 blur-[40px] md:blur-[60px] rounded-full scale-y-50 opacity-60"></div>
@@ -601,8 +601,8 @@ $wishlist_json = json_encode($wishlist_ids);
             #hero-accent-panel {
                 inset: auto 0 0 0;
                 width: 100%;
-                height: 50%;
-                border-radius: 40px 40px 0 0;
+                height: 75%;
+                border-radius: 60px 60px 0 0;
             }
             #hero-vertical-text-box {
                 flex-direction: row;
@@ -612,13 +612,13 @@ $wishlist_json = json_encode($wishlist_ids);
             }
             .hero-v-text { white-space: nowrap; font-size: 20vw !important; }
             #hero-main-img { 
-                max-height: 28vh; 
+                max-height: 38vh; 
                 width: auto;
-                max-width: 85%;
+                max-width: 95%;
                 object-fit: contain;
             }
-            #hero-badges { transform: scale(0.85); margin-bottom: 0.4rem; gap: 0.5rem; }
-            #hero-atc-btn { transform: scale(0.85); transform-origin: center; }
+            #hero-badges { transform: scale(0.9); margin-bottom: 0.8rem; gap: 0.6rem; }
+            #hero-atc-btn { transform: scale(0.9); transform-origin: center; }
         }
 
         @media (max-width: 640px) {
