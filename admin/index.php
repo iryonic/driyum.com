@@ -1,10 +1,14 @@
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/header.php'; 
 
-<?php
+// Chart Range Configuration
+$days = isset($_GET['range']) ? (int)$_GET['range'] : 7;
+if(!in_array($days, [7, 15, 30])) $days = 7;
+
 // Stats
-$orders_count = fetch_one("SELECT COUNT(*) as c FROM orders")['c'];
+$excluded_statuses = "'cancelled', 'pending_payment'";
+$orders_count = fetch_one("SELECT COUNT(*) as c FROM orders WHERE order_status NOT IN ($excluded_statuses)")['c'];
 $products_count = fetch_one("SELECT COUNT(*) as c FROM products WHERE is_active=1")['c'];
-$revenue = fetch_one("SELECT SUM(total) as t FROM orders WHERE order_status != 'cancelled'")['t'] ?? 0;
+$revenue = fetch_one("SELECT SUM(total) as t FROM orders WHERE order_status NOT IN ($excluded_statuses)")['t'] ?? 0;
 $pending_orders = fetch_one("SELECT COUNT(*) as c FROM orders WHERE order_status = 'pending'")['c'];
 $subscribers_count = fetch_one("SELECT COUNT(*) as c FROM newsletter_subscribers WHERE is_active=1")['c'];
 $live_users_count = get_live_user_count(5);
@@ -17,15 +21,19 @@ $low_stock = fetch_all("SELECT name, stock, image FROM products WHERE stock <= 5
 $recent_reviews = fetch_all("SELECT r.*, u.name as user_name, p.name as prod_name FROM reviews r JOIN users u ON r.user_id = u.id JOIN products p ON r.product_id = p.id ORDER BY r.created_at DESC LIMIT 3");
 
 // Business Intelligence Stats
-$sales_today = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = CURDATE() AND order_status != 'cancelled'")['t'] ?? 0;
-$top_selling = fetch_all("SELECT p.name, SUM(oi.quantity) as total_sold, p.image, p.price FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY p.id ORDER BY total_sold DESC LIMIT 3");
+$sales_today = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = CURDATE() AND order_status NOT IN ($excluded_statuses)")['t'] ?? 0;
+$top_selling = fetch_all("SELECT p.name, SUM(oi.quantity) as total_sold, p.image, p.price FROM order_items oi JOIN products p ON oi.product_id = p.id JOIN orders o ON oi.order_id = o.id WHERE o.order_status NOT IN ($excluded_statuses) GROUP BY p.id ORDER BY total_sold DESC LIMIT 3");
 
-// Chart Data: Last 7 Days Sales
+// Chart Data: dynamic range
 $sales_data = [];
-for($i = 6; $i >= 0; $i--) {
+for($i = $days - 1; $i >= 0; $i--) {
     $date = date('Y-m-d', strtotime("-$i days"));
-    $label = date('D', strtotime($date));
-    $val = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = ? AND order_status != 'cancelled'", [$date])['t'] ?? 0;
+    if ($days > 7) {
+        $label = date('d M', strtotime($date));
+    } else {
+        $label = date('D', strtotime($date));
+    }
+    $val = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = ? AND order_status NOT IN ($excluded_statuses)", [$date])['t'] ?? 0;
     $sales_data[] = ['label' => $label, 'value' => (float)$val];
 }
 
@@ -141,7 +149,14 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h3 class="font-black text-xl crimson-pro text-gray-900">Revenue Stream</h3>
-                <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Performance over the last 7 days</p>
+                <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Performance over the last <?php echo $days; ?> days</p>
+            </div>
+            <div class="flex gap-2">
+                <select onchange="window.location.href='index.php?range=' + this.value" class="bg-gray-50 border border-gray-100 rounded-xl px-3 py-1.5 text-[10px] font-black uppercase tracking-widest outline-none focus:border-[#24B25D] shadow-sm">
+                    <option value="7" <?php echo $days == 7 ? 'selected' : ''; ?>>7 Days</option>
+                    <option value="15" <?php echo $days == 15 ? 'selected' : ''; ?>>15 Days</option>
+                    <option value="30" <?php echo $days == 30 ? 'selected' : ''; ?>>Month</option>
+                </select>
             </div>
         </div>
         <div class="h-64 relative">

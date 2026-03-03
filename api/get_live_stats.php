@@ -12,7 +12,8 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
 }
 
 $live_users = get_live_user_count(5);
-$sales_today = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = CURDATE() AND order_status != 'cancelled'")['t'] ?? 0;
+$excluded_statuses = "'cancelled', 'pending', 'pending_payment'";
+$sales_today = fetch_one("SELECT SUM(total) as t FROM orders WHERE DATE(created_at) = CURDATE() AND order_status NOT IN ($excluded_statuses)")['t'] ?? 0;
 $pending_orders = fetch_one("SELECT COUNT(*) as c FROM orders WHERE order_status = 'pending'")['c'];
 
 echo json_encode([
