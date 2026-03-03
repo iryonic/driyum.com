@@ -2,7 +2,7 @@
 session_start();
 require_once 'config/database.php';
 require_once 'includes/functions.php';
-$featured = get_featured_products(5);
+$featured = get_featured_products(10);
 
 // Fetch Wishlist IDs for active states
 $wishlist_ids = [];
@@ -821,10 +821,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                         <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-sans">Premium Select</p>
                                     </div>
                                     <h3 class="text-2xl font-black font-heading text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
-                                    <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
-                                        <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
-                                        <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest ml-1">(4.9)</span>
-                                    </div>
+                                   
                                 </div>
                             </div>
                         </a>
@@ -1059,9 +1056,36 @@ $wishlist_json = json_encode($wishlist_ids);
             if(!container) return;
             const card = container.querySelector('.flex-none');
             if(!card) return;
+            
+            if (direction === 'right') {
+                // If we are at the end, loop back to start
+                if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth) {
+                    container.scrollTo({ left: 0, behavior: 'smooth' });
+                    return;
+                }
+            }
+            
             const scrollAmount = direction === 'left' ? -card.offsetWidth * 1.1 : card.offsetWidth * 1.1;
             container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
+
+        // Auto-Slide Hot Drops
+        let productInterval;
+        function startProductAutoSlide() {
+            productInterval = setInterval(() => {
+                scrollProducts('right');
+            }, 3000); // Every 3 seconds
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const productContainer = document.getElementById('product-slider-container');
+            if (productContainer) {
+                startProductAutoSlide();
+                // Pause on hover
+                productContainer.addEventListener('mouseenter', () => clearInterval(productInterval));
+                productContainer.addEventListener('mouseleave', startProductAutoSlide);
+            }
+        });
 
         function scrollCategories(direction) {
             const container = document.getElementById('category-slider-container');

@@ -44,7 +44,18 @@ if (isset($_POST['ajax_action']) && in_array($_POST['ajax_action'], ['bulk_delet
     }
     elseif ($action === 'bulk_featured') {
         $feat = (int)$_POST['featured'];
-        $conn->query("UPDATE products SET is_featured = $feat WHERE id IN ($ids_str)");
+        // If showing on home, we should also make sure it's active
+        if ($feat === 1) {
+            $sql = "UPDATE products SET is_featured = 1, is_active = 1 WHERE id IN ($ids_str)";
+        } else {
+            $sql = "UPDATE products SET is_featured = 0 WHERE id IN ($ids_str)";
+        }
+        
+        if (!$conn->query($sql)) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $conn->error]);
+            exit;
+        }
     }
 
     header('Content-Type: application/json');
@@ -202,15 +213,15 @@ $products = $pagination['records'];
         </button>
     </div>
 
-    <!-- Group: Homepage -->
+    <!-- Group: Home Show -->
     <div class="flex items-center p-0.5 bg-white/5 rounded-2xl border border-white/5">
-        <button onclick="bulkUpdateAction('bulk_featured', {featured: 1})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
-            <i class="fas fa-star text-[10px] text-yellow-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Feature</span>
+        <button onclick="bulkUpdateAction('bulk_featured', {featured: 1})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group" title="Show on Homepage">
+            <i class="fas fa-home text-[10px] text-[#24B25D] group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Show on Home</span>
         </button>
-        <button onclick="bulkUpdateAction('bulk_featured', {featured: 0})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group">
-            <i class="far fa-star text-[10px] text-gray-500 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Normal</span>
+        <button onclick="bulkUpdateAction('bulk_featured', {featured: 0})" class="flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl hover:bg-white/5 text-white transition-all group" title="Hide from Homepage">
+            <i class="fas fa-eye-slash text-[10px] text-gray-500 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Hide from Home</span>
         </button>
     </div>
 
