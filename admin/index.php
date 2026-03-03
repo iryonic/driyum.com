@@ -37,8 +37,24 @@ for($i = $days - 1; $i >= 0; $i--) {
     $sales_data[] = ['label' => $label, 'value' => (float)$val];
 }
 
-// Category Distribution
+// Category Distribution (Count)
 $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEFT JOIN products p ON c.id = p.category_id GROUP BY c.id");
+
+// Advanced Stats
+$aov = $orders_count > 0 ? $revenue / $orders_count : 0;
+$abandoned_count = fetch_one("SELECT COUNT(*) as c FROM abandoned_carts")['c'];
+$repeat_customers = fetch_one("SELECT COUNT(*) as c FROM (SELECT user_id FROM orders WHERE user_id IS NOT NULL AND order_status NOT IN ($excluded_statuses) GROUP BY user_id HAVING COUNT(id) > 1) as t")['c'];
+$repeat_rate = $orders_count > 0 ? ($repeat_customers / $orders_count) * 100 : 0;
+
+// Affiliate & Marketing
+$affiliate_revenue = fetch_one("SELECT SUM(total) as t FROM orders WHERE affiliate_id IS NOT NULL AND order_status NOT IN ($excluded_statuses)")['t'] ?? 0;
+$coupon_savings = fetch_one("SELECT SUM(discount) as t FROM orders WHERE discount > 0 AND order_status NOT IN ($excluded_statuses)")['t'] ?? 0;
+
+// Category Revenue Distribution
+$cat_revenue_data = fetch_all("SELECT c.name, SUM(oi.subtotal) as revenue FROM categories c JOIN products p ON c.id = p.category_id JOIN order_items oi ON p.id = oi.product_id JOIN orders o ON oi.order_id = o.id WHERE o.order_status NOT IN ($excluded_statuses) GROUP BY c.id");
+
+// Top Customers Intelligence
+$top_customers = fetch_all("SELECT u.name, u.email, COUNT(o.id) as order_count, SUM(o.total) as total_spent FROM orders o JOIN users u ON o.user_id = u.id WHERE o.order_status NOT IN ($excluded_statuses) GROUP BY o.user_id ORDER BY total_spent DESC LIMIT 3");
 ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -165,12 +181,79 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
     </div>
 
     <!-- Category Performance -->
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 anim-up" style="animation-delay: 100ms">
-        <h3 class="font-black text-xl crimson-pro text-gray-900 mb-1">Inventory Split</h3>
-        <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-6">Product distribution by Category</p>
-        <div class="h-56">
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 anim-up flex flex-col" style="animation-delay: 100ms">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h3 class="font-black text-xl crimson-pro text-gray-900 mb-1">Financial Split</h3>
+                <p class="text-[9px] text-gray-400 font-black uppercase tracking-widest">Revenue by Category</p>
+            </div>
+            <div id="chart-toggle" class="flex bg-gray-50 p-1 rounded-xl">
+                <button onclick="toggleCatChart('revenue')" id="btn-cat-rev" class="px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-lg bg-white shadow-sm transition-all">Rev</button>
+                <button onclick="toggleCatChart('count')" id="btn-cat-count" class="px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-lg text-gray-400 hover:text-gray-600 transition-all">Qty</button>
+            </div>
+        </div>
+        <div class="h-56 relative flex-1">
             <canvas id="categoryChart"></canvas>
         </div>
+    </div>
+</div>
+
+<!-- INTELLIGENCE INSIGHTS -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    <!-- AOV -->
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all anim-up">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div>
+                <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Avg Order Value</div>
+                <div class="text-lg font-black text-gray-900 crimson-pro">₹<?php echo number_format($aov, 0); ?></div>
+            </div>
+        </div>
+        <div class="text-[9px] text-gray-500 font-medium">Based on <span class="text-black font-bold"><?php echo $orders_count; ?></span> successful orders.</div>
+    </div>
+
+    <!-- Repeat Rate -->
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all anim-up" style="animation-delay: 50ms">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
+                <i class="fas fa-redo"></i>
+            </div>
+            <div>
+                <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Repeat Cust. Rate</div>
+                <div class="text-lg font-black text-gray-900 crimson-pro"><?php echo number_format($repeat_rate, 1); ?>%</div>
+            </div>
+        </div>
+        <div class="text-[9px] text-gray-500 font-medium"><span class="text-black font-bold"><?php echo $repeat_customers; ?></span> users order more than once.</div>
+    </div>
+
+    <!-- Abandoned Carts -->
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all anim-up" style="animation-delay: 100ms">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+                <i class="fas fa-shopping-basket"></i>
+            </div>
+            <div>
+                <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Abandoned Carts</div>
+                <div class="text-lg font-black text-gray-900 crimson-pro"><?php echo $abandoned_count; ?></div>
+            </div>
+        </div>
+        <div class="text-[9px] text-gray-500 font-medium">Potential revenue waiting to be recovered.</div>
+    </div>
+
+    <!-- Affiliate Revenue -->
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all anim-up" style="animation-delay: 150ms">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <i class="fas fa-handshake"></i>
+            </div>
+            <div>
+                <div class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Affiliate Revenue</div>
+                <div class="text-lg font-black text-gray-900 crimson-pro">₹<?php echo number_format($affiliate_revenue, 0); ?></div>
+            </div>
+        </div>
+        <div class="text-[9px] text-gray-500 font-medium">Coupons saved customers <span class="text-emerald-600 font-bold">₹<?php echo number_format($coupon_savings, 0); ?></span></div>
     </div>
 </div>
 
@@ -311,6 +394,24 @@ $cat_data = fetch_all("SELECT c.name, COUNT(p.id) as count FROM categories c LEF
                         <div class="flex-1">
                             <div class="text-xs font-bold text-gray-900 leading-tight"><?php echo $ts['name']; ?></div>
                             <div class="text-[10px] text-gray-400 font-medium">₹<?php echo number_format($ts['price']); ?> • <span class="text-[#24B25D] font-black"><?php echo $ts['total_sold']; ?> Sold</span></div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+
+                <!-- Top Customers -->
+                <?php if(!empty($top_customers)): ?>
+                <div class="space-y-4 pt-4 border-t border-gray-50">
+                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">High-Value Customers</h4>
+                    <?php foreach($top_customers as $tc): ?>
+                    <div class="flex items-center gap-4 group cursor-default">
+                        <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 font-black text-xs border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-all capitalize">
+                            <?php echo substr($tc['name'], 0, 1); ?>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-xs font-bold text-gray-900 leading-tight"><?php echo $tc['name']; ?></div>
+                            <div class="text-[10px] text-gray-400 font-medium"><?php echo $tc['order_count']; ?> Orders • <span class="text-indigo-600 font-black">₹<?php echo number_format($tc['total_spent']); ?> Spent</span></div>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -630,14 +731,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Category Doughnut Chart
     const catCtx = document.getElementById('categoryChart').getContext('2d');
-    const catData = <?php echo json_encode($cat_data); ?>;
+    const catCountData = <?php echo json_encode($cat_data); ?>;
+    const catRevData = <?php echo json_encode($cat_revenue_data); ?>;
     
-    new Chart(catCtx, {
+    let categoryChart = new Chart(catCtx, {
         type: 'doughnut',
         data: {
-            labels: catData.map(d => d.name),
+            labels: catRevData.map(d => d.name),
             datasets: [{
-                data: catData.map(d => d.count),
+                data: catRevData.map(d => d.revenue),
                 backgroundColor: [
                     '#24B25D', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6', '#6366f1'
                 ],
@@ -656,10 +758,50 @@ document.addEventListener('DOMContentLoaded', () => {
                         usePointStyle: true,
                         font: { size: 10, weight: 'bold' }
                     }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const val = context.raw;
+                            const isRev = categoryChart.data.datasets[0].label === 'Revenue';
+                            return context.label + ': ' + (isRev ? '₹' + val.toLocaleString() : val + ' items');
+                        }
+                    }
                 }
             }
         }
     });
+
+    window.toggleCatChart = function(type) {
+        const btnRev = document.getElementById('btn-cat-rev');
+        const btnCount = document.getElementById('btn-cat-count');
+        const title = document.querySelector('#categoryChart').closest('div').parentElement.querySelector('h3');
+        const sub = document.querySelector('#categoryChart').closest('div').parentElement.querySelector('p');
+
+        if (type === 'revenue') {
+            categoryChart.data.labels = catRevData.map(d => d.name);
+            categoryChart.data.datasets[0].data = catRevData.map(d => d.revenue);
+            categoryChart.data.datasets[0].label = 'Revenue';
+            btnRev.classList.add('bg-white', 'shadow-sm');
+            btnRev.classList.remove('text-gray-400');
+            btnCount.classList.remove('bg-white', 'shadow-sm');
+            btnCount.classList.add('text-gray-400');
+            title.textContent = 'Financial Split';
+            sub.textContent = 'Revenue by Category';
+        } else {
+            categoryChart.data.labels = catCountData.map(d => d.name);
+            categoryChart.data.datasets[0].data = catCountData.map(d => d.count);
+            categoryChart.data.datasets[0].label = 'Quantity';
+            btnCount.classList.add('bg-white', 'shadow-sm');
+            btnCount.classList.remove('text-gray-400');
+            btnRev.classList.remove('bg-white', 'shadow-sm');
+            btnRev.classList.add('text-gray-400');
+            title.textContent = 'Inventory Split';
+            sub.textContent = 'Product distribution by Category';
+        }
+        categoryChart.update();
+    };
+    categoryChart.data.datasets[0].label = 'Revenue'; // Default label
 });
 
 // Real-time Stats Refresher
