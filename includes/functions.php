@@ -120,7 +120,8 @@ function send_email($to, $subject, $message) {
         return true;
     } catch (Exception $e) {
         // Log error and fallback to mail() as last resort with robust headers
-        error_log("PHPMailer Error: " . $mail->ErrorInfo);
+        error_log("PHPMailer Error for $to: " . $e->getMessage());
+        file_put_contents(__DIR__ . '/../mail_log.txt', "[" . date('Y-m-d H:i:s') . "] PHPMailer Exception for $to: " . $e->getMessage() . "\n", FILE_APPEND);
         
         $from = 'contact@driyum.com';
         $headers  = "MIME-Version: 1.0\r\n";
@@ -1430,10 +1431,12 @@ function run_crons() {
     if ($now - $last_run > 300) {
         update_setting('last_cron_run', $now);
         
-        // Use a more reliable path for the cron script
+        // 1. Process Pending Emails from Queue
+        process_email_queue(10);
+        
+        // 2. Automate finding abandoned carts to remind
         $cron_script = __DIR__ . '/../cron/abandoned_cart_reminder.php';
         if (file_exists($cron_script)) {
-            // We'll run it and ignore output for now
             ob_start();
             include $cron_script;
             ob_end_clean();

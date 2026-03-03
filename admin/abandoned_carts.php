@@ -11,11 +11,11 @@ if (!is_admin()) {
 // Handle Action
 if (isset($_GET['mark_reminded'])) {
     $id = (int)$_GET['mark_reminded'];
-    if (queue_abandoned_cart_reminder($id)) {
+    if (send_abandoned_cart_reminder($id)) {
         execute_query("UPDATE abandoned_carts SET is_reminded = 1 WHERE id = ?", [$id]);
-        $_SESSION['success'] = "Reminder queued for delivery!";
+        $_SESSION['success'] = "Reminder sent successfully!";
     } else {
-        $_SESSION['error'] = "Failed to queue reminder.";
+        $_SESSION['error'] = "Failed to send reminder. Check email logs.";
     }
     header('Location: abandoned_carts.php');
     exit;
@@ -46,7 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_ids']) && is_arr
         if (!empty($processed_ids)) {
             $id_list = implode(',', $processed_ids);
             execute_query("UPDATE abandoned_carts SET is_reminded = 1 WHERE id IN ($id_list)");
-            $_SESSION['success'] = "Queued $success_count reminders for background delivery!";
+            
+            // Trigger immediate processing of the first few in this request
+            process_email_queue(5);
+            
+            $_SESSION['success'] = "Queued $success_count reminders. Sending started in background!";
         }
     }
 
