@@ -348,22 +348,49 @@ $wishlist_json = json_encode($wishlist_ids);
     </div>
     <?php endif; ?>
 
-    <!-- MODERN BRANDED HERO (Optimized & Fully Responsive) -->
-    <section class="relative min-h-[max(650px,90vh)] lg:h-[95vh] w-full bg-[#002A23] overflow-hidden flex flex-col pt-[80px] lg:pt-0" id="modern-hero">
+    <!-- MODERN BRANDED HERO (True Viewport Engineering) -->
+    <style>
+        :root {
+            /* TOP BAR OFFSETS (Approximate heights for calculation) */
+            --announcement-h: 44px;
+            --header-h: 90px;
+            --ticker-h: <?php echo $active_sale ? '50px' : '0px'; ?>;
+            --top-offset: calc(var(--announcement-h) + var(--header-h) + var(--ticker-h));
+            
+            --mobile-announcement-h: 28px;
+            --mobile-header-h: 64px;
+            --mobile-ticker-h: <?php echo $active_sale ? '44px' : '0px'; ?>;
+            --mobile-top-offset: calc(var(--mobile-announcement-h) + var(--mobile-header-h) + var(--mobile-ticker-h));
+            --mobile-dock-h: 85px;
+        }
+        
+        #modern-hero {
+            height: calc(100dvh - var(--top-offset));
+            max-height: calc(100dvh - var(--top-offset));
+        }
+
+        @media (max-width: 1023px) {
+            #modern-hero {
+                height: calc(100dvh - var(--mobile-top-offset));
+                max-height: calc(100dvh - var(--mobile-top-offset));
+            }
+        }
+    </style>
+    <section class="w-full bg-[#002A23] overflow-hidden flex flex-col relative" id="modern-hero">
         
         <!-- MAIN CONTENT WRAPPER -->
         <div class="flex-grow flex flex-col-reverse lg:flex-row relative z-10 w-full h-full">
             
-            <!-- LEFT AREA: BRAND PITCH & SELECTOR -->
-            <div class="w-full lg:w-[55%] flex flex-col justify-center px-6 sm:px-10 md:px-16 lg:px-24 py-12 lg:py-0 relative z-20 text-center lg:text-left">
+            <!-- LEFT AREA: TEXT & ACTIONS -->
+            <div class="w-full lg:w-[55%] flex flex-col justify-center px-6 lg:px-24 pb-[var(--mobile-dock-h)] lg:pb-0 py-4 lg:py-0 relative z-20 text-center lg:text-left h-[60%] lg:h-full">
                 <div class="max-w-2xl mx-auto lg:mx-0">
                     <!-- Top Tagline -->
                     <span class="text-[#19DC7E] font-black uppercase tracking-[0.4em] text-[10px] sm:text-xs lg:text-sm mb-4 block anim-reveal-up" style="animation-delay: 0.1s">
                         <?php echo $hero_variants[0]['tagline'] ?? 'Your New Healthy Habit'; ?>
                     </span>
                     
-                    <!-- Main Catchy Headline (Fluid Typography) -->
-                    <h1 id="hero-main-title" class="text-[clamp(2.5rem,8vw,6rem)] font-black leading-[0.95] text-white tracking-tighter uppercase mb-6 lg:mb-12 anim-reveal-up font-heading" style="animation-delay: 0.2s">
+                    <!-- Main Catchy Headline (Aggressively Compact for Mobile) -->
+                    <h1 id="hero-main-title" class="text-[clamp(1.5rem,5.5vw,4.5rem)] font-black leading-[0.8] text-white tracking-tighter uppercase mb-2 lg:mb-10 anim-reveal-up font-heading" style="animation-delay: 0.2s">
                         <?php 
                             $first_title = $hero_variants[0]['name'] ?? 'PURE CRUNCH';
                             $words = explode(' ', strtoupper($first_title));
@@ -377,12 +404,12 @@ $wishlist_json = json_encode($wishlist_ids);
                     <!-- Badges Row (Optimized for Mobile) -->
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-4 mb-10 lg:mb-16 anim-reveal-up" id="hero-badges" style="animation-delay: 0.3s">
                         <!-- Price Badge -->
-                        <div class="bg-white/10 backdrop-blur-3xl border border-white/10 px-5 lg:px-8 py-3 lg:py-4 rounded-2xl md:rounded-3xl flex flex-col items-center">
+                        <div class="bg-white/10 backdrop-blur-3xl border border-white/10 px-4 lg:px-8 py-2.5 lg:py-4 rounded-2xl md:rounded-3xl flex flex-col items-center">
                             <div class="flex items-baseline gap-1">
-                                <span class="text-white/40 text-xs font-black uppercase tracking-widest">₹</span>
-                                <span id="hero-price" class="text-xl md:text-2xl lg:text-3xl font-black text-white leading-none"><?php echo $hero_variants[0]['price'] ?: '249'; ?></span>
+                                <span class="text-white/40 text-[10px] lg:text-xs font-black uppercase tracking-widest">₹</span>
+                                <span id="hero-price" class="text-lg md:text-2xl lg:text-3xl font-black text-white leading-none"><?php echo $hero_variants[0]['price'] ?: '249'; ?></span>
                             </div>
-                            <span class="text-[7px] lg:text-[10px] font-black uppercase tracking-widest text-white/40 mt-1">FOR SALE!</span>
+                            <span class="text-[6px] lg:text-[10px] font-black uppercase tracking-widest text-white/40 mt-1">FOR SALE!</span>
                         </div>
                         <!-- Add to Cart Badge (Functional) -->
                         <div class="anim-reveal-up" id="hero-atc-wrap" style="animation-delay: 0.35s;">
@@ -412,7 +439,7 @@ $wishlist_json = json_encode($wishlist_ids);
                         <?php endforeach; ?>
                     </div>
 
-                    <!-- THUMBNAIL SELECTOR (Desktop Only Grid) -->
+                    <!-- THUMBNAIL SELECTOR -->
                     <div class="hidden lg:grid grid-cols-4 gap-4 max-w-sm anim-reveal-up" style="animation-delay: 0.4s">
                         <?php 
                         foreach($hero_variants as $index => $variant): 
@@ -422,7 +449,6 @@ $wishlist_json = json_encode($wishlist_ids);
                             <div class="aspect-square w-full h-full bg-white/5 backdrop-blur-md rounded-xl md:rounded-2xl border border-white/10 p-2 flex items-center justify-center overflow-hidden">
                                 <img src="<?php echo get_url($variant['image']); ?>" class="w-full h-auto transform group-hover:scale-110 transition-transform" alt="">
                             </div>
-                            <!-- Progress Bar -->
                             <div class="absolute bottom-0 left-0 h-1 bg-[#19DC7E] transition-all duration-300 pointer-events-none thumb-progress" style="width: 0%"></div>
                         </button>
                         <?php endforeach; ?>
@@ -430,8 +456,8 @@ $wishlist_json = json_encode($wishlist_ids);
                 </div>
             </div>
 
-            <!-- RIGHT AREA: ACCENT PANEL & PRODUCT (Advanced Responsive Composition) -->
-            <div class="w-full lg:w-[45%] relative min-h-[50vh] md:min-h-[50vh] lg:h-full flex items-center justify-center mt-auto lg:mt-0">
+            <!-- RIGHT AREA: IMAGE AREA -->
+            <div class="w-full lg:w-[45%] relative h-[40%] lg:h-full flex items-center justify-center overflow-hidden">
                 
                 <!-- ACCENT BACKGROUND (Dynamic Fluid Shape) -->
                 <div id="hero-accent-panel" class="absolute inset-y-0 right-0 w-full lg:w-[85%] lg:rounded-l-[100px] xl:rounded-l-[150px] transform transition-all duration-1000 ease-out z-0" style="background-color: <?php echo $hero_variants[0]['bg'] ?? '#19DC7E'; ?>"></div>
@@ -449,16 +475,16 @@ $wishlist_json = json_encode($wishlist_ids);
                 </div>
 
                 <!-- MAIN PRODUCT (Enhanced Center/Mobile Composition) -->
-                <div id="hero-main-img-container" class="relative z-20 w-full flex items-center justify-center p-8 sm:p-12 lg:p-0">
+                <div id="hero-main-img-container" class="relative z-20 w-full flex items-center justify-center p-4 sm:p-12 lg:p-0">
                     <div class="relative group/main max-w-[400px] sm:max-w-none">
                         <!-- Bottom Shadow -->
                         <div class="absolute -bottom-6 md:-bottom-12 left-1/2 -translate-x-1/2 w-[70%] h-12 bg-black/30 blur-[40px] md:blur-[60px] rounded-full scale-y-50 opacity-60"></div>
                         
                         <!-- The Image -->
-                        <a id="hero-product-link" href="<?php echo product_url($hero_variants[0]['slug']); ?>" class="block relative z-20">
+                        <a id="hero-product-link" href="<?php echo product_url($hero_variants[0]['slug']); ?>" class="block relative z-20 flex items-center justify-center w-full">
                             <img id="hero-main-img" 
                                  src="<?php echo get_url($hero_variants[0]['image']); ?>" 
-                                 class="w-full max-w-[280px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] h-auto drop-shadow-[0_45px_75px_rgba(0,0,0,0.4)] anim-float-slow transform group-hover/main:scale-105 transition-all duration-1000 briry" 
+                                 class="w-full max-w-[280px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] h-auto object-contain drop-shadow-[0_45px_75px_rgba(0,0,0,0.4)] anim-float-slow transform group-hover/main:scale-105 transition-all duration-1000 briry" 
                                  alt="Premium Snack">
                         </a>
                         
@@ -567,11 +593,15 @@ $wishlist_json = json_encode($wishlist_ids);
         }
 
         /* Mobile Adjustments for High Impact Composition */
+        /* Correct Centering for Locked Viewport */
         @media (max-width: 1023px) {
+            #modern-hero {
+                height: calc(100dvh - var(--mobile-top-offset));
+            }
             #hero-accent-panel {
                 inset: auto 0 0 0;
                 width: 100%;
-                height: 55%;
+                height: 50%;
                 border-radius: 40px 40px 0 0;
             }
             #hero-vertical-text-box {
@@ -580,12 +610,19 @@ $wishlist_json = json_encode($wishlist_ids);
                 opacity: 0.1;
                 pointer-events: none;
             }
-            .hero-v-text { white-space: nowrap; }
+            .hero-v-text { white-space: nowrap; font-size: 20vw !important; }
+            #hero-main-img { 
+                max-height: 28vh; 
+                width: auto;
+                max-width: 85%;
+                object-fit: contain;
+            }
+            #hero-badges { transform: scale(0.85); margin-bottom: 0.4rem; gap: 0.5rem; }
+            #hero-atc-btn { transform: scale(0.85); transform-origin: center; }
         }
 
         @media (max-width: 640px) {
-            #hero-main-title { letter-spacing: -0.05em; }
-            .hero-v-text { font-size: 25vw !important; }
+            #hero-main-title { letter-spacing: -0.05em; margin-bottom: 0.5rem; font-size: 10vw !important; }
         }
         /* Infinite Marquee */
         @keyframes marquee {

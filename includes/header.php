@@ -236,7 +236,7 @@ try {
 </script>
 
 <!-- INFINITE MARQUEE -->
-<div class="text-white overflow-hidden py-2.5 relative z-[40] border-b border-[#19DC7E]/30 font-cute" style="background-color: <?php echo $announcement_bg; ?>;">
+<div class="text-white overflow-hidden py-1.5 md:py-2.5 relative z-[40] border-b border-[#19DC7E]/30 font-cute" style="background-color: <?php echo $announcement_bg; ?>;">
     <!-- Gradient Overlay for fade effect on edges -->
     <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
     <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
@@ -383,7 +383,7 @@ try {
 </header>
 
 <!-- MOBILE TOP BAR -->
-<header class="md:hidden sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100 h-20 flex items-center justify-between px-6 shadow-sm">
+<header class="md:hidden sticky top-0 z-[100] bg-white/80 backdrop-blur-xl border-b border-gray-100 h-16 flex items-center justify-between px-6 shadow-sm">
     <div class="flex items-center gap-2">
         <button id="mobile-search-trigger" onclick="toggleSearch()" class="w-10 h-10 flex items-center justify-center text-gray-700 hover:text-black transition-colors" aria-label="Search"><i class="fas fa-search"></i></button>
     </div>
