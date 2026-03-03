@@ -265,7 +265,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             ?>
                         </div>
                         <span class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">
-                            <?php echo $total_reviews > 0 ? $avg_rating . " (" . $total_reviews . " Reviews)" : "Awaiting First Verdict"; ?>
+                            <?php echo $total_reviews > 0 ? $avg_rating . " (" . $total_reviews . " Reviews)" : "No reviews yet"; ?>
                         </span>
                     </div>
                     <h1 class="text-[clamp(2.5rem,10vw,8rem)] font-heading font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>

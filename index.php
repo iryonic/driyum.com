@@ -17,14 +17,28 @@ if(!empty($slides_data)) {
     $hero_variants = [];
     foreach($slides_data as $s) {
         $pid = $s['product_id'];
+        $pslug = '';
+        
         if(empty($pid)) {
             // Try to match by title as fallback
-            $match = fetch_one("SELECT id FROM products WHERE name LIKE ? LIMIT 1", ["%".$s['title']."%"]);
-            $pid = $match ? $match['id'] : fetch_one("SELECT id FROM products WHERE is_active = 1 LIMIT 1")['id'];
+            $match = fetch_one("SELECT id, slug FROM products WHERE name LIKE ? LIMIT 1", ["%".$s['title']."%"]);
+            if($match) {
+                $pid = $match['id'];
+                $pslug = $match['slug'];
+            } else {
+                $fallback = fetch_one("SELECT id, slug FROM products WHERE is_active = 1 LIMIT 1");
+                $pid = $fallback['id'];
+                $pslug = $fallback['slug'];
+            }
+        } else {
+            $pinfo = fetch_one("SELECT slug FROM products WHERE id = ?", [$pid]);
+            $pslug = $pinfo ? $pinfo['slug'] : '';
         }
+
         $hero_variants[] = [
             'id' => $s['id'],
             'product_id' => $pid,
+            'slug' => $pslug,
             'name' => $s['title'],
             'price' => $s['price'] > 0 ? $s['price'] : '249',
             'image' => $s['image'],
@@ -42,6 +56,7 @@ if(!empty($slides_data)) {
         $hero_variants[] = [
             'id' => $f['id'],
             'product_id' => $f['id'],
+            'slug' => $f['slug'],
             'name' => $f['name'],
             'price' => $f['price'],
             'image' => $f['image'],
@@ -56,10 +71,10 @@ if(!empty($slides_data)) {
 // Global High-End Fallback if still empty
 if(empty($hero_variants)) {
     $hero_variants = [
-        ['id'=>1, 'product_id'=>1, 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'bg'=>'#19DC7E', 'v1'=>'PURE', 'v2'=>'ENERGY', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>2, 'product_id'=>2, 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'bg'=>'#EDB02C', 'v1'=>'NATURE\'S', 'v2'=>'SWEET', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>3, 'product_id'=>3, 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'bg'=>'#F67E42', 'v1'=>'BOLD', 'v2'=>'CRUNCH', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>4, 'product_id'=>4, 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'bg'=>'#EC4899', 'v1'=>'WILD', 'v2'=>'PICKED', 'tagline'=>'Your New Healthy Habit']
+        ['id'=>1, 'product_id'=>1, 'slug'=>'signature-almonds', 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'bg'=>'#19DC7E', 'v1'=>'PURE', 'v2'=>'ENERGY', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>2, 'product_id'=>2, 'slug'=>'crispy-apple-chips', 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'bg'=>'#EDB02C', 'v1'=>'NATURE\'S', 'v2'=>'SWEET', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>3, 'product_id'=>3, 'slug'=>'spiced-walnuts', 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'bg'=>'#F67E42', 'v1'=>'BOLD', 'v2'=>'CRUNCH', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>4, 'product_id'=>4, 'slug'=>'sweet-berries', 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'bg'=>'#EC4899', 'v1'=>'WILD', 'v2'=>'PICKED', 'tagline'=>'Your New Healthy Habit']
     ];
 }
 
@@ -149,6 +164,12 @@ $wishlist_json = json_encode($wishlist_ids);
                 mainImg.src = imgPath;
 
                 if(mainPrice) mainPrice.innerText = data.price || '249';
+                
+                // Update Link
+                const productLink = document.getElementById('hero-product-link');
+                if(productLink && data.slug) {
+                    productLink.href = '<?php echo get_url('product/'); ?>' + data.slug;
+                }
                 
                 // Update ATC Button
                 const cartBtn = document.getElementById('hero-atc-btn');
@@ -434,10 +455,12 @@ $wishlist_json = json_encode($wishlist_ids);
                         <div class="absolute -bottom-6 md:-bottom-12 left-1/2 -translate-x-1/2 w-[70%] h-12 bg-black/30 blur-[40px] md:blur-[60px] rounded-full scale-y-50 opacity-60"></div>
                         
                         <!-- The Image -->
-                        <img id="hero-main-img" 
-                             src="<?php echo get_url($hero_variants[0]['image']); ?>" 
-                             class="w-full max-w-[280px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] h-auto drop-shadow-[0_45px_75px_rgba(0,0,0,0.4)] anim-float-slow transform group-hover/main:scale-105 transition-all duration-1000 briry" 
-                             alt="Premium Snack">
+                        <a id="hero-product-link" href="<?php echo product_url($hero_variants[0]['slug']); ?>" class="block relative z-20">
+                            <img id="hero-main-img" 
+                                 src="<?php echo get_url($hero_variants[0]['image']); ?>" 
+                                 class="w-full max-w-[280px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] h-auto drop-shadow-[0_45px_75px_rgba(0,0,0,0.4)] anim-float-slow transform group-hover/main:scale-105 transition-all duration-1000 briry" 
+                                 alt="Premium Snack">
+                        </a>
                         
                         <!-- Wishlist Toggle -->
                 <div id="hero-heart-btn" 
@@ -833,7 +856,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                  <!-- Price -->
                                  <div class="pl-2 md:pl-4 flex flex-col leading-none">
                                     <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
-                                        <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
+                                        <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹ <?php echo $p['original_price']; ?></span>
                                     <?php endif; ?>
                                     <span class="text-xl md:text-3xl font-black text-gray-900 font-heading tracking-tighter">₹<?php echo $p['price']; ?></span>
                                  </div>
