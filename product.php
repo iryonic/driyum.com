@@ -50,6 +50,16 @@ if (isset($_GET['delete_review_id']) && is_admin()) {
 $reviews = get_product_reviews($id);
 $related = get_related_products($id, $product['category_id']);
 
+// Calculate Average Rating
+$total_reviews = count($reviews);
+$avg_rating = 0;
+$is_new_product = true;
+if ($total_reviews > 0) {
+    $sum = array_sum(array_column($reviews, 'rating'));
+    $avg_rating = round($sum / $total_reviews, 1);
+    $is_new_product = false;
+}
+
 // Background Color Logic
 $bg_options = ['#FFFBEB', '#F0FDFA', '#FEF2F2', '#F5F3FF', '#ECFDF5', '#FFF7ED', '#FDF2F8'];
 $color_base = !empty($product['bg_color']) ? $product['bg_color'] : $bg_options[array_rand($bg_options)];
@@ -242,9 +252,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="mb-10">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="flex text-yellow-400 text-[10px] md:text-xs gap-0.5">
-                            <?php for($i=0;$i<5;$i++) echo '<i class="fas fa-star"></i>'; ?>
+                            <?php 
+                            if ($total_reviews > 0):
+                                for($i=1; $i<=5; $i++) {
+                                    if($i <= floor($avg_rating)) echo '<i class="fas fa-star"></i>';
+                                    elseif($i <= ceil($avg_rating)) echo '<i class="fas fa-star-half-alt"></i>';
+                                    else echo '<i class="far fa-star"></i>';
+                                }
+                            else:
+                                echo '<span class="text-[#19DC7E] font-black text-[8px] uppercase tracking-widest bg-[#19DC7E]/10 px-2 py-0.5 rounded-full">New Drop</span>';
+                            endif;
+                            ?>
                         </div>
-                        <span class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">4.5 (<?php echo count($reviews); ?> Reviews)</span>
+                        <span class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">
+                            <?php echo $total_reviews > 0 ? $avg_rating . " (" . $total_reviews . " Reviews)" : "Awaiting First Verdict"; ?>
+                        </span>
                     </div>
                     <h1 class="text-[clamp(2.5rem,10vw,8rem)] font-heading font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>
                     
@@ -472,16 +494,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </h2>
                         <div class="bg-white rounded-[60px] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.06)] border border-gray-50 relative overflow-hidden group hover:shadow-2xl transition-all duration-700 anim-up text-center">
                             <div class="inline-flex items-baseline gap-2 mb-4">
-                                <span class="text-8xl font-black text-gray-900 font-heading tracking-tighter">4.9</span>
+                                <span class="text-8xl font-black text-gray-900 font-heading tracking-tighter" id="rating-number"><?php echo $total_reviews > 0 ? 0 : '0.0'; ?></span>
                                 <span class="text-2xl font-black text-[#19DC7E]">/5</span>
                             </div>
                             <div class="flex justify-center text-[#FFD700] text-lg gap-1 mb-6">
-                                <?php for($i=0;$i<5;$i++) echo '<i class="fas fa-star drop-shadow-sm"></i>'; ?>
+                                <?php 
+                                if ($total_reviews > 0):
+                                    for($i=1; $i<=5; $i++) {
+                                        if($i <= floor($avg_rating)) echo '<i class="fas fa-star drop-shadow-sm"></i>';
+                                        elseif($i <= ceil($avg_rating)) echo '<i class="fas fa-star-half-alt drop-shadow-sm"></i>';
+                                        else echo '<i class="far fa-star drop-shadow-sm"></i>';
+                                    }
+                                else:
+                                    for($i=0;$i<5;$i++) echo '<i class="far fa-star text-gray-100 drop-shadow-sm"></i>';
+                                endif;
+                                ?>
                             </div>
                             <div class="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden mb-10">
-                                <div class="h-full bg-gradient-to-r from-[#19DC7E] to-[#14c06e] w-[98%] rounded-full shadow-[0_0_10px_rgba(25,220,126,0.3)]"></div>
+                                <div id="rating-bar" class="h-full bg-gradient-to-r from-[#19DC7E] to-[#14c06e] rounded-full shadow-[0_0_10px_rgba(25,220,126,0.3)] transition-all duration-[1.5s] ease-out" style="width: 0%"></div>
                             </div>
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-10">Authentic Stories</p>
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-10"><?php echo $total_reviews > 0 ? "Verified Authentic Stories" : "Be the first to tell yours"; ?></p>
 
                             <button onclick="document.getElementById('review-form-container').scrollIntoView({behavior:'smooth'})" class="w-full bg-gray-50 hover:bg-black hover:text-white py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest transition-all">Share Your Experience</button>
                         </div>
@@ -736,6 +768,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             progressBar.style.width = '0%'; // Pause visually
         });
         showcase.addEventListener('mouseleave', startSlideshow);
+
+        // Rating Dynamics
+        const targetRating = <?php echo (float)$avg_rating; ?>;
+        const ratingEl = document.getElementById('rating-number');
+        const ratingBar = document.getElementById('rating-bar');
+        
+        if (ratingEl && targetRating > 0) {
+            let current = 0;
+            const step = targetRating / 60; // 60 frames
+            const counter = setInterval(() => {
+                current += step;
+                if (current >= targetRating) {
+                    current = targetRating;
+                    clearInterval(counter);
+                }
+                ratingEl.textContent = current.toFixed(1);
+            }, 16);
+            
+            setTimeout(() => {
+                ratingBar.style.width = (targetRating / 5 * 100) + '%';
+            }, 300);
+        }
     });
 
     async function checkPincode() {
