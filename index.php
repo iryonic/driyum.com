@@ -404,7 +404,7 @@ $wishlist_json = json_encode($wishlist_ids);
                     <!-- Badges Row (Optimized for Mobile) -->
                     <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-4 mb-10 lg:mb-16 anim-reveal-up" id="hero-badges" style="animation-delay: 0.3s">
                         <!-- Price Badge -->
-                        <div class="bg-white/10 backdrop-blur-3xl border border-white/10 px-4 lg:px-8 py-2.5 lg:py-4 rounded-2xl md:rounded-3xl flex flex-col items-center">
+                        <div class="bg-white/10 backdrop-blur-3xl border border-white/10 px-4 lg:px-8 py-4 lg:py-4 rounded-2xl md:rounded-3xl flex flex-col items-center">
                             <div class="flex items-baseline gap-1">
                                 <span class="text-white/40 text-[10px] lg:text-xs font-black uppercase tracking-widest">₹</span>
                                 <span id="hero-price" class="text-lg md:text-2xl lg:text-3xl font-black text-white leading-none"><?php echo $hero_variants[0]['price'] ?: '249'; ?></span>
