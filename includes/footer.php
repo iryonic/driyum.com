@@ -338,9 +338,7 @@
         <div class="dock-fab-wrapper-v2">
             <a href="#" onclick="openCartSidebar(); return false;" class="dock-fab-v2">
                 <i class="fas fa-shopping-cart"></i>
-                <?php if(isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
-                    <span class="dock-badge-v2" id="mobile-cart-count"><?php echo count($_SESSION['cart']); ?></span>
-                <?php endif; ?>
+                <span class="dock-badge-v2" id="mobile-cart-count">0</span>
             </a>
         </div>
 

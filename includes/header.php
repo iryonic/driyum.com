@@ -374,9 +374,9 @@ try {
             </div>
 
             <!-- Cart Trigger -->
-            <button onclick="openCartSidebar()" class="relative btn-chunky bg-[#111827] text-white hover:bg-[#19DC7E] border-none px-4 lg:px-6 py-2 shrink-0 h-10 lg:h-12 flex items-center" aria-label="Open shopping bag">
-                <i class="fas fa-shopping-bag mr-2 text-sm " aria-hidden="true"></i>
-                <span id="cart-count" class="text-xs lg:text-sm font-bold">Bag</span>
+            <button onclick="openCartSidebar()" class="relative w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white border-2 border-gray-100 flex items-center justify-center text-gray-600 hover:border-[#19DC7E] hover:text-[#19DC7E] transition" aria-label="Open shopping bag">
+                <i class="fas fa-shopping-bag text-sm"></i>
+                <span id="cart-count" class="absolute -top-1 -right-1 bg-[#19DC7E] text-[#002A23] text-[9px] font-black rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center shadow-sm">0</span>
             </button>
         </div>
     </div>
@@ -390,6 +390,7 @@ try {
     <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="<?php echo $store_name; ?> - Home" class="w-24"></a>
     <button onclick="openCartSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-700 relative hover:text-black transition-colors" aria-label="Open Shopping Bag">
         <i class="fas fa-shopping-bag"></i>
+        <span id="mobile-cart-count" class="absolute top-1 right-1 bg-[#19DC7E] text-[#002A23] text-[9px] font-black rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center shadow-sm">0</span>
     </button>
 </header>
 

@@ -878,7 +878,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-2">
                                         <span class="w-2 h-2 rounded-full bg-[#24B25D] opacity-50"></span>
-                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-sans">Premium Select</p>
+                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-sans">Driyum</p>
                                     </div>
                                     <h3 class="text-2xl font-black font-heading text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
                                    

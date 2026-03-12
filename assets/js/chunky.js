@@ -346,13 +346,7 @@ window.updateCartIcon = async function () {
         const data = await response.json();
         if (data.success) {
             document.querySelectorAll('#cart-count, #mobile-cart-count, #desktop-cart-count').forEach(el => {
-                if (el.id === 'cart-count') {
-                    el.textContent = `Cart (${data.count})`;
-                } else if (el.id === 'mobile-cart-count') {
-                    el.textContent = data.count;
-                } else {
-                    el.textContent = data.count;
-                }
+                el.textContent = data.count;
             });
         }
     } catch (e) { }
