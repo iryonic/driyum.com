@@ -9,3 +9,8 @@
 /build
 /uploads
 *.log
+
+# Uploaded images
+/assets/images/categories/
+/assets/images/products/
+/assets/images/uploads/
