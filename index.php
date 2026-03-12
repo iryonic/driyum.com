@@ -415,13 +415,13 @@ $wishlist_json = json_encode($wishlist_ids);
                         <div class="anim-reveal-up" id="hero-atc-wrap" style="animation-delay: 0.35s;">
                             <button id="hero-atc-btn" 
                                     onclick="addToCart(<?php echo $hero_variants[0]['product_id']; ?>, this, 1)"
-                                    class="bg-[#19DC7E] px-6 lg:px-10 py-3 lg:py-5 rounded-2xl md:rounded-3xl flex items-center gap-3 lg:gap-4 text-[#002A23] shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group">
-                                <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#002A23] flex items-center justify-center text-white group-hover:bg-[#19DC7E] group-hover:text-[#002A23] transition-colors">
-                                    <i class="fas fa-shopping-basket text-[10px] lg:text-sm"></i>
+                                    class="bg-[#19DC7E] px-8 md:px-10 lg:px-10 py-4 md:py-5 lg:py-5 rounded-2xl md:rounded-3xl flex items-center gap-3 lg:gap-4 text-[#002A23] shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group">
+                                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-[#002A23] flex items-center justify-center text-white group-hover:bg-[#19DC7E] group-hover:text-[#002A23] transition-colors">
+                                    <i class="fas fa-shopping-basket text-xs lg:text-sm"></i>
                                 </div>
                                 <div class="flex flex-col items-start">
-                                    <span class="text-[9px] lg:text-xs font-black uppercase tracking-widest leading-none">BUY</span>
-                                    <span class="text-[7px] lg:text-[10px] font-black uppercase tracking-widest opacity-60">NOW</span>
+                                    <span class="text-[11px] lg:text-xs font-black uppercase tracking-widest leading-none">BUY</span>
+                                    <span class="text-[9px] lg:text-[10px] font-black uppercase tracking-widest opacity-60">NOW</span>
                                 </div>
                             </button>
                         </div>
@@ -617,8 +617,8 @@ $wishlist_json = json_encode($wishlist_ids);
                 max-width: 95%;
                 object-fit: contain;
             }
-            #hero-badges { transform: scale(0.9); margin-bottom: 0.8rem; gap: 0.6rem; }
-            #hero-atc-btn { transform: scale(0.9); transform-origin: center; }
+            #hero-badges { margin-bottom: 0.8rem; gap: 0.6rem; }
+            #hero-atc-btn { transform-origin: center; }
         }
 
         @media (max-width: 640px) {
