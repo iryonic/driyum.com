@@ -1301,7 +1301,7 @@ function get_abandoned_cart_email_content($cart_id) {
     $cart_items_data = json_decode($cart['cart_data'], true);
     if (empty($cart_items_data)) return null;
 
-    $subject = "Your Driyum snacks are waiting! 🍎";
+    $subject = "Your Driyum snacks are waiting!";
     $items_html = "";
     $subtotal = 0;
     

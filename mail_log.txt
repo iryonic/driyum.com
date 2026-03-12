@@ -490,3 +490,20 @@
 ----------------------------------------
 [2026-03-03 22:04:17] To: sarahayjaz@gmail.com | Subject: Your Driyum snacks are waiting! 🍎
 ----------------------------------------
+[2026-03-12 13:01:39] To: hire.iry@gmail.com | Subject: Test Direct
+----------------------------------------
+[2026-03-12 13:04:16] To: test@example.com | Subject: Test Subject
+----------------------------------------
+[2026-03-12 13:04:20] To: thisizirfan2@gmail.com | Subject: Hurry! Driyumâ€™s Limited-Time Fruit Sale Ends Soon
+----------------------------------------
+[2026-03-12 13:04:23] To: faiqbhat123@gmail.com | Subject: try
+----------------------------------------
+[2026-03-12 13:04:26] To: thisizirfan2@gmail.com | Subject: try
+----------------------------------------
+[2026-03-12 13:04:28] To: drop.mail.iry@gmail.com | Subject: Test Email â€“ Driyum Mail System
+----------------------------------------
+[2026-03-12 13:14:31] To: hire.iry@gmail.com | Subject: Your Driyum snacks are waiting! 🍎
+----------------------------------------
+[2026-03-12 13:15:47] PHPMailer Exception for hire.iry@gmail.com: SMTP Error: data not accepted.
+[2026-03-12 13:37:23] To: hire.iry@gmail.com | Subject: Your Driyum snacks are waiting!
+----------------------------------------
