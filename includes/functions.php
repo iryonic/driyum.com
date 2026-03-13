@@ -1362,7 +1362,7 @@ function get_abandoned_cart_email_content($cart_id) {
             </div>
             
             <p style='margin-top: 40px; font-size: 12px; color: #999; text-align: center; line-height: 1.6;'>
-                Need help? Just reply to this email or visit our support center.<br>
+                Need help? Just reply to this email .<br>
                 &copy; " . date('Y') . " DRIYUM. All Rights Reserved.
             </p>
         </div>
