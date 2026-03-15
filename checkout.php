@@ -477,7 +477,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">PIN Code</label>
-                                    <input type="text" name="zip" id="zip_input" required placeholder="eg :190001" value="<?php echo $form['zip']; ?>" maxlength="6" oninput="fetchShippingMethods()" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="zip" id="zip_input" required placeholder="eg :190001" value="<?php echo $form['zip']; ?>" maxlength="6" pattern="[0-9]{6}" title="Please enter a valid 6-digit PIN code" oninput="this.value = this.value.replace(/[^0-9]/g, ''); fetchShippingMethods();" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
 
                                 <div class="md:col-span-2 mt-4 hidden" id="shipping-methods-container">
@@ -862,15 +862,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             if (n === 2) {
                 const step1Inputs = document.querySelectorAll('#step-1 input[required]');
                 let valid = true;
+                let firstInvalid = null;
                 step1Inputs.forEach(input => {
-                    if (!input.value.trim()) {
+                    if (!input.checkValidity()) {
                         input.classList.add('border-red-200', 'bg-red-50');
                         valid = false;
+                        if (!firstInvalid) firstInvalid = input;
                     } else {
                         input.classList.remove('border-red-200', 'bg-red-50');
                     }
                 });
-                if (!valid) return;
+                if (!valid) {
+                    firstInvalid.reportValidity();
+                    return;
+                }
             }
 
             // Clean up UI
