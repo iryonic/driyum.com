@@ -256,6 +256,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($redirect) {
+        Cache::forget('hero_slides_all');
+        Cache::forget('hero_slides_active');
         header("Location: manage_home.php");
         exit;
     }
