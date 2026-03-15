@@ -453,7 +453,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Phone Number</label>
-                                    <input type="text" name="phone" required placeholder="eg : +91 00000 00000" value="<?php echo $form['phone']; ?>" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
+                                    <input type="text" name="phone" required placeholder="eg : +91 00000 00000" value="<?php echo $form['phone']; ?>" pattern="[0-9+\s\-]+" title="Please enter a valid phone number" oninput="this.value = this.value.replace(/[^0-9+\s\-]/g, '')" class="w-full bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-[24px] px-6 py-4 outline-none transition-all font-bold">
                                 </div>
                                 <div class="space-y-2">
                                     <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">First Name</label>
