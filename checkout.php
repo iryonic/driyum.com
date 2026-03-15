@@ -46,12 +46,15 @@ $subtotal = 0;
 $cart_keys = array_keys($_SESSION['cart']);
 
 if (!empty($cart_keys)) {
-    $ids = implode(',', $cart_keys);
-    $products_result = $conn->query("SELECT * FROM products WHERE id IN ($ids)");
+    // Secure against SQL Injection by using prepared statements with ? placeholders
+    $placeholders = implode(',', array_fill(0, count($cart_keys), '?'));
+    $sql = "SELECT * FROM products WHERE id IN ($placeholders)";
+    $products_data_raw = fetch_all($sql, array_values($cart_keys));
+    
     $products_data = [];
     $valid_pids = [];
     
-    while($row = $products_result->fetch_assoc()) {
+    foreach ($products_data_raw as $row) {
         $products_data[$row['id']] = $row;
         $subtotal += $row['price'] * $_SESSION['cart'][$row['id']];
         $valid_pids[] = $row['id'];
@@ -779,8 +782,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                 </div>
 
                 <!-- Slider Container -->
-                <div class="flex-1 overflow-hidden p-6 md:p-12 bg-gray-50/30">
-                    <div id="suggestions-slider" class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar scroll-smooth snap-x pb-4">
+                <div class="flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-12 bg-gray-50/30">
+                    <div id="suggestions-slider" class="flex gap-4 md:gap-6 overflow-x-auto hide-scrollbar scroll-smooth snap-x pb-8 pt-4 px-2">
                         <!-- Suggestions will be injected here -->
                     </div>
                 </div>
@@ -1190,26 +1193,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         const isOutOfStock = parseInt(p.stock || 0) <= 0;
                         const isLowStock = parseInt(p.stock || 0) > 0 && parseInt(p.stock || 0) < 5;
                         const productUrl = `${BASE_URL}product/${p.slug || p.id}`;
-                        
                         html += `
-                            <div class="flex-none w-[180px] md:w-[220px] snap-start bg-white rounded-[24px] md:rounded-[32px] p-4 md:p-5 shadow-sm border-2 border-white hover:border-[#24B25D] hover:shadow-xl transition-all duration-300 group">
+                            <div class="flex-none w-[140px] md:w-[160px] snap-start bg-white rounded-[20px] md:rounded-[24px] p-3 md:p-4 shadow-sm border-2 border-white hover:border-[#24B25D] hover:shadow-xl transition-all duration-300 group">
                                 <div class="aspect-square bg-gray-50 rounded-xl md:rounded-2xl mb-4 md:mb-5 overflow-hidden relative ${isOutOfStock ? 'grayscale' : ''}">
                                     <img src="${BASE_URL}${p.image.replace(/^(\.\/|\/)/, '')}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23d1d5db%22 font-family=%22sans-serif%22 font-size=%2224%22%3ENo Image%3C/text%3E%3C/svg%3E'">
                                     <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors"></div>
                                     ${isOutOfStock ? '<div class="absolute inset-0 bg-white/60 flex items-center justify-center font-black text-xs text-red-500 uppercase tracking-widest">Sold Out</div>' : ''}
                                     ${isLowStock ? '<div class="absolute top-3 left-3 bg-amber-500 text-white text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Only ' + p.stock + ' Left</div>' : ''}
                                 </div>
-                                <h4 class="font-black text-base md:text-lg text-gray-900 mb-1 line-clamp-1 font-[\'crimson-pro\'] ${isOutOfStock ? 'opacity-50' : ''}">${p.name}</h4>
-                                <div class="flex items-center justify-between mt-3 md:mt-4">
+                                <h4 class="font-black text-sm md:text-base text-gray-900 mb-1 line-clamp-1 font-heading ${isOutOfStock ? 'opacity-50' : ''}">${p.name}</h4>
+                                <div class="flex items-center justify-between mt-2 md:mt-3">
                                     <div class="flex flex-col">
-                                        <span class="text-[9px] md:text-[10px] font-black text-gray-300 uppercase tracking-widest">Price</span>
-                                        <span class="font-black text-lg md:text-xl text-gray-900 tracking-tighter">₹${p.price}</span>
+                                        <span class="text-[8px] md:text-[9px] font-black text-gray-300 uppercase tracking-widest">Price</span>
+                                        <span class="font-black text-base md:text-lg text-gray-900 tracking-tighter">₹${p.price}</span>
                                     </div>
                                     <button 
                                         onclick="addToCartFromModal(${p.id}, this)" 
                                         ${isOutOfStock ? 'disabled' : ''}
-                                        class="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl ${isOutOfStock ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#24B25D] hover:bg-[#24B25D] hover:text-black hover:rotate-6'} transition-all shadow-lg flex items-center justify-center">
-                                        <i class="fas fa-plus text-xs md:text-base"></i>
+                                        class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl ${isOutOfStock ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#24B25D] hover:bg-[#24B25D] hover:text-black hover:rotate-6'} transition-all shadow-lg flex items-center justify-center">
+                                        <i class="fas fa-plus text-[10px] md:text-xs"></i>
                                     </button>
                                 </div>
                             </div>

@@ -16,10 +16,11 @@ try {
 
     // 1. Calculate Finals
     $subtotal = 0;
-    $ids = implode(',', array_keys($_SESSION['cart']));
-    $products_result = $conn->query("SELECT * FROM products WHERE id IN ($ids)");
+    $cart_keys = array_keys($_SESSION['cart']);
+    $placeholders = implode(',', array_fill(0, count($cart_keys), '?'));
+    $products_result = fetch_all("SELECT * FROM products WHERE id IN ($placeholders)", array_values($cart_keys));
     $products = [];
-    while($row = $products_result->fetch_assoc()) {
+    foreach ($products_result as $row) {
         $products[$row['id']] = $row;
         $subtotal += $row['price'] * $_SESSION['cart'][$row['id']];
     }

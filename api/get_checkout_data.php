@@ -56,7 +56,7 @@ while($row = $products_result->fetch_assoc()) {
             <img src="' . get_url(ltrim($row['image'], './')) . '" class="w-full h-full object-contain rounded-xl group-hover:scale-110 transition">
         </div>
         <div class="flex-1">
-            <h4 class="font-bold text-sm text-gray-800 line-clamp-1 font-[\'crimson-pro\']">' . $row['name'] . '</h4>
+            <h4 class="font-bold text-sm text-gray-800 line-clamp-1 font-heading">' . $row['name'] . '</h4>
             <div class="flex items-center gap-2 mt-1">
                 <div class="flex items-center bg-gray-50 rounded-lg p-0.5 border border-gray-100">
                     <button onclick="updateCheckoutQty(' . $row['id'] . ', ' . ($qty - 1) . ')" class="w-5 h-5 flex items-center justify-center text-[8px] text-gray-400 hover:text-black transition">-</button>

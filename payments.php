@@ -10,8 +10,9 @@ if (empty($_SESSION['cart'])) {
 
 // Calculate Total
 $subtotal = 0;
-$ids = implode(',', array_keys($_SESSION['cart']));
-$products = fetch_all("SELECT * FROM products WHERE id IN ($ids)");
+$cart_keys = array_keys($_SESSION['cart']);
+$placeholders = implode(',', array_fill(0, count($cart_keys), '?'));
+$products = fetch_all("SELECT * FROM products WHERE id IN ($placeholders)", array_values($cart_keys));
 foreach ($products as $p) $subtotal += $p['price'] * $_SESSION['cart'][$p['id']];
 $shipping = ($subtotal >= 500) ? 0 : 50;
 $tax = ceil($subtotal * 0.05);

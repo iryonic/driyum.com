@@ -25,8 +25,10 @@ if (isset($_GET['remove'])) {
 $products = [];
 $subtotal = 0;
 if (!empty($_SESSION['cart'])) {
-    $ids = implode(',', array_keys($_SESSION['cart']));
-    $products = fetch_all("SELECT * FROM products WHERE id IN ($ids)");
+    $cart_keys = array_keys($_SESSION['cart']);
+    $placeholders = implode(',', array_fill(0, count($cart_keys), '?'));
+    $sql = "SELECT * FROM products WHERE id IN ($placeholders)";
+    $products = fetch_all($sql, array_values($cart_keys));
 }
 
 // Free Shipping Logic
@@ -156,7 +158,7 @@ if (isset($_SESSION['coupon'])) {
                                 <div class="bg-green-50 border-2 border-green-100 rounded-2xl p-4 flex items-center justify-between">
                                     <div>
                                         <p class="text-[10px] font-black uppercase tracking-widest text-green-600 mb-1">Coupon Applied</p>
-                                        <h4 class="font-black text-gray-900 crimson-pro"><?php echo $_SESSION['coupon']['code']; ?></h4>
+                                        <h4 class="font-black text-gray-900 font-heading"><?php echo $_SESSION['coupon']['code']; ?></h4>
                                     </div>
                                     <button onclick="removeCoupon()" class="w-8 h-8 bg-white text-red-500 rounded-full flex items-center justify-center shadow-sm hover:bg-red-50 transition">
                                         <i class="fas fa-times"></i>

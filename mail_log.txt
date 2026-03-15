@@ -507,3 +507,5 @@
 [2026-03-12 13:15:47] PHPMailer Exception for hire.iry@gmail.com: SMTP Error: data not accepted.
 [2026-03-12 13:37:23] To: hire.iry@gmail.com | Subject: Your Driyum snacks are waiting!
 ----------------------------------------
+[2026-03-15 12:46:57] To: admin@driyum.com | Subject: Driyum Order Confirmed! #ORD-69B65CE93C8E8
+----------------------------------------

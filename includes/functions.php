@@ -1,5 +1,8 @@
 <?php
 date_default_timezone_set('Asia/Kolkata');
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/cache.php';
+
 // Polyfill for PHP < 8.0
 if (!function_exists('str_starts_with')) {
     function str_starts_with($haystack, $needle) {
@@ -195,12 +198,15 @@ function get_flash_message() {
 
 // Global Settings Helpers
 function get_setting($key, $default = null) {
-    $res = fetch_one("SELECT value FROM settings WHERE `key` = ?", [$key]);
-    return $res ? $res['value'] : $default;
+    return Cache::remember("setting_{$key}", 3600, function() use ($key, $default) {
+        $res = fetch_one("SELECT value FROM settings WHERE `key` = ?", [$key]);
+        return $res ? $res['value'] : $default;
+    });
 }
 
 function update_setting($key, $value) {
     execute_query("INSERT INTO settings (`key`, `value`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `value` = ?", [$key, $value, $value]);
+    Cache::forget("setting_{$key}"); // Invalidate cache
 }
 
 /**
@@ -312,14 +318,19 @@ function require_admin() {
 
 // Homepage Functions
 function get_hero_slides($include_inactive = false) {
-    $where = $include_inactive ? "" : "WHERE is_active = 1";
-    $sql = "SELECT * FROM hero_slides $where ORDER BY sort_order ASC";
-    return fetch_all($sql);
+    $cache_key = "hero_slides_" . ($include_inactive ? 'all' : 'active');
+    return Cache::remember($cache_key, 1800, function() use ($include_inactive) {
+        $where = $include_inactive ? "" : "WHERE is_active = 1";
+        $sql = "SELECT * FROM hero_slides $where ORDER BY sort_order ASC";
+        return fetch_all($sql);
+    });
 }
 
 function get_active_announcement() {
-    $sql = "SELECT * FROM announcements WHERE is_active = 1 AND (end_date IS NULL OR end_date > NOW()) ORDER BY created_at DESC LIMIT 1";
-    return fetch_one($sql);
+    return Cache::remember("active_announcement", 1800, function() {
+        $sql = "SELECT * FROM announcements WHERE is_active = 1 AND (end_date IS NULL OR end_date > NOW()) ORDER BY created_at DESC LIMIT 1";
+        return fetch_one($sql);
+    });
 }
 
 function get_sale_countdown() {
@@ -328,23 +339,31 @@ function get_sale_countdown() {
 }
 
 function get_all_categories() {
-    $sql = "SELECT c.*, COUNT(p.id) as product_count FROM categories c LEFT JOIN products p ON p.category_id = c.id AND p.is_active = 1 WHERE c.is_active = 1 GROUP BY c.id ORDER BY c.sort_order ASC";
-    return fetch_all($sql);
+    return Cache::remember("all_categories_active", 3600, function() {
+        $sql = "SELECT c.*, COUNT(p.id) as product_count FROM categories c LEFT JOIN products p ON p.category_id = c.id AND p.is_active = 1 WHERE c.is_active = 1 GROUP BY c.id ORDER BY c.sort_order ASC";
+        return fetch_all($sql);
+    });
 }
 
 function get_featured_products($limit = 8) {
-    $sql = "SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY created_at DESC LIMIT ?";
-    return fetch_all($sql, [$limit]);
+    return Cache::remember("featured_products_{$limit}", 1800, function() use ($limit) {
+        $sql = "SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY created_at DESC LIMIT ?";
+        return fetch_all($sql, [$limit]);
+    });
 }
 
 function get_best_sellers($limit = 8) {
-    $sql = "SELECT p.*, COUNT(oi.id) as sales_count FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id WHERE p.is_active = 1 GROUP BY p.id ORDER BY sales_count DESC LIMIT ?";
-    return fetch_all($sql, [$limit]);
+    return Cache::remember("best_sellers_{$limit}", 3600, function() use ($limit) {
+        $sql = "SELECT p.*, COUNT(oi.id) as sales_count FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id WHERE p.is_active = 1 GROUP BY p.id ORDER BY sales_count DESC LIMIT ?";
+        return fetch_all($sql, [$limit]);
+    });
 }
 
 function get_new_arrivals($limit = 8) {
-    $sql = "SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT ?";
-    return fetch_all($sql, [$limit]);
+    return Cache::remember("new_arrivals_{$limit}", 3600, function() use ($limit) {
+        $sql = "SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT ?";
+        return fetch_all($sql, [$limit]);
+    });
 }
 
 function get_testimonials() {
