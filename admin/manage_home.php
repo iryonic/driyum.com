@@ -163,6 +163,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+    // --- PARTNERS MANAGEMENT ---
+    if (isset($_POST['add_partner']) || isset($_POST['edit_partner'])) {
+        $name = sanitize_input($_POST['partner_name']);
+        $location = sanitize_input($_POST['partner_location']);
+        $link = sanitize_input($_POST['partner_link']);
+        $sort_order = intval($_POST['sort_order']);
+        $is_active = isset($_POST['partner_active']) ? 1 : 0;
+        
+        $logo_url = $_POST['current_logo'] ?? '';
+        if (isset($_FILES['partner_logo']) && $_FILES['partner_logo']['error'] == 0) {
+            $target_dir = "../assets/images/partners/";
+            if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+            $filename = "partner_" . uniqid() . "_" . basename($_FILES["partner_logo"]["name"]);
+            if (move_uploaded_file($_FILES["partner_logo"]["tmp_name"], $target_dir . $filename)) {
+                $logo_url = "assets/images/partners/" . $filename;
+                // Cleanup old logo
+                if(!empty($_POST['current_logo']) && strpos($_POST['current_logo'], 'assets/images/partners/') === 0) {
+                    @unlink("../" . $_POST['current_logo']);
+                }
+            }
+        }
+
+        if (isset($_POST['add_partner'])) {
+            $stmt = $conn->prepare("INSERT INTO partners (name, logo, location, website_url, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssii", $name, $logo_url, $location, $link, $sort_order, $is_active);
+            if ($stmt->execute()) $_SESSION['msg'] = "Partner added!";
+            else $_SESSION['error'] = "Failed to add partner: " . $conn->error;
+        } else {
+            $id = intval($_POST['partner_id']);
+            $stmt = $conn->prepare("UPDATE partners SET name=?, logo=?, location=?, website_url=?, sort_order=?, is_active=? WHERE id=?");
+            $stmt->bind_param("ssssiii", $name, $logo_url, $location, $link, $sort_order, $is_active, $id);
+            if ($stmt->execute()) $_SESSION['msg'] = "Partner updated!";
+            else $_SESSION['error'] = "Failed to update partner: " . $conn->error;
+        }
+        $redirect = true;
+    }
+
+    if (isset($_POST['delete_partner'])) {
+        $id = intval($_POST['partner_id']);
+        $old = fetch_one("SELECT logo FROM partners WHERE id = $id");
+        if($old && strpos($old['logo'], 'assets/images/partners/') === 0) {
+            @unlink("../" . $old['logo']);
+        }
+        $conn->query("DELETE FROM partners WHERE id = $id");
+        $_SESSION['msg'] = "Partner removed!";
+        $redirect = true;
+    }
+
+    if (isset($_POST['toggle_partner'])) {
+        $id = intval($_POST['partner_id']);
+        $conn->query("UPDATE partners SET is_active = 1 - is_active WHERE id = $id");
+        $_SESSION['msg'] = "Partner status toggled!";
+        $redirect = true;
+    }
     
     // --- HERO SLIDES MANAGEMENT ---
     if (isset($_POST['add_slide']) || isset($_POST['edit_slide'])) {
@@ -185,8 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $v_text_2 = $_POST['v_text_2'] ?? 'REIMAGINED';
 
         if (isset($_POST['add_slide'])) {
-            // Mandatory Validation for Add
-            if(empty($title)) $error = "Missing Input: Slide Heading is mandatory.";
             if($_FILES['slide_image']['error'] != 0) $error = "Missing Input: Slide Photo/Image is mandatory.";
             
             if(!$error) {
@@ -206,11 +259,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $redirect = true;
                 } else $error = "Failed to add slide: " . $conn->error;
             }
-        } else {
+        } elseif (isset($_POST['edit_slide'])) {
             $id = intval($_POST['slide_id']);
-            // Mandatory Validation for Edit
-            if(empty($title)) $error = "Missing Input: Slide Heading is mandatory.";
-
             if(!$error) {
                 $image_url = $_POST['current_image'] ?? '';
                 if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
@@ -284,6 +334,7 @@ $announcement_bg = get_setting('announcement_bg_color', '#004f42');
 $hero_slides = get_hero_slides(true);
 $trust_badges = fetch_all("SELECT * FROM trust_badges ORDER BY sort_order ASC");
 $show_stats = get_setting('show_hero_stats', 'on');
+$partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
 ?>
 
 <!-- VIEW START -->
@@ -682,109 +733,113 @@ $show_stats = get_setting('show_hero_stats', 'on');
         </div>
 
     </div>
+
+    <!-- PARTNERS MANAGEMENT SECTION -->
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up mb-10">
+        <div class="px-8 py-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-sm">
+                    <i class="fas fa-store-alt"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 font-heading leading-tight">Retail Partners</h3>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Manage 'Available At' stockists</p>
+                </div>
+            </div>
+            <button onclick="showModal('partner-modal')" class="bg-emerald-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg flex items-center gap-2">
+                <i class="fas fa-plus"></i> Add New Partner
+            </button>
+        </div>
+
+        <div class="p-8">
+            <?php if(empty($partners)): ?>
+                <div class="bg-emerald-50 rounded-2xl p-10 text-center border border-emerald-100/50">
+                    <i class="fas fa-store text-4xl text-emerald-200 mb-4 block"></i>
+                    <p class="text-xs font-bold text-emerald-800 uppercase tracking-widest">No Partners Found</p>
+                </div>
+            <?php else: ?>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    <?php foreach($partners as $p): ?>
+                    <div class="group relative bg-white border border-gray-100 rounded-3xl p-5 hover:shadow-xl transition-all text-center">
+                        <div class="h-16 flex items-center justify-center mb-4">
+                            <img src="../<?php echo $p['logo']; ?>" class="max-h-full max-w-full object-contain filter <?php echo !$p['is_active'] ? 'grayscale opacity-30 drop-shadow-sm' : ''; ?>">
+                        </div>
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-900 truncate"><?php echo htmlspecialchars($p['name']); ?></h4>
+                        <p class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter mt-1"><?php echo htmlspecialchars($p['location']); ?></p>
+                        
+                        <!-- Quick Actions -->
+                        <div class="absolute inset-0 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-3">
+                             <button onclick='openEditPartner(<?php echo json_encode($p); ?>)' class="w-full max-w-[80px] py-1.5 bg-gray-900 text-white text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-600 transition-all">Edit</button>
+                             <form method="POST" class="w-full max-w-[80px]">
+                                 <input type="hidden" name="partner_id" value="<?php echo $p['id']; ?>">
+                                 <button type="submit" name="toggle_partner" class="w-full py-1.5 <?php echo $p['is_active'] ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'; ?> text-[8px] font-black uppercase tracking-widest rounded-lg mb-2"><?php echo $p['is_active'] ? 'Disable' : 'Enable'; ?></button>
+                                 <button type="submit" name="delete_partner" class="w-full py-1.5 bg-red-100 text-red-600 text-[8px] font-black uppercase tracking-widest rounded-lg" onclick="return confirm('Delete partner?')">Delete</button>
+                             </form>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
 
 
 <!-- MODALS SECTION -->
 <div id="add-slide-modal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="hideModal('add-slide-modal')"></div>
-    <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden anim-up border border-gray-100 relative z-10 max-h-[90vh] flex flex-col">
+    <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.3)] overflow-hidden anim-up border border-gray-100 relative z-10 max-h-[90vh] flex flex-col">
         <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
             <div>
                 <h3 class="text-xl font-black text-gray-900 font-heading">Add New Slide</h3>
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Configure your hero masterpiece</p>
             </div>
-            <button onclick="hideModal('add-slide-modal')" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all">
+            <button onclick="hideModal('add-slide-modal')" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-black hover:text-white transition-all">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="overflow-y-auto custom-scrollbar flex-1">
             <form method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
-                <input type="hidden" name="add_slide" value="1">
-                <div class="relative h-[250px] rounded-2xl overflow-hidden bg-[#002A23] border border-gray-100 shadow-inner flex flex-row group/preview">
-                    <div class="w-[60%] h-full p-6 flex flex-col justify-center relative z-10">
-                        <span class="text-[#19DC7E] font-black uppercase tracking-[0.2em] text-[6px] mb-1 transition-opacity opacity-0" id="add-preview-tagline-val" style="opacity: 1;">DRIYUM IS...</span>
-                        <h1 id="add-preview-title" class="text-white font-black leading-tight text-xl uppercase tracking-tighter mb-2">YOUR<br>HEADLINE</h1>
-                        <div class="flex items-center gap-2 mb-3">
-                            <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 flex flex-col items-center">
-                                <span class="text-white font-black text-[10px]" id="add-preview-price">₹249</span>
-                                <span class="text-[5px] text-white/40 font-black uppercase tracking-widest">PRICE</span>
-                            </div>
-                            <div class="bg-white px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                <div class="w-4 h-4 rounded-full bg-[#002A23] flex items-center justify-center text-white">
-                                    <i class="fas fa-truck-fast text-[7px]"></i>
-                                </div>
-                                <span class="text-[7px] font-black text-[#002A23]">FREE</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="w-[40%] h-full relative flex items-center justify-center">
-                        <div id="add-preview-accent" class="absolute inset-y-0 right-0 w-[85%] bg-[#19DC7E] rounded-l-[30px] transition-all duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-10">
-                            <span id="add-preview-v1" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">SNACKING</span>
-                            <span id="add-preview-v2" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">DRIYUM</span>
-                        </div>
-                        <img id="add-preview-bg" src="../assets/images/hero.jpg" class="relative z-10 w-full max-w-[120px] h-auto drop-shadow-2xl transition-transform duration-500">
+                <div class="relative h-[220px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner group/preview">
+                    <img id="add-preview-bg" src="../assets/images/hero.jpg" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 group-hover/preview:opacity-100 transition-opacity">
+                         <span class="text-[10px] font-black text-black bg-white/80 px-4 py-2 rounded-full uppercase tracking-widest">Banner Preview</span>
                     </div>
                 </div>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2">
-                            <div class="flex items-center justify-between mb-1 ml-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Main Heading</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer">
-                                    <input type="checkbox" name="show_title" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
-                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                </label>
-                            </div>
-                            <textarea name="slide_title" id="add-slide-title" placeholder="e.g. SIGNATURE ALMONDS" rows="2" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Banner Image File</label>
+                            <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
+                            <label for="add-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-2xl px-4 py-8 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                <i class="fas fa-image text-2xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
+                                <span class="font-bold text-xs text-gray-500">UPLOAD HIGH-RES BANNER</span>
+                            </label>
                         </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Linked Product</label>
-                            <select name="product_id" id="add-product-id" onchange="onProductChange('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm bg-white">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
+                            <input type="number" name="slide_sort_order" id="add-slide-sort" value="0" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Link to Product</label>
+                            <select name="product_id" id="add-product-id" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
                                 <option value="">-- No Product Linked --</option>
                                 <?php foreach($all_products as $p): ?>
                                     <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-1 ml-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Brand Pitch</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer">
-                                    <input type="checkbox" name="show_badge" value="1" checked onchange="updatePreview('add')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
-                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                </label>
-                            </div>
-                            <input type="text" name="badge_text" id="add-badge-text" placeholder="e.g. DRIYUM IS..." oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Price (₹)</label>
-                            <input type="number" step="0.01" name="price" id="add-price" value="249" oninput="updatePreview('add')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Color</label>
-                            <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                                <input type="color" name="accent_color" id="add-accent-color" value="#19DC7E" oninput="updatePreview('add')" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                                <span class="text-[10px] font-black text-gray-400 uppercase" id="add-accent-hex">#19DC7E</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Slide Photo</label>
-                            <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
-                            <label for="add-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
-                                <i class="fas fa-camera mr-2"></i> Choose File
-                            </label>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">OR Custom Link</label>
+                            <input type="text" name="slide_cta_link" placeholder="https://driyum.com/shop" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
                         </div>
                     </div>
                 </div>
-                <div class="pt-4">
-                    <button type="submit" class="w-full bg-[#24B25D] text-black py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-black hover:text-white transition-all shadow-xl active:scale-95">
-                       <i class="fas fa-save mr-2"></i> Deploy New Slide
+                <div class="pt-6">
+                    <button type="submit" name="add_slide" class="w-full bg-emerald-600 text-white py-5 rounded-3xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-black transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3">
+                       <i class="fas fa-cloud-upload-alt"></i> ADD NEW BANNER SLIDE
                     </button>
                 </div>
             </form>
@@ -794,105 +849,66 @@ $show_stats = get_setting('show_hero_stats', 'on');
 
 <div id="edit-slide-modal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 hidden">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="hideModal('edit-slide-modal')"></div>
-    <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] overflow-hidden anim-up border border-gray-100 relative z-10 max-h-[90vh] flex flex-col">
+    <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-[0_30px_60px_rgba(0,0,0,0.3)] overflow-hidden anim-up border border-gray-100 relative z-10 max-h-[90vh] flex flex-col">
         <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
             <div>
                 <h3 class="text-xl font-black text-gray-900 font-heading">Edit Slide</h3>
                 <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Refining the experience</p>
             </div>
-            <button onclick="hideModal('edit-slide-modal')" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all">
+            <button onclick="hideModal('edit-slide-modal')" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-black hover:text-white transition-all">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="overflow-y-auto custom-scrollbar flex-1">
             <form method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
-                <input type="hidden" name="edit_slide" value="1">
+                <input type="hidden" name="edit_slide_action" value="1">
                 <input type="hidden" name="slide_id" id="edit-slide-id">
                 <input type="hidden" name="current_image" id="edit-current-image">
-                <div class="relative h-[250px] rounded-2xl overflow-hidden bg-[#002A23] border border-gray-100 shadow-inner flex flex-row group/preview">
-                    <div class="w-[60%] h-full p-6 flex flex-col justify-center relative z-10">
-                        <span class="text-[#19DC7E] font-black uppercase tracking-[0.2em] text-[6px] mb-1 transition-opacity opacity-0" id="edit-preview-tagline-val" style="opacity: 1;">DRIYUM IS...</span>
-                        <h1 id="edit-preview-title" class="text-white font-black leading-tight text-xl uppercase tracking-tighter mb-2">HEADLINE</h1>
-                        <div class="flex items-center gap-2 mb-3">
-                            <div class="bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 flex flex-col items-center">
-                                <span class="text-white font-black text-[10px]" id="edit-preview-price">₹249</span>
-                                <span class="text-[5px] text-white/40 font-black uppercase tracking-widest">PRICE</span>
-                            </div>
-                            <div class="bg-white px-3 py-1.5 rounded-lg flex items-center gap-2">
-                                <div class="w-4 h-4 rounded-full bg-[#002A23] flex items-center justify-center text-white">
-                                    <i class="fas fa-truck-fast text-[7px]"></i>
-                                </div>
-                                <span class="text-[7px] font-black text-[#002A23]">FREE</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="w-[40%] h-full relative flex items-center justify-center">
-                        <div id="edit-preview-accent" class="absolute inset-y-0 right-0 w-[85%] bg-[#19DC7E] rounded-l-[30px] transition-all duration-500"></div>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-10">
-                            <span id="edit-preview-v1" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">TEXT</span>
-                            <span id="edit-preview-v2" class="text-[20px] font-black text-black leading-none uppercase tracking-tighter">HERE</span>
-                        </div>
-                        <img id="edit-preview-bg" src="" class="relative z-10 w-full max-w-[120px] h-auto drop-shadow-2xl">
+                
+                <div class="relative h-[220px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner group/preview">
+                    <!-- Pure Image Preview -->
+                    <img id="edit-preview-bg" src="" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 group-hover/preview:opacity-100 transition-opacity">
+                         <span class="text-[10px] font-black text-black bg-white/80 px-4 py-2 rounded-full uppercase tracking-widest">Banner Preview</span>
                     </div>
                 </div>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="col-span-2">
-                            <div class="flex items-center justify-between mb-1 ml-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Product Heading</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer">
-                                    <input type="checkbox" name="show_title" id="edit-show-title" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
-                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                </label>
-                            </div>
-                            <textarea name="slide_title" id="edit-slide-title" placeholder="Banner text..." rows="2" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-green-500 font-bold text-gray-900 resize-none" required></textarea>
+                
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Banner Image file</label>
+                            <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
+                            <label for="edit-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-2xl px-4 py-8 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                <i class="fas fa-camera text-2xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
+                                <span class="font-bold text-xs text-gray-500">UPDATE BANNER IMAGE</span>
+                            </label>
+                             <p class="text-[8px] text-gray-400 font-bold uppercase mt-2 text-center">Leave blank to keep current</p>
                         </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Linked Product</label>
-                            <select name="product_id" id="edit-product-id" onchange="onProductChange('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm bg-white">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
+                            <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Link to Product</label>
+                            <select name="product_id" id="edit-product-id" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
                                 <option value="">-- No Product Linked --</option>
                                 <?php foreach($all_products as $p): ?>
                                     <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-1 ml-1">
-                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Brand Pitch</label>
-                                <label class="flex items-center gap-1.5 cursor-pointer">
-                                    <input type="checkbox" name="show_badge" id="edit-show-badge" value="1" onchange="updatePreview('edit')" class="w-3.5 h-3.5 rounded border-gray-300 text-green-500">
-                                    <span class="text-[9px] font-bold text-gray-400">Visible</span>
-                                </label>
-                            </div>
-                            <input type="text" name="badge_text" id="edit-badge-text" placeholder="e.g. DRIYUM IS..." oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Price (₹)</label>
-                            <input type="number" step="0.01" name="price" id="edit-price" oninput="updatePreview('edit')" class="w-full border border-gray-200 rounded-lg px-4 py-2 outline-none focus:border-green-500 font-bold text-sm">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Plate Color</label>
-                            <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                                <input type="color" name="accent_color" id="edit-accent-color" oninput="updatePreview('edit')" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                                <span class="text-[10px] font-black text-gray-400 uppercase" id="edit-accent-hex">#19DC7E</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Swap Photo</label>
-                            <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
-                            <label for="edit-file-input" class="w-full border border-gray-200 rounded-lg px-4 py-2 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer font-bold text-xs text-gray-500 transition-colors">
-                                <i class="fas fa-camera mr-2"></i> Update Image
-                            </label>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">OR Custom Link</label>
+                            <input type="text" name="slide_cta_link" id="edit-cta-link" placeholder="https://driyum.com/shop" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
                         </div>
                     </div>
                 </div>
-                <div class="pt-4">
-                    <button type="submit" class="w-full bg-black text-white py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-[#24B25D] hover:text-black transition-all shadow-xl active:scale-95">
-                        <i class="fas fa-check-circle mr-2"></i> Save Changes
+                <div class="pt-6">
+                    <button type="submit" name="edit_slide" class="w-full bg-emerald-600 text-white py-5 rounded-3xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-black transition-all shadow-xl active:scale-95 flex items-center justify-center gap-3">
+                       <i class="fas fa-check-circle"></i> UPDATE BANNER SLIDE
                     </button>
                 </div>
             </form>
@@ -960,6 +976,63 @@ $show_stats = get_setting('show_hero_stats', 'on');
     </div>
 </div>
 
+<!-- Partner Modal -->
+<div id="partner-modal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 hidden">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePartnerModal()"></div>
+    <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.25)] overflow-hidden anim-up border border-gray-100 relative z-10">
+        <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+            <div>
+                <h3 class="text-xl font-black text-gray-900 font-heading" id="partner-modal-title">Add Partner</h3>
+                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Expanding the Horizon</p>
+            </div>
+            <button onclick="closePartnerModal()" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-400 hover:bg-black hover:text-white transition-all shadow-sm">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form method="POST" enctype="multipart/form-data" class="p-8 md:p-10 space-y-6">
+            <input type="hidden" name="partner_id" id="modal-partner-id">
+            <input type="hidden" name="current_logo" id="modal-partner-current-logo">
+            <input type="hidden" name="add_partner" id="modal-partner-action-add" value="1">
+            <input type="hidden" name="edit_partner" id="modal-partner-action-edit" value="1" disabled>
+            
+            <div class="space-y-1">
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Stockist Name</label>
+                <input type="text" name="partner_name" id="modal-partner-name" placeholder="e.g. Eco Grocery" class="w-full border border-gray-200 rounded-xl px-5 py-3 outline-none focus:border-emerald-500 font-bold text-lg" required>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-1">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Location Area</label>
+                    <input type="text" name="partner_location" id="modal-partner-location" placeholder="e.g. RAJBAGH" class="w-full border border-gray-200 rounded-xl px-5 py-3 outline-none focus:border-emerald-500 font-bold text-sm">
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Order</label>
+                    <input type="number" name="sort_order" id="modal-partner-sort" value="0" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-bold text-sm text-center">
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Logo (Optional / Legacy)</label>
+                <p class="text-[8px] text-gray-400 font-bold uppercase mb-2">Note: Logos are currently hidden in the text-only layout.</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden">
+                        <img id="modal-partner-logo-preview" src="" class="max-w-full max-h-full object-contain hidden">
+                        <i id="modal-partner-logo-icon" class="fas fa-store text-gray-200 text-xl"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <input type="file" name="partner_logo" id="partner-logo-input" onchange="previewPartnerLogo(this)" class="hidden">
+                        <label for="partner-logo-input" class="inline-block bg-gray-100 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black hover:text-white cursor-pointer transition-all">Upload Logo</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6">
+                <button type="submit" class="w-full px-6 py-4 rounded-2xl bg-emerald-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-emerald-700 shadow-xl transition-all active:scale-95">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <style>
     @keyframes slideIn {
         from { transform: translateY(-20px); opacity: 0; }
@@ -983,6 +1056,100 @@ function hideModal(id) {
     document.getElementById(id).classList.add('hidden');
     if(!document.querySelector('.fixed:not(.hidden)')) {
         document.body.classList.remove('overflow-hidden');
+    }
+}
+
+// --- PARTNER LOGIC ---
+function openEditPartner(partner) {
+    document.getElementById('partner-modal-title').innerText = 'Edit Partner';
+    document.getElementById('modal-partner-id').value = partner.id;
+    document.getElementById('modal-partner-name').value = partner.name;
+    document.getElementById('modal-partner-location').value = partner.location;
+    document.getElementById('modal-partner-link').value = partner.website_url;
+    document.getElementById('modal-partner-sort').value = partner.sort_order;
+    document.getElementById('modal-partner-active').checked = partner.is_active == 1;
+    document.getElementById('modal-partner-current-logo').value = partner.logo;
+    
+    if(partner.logo) {
+        document.getElementById('modal-partner-logo-preview').src = '../' + partner.logo;
+        document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
+        document.getElementById('modal-partner-logo-icon').classList.add('hidden');
+    }
+    
+    document.getElementById('modal-partner-action-add').disabled = true;
+    document.getElementById('modal-partner-action-edit').disabled = false;
+    showModal('partner-modal');
+}
+
+function closePartnerModal() {
+    hideModal('partner-modal');
+    setTimeout(() => {
+        document.getElementById('partner-modal-title').innerText = 'Add Partner';
+        document.getElementById('modal-partner-action-add').disabled = false;
+        document.getElementById('modal-partner-action-edit').disabled = true;
+        document.getElementById('modal-partner-id').value = '';
+        document.getElementById('modal-partner-logo-preview').src = '';
+        document.getElementById('modal-partner-logo-preview').classList.add('hidden');
+        document.getElementById('modal-partner-logo-icon').classList.remove('hidden');
+    }, 300);
+}
+
+function previewPartnerLogo(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modal-partner-logo-preview').src = e.target.result;
+            document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
+            document.getElementById('modal-partner-logo-icon').classList.add('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// --- PARTNER LOGIC ---
+function openEditPartner(partner) {
+    document.getElementById('partner-modal-title').innerText = 'Edit Partner';
+    document.getElementById('modal-partner-id').value = partner.id;
+    document.getElementById('modal-partner-name').value = partner.name;
+    document.getElementById('modal-partner-location').value = partner.location;
+    document.getElementById('modal-partner-link').value = partner.website_url;
+    document.getElementById('modal-partner-sort').value = partner.sort_order;
+    document.getElementById('modal-partner-active').checked = partner.is_active == 1;
+    document.getElementById('modal-partner-current-logo').value = partner.logo;
+    
+    if(partner.logo) {
+        document.getElementById('modal-partner-logo-preview').src = '../' + partner.logo;
+        document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
+        document.getElementById('modal-partner-logo-icon').classList.add('hidden');
+    }
+    
+    document.getElementById('modal-partner-action-add').disabled = true;
+    document.getElementById('modal-partner-action-edit').disabled = false;
+    showModal('partner-modal');
+}
+
+function closePartnerModal() {
+    hideModal('partner-modal');
+    setTimeout(() => {
+        document.getElementById('partner-modal-title').innerText = 'Add Partner';
+        document.getElementById('modal-partner-action-add').disabled = false;
+        document.getElementById('modal-partner-action-edit').disabled = true;
+        document.getElementById('modal-partner-id').value = '';
+        document.getElementById('modal-partner-logo-preview').src = '';
+        document.getElementById('modal-partner-logo-preview').classList.add('hidden');
+        document.getElementById('modal-partner-logo-icon').classList.remove('hidden');
+    }, 300);
+}
+
+function previewPartnerLogo(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modal-partner-logo-preview').src = e.target.result;
+            document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
+            document.getElementById('modal-partner-logo-icon').classList.add('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
     }
 }
 
@@ -1029,43 +1196,12 @@ const allProducts = <?php echo json_encode($all_products); ?>;
 function onProductChange(type) {
     const prefix = type === 'add' ? 'add' : 'edit';
     const select = document.getElementById(prefix + '-product-id');
-    const titleInput = type === 'add' ? document.getElementById('add-slide-title') : document.getElementById('edit-slide-title');
-    const priceInput = document.getElementById(prefix + '-price');
     const productId = select.value;
     if(!productId) return;
-    const product = allProducts.find(p => p.id == productId);
-    if(product) {
-        if(!titleInput.value || titleInput.value.length < 3) titleInput.value = product.name.toUpperCase();
-        priceInput.value = product.price;
-        updatePreview(type);
-    }
 }
 
 function updatePreview(type) {
-    const container = type === 'add' ? document.getElementById('add-slide-modal') : document.getElementById('edit-slide-modal');
-    const prefix = type === 'add' ? 'add' : 'edit';
-    const badge = container.querySelector('[name="badge_text"]').value;
-    const title = container.querySelector('[name="slide_title"]').value;
-    const price = container.querySelector('[name="price"]').value;
-    const accent = container.querySelector('[name="accent_color"]').value;
-    const showBadge = container.querySelector('[name="show_badge"]').checked;
-    const showTitle = container.querySelector('[name="show_title"]').checked;
-    
-    const taglineEl = document.getElementById(prefix + '-preview-tagline-val');
-    if(taglineEl) {
-        taglineEl.innerText = badge || 'DRIYUM IS...';
-        taglineEl.style.opacity = showBadge ? '1' : '0.1';
-    }
-    if(document.getElementById(prefix + '-preview-title'))
-        document.getElementById(prefix + '-preview-title').innerHTML = (title || 'YOUR HEADLINE').replace(/\n/g, '<br>');
-    if(document.getElementById(prefix + '-preview-price'))
-        document.getElementById(prefix + '-preview-price').innerText = '₹' + (price || '249');
-    if(document.getElementById(prefix + '-preview-accent'))
-        document.getElementById(prefix + '-preview-accent').style.backgroundColor = accent;
-    const hex = document.getElementById(prefix + '-accent-hex');
-    if(hex) hex.innerText = accent.toUpperCase();
-    if(document.getElementById(prefix + '-preview-title'))
-         document.getElementById(prefix + '-preview-title').style.opacity = showTitle ? '1' : '0.1';
+    // Simplified preview only handles image which is done via previewSlideFile
 }
 
 function previewSlideFile(input, type) {
@@ -1079,15 +1215,10 @@ function previewSlideFile(input, type) {
 function openEditSlide(slide) {
     document.getElementById('edit-slide-id').value = slide.id;
     document.getElementById('edit-current-image').value = slide.image;
-    document.getElementById('edit-badge-text').value = slide.badge_text || '';
-    document.getElementById('edit-slide-title').value = slide.title || '';
-    document.getElementById('edit-price').value = slide.price || 0;
-    document.getElementById('edit-accent-color').value = slide.accent_color || '#19DC7E';
     document.getElementById('edit-product-id').value = slide.product_id || '';
+    document.getElementById('edit-cta-link').value = slide.cta_link || '';
+    document.getElementById('edit-slide-sort').value = slide.sort_order || 0;
     document.getElementById('edit-preview-bg').src = '../' + slide.image;
-    document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
-    document.getElementById('edit-show-title').checked = slide.show_title == 1;
-    updatePreview('edit');
     showModal('edit-slide-modal');
 }
 

@@ -11,6 +11,9 @@ if (isset($_SESSION['user_id'])) {
     $wishlist_ids = array_column($wishlist_res, 'product_id');
 }
 
+// Fetch Partners for "Available At" section
+$partners = fetch_all("SELECT * FROM partners WHERE is_active = 1 ORDER BY sort_order ASC", []);
+
 // Initialize Hero Variants early for global head access
 $slides_data = get_hero_slides();
 if(!empty($slides_data)) {
@@ -97,14 +100,7 @@ $wishlist_json = json_encode($wishlist_ids);
         .snap-x-mandatory { scroll-snap-type: x mandatory; }
         .snap-center { scroll-snap-align: center; }
 
-        .briry{
-           border-radius: 20% 10px 20% 10px;
-        }
-       /* @media (max-width: 1024px) {
-        .briry{
-          border-radius: 30% 30% 10px 10px;
-        }
-       } */
+     
     </style>
     <!-- HERO LOGIC: VIVID SCENE SWITCHER -->
     <script>
@@ -349,214 +345,214 @@ $wishlist_json = json_encode($wishlist_ids);
     <?php endif; ?>
 
     <!-- MODERN BRANDED HERO (True Viewport Engineering) -->
+    <!-- PREMIUM FULL-WIDTH BANNER HERO -->
     <style>
-        :root {
-            /* TOP BAR OFFSETS (Approximate heights for calculation) */
-            --announcement-h: 44px;
-            --header-h: 90px;
-            --ticker-h: <?php echo $active_sale ? '50px' : '0px'; ?>;
-            --top-offset: calc(var(--announcement-h) + var(--header-h) + var(--ticker-h));
-            
-            --mobile-announcement-h: 28px;
-            --mobile-header-h: 64px;
-            --mobile-ticker-h: <?php echo $active_sale ? '44px' : '0px'; ?>;
-            --mobile-top-offset: calc(var(--mobile-announcement-h) + var(--mobile-header-h) + var(--mobile-ticker-h));
-            --mobile-dock-h: 85px;
+        .hero-banner-container {
+            height: 62vh;
+            min-height: 400px;
+            max-height: 550px;
         }
-        
-        #modern-hero {
-            height: calc(100dvh - var(--top-offset));
-            max-height: calc(100dvh - var(--top-offset));
+        @media (max-width: 768px) {
+            .hero-banner-container { height: 45vh; min-height: 280px; }
         }
-
-        @media (max-width: 1023px) {
-            #modern-hero {
-                height: calc(100dvh - var(--mobile-top-offset));
-                max-height: calc(100dvh - var(--mobile-top-offset));
-            }
+        .banner-slide {
+            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .banner-slide.active { opacity: 1 !important; z-index: 10; transform: scale(1) !important; }
+        .banner-slide.inactive {
+            opacity: 0 !important; z-index: 0; transform: scale(1.05) !important;
+            position: absolute !important; top: 0; left: 0; width: 100%; height: 100%;
         }
     </style>
-    <section class="w-full bg-[#002A23] overflow-hidden flex flex-col relative" id="modern-hero">
-        
-        <!-- MAIN CONTENT WRAPPER -->
-        <div class="flex-grow flex flex-col-reverse lg:flex-row relative z-10 w-full h-full">
-            
-            <!-- LEFT AREA: TEXT & ACTIONS -->
-            <div class="w-full lg:w-[55%] flex flex-col justify-center px-6 lg:px-24 pb-[var(--mobile-dock-h)] lg:pb-0 py-4 lg:py-0 relative z-20 text-center lg:text-left h-[52%] lg:h-full">
-                <div class="max-w-2xl mx-auto lg:mx-0">
-                    <!-- Top Tagline -->
-                    <span class="text-[#19DC7E] font-black uppercase tracking-[0.4em] text-[10px] sm:text-xs lg:text-sm mb-4 block anim-reveal-up" style="animation-delay: 0.1s">
-                        <?php echo $hero_variants[0]['tagline'] ?? 'Your New Healthy Habit'; ?>
-                    </span>
-                    
-                    <!-- Main Catchy Headline (Aggressively Compact for Mobile) -->
-                    <h1 id="hero-main-title" class="text-[clamp(1.5rem,5.5vw,4.5rem)] font-black leading-[0.8] text-white tracking-tighter uppercase mb-2 lg:mb-10 anim-reveal-up font-heading" style="animation-delay: 0.2s">
-                        <?php 
-                            $first_title = $hero_variants[0]['name'] ?? 'PURE CRUNCH';
-                            $words = explode(' ', strtoupper($first_title));
-                            echo implode(' ', array_slice($words, 0, 2));
-                            if (count($words) > 2) {
-                                echo '<br>' . implode(' ', array_slice($words, 2));
-                            }
-                        ?>
-                    </h1>
 
-                    <!-- Badges Row (Optimized for Mobile) -->
-                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 md:gap-4 mb-10 lg:mb-16 anim-reveal-up" id="hero-badges" style="animation-delay: 0.3s">
-                        <!-- Price Badge -->
-                        <div class="bg-white/10 backdrop-blur-3xl border border-white/10 px-4 lg:px-8 py-4 lg:py-4 rounded-2xl md:rounded-3xl flex flex-col items-center">
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-white/40 text-[10px] lg:text-xs font-black uppercase tracking-widest">₹</span>
-                                <span id="hero-price" class="text-lg md:text-2xl lg:text-3xl font-black text-white leading-none"><?php echo $hero_variants[0]['price'] ?: '249'; ?></span>
-                            </div>
-                            <span class="text-[6px] lg:text-[10px] font-black uppercase tracking-widest text-white/40 mt-1">FOR SALE!</span>
-                        </div>
-                        <!-- Add to Cart Badge (Functional) -->
-                        <div class="anim-reveal-up" id="hero-atc-wrap" style="animation-delay: 0.35s;">
-                            <button id="hero-atc-btn" 
-                                    onclick="addToCart(<?php echo $hero_variants[0]['product_id']; ?>, this, 1)"
-                                    class="bg-[#19DC7E] px-8 md:px-10 lg:px-10 py-4 md:py-5 lg:py-5 rounded-2xl md:rounded-3xl flex items-center gap-3 lg:gap-4 text-[#002A23] shadow-xl hover:bg-white hover:scale-105 transition-all duration-300 group">
-                                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-[#002A23] flex items-center justify-center text-white group-hover:bg-[#19DC7E] group-hover:text-[#002A23] transition-colors">
-                                    <i class="fas fa-shopping-basket text-xs lg:text-sm"></i>
-                                </div>
-                                <div class="flex flex-col items-start">
-                                    <span class="text-[11px] lg:text-xs font-black uppercase tracking-widest leading-none">BUY</span>
-                                    <span class="text-[9px] lg:text-[10px] font-black uppercase tracking-widest opacity-60">NOW</span>
-                                </div>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Mobile Selector (Moved below for better reach) -->
-                    <div class="flex lg:hidden overflow-x-auto hide-scrollbar gap-3 mb-8 w-full px-1">
-                        <?php foreach($hero_variants as $index => $variant): ?>
-                        <button onclick="switchHeroProduct(<?php echo $index; ?>, this)" 
-                                class="hero-thumb shrink-0 w-16 h-16 active:scale-95 group transition-all duration-500 overflow-hidden relative <?php echo $index === 0 ? 'active-scene opacity-100' : 'opacity-40'; ?>">
-                            <div class="aspect-square w-full h-full bg-white/10 backdrop-blur-md rounded-xl border border-white/10 p-2 flex items-center justify-center">
-                                <img src="<?php echo get_url($variant['image']); ?>" class="w-10 h-auto">
-                            </div>
-                        </button>
-                        <?php endforeach; ?>
-                    </div>
+    <section id="hero-slider-section" class="relative hero-banner-container w-[100vw] mx-auto overflow-hidden bg-black group">
+        <div class="relative w-full h-full">
+            <?php foreach($hero_variants as $index => $slide): 
+                $slide_link = ($slide['cta_link'] ?? '') ?: 'product.php?id='.($slide['product_id'] ?? '0');
+            ?>
+            <div class="banner-slide <?php echo $index === 0 ? 'active' : 'inactive'; ?> absolute inset-0 w-full h-full" data-index="<?php echo $index; ?>">
+                <!-- Clickable Link -->
+                <a href="<?php echo $slide_link; ?>" class="absolute inset-0 z-10 w-full h-full"></a>
 
-                    <!-- THUMBNAIL SELECTOR -->
-                    <div class="hidden lg:grid grid-cols-4 gap-4 max-w-sm anim-reveal-up" style="animation-delay: 0.4s">
-                        <?php 
-                        foreach($hero_variants as $index => $variant): 
-                        ?>
-                        <button onclick="switchHeroProduct(<?php echo $index; ?>, this)" 
-                                class="hero-thumb w-auto h-auto active:scale-95 group transition-all duration-500 overflow-hidden relative <?php echo $index === 0 ? 'active-scene opacity-100' : 'opacity-40 hover:opacity-100'; ?>">
-                            <div class="aspect-square w-full h-full bg-white/5 backdrop-blur-md rounded-xl md:rounded-2xl border border-white/10 p-2 flex items-center justify-center overflow-hidden">
-                                <img src="<?php echo get_url($variant['image']); ?>" class="w-full h-auto transform group-hover:scale-110 transition-transform" alt="">
+                <!-- Background Image -->
+                <div class="absolute inset-0 w-full h-full overflow-hidden">
+                    <img src="<?php echo get_url($slide['image']); ?>" 
+                         class="w-full h-full object-cover object-center transform transition-transform duration-[10000ms] ease-linear <?php echo $index === 0 ? 'scale-110' : ''; ?>" 
+                         alt="<?php echo htmlspecialchars($slide['name']); ?>">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent"></div>
+                </div>
+
+                <!-- Overlay Content -->
+                <?php if(!empty($slide['name']) || !empty($slide['tagline'])): ?>
+                <div class="container mx-auto px-6 lg:px-24 h-full flex flex-col justify-center relative z-20 pointer-events-none">
+                    <div class="max-w-3xl text-white">
+                        <div class="banner-content-reveal">
+                            <?php if(!empty($slide['tagline'])): ?>
+                            <span class="inline-block px-4 py-1.5 rounded-lg bg-[#19DC7E] text-[#002A23] text-[10px] md:text-xs font-black uppercase tracking-[0.2em] mb-4 md:mb-6 transform translate-y-10 opacity-0 transition-all duration-700 delay-300 banner-reveal-item active:translate-y-0 active:opacity-100">
+                                <?php echo htmlspecialchars($slide['tagline']); ?>
+                            </span>
+                            <?php endif; ?>
+
+                            <?php if(!empty($slide['name'])): ?>
+                            <h2 class="text-3xl md:text-4xl lg:text-6xl font-black leading-[1.0] tracking-tight mb-6 md:mb-8 transform translate-y-10 opacity-0 transition-all duration-700 delay-500 banner-reveal-item active:translate-y-0 active:opacity-100 font-heading">
+                                <?php echo nl2br(htmlspecialchars($slide['name'])); ?>
+                            </h2>
+                            <?php endif; ?>
+
+                            <div class="flex items-center gap-4 md:gap-6 transform translate-y-10 opacity-0 transition-all duration-700 delay-700 banner-reveal-item active:translate-y-0 active:opacity-100 pointer-events-auto">
+                                <span class="px-6 py-3 md:px-8 md:py-4 bg-[#19DC7E] text-[#002A23] font-black text-[10px] md:text-sm uppercase tracking-[0.1em] rounded-xl hover:bg-white hover:text-black transition-all transform hover:scale-105 active:scale-95 shadow-2xl inline-block cursor-pointer">
+                                    <?php echo !empty($slide['cta_text']) ? htmlspecialchars($slide['cta_text']) : 'ORDER NOW'; ?>
+                                </span>
                             </div>
-                            <div class="absolute bottom-0 left-0 h-1 bg-[#19DC7E] transition-all duration-300 pointer-events-none thumb-progress" style="width: 0%"></div>
-                        </button>
-                        <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
+                <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
+
+
+            <!-- Side Arrows (Visible on Hover/Desktop) -->
+            <div class="absolute inset-y-0 left-4 md:left-8 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onclick="prevSlide()" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all flex items-center justify-center">
+                    <i class="fas fa-chevron-left text-xs"></i>
+                </button>
+            </div>
+            <div class="absolute inset-y-0 right-4 md:right-8 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onclick="nextSlide()" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all flex items-center justify-center">
+                    <i class="fas fa-chevron-right text-xs"></i>
+                </button>
             </div>
 
-            <!-- RIGHT AREA: IMAGE AREA -->
-            <div class="w-full lg:w-[45%] relative h-[48%] lg:h-full flex items-center justify-center overflow-hidden">
+            <!-- Centered Bottom Dots -->
+            <div class="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+                <?php foreach($hero_variants as $i => $v): ?>
+                    <button onclick="goToSlide(<?php echo $i; ?>)" class="w-6 md:w-10 h-1 rounded-full transition-all slider-dot <?php echo $i === 0 ? 'bg-[#19DC7E] w-10 md:w-14' : 'bg-white/20 hover:bg-white/40'; ?>"></button>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOW AVAILABLE AT SECTION (Panoramic Text Row) -->
+    <section id="partners-section" class="bg-white border-b border-gray-100 overflow-hidden">
+        <div class="container mx-auto px-10 lg:px-40 py-2 md:py-6">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
+                <!-- Sidebar Title -->
+                <div class="flex-shrink-0">
+                    <span class="text-[12px] md:text-[14px] font-black tracking-[0.3em] text-gray-900 uppercase">NOW AVAILABLE AT</span>
+                </div>
                 
-                <!-- ACCENT BACKGROUND (Dynamic Fluid Shape) -->
-                <div id="hero-accent-panel" class="absolute inset-y-0 right-0 w-full lg:w-[85%] lg:rounded-l-[100px] xl:rounded-l-[150px] transform transition-all duration-1000 ease-out z-0" style="background-color: <?php echo $hero_variants[0]['bg'] ?? '#19DC7E'; ?>"></div>
-
-                <!-- VERTICAL TEXT CONTAINER (Safe Visibility) -->
-                <div class="absolute inset-0 flex items-center justify-center lg:justify-end pointer-events-none select-none z-10 overflow-hidden px-10">
-                    <div id="hero-vertical-text-box" class="flex flex-col gap-4 transform opacity-10 lg:opacity-100 lg:mr-12 xl:mr-20">
-                         <span class="hero-v-text text-[clamp(4rem,15vw,10rem)] font-black text-[#002A23]/10 uppercase leading-none tracking-tighter lg:text-[#002A23]/10" style="-webkit-text-stroke: 1px rgba(0,42,35,0.2);">
-                            <?php echo $hero_variants[0]['v1'] ?? 'HEALTHY'; ?>
-                         </span>
-                         <span class="hero-v-text text-[clamp(4rem,15vw,10rem)] font-black text-[#002A23]/10 uppercase leading-none tracking-tighter lg:text-[#002A23]/10" style="-webkit-text-stroke: 1px rgba(0,42,35,0.2);">
-                            <?php echo $hero_variants[0]['v2'] ?? 'SNACKING'; ?>
-                         </span>
+                <!-- Partners Horizon (Strict Single Line) -->
+                <div class="flex-grow w-full overflow-x-auto hide-scrollbar">
+                    <div class="flex flex-nowrap items-center justify-center lg:justify-end gap-12 md:gap-16 lg:gap-24 min-w-max pb-2 md:pb-0">
+                        <?php if(!empty($partners)): ?>
+                            <?php foreach($partners as $partner): ?>
+                            <div class="flex flex-col items-center group cursor-default">
+                                 <h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#19DC7E]">
+                                    <?php echo htmlspecialchars($partner['name']); ?>
+                                 </h4>
+                                 <span class="text-[9px] md:text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-1.5 border-t border-gray-50 pt-1 w-full text-center group-hover:text-gray-500 transition-colors">
+                                    <?php echo htmlspecialchars($partner['location']); ?>
+                                 </span>
+                            </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <!-- Fallback Static Items -->
+                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">ecogrocery</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">RAJBAGH</span></div>
+                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">Basket</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">RAJBAGH</span></div>
+                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">City Max</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">RAJBAGH</span></div>
+                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">Pick N Choose</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">BAGHAT</span></div>
+                        <?php endif; ?>
                     </div>
                 </div>
-
-                <!-- MAIN PRODUCT (Enhanced Center/Mobile Composition) -->
-                <div id="hero-main-img-container" class="relative z-20 w-full flex items-center justify-center p-1 sm:p-12 lg:p-0">
-                    <div class="relative group/main max-w-[400px] sm:max-w-none">
-                        <!-- Bottom Shadow -->
-                        <div class="absolute -bottom-6 md:-bottom-12 left-1/2 -translate-x-1/2 w-[70%] h-12 bg-black/30 blur-[40px] md:blur-[60px] rounded-full scale-y-50 opacity-60"></div>
-                        
-                        <!-- The Image -->
-                        <a id="hero-product-link" href="<?php echo product_url($hero_variants[0]['slug']); ?>" class="block relative z-20 flex items-center justify-center w-full">
-                            <img id="hero-main-img" 
-                                 src="<?php echo get_url($hero_variants[0]['image']); ?>" 
-                                 class="w-full max-w-[280px] sm:max-w-[400px] lg:max-w-[450px] xl:max-w-[500px] h-auto object-contain drop-shadow-[0_45px_75px_rgba(0,0,0,0.4)] anim-float-slow transform group-hover/main:scale-105 transition-all duration-1000 briry" 
-                                 alt="Premium Snack">
-                        </a>
-                        
-                        <!-- Wishlist Toggle -->
-                <div id="hero-heart-btn" 
-                     onclick="toggleWishlist(<?php echo $hero_variants[0]['product_id'] ?? 0; ?>, this)"
-                     class="absolute top-[25%] -right-4 md:-right-8 w-14 h-14 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-[0_20px_40px_rgba(0,0,0,0.2)] cursor-pointer hover:scale-110 active:scale-95 transition-all z-30 group <?php echo in_array($hero_variants[0]['product_id'] ?? 0, $wishlist_ids) ? 'active text-red-500' : 'text-[#19DC7E]'; ?>">
-                    <i class="<?php echo in_array($hero_variants[0]['product_id'] ?? 0, $wishlist_ids) ? 'fas' : 'far'; ?> fa-heart text-xl md:text-2xl transition-all duration-300"></i>
-                </div>
-                    </div>
-                </div>
-
-                <!-- Navigation Controls (Bottom Right - Fixed Mobile Position) -->
-                <div class="absolute bottom-6 md:bottom-10 right-6 md:right-10 lg:right-20 flex gap-3 md:gap-4 z-30">
-                    <button onclick="prevHero()" class="w-11 h-11 md:w-14 md:h-14 rounded-2xl bg-black/30 backdrop-blur-xl border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all active:scale-90">
-                        <i class="fas fa-chevron-left text-sm md:text-base"></i>
-                    </button>
-                    <button onclick="nextHero()" class="w-11 h-11 md:w-14 md:h-14 rounded-2xl bg-[#002A23] text-white flex items-center justify-center shadow-2xl hover:bg-[#19DC7E] hover:text-[#002A23] transition-all active:scale-90">
-                         <i class="fas fa-chevron-right text-sm md:text-base"></i>
-                    </button>
-                </div>
-
-            </div>
-        </div>
-
-    </section>
-
-    <!-- INFINITE BRAND TRUST MARQUEE -->
-    <?php if(!empty($trust_badges)): ?>
-    <section class="bg-white py-10 lg:py-16 overflow-hidden border-b border-gray-100 relative group/marquee">
-        <!-- Subtle Background Glow -->
-        <div class="absolute top-0 right-0 w-[100px] h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute top-0 left-0 w-[100px] h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
-
-        <div class="flex whitespace-nowrap marquee-wrapper">
-            <div class="flex items-center gap-16 lg:gap-24 marquee-content px-8">
-                <?php foreach($trust_badges as $badge): 
-                    $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
-                    $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
-                ?>
-                <div class="flex items-center gap-5 group/badge cursor-default shrink-0">
-                    <div class="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] transform group-hover/badge:scale-110 group-hover/badge:rotate-3 transition-all duration-500" style="background-color: <?php echo $bg; ?>; color: <?php echo $ic; ?>;">
-                        <i class="<?php echo $badge['icon']; ?> text-2xl lg:text-3xl"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5"><?php echo $badge['subtitle']; ?></span>
-                        <span class="text-base lg:text-xl font-black text-[#002A23] uppercase tracking-tighter"><?php echo $badge['title']; ?></span>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-            </div>
-
-            <!-- Duplicate for Infinite Loop -->
-            <div class="flex items-center gap-16 lg:gap-24 marquee-content px-8" aria-hidden="true">
-                <?php foreach($trust_badges as $badge): 
-                    $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
-                    $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
-                ?>
-                <div class="flex items-center gap-5 group/badge shrink-0">
-                    <div class="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-sm transform group-hover/badge:scale-110 transition-all duration-500" style="background-color: <?php echo $bg; ?>; color: <?php echo $ic; ?>;">
-                        <i class="<?php echo $badge['icon']; ?> text-2xl lg:text-3xl"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5"><?php echo $badge['subtitle']; ?></span>
-                        <span class="text-base lg:text-xl font-black text-[#002A23] uppercase tracking-tighter"><?php echo $badge['title']; ?></span>
-                    </div>
-                </div>
-                <?php endforeach; ?>
             </div>
         </div>
     </section>
-    <?php endif; ?>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = <?php echo count($hero_variants); ?>;
+        let slideTimer;
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.banner-slide');
+            const dots = document.querySelectorAll('.slider-dot');
+
+            if(!slides.length) return;
+
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                slide.classList.add('inactive');
+                slide.querySelectorAll('.banner-reveal-item').forEach(el => el.classList.remove('active'));
+            });
+
+            const active = slides[index];
+            if(active) {
+                active.classList.remove('inactive');
+                active.classList.add('active');
+                setTimeout(() => {
+                    active.querySelectorAll('.banner-reveal-item').forEach(el => el.classList.add('active'));
+                }, 100);
+            }
+
+            dots.forEach((d, i) => {
+                d.classList.remove('bg-[#19DC7E]', 'w-12', 'md:w-16');
+                d.classList.add('bg-white/20', 'w-8', 'md:w-12');
+                if(i === index) {
+                    d.classList.remove('bg-white/20', 'w-8', 'md:w-12');
+                    d.classList.add('bg-[#19DC7E]', 'w-12', 'md:w-16');
+                }
+            });
+
+            currentSlide = index;
+            resetTimer();
+        }
+
+        function nextSlide() {
+            showSlide((currentSlide + 1) % totalSlides);
+        }
+
+        function prevSlide() {
+            showSlide((currentSlide - 1 + totalSlides) % totalSlides);
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+        }
+
+        function resetTimer() {
+            clearInterval(slideTimer);
+            slideTimer = setInterval(nextSlide, 7000);
+        }
+
+        // Touch Swipe Support
+        let touchstartX = 0;
+        let touchendX = 0;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+             const sliderSection = document.getElementById('hero-slider-section');
+             if(sliderSection) {
+                 sliderSection.addEventListener('touchstart', e => {
+                     touchstartX = e.changedTouches[0].screenX;
+                 }, {passive: true});
+
+                 sliderSection.addEventListener('touchend', e => {
+                     touchendX = e.changedTouches[0].screenX;
+                     if (touchendX < touchstartX - 60) nextSlide();
+                     if (touchendX > touchstartX + 60) prevSlide();
+                 }, {passive: true});
+             }
+
+             if(totalSlides > 0) {
+                showSlide(0);
+             }
+             window.nextSlide = nextSlide;
+             window.prevSlide = prevSlide;
+             window.goToSlide = goToSlide;
+        });
+    </script>
+
+  
 
     <!-- MODERN HERO SPECIFIC STYLES -->
     <style>
@@ -748,17 +744,17 @@ $wishlist_json = json_encode($wishlist_ids);
                     $i++;
                 ?>
                 <div class="flex-none w-[85vw] sm:w-[calc(50%-1.5rem)] md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2rem)] xl:w-[calc(25%-2.5rem)] snap-start h-full">
-                    <a href="<?php echo category_url($c['slug']); ?>" class="block h-[400px] md:h-[450px] <?php echo $s['bg']; ?> rounded-[50px] p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:-translate-y-2">
+                    <a href="<?php echo category_url($c['slug']); ?>" class="block h-[400px] md:h-[450px] <?php echo $s['bg']; ?> rounded-[12px] p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:-translate-y-2">
                 
                 <!-- Inner Glow/Border for 3D Feel -->
-                <div class="absolute inset-0 border border-white/40 rounded-[50px] z-20 pointer-events-none"></div>
-                <div class="absolute inset-0 border-2 border-white/20 rounded-[50px] z-20 pointer-events-none translate-y-1 translate-x-1 blur-[1px]"></div>
+                <div class="absolute inset-0 border border-white/40 rounded-[12px] z-20 pointer-events-none"></div>
+                <div class="absolute inset-0 border-2 border-white/20 rounded-[12px] z-20 pointer-events-none translate-y-1 translate-x-1 blur-[1px]"></div>
 
                 <!-- Holographic Sheen Animation -->
                 <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out z-30 pointer-events-none"></div>
 
                 <!-- Text Container with Glass Effect -->
-                <div class="relative z-20 bg-white/40 backdrop-blur-md rounded-[20px] md:rounded-[30px] p-4 md:p-6 border border-white/60 shadow-[0_8px_32px_rgba(255,255,255,0.2)] group-hover:scale-[1.02] transition-transform duration-500 origin-top-left">
+                <div class="relative z-20 bg-white/40 backdrop-blur-md rounded-[12px] md:rounded-[14px] p-4 md:p-6 border border-white/60 shadow-[0_8px_32px_rgba(255,255,255,0.2)] group-hover:scale-[1.02] transition-transform duration-500 origin-top-left">
                     <div class="flex justify-between items-start mb-1 md:mb-2">
                         <span class="px-2 py-1 md:px-3 md:py-1 rounded-full text-[8px] md:text-[10px] font-black tracking-widest uppercase bg-white/80 backdrop-blur-sm <?php echo $s['text']; ?> shadow-sm"><?php echo $s['sub']; ?></span>
                         <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-black group-hover:text-white transition-colors duration-300">
@@ -800,7 +796,7 @@ $wishlist_json = json_encode($wishlist_ids);
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
                 <div>
                     <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-sans">Fresh From The Farm</span>
-                    <h2 class="text-3xl md:text-5xl font-heading font-black text-gray-900 leading-none">Hot Drops <span class="text-[#24B25D]">🔥</span></h2>
+                    <h2 class="text-3xl md:text-5xl font-heading font-black text-gray-900 leading-none">Our Products</h2>
                 </div>
                 <!-- Slider Controls -->
                 <div class="flex gap-3">
@@ -825,107 +821,128 @@ $wishlist_json = json_encode($wishlist_ids);
                     $color_raw = $db_color ?: $default_bg_colors[$i % count($default_bg_colors)];
                     $card_bg = adjust_brightness($color_raw, -15);
                     $i++;
-                    $delay += 100;
+                    $delay += 100;              
                 ?>
-                <!-- Premium Product Card Wrapper -->
-                <div class="flex-none flex-shrink-0 w-[85vw] sm:w-[calc(50%-1.5rem)] md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2rem)] xl:w-[calc(25%-2.5rem)] snap-start h-full">
-                    <div class="group relative rounded-[50px] hover:shadow-[0_45px_90px_rgba(0,0,0,0.15)] transition-all duration-700 overflow-hidden border-4 border-white/50 hover:border-white h-full flex flex-col anim-up" style="background-color: <?php echo $card_bg; ?>; animation-delay: <?php echo $delay; ?>ms">
+                <!-- "The Boutique Collective" Reference Card -->
+                <div class="flex-none flex-shrink-0 w-[82vw] sm:w-[50%] md:w-[33.333%] lg:w-[25%] snap-start px-2 pb-8 h-full">
+                    <!-- Outer Tinted Container (Alternating Brand Colors) -->
+                    <div class="rounded-[2.5rem] p-3 transition-transform duration-500 hover:scale-[1.02] h-full flex flex-col anim-up shadow-sm border border-[#004F42]/5" style="background-color: <?php echo $color_raw; ?>; animation-delay: <?php echo $delay; ?>ms">
                         
-                        <!-- White Overlay (Fades out on hover for fuller color) -->
-                        <div class="absolute inset-0 bg-white/60 group-hover:bg-white/0 transition-colors duration-700 pointer-events-none"></div>
-                        
-                        <!-- Dynamic Glow Highlight (Appears on hover) -->
-                        <div class="absolute -inset-1 bg-gradient-to-tr from-white/30 via-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl z-0"></div>
-
-                        <!-- Link Wrapper -->
-                        <a href="<?php echo product_url($p['slug']); ?>" class="block flex-1 relative p-2 z-10">
+                        <!-- Inner White Card -->
+                        <div class="bg-white rounded-[2rem] p-4 flex flex-col flex-1 h-full shadow-sm">
                             
-                            <!-- Image Area with 3D Float -->
-                            <div class="bg-white/80 rounded-[42px] aspect-square mb-6 overflow-hidden relative flex items-center justify-center group-hover:bg-white transition-all duration-700 shadow-inner group-hover:shadow-none">
-                                <!-- Background Bloom -->
-                                <div class="absolute inset-0 bg-gradient-to-tr from-white via-transparent to-white/50 opacity-0 group-hover:opacity-100 transition duration-700 z-0"></div>
-                                
+                            <!-- Product Image (Reference Corners) -->
+                            <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-gray-50/50">
                                 <img src="<?php echo get_url($p['image']); ?>" 
                                      loading="lazy"
                                      alt="<?php echo htmlspecialchars($p['name']); ?>"
-                                     class="w-[85%] h-[85%] object-contain transform group-hover:scale-110 group-hover:-rotate-6 group-hover:-translate-y-4 transition duration-700 ease-out z-10 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.05)] group-hover:drop-shadow-[0_30px_30px_rgba(0,0,0,0.1)] <?php echo $p['stock'] <= 0 ? 'grayscale' : ''; ?>">                                
-                                <!-- Badges -->
-                                <div class="absolute top-6 left-6 flex flex-col gap-2 z-20 items-start">
-                                    <?php if(isset($p['is_new']) && $p['is_new']): ?>
-                                        <span class="bg-[#24B25D] text-black text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-green-200 uppercase tracking-widest backdrop-blur-md transform group-hover:scale-110 transition-transform">NEW ✨</span>
-                                    <?php endif; ?>
-                                    <?php if(isset($p['discount_percentage']) && $p['discount_percentage'] > 0): ?>
-                                        <span class="bg-black text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg h-8 flex items-center justify-center uppercase tracking-widest transform group-hover:rotate-12 transition-transform">-<?php echo $p['discount_percentage']; ?>% OFF</span>
-                                    <?php endif; ?>
-                                    
-                                    <!-- Stock Indicator Badge -->
-                                    <?php if($p['stock'] <= 0): ?>
-                                        <span class="bg-red-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-widest">Sold Out</span>
-                                    <?php elseif($p['stock'] < 10): ?>
-                                        <span class="bg-amber-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-widest animate-pulse">Few Left</span>
-                                    <?php endif; ?>
-                                </div>
+                                     class="w-full h-full object-cover">
+                                
+                                <!-- deal badge if any -->
+                                <?php if(isset($p['discount_percentage']) && $p['discount_percentage'] > 0): ?>
+                                    <div class="absolute top-3 left-3 bg-[#EDB02C] text-white text-[9px] font-black px-2 py-1 rounded-md shadow-md">
+                                        -<?php echo $p['discount_percentage']; ?>%
+                                    </div>
+                                <?php endif; ?>
+                            </div>
 
-                                <!-- Heart Icon -->
-                                <?php $is_wishlisted = in_array($p['id'], $wishlist_ids); ?>
-                                <button onclick="event.preventDefault(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="absolute top-5 right-5 w-12 h-12 bg-white rounded-[18px] flex items-center justify-center shadow-lg <?php echo $is_wishlisted ? 'active text-red-500' : 'text-gray-300'; ?> hover:text-red-500 hover:scale-110 transition-all duration-300 z-20 group/heart active:scale-90 border border-gray-50" aria-label="Add <?php echo htmlspecialchars($p['name']); ?> to Wishlist">
-                                    <i class="<?php echo $is_wishlisted ? 'fas' : 'far'; ?> fa-heart group-hover/heart:animate-bounce"></i>
+                            <!-- High-Quality Stars & Branding -->
+                            <div class="flex gap-1 mb-2">
+                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                            </div>
+
+                            <!-- Title & Specs -->
+                            <div class="mb-5">
+                                <h3 class="text-xl font-black text-[#004F42] leading-tight mb-1 truncate-1"><?php echo $p['name']; ?></h3>
+                                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                                    <?php echo !empty($p['tagline']) ? $p['tagline'] : 'Premium Natural Selection'; ?>
+                                </p>
+                            </div>
+
+                            <!-- Interactive Price Strip (Reference Layout) -->
+                            <div class="flex items-center justify-between mb-5 mt-auto">
+                                <div class="flex flex-col">
+                                    <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
+                                        <span class="text-[10px] text-gray-400 font-bold line-through">MRP <?php echo format_price($p['original_price']); ?></span>
+                                    <?php endif; ?>
+                                    <span class="text-3xl font-black text-black leading-none">
+                                        <?php echo format_price($p['price']); ?>
+                                    </span>
+                                </div>
+                                <!-- Cart Icon Pill -->
+                                <button onclick="addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-[#212121] text-white rounded-xl flex items-center justify-center hover:bg-[#004F42] transition-colors shadow-md">
+                                    <i class="fas fa-shopping-cart text-sm"></i>
                                 </button>
                             </div>
 
-                            <!-- Content -->
-                            <div class="px-6 pb-2 relative">
-                                <div class="flex flex-col gap-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="w-2 h-2 rounded-full bg-[#24B25D] opacity-50"></span>
-                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-sans">Driyum</p>
-                                    </div>
-                                    <h3 class="text-2xl font-black font-heading text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
-                                   
-                                </div>
-                            </div>
-                        </a>
-                        
-                        <!-- Glass Action Bar (Floating at bottom) -->
-                        <div class="px-3 pb-4 md:px-5 md:pb-5 pt-2 md:pt-3 mt-auto z-20 relative">
-                            <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 action-bar-chunky border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
-                                 
-                                 <!-- Price -->
-                                 <div class="pl-2 md:pl-4 flex flex-col leading-none">
-                                    <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
-                                        <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹ <?php echo $p['original_price']; ?></span>
-                                    <?php endif; ?>
-                                    <span class="text-xl md:text-3xl font-black text-gray-900 font-heading tracking-tighter">₹<?php echo $p['price']; ?></span>
-                                 </div>
-
-                                 <div class="flex gap-1 md:gap-2">
-                                    <!-- Quick Buy -->
-                                    <button onclick="event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
-                                        <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" aria-label="Quick buy <?php echo htmlspecialchars($p['name']); ?>">
-                                        <i class="fas fa-bolt text-sm md:text-xl group-hover/btn:animate-pulse"></i>
-                                    </button>
-                                    <!-- Add Cart -->
-                                    <button onclick="event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" 
-                                        <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                        class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#24B25D] hover:bg-[#24B25D] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" aria-label="Add <?php echo htmlspecialchars($p['name']); ?> to Bag">
-                                        <i class="fas fa-shopping-bag text-sm md:text-xl group-hover/btn:rotate-12 transition-transform"></i>
-                                    </button>
-                                 </div>
-                            </div>
+                            <!-- "Buy Now" Action (Quick Buy Enabled) -->
+                            <button onclick="quickBuy(<?php echo $p['id']; ?>, this)" 
+                                class="w-full bg-[#24B25D] hover:bg-[#17775D] text-white py-4 rounded-2xl font-black text-lg transition-all shadow-md active:scale-95">
+                                Buy Now
+                            </button>
                         </div>
-
                     </div>
                 </div>
                 <?php endforeach; ?>
             </div>
         </div>
+        
             
             <div class="text-center mt-16">
                 <a href="<?php echo get_url('shop'); ?>" class="btn-chunky btn-outline px-12 py-4 text-lg border-2">View All Products</a>
             </div>
         </div>
     </section>
+
+      <!-- INFINITE BRAND TRUST MARQUEE -->
+    <?php if(!empty($trust_badges)): ?>
+    <section class="bg-white py-10 lg:py-16 overflow-hidden border-b border-gray-100 relative group/marquee">
+        <!-- Subtle Background Glow -->
+        <div class="absolute top-0 right-0 w-[100px] h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute top-0 left-0 w-[100px] h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+
+        <div class="flex whitespace-nowrap marquee-wrapper">
+            <div class="flex items-center gap-16 lg:gap-24 marquee-content px-8">
+                <?php foreach($trust_badges as $badge): 
+                    $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
+                    $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
+                ?>
+                <div class="flex items-center gap-5 group/badge cursor-default shrink-0">
+                    <div class="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] transform group-hover/badge:scale-110 group-hover/badge:rotate-3 transition-all duration-500" style="background-color: <?php echo $bg; ?>; color: <?php echo $ic; ?>;">
+                        <i class="<?php echo $badge['icon']; ?> text-2xl lg:text-3xl"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5"><?php echo $badge['subtitle']; ?></span>
+                        <span class="text-base lg:text-xl font-black text-[#002A23] uppercase tracking-tighter"><?php echo $badge['title']; ?></span>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Duplicate for Infinite Loop -->
+            <div class="flex items-center gap-16 lg:gap-24 marquee-content px-8" aria-hidden="true">
+                <?php foreach($trust_badges as $badge): 
+                    $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
+                    $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
+                ?>
+                <div class="flex items-center gap-5 group/badge shrink-0">
+                    <div class="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-sm transform group-hover/badge:scale-110 transition-all duration-500" style="background-color: <?php echo $bg; ?>; color: <?php echo $ic; ?>;">
+                        <i class="<?php echo $badge['icon']; ?> text-2xl lg:text-3xl"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5"><?php echo $badge['subtitle']; ?></span>
+                        <span class="text-base lg:text-xl font-black text-[#002A23] uppercase tracking-tighter"><?php echo $badge['title']; ?></span>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <!-- CINEMATIC BRAND VIDEO SECTION -->
     <?php

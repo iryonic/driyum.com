@@ -109,7 +109,7 @@
     #driyum-mobile-dock-v2 {
         display: none;
         position: fixed;
-        bottom: 30px;
+        bottom: 20px;
         left: 0;
         right: 0;
         justify-content: center;

@@ -30,6 +30,17 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /**
+ * Format Price for Display
+ * Removes unnecessary .00 for whole numbers
+ */
+function format_price($price, $currency = '₹') {
+    if (floor($price) == $price) {
+        return $currency . number_format($price, 0);
+    }
+    return $currency . number_format($price, 2);
+}
+
+/**
  * Send Email Helper
  * Currently uses standard mail(), should be upgraded to PHPMailer for Production
  */
