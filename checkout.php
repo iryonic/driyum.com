@@ -494,7 +494,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                                 </div>
                             </div>
 
-                            <button type="button" onclick="goToStep(2)" class="btn-chunky bg-[#111827] text-white w-full mt-10 py-5 text-lg shadow-xl hover:bg-[#24B25D] hover:text-black">
+                            <button type="button" onclick="goToStep(2)" class="btn rounded-xl  bg-[#111827] text-white w-full mt-10 py-5 text-lg shadow-xl hover:bg-[#24B25D] font-bold hover:text-black">
                                 Continue to Payment <i class="fas fa-arrow-right ml-2"></i>
                             </button>
                         </div>
@@ -575,7 +575,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     
                     <div class="flex items-center justify-between mb-8">
                         <h3 class="font-black text-xl font-heading text-gray-900">Order Items</h3>
-                        <button type="button" onclick="openBrowseMoreModal()" id="btn-browse-more" class="group relative flex items-center justify-center gap-2 bg-[#24B25D]/10 hover:bg-[#24B25D] px-4 py-2.5 rounded-2xl transition-all duration-300 active:scale-95 cursor-pointer z-20">
+                        <button type="button" onclick="openBrowseMoreModal()" id="btn-browse-more" class="group relative flex items-center justify-center gap-2 bg-[#24B25D]/10 hover:bg-[#24B25D] px-4 py-2.5 rounded-xl transition-all duration-300 active:scale-95 cursor-pointer z-20">
                             <i class="fas fa-plus text-[10px] text-[#24B25D] group-hover:text-black pointer-events-none"></i>
                             <span class="text-[10px] font-black uppercase tracking-widest text-[#24B25D] group-hover:text-black pointer-events-none">Browse More</span>
                         </button>
@@ -611,8 +611,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                     <!-- COUPON SECTION -->
                     <div class="pt-6 border-t border-gray-100 mb-6">
                         <div class="flex sm:flex-row flex-col gap-2">
-                            <input type="text" id="coupon-code" placeholder="Have a code?" class="flex-1 bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-2xl px-4 py-3 outline-none transition-all font-bold text-sm">
-                            <button type="button" onclick="applyCoupon()" class="btn-chunky bg-gray-900 text-white px-6 text-xs py-3">Apply</button>
+                            <input type="text" id="coupon-code" placeholder="Have a code?" class="flex-1 bg-gray-50 border-2 border-transparent focus:border-[#24B25D] focus:bg-white rounded-xl px-4 py-3 outline-none transition-all font-bold text-sm">
+                            <button type="button" onclick="applyCoupon()" class="btn-chunky rounded-xl  bg-gray-900 text-white px-6 text-xs py-3">Apply</button>
                         </div>
                         <div id="coupon-message" class="text-[10px] font-bold mt-2 ml-2"></div>
                     </div>

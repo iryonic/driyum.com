@@ -175,106 +175,93 @@ if (isset($_SESSION['user_id'])) {
             <?php if (count($products) > 0): ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     <?php 
-                    $color_count = 1;
-                    $default_colors = ['#E0F2FE', '#DCFCE7', '#FEF9C3', '#FFEDD5', '#F3E8FF', '#FFE4E6'];
+                    $i = 0;
+                    $default_colors = ['#E0F2FE', '#DCFCE7', '#FEF3C7', '#FEE2E2', '#F3E8FF', '#FFEDD5'];
                     foreach ($products as $p): 
                         $db_color = !empty($p['bg_color']) ? $p['bg_color'] : null;
-                        $color_raw = $db_color ?: $default_colors[($color_count - 1) % 6];
-                        $card_bg = adjust_brightness($color_raw, -15); // Darken for depth
-                        $color_count++;
+                        $color_raw = $db_color ?: $default_colors[$i % count($default_colors)];
+                        $i++;
                     ?>
-                        <!-- Premium Product Card -->
-                        <div class="group relative rounded-[50px] hover:shadow-[0_45px_90px_rgba(0,0,0,0.15)] transition-all duration-700 overflow-hidden border-4 border-white/50 hover:border-white h-full flex flex-col anim-up" style="background-color: <?php echo $card_bg; ?>;">
-                            
-                            <!-- White Overlay (Fades out on hover for fuller color) -->
-                            <div class="absolute inset-0 bg-white/60 group-hover:bg-white/0 transition-colors duration-700 pointer-events-none"></div>
-                            
-                            <!-- Dynamic Glow Highlight (Appears on hover) -->
-                            <div class="absolute -inset-1 bg-gradient-to-tr from-white/30 via-transparent to-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl z-0"></div>
-
-                            <!-- Link Wrapper -->
-                            <a href="<?php echo product_url($p['slug']); ?>" class="block flex-1 relative p-2 z-10">
-                                
-                                <!-- Image Area with 3D Float -->
-                                <div class="bg-white/80 rounded-[42px] aspect-square mb-6 overflow-hidden relative flex items-center justify-center group-hover:bg-white transition-all duration-700 shadow-inner group-hover:shadow-none">
-                                    <!-- Background Bloom -->
-                                    <div class="absolute inset-0 bg-gradient-to-tr from-white via-transparent to-white/50 opacity-0 group-hover:opacity-100 transition duration-700 z-0"></div>
+                        <!-- Premium Boutique Card -->
+                        <div class="group relative anim-up" style="animation-delay: <?php echo $i * 50; ?>ms">
+                            <a href="<?php echo product_url($p['slug']); ?>" class="block h-full group/card transition-transform duration-500 hover:scale-[1.02]">
+                                <!-- Outer Tinted Container -->
+                                <div class="rounded-[2.5rem] p-3 h-full flex flex-col shadow-sm border border-[#004F42]/5 transition-all duration-500 group-hover/card:shadow-xl" style="background-color: <?php echo $color_raw; ?>;">
                                     
-                                    <img src="<?php echo get_url(ltrim($p['image'], './')); ?>" class="w-4/5 h-4/5 object-contain transform group-hover:scale-110 group-hover:-rotate-6 group-hover:-translate-y-4 transition duration-700 ease-out z-10 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.05)] group-hover:drop-shadow-[0_30px_30px_rgba(0,0,0,0.1)] <?php echo $p['stock'] <= 0 ? 'grayscale' : ''; ?>">
-                                    
-                                    <!-- Badges -->
-                                    <div class="absolute top-6 left-6 flex flex-col gap-2 z-20 items-start">
-                                        <?php if(isset($p['is_new']) && $p['is_new']): ?>
-                                            <span class="bg-[#24B25D] text-black text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-green-200 uppercase tracking-widest backdrop-blur-md transform group-hover:scale-110 transition-transform">NEW ✨</span>
-                                        <?php endif; ?>
-                                        <?php if(isset($p['discount_percentage']) && $p['discount_percentage'] > 0): ?>
-                                            <span class="bg-black text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg h-8 flex items-center justify-center uppercase tracking-widest transform group-hover:rotate-12 transition-transform">-<?php echo $p['discount_percentage']; ?>% OFF</span>
-                                        <?php endif; ?>
+                                    <!-- Inner White Card -->
+                                    <div class="bg-white rounded-[2rem] p-4 px-6 flex flex-col flex-1 h-full shadow-sm">
                                         
-                                        <!-- Stock Indicator Badge -->
-                                        <?php if($p['stock'] <= 0): ?>
-                                            <span class="bg-red-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-widest">Sold Out</span>
-                                        <?php elseif($p['stock'] < 10): ?>
-                                            <span class="bg-amber-500 text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-widest animate-pulse">Low Stock</span>
-                                        <?php endif; ?>
-                                    </div>
+                                        <!-- Product Image -->
+                                        <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-6 bg-gray-50/50">
+                                            <img src="<?php echo get_url(ltrim($p['image'], './')); ?>" 
+                                                 loading="lazy"
+                                                 alt="<?php echo htmlspecialchars($p['name']); ?>"
+                                                 class="w-full h-full object-contain group-hover/card:scale-110 transition-transform duration-1000">
+                                            
+                                            <!-- deal badge -->
+                                            <?php if(isset($p['discount_percentage']) && $p['discount_percentage'] > 0): ?>
+                                                <div class="absolute top-4 left-4 bg-[#EDB02C] text-white text-[9px] font-black px-3 py-1.5 rounded-lg shadow-md">
+                                                    -<?php echo $p['discount_percentage']; ?>%
+                                                </div>
+                                            <?php endif; ?>
 
-                                    <!-- Heart Icon -->
-                                    <?php $is_wishlisted = in_array($p['id'], $wishlist_ids); ?>
-                                    <button onclick="event.preventDefault(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="absolute top-5 right-5 w-12 h-12 bg-white rounded-[18px] flex items-center justify-center shadow-lg <?php echo $is_wishlisted ? 'active text-red-500' : 'text-gray-300'; ?> hover:text-red-500 hover:scale-110 transition-all duration-300 z-20 group/heart active:scale-90 border border-gray-50">
-                                        <i class="<?php echo $is_wishlisted ? 'fas' : 'far'; ?> fa-heart group-hover/heart:animate-bounce"></i>
-                                    </button>
-                                </div>
+                                            <!-- Stock Status -->
+                                            <?php if($p['stock'] <= 0): ?>
+                                                <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center">
+                                                    <span class="bg-white text-black text-[10px] font-black px-4 py-2 rounded-full shadow-xl uppercase tracking-widest border border-gray-100">out of stock</span>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
 
-                                <!-- Content -->
-                                <div class="px-6 pb-2 relative">
-                                    <div class="flex flex-col gap-1">
-                                        <div class="flex items-center gap-2">
-                                            <span class="w-2 h-2 rounded-full bg-[#24B25D] opacity-50"></span>
-                                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] font-sans"><?php echo htmlspecialchars($p['category_name'] ?: 'Kashmir Special'); ?></p>
+                                        <!-- Stars & Branding -->
+                                        <div class="flex gap-1 mb-3">
+                                            <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                            <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                            <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                            <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                            <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
                                         </div>
-                                        <h3 class="text-2xl font-black font-heading text-gray-900 group-hover:text-black transition leading-tight py-1 card-title"><?php echo $p['name']; ?></h3>
-                                        <p class="text-gray-400 text-xs mb-4 font-sans line-clamp-2 min-h-[32px] font-medium"><?php echo $p['description']; ?></p>
-                                        <div class="flex text-yellow-400 text-[10px] gap-1 mt-1">
-                                            <i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i><i class="fas fa-star text-[8px]"></i>
-                                            <span class="text-gray-400 text-[9px] font-black uppercase tracking-widest ml-1">(4.9)</span>
+
+                                        <!-- Title & Specs -->
+                                        <div class="mb-6">
+                                            <h3 class="text-2xl font-black text-[#004F42] leading-tight mb-2 group-hover/card:text-[#24B25D] transition-colors"><?php echo $p['name']; ?></h3>
+                                            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+                                                <?php echo !empty($p['category_name']) ? $p['category_name'] : 'Premium Natural Selection'; ?>
+                                            </p>
                                         </div>
+
+                                        <!-- Interactive Price Strip -->
+                                        <div class="flex items-center justify-between mb-6 mt-auto">
+                                            <div class="flex flex-col">
+                                                <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
+                                                    <span class="text-[11px] text-gray-300 font-bold line-through">MRP ₹<?php echo $p['original_price']; ?></span>
+                                                <?php endif; ?>
+                                                <span class="text-4xl font-black text-black leading-none tracking-tighter">
+                                                    ₹<?php echo $p['price']; ?>
+                                                </span>
+                                            </div>
+                                            <!-- Quick Actions -->
+                                            <div class="flex gap-2">
+                                                <button onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center hover:bg-white hover:text-red-500 transition-all border border-gray-100">
+                                                    <i class="<?php echo in_array($p['id'], $wishlist_ids) ? 'fas text-red-500' : 'far'; ?> fa-heart text-sm"></i>
+                                                </button>
+                                                <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
+                                                    <i class="fas fa-shopping-bag text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Buy Now Action -->
+                                        <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
+                                            class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-xl md:rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy">
+                                            Quick Buy — <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </a>
-                            
-                            <!-- Glass Action Bar (Floating at bottom) -->
-                            <div class="px-3 pb-4 md:px-5 md:pb-5 pt-2 md:pt-3 mt-auto z-20 relative">
-                                <div class="bg-white rounded-[24px] md:rounded-[30px] p-2 md:p-3 action-bar-chunky border-2 border-transparent group-hover:border-white group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500">
-                                     
-                                     <!-- Price -->
-                                     <div class="pl-2 md:pl-4 flex flex-col leading-none">
-                                        <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
-                                            <span class="text-[9px] md:text-[11px] text-gray-400 font-bold line-through decoration-red-400/50 block mb-0.5">₹<?php echo $p['original_price']; ?></span>
-                                        <?php endif; ?>
-                                        <span class="text-xl md:text-3xl font-black text-gray-900 font-heading tracking-tighter">₹<?php echo $p['price']; ?></span>
-                                     </div>
-
-                                     <div class="flex gap-1 md:gap-2">
-                                        <!-- Quick Buy -->
-                                        <button onclick="event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
-                                            <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                            class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-amber-50 text-amber-500 hover:bg-amber-400 hover:text-white hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn" title="Flash Buy">
-                                            <i class="fas fa-bolt text-sm md:text-xl group-hover/btn:animate-pulse"></i>
-                                        </button>
-                                        <!-- Add Cart -->
-                                        <button onclick="event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" 
-                                            <?php echo $p['stock'] <= 0 ? 'disabled' : ''; ?>
-                                            class="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl <?php echo $p['stock'] <= 0 ? 'bg-gray-100 text-gray-300' : 'bg-black text-[#24B25D] hover:bg-[#24B25D] hover:text-black hover:scale-105 active:scale-95'; ?> flex items-center justify-center transition-all duration-300 group/btn">
-                                            <i class="fas fa-shopping-bag text-sm md:text-xl group-hover/btn:rotate-12 transition-transform"></i>
-                                        </button>
-                                     </div>
-                                </div>
-                            </div>
-
                         </div>
                     <?php endforeach; ?>
-                </div>
+                </div></div>
 
                 <!-- PAGINATION -->
                 <?php if ($total_pages > 1): ?>

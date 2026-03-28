@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $active = (int)$_POST['is_active'];
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
     $is_featured = isset($_POST['is_featured']) ? (int)$_POST['is_featured'] : 0;
+    $is_combo = isset($_POST['is_combo']) ? (int)$_POST['is_combo'] : 0;
     $bg_color = $_POST['bg_color'] ?? '';
 
 
@@ -79,13 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // SAVE PRODUCT META
     if ($id > 0) {
-        $sql = "UPDATE products SET category_id=?, name=?, description=?, ingredients=?, nutritional_info=?, price=?, original_price=?, stock=?, is_active=?, is_featured=?, image=?, bg_color=?, weight=? WHERE id=?";
+        $sql = "UPDATE products SET category_id=?, name=?, description=?, ingredients=?, nutritional_info=?, price=?, original_price=?, stock=?, is_active=?, is_featured=?, is_combo=?, image=?, bg_color=?, weight=? WHERE id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("issssddiiisssi", $cat_id, $name, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $is_featured, $image_path, $bg_color, $weight, $id);
+        $stmt->bind_param("issssddiiiisssi", $cat_id, $name, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $is_featured, $is_combo, $image_path, $bg_color, $weight, $id);
     } else {
-        $sql = "INSERT INTO products (category_id, name, slug, description, ingredients, nutritional_info, price, original_price, stock, is_active, is_featured, image, bg_color, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO products (category_id, name, slug, description, ingredients, nutritional_info, price, original_price, stock, is_active, is_featured, is_combo, image, bg_color, weight) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssssddiiisss", $cat_id, $name, $slug, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $is_featured, $image_path, $bg_color, $weight);
+        $stmt->bind_param("isssssddiiiisss", $cat_id, $name, $slug, $desc, $ingredients, $nutrition, $price, $orig_price, $stock, $active, $is_featured, $is_combo, $image_path, $bg_color, $weight);
     }
 
     if ($stmt->execute()) {
@@ -132,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $product = [
     'name' => '', 'category_id' => 1, 'price' => '', 'original_price' => '', 
     'description' => '', 'ingredients' => '', 'nutritional_info' => '', 
-    'image' => '', 'stock' => 10, 'is_active' => 1, 'is_featured' => 0, 'bg_color' => '', 'weight' => '0.500'
+    'image' => '', 'stock' => 10, 'is_active' => 1, 'is_featured' => 0, 'is_combo' => 0, 'bg_color' => '', 'weight' => '0.500'
 ];
 $gallery_images = [];
 
@@ -474,7 +475,14 @@ while($row = $cats_res->fetch_assoc()) $cats[] = $row;
                         <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Featured Product</label>
                         <select name="is_featured" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none appearance-none">
                             <option value="0" <?php echo !$product['is_featured']?'selected':''; ?>>No (Normal)</option>
-                            <option value="1" <?php echo $product['is_featured']?'selected':''; ?>>Yes (Show on Homepage)</option>
+                            <option value="1" <?php echo $product['is_featured']?'selected':''; ?>>Yes (Show Featured)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-gray-300 mb-1">Mark as Combo</label>
+                        <select name="is_combo" class="w-full bg-gray-50 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-[#24B25D] outline-none appearance-none">
+                            <option value="0" <?php echo !$product['is_combo']?'selected':''; ?>>No (Individual)</option>
+                            <option value="1" <?php echo $product['is_combo']?'selected':''; ?>>Yes (Show in Combo Bar)</option>
                         </select>
                     </div>
                 </div>

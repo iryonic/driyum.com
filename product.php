@@ -62,6 +62,7 @@ if ($total_reviews > 0) {
 
 // Background Color Logic
 $bg_options = ['#FFFBEB', '#F0FDFA', '#FEF2F2', '#F5F3FF', '#ECFDF5', '#FFF7ED', '#FDF2F8'];
+$default_bg_colors = ['#E0F2FE', '#DCFCE7', '#FEF3C7', '#FEE2E2', '#F3E8FF', '#FFEDD5'];
 $color_base = !empty($product['bg_color']) ? $product['bg_color'] : $bg_options[array_rand($bg_options)];
 $page_bg_dark = adjust_brightness($color_base, -10); // Slightly darker for immersion
 
@@ -102,18 +103,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <style>
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #fffbeb; }
-        ::-webkit-scrollbar-thumb { background: #19DC7E; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #24B25D; border-radius: 10px; }
         
         .product-gradient-bg {
             background: <?php echo $page_bg_dark; ?>;
-            background: radial-gradient(circle at 50% 50%, rgba(25, 220, 126, 0.05) 0%, <?php echo $page_bg_dark; ?> 100%);
+            background: radial-gradient(circle at 70% 30%, <?php echo adjust_brightness($color_base, 20); ?>33 0%, <?php echo $page_bg_dark; ?> 100%);
         }
 
-        .thumb-active { 
-            border-color: #19DC7E !important; 
-            transform: scale(1.1) rotate(2deg); 
-            box-shadow: 0 10px 20px rgba(25, 220, 126, 0.2); 
+        /* Desktop Sticky Buy Bar */
+        .desktop-sticky-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 90;
+            transform: translateY(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 0;
         }
+        .desktop-sticky-bar.visible { transform: translateY(0); }
+
+
+        .thumb-active { 
+            border-color: #24B25D !important; swap; }
 
         .floating-badge {
             animation: float 6s ease-in-out infinite;
@@ -164,89 +179,105 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <?php include 'includes/header.php'; ?>
 
-    <div class="container mx-auto px-6 py-8 relative z-10 font-sans">
+    <!-- DESKTOP STICKY BUY BAR (Hidden initially) -->
+    <div id="desktop-sticky-buy-bar" class="desktop-sticky-bar hidden lg:block">
+        <div class="container mx-auto px-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-white rounded-xl p-1 border border-gray-100">
+                    <img src="<?php echo get_url(ltrim($product['image'], './')); ?>" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h4 class="font-black text-sm uppercase tracking-tight text-gray-900"><?php echo $product['name']; ?></h4>
+                    <p class="text-[10px] font-bold text-[#24B25D]"><?php echo format_price($product['price']); ?></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="addToCart(<?php echo $id; ?>, this, 1)" class="bg-black text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-[#24B25D] hover:text-white transition-all active:scale-95">Add to Bag</button>
+                <button onclick="quickBuy(<?php echo $id; ?>, this, 1)" class="bg-[#24B25D] text-white px-8 py-3 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-[#004F42] transition-all active:scale-95">Quick Buy</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 sm:px-6 py-4 relative z-10 font-sans">
         
         <!-- BREADCRUMBS -->
-        <nav class="flex items-center gap-2 mb-10 text-[10px] font-black tracking-[0.2em] uppercase text-gray-400">
-            <a href="<?php echo get_url(''); ?>" class="hover:text-[#19DC7E] transition-colors">Home</a>
+        <nav class="flex items-center gap-2 mb-4 text-[10px] font-black tracking-[0.2em] uppercase text-gray-400">
+            <a href="<?php echo get_url(''); ?>" class="hover:text-[#24B25D] transition-colors">Home</a>
             <span class="opacity-30">/</span>
-            <a href="<?php echo get_url('shop'); ?>" class="hover:text-[#19DC7E] transition-colors">Snacks</a>
+            <a href="<?php echo get_url('shop'); ?>" class="hover:text-[#24B25D] transition-colors">Snacks</a>
             <span class="opacity-30">/</span>
             <span class="text-gray-900"><?php echo $product['name']; ?></span>
         </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 mb-16 lg:mb-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-12 lg:mb-16">
             
             <?php
             // Fetch Gallery Images
             $gallery = fetch_all("SELECT * FROM product_images WHERE product_id = $id ORDER BY sort_order");
             ?>
-            <!-- LEFT: VISUALS -->
-            <div class="space-y-4 md:space-y-8 lg:sticky lg:top-32 h-fit">
-                <!-- Main Showcase -->
-                <div class="relative group">
-                    <!-- Decor Blobs -->
-                    <div class="absolute -top-10 -left-10 w-64 h-64 bg-[#19DC7E]/10 rounded-full blur-[100px] animate-pulse"></div>
-                    <div class="absolute -bottom-10 -right-0 w-64 h-64 bg-yellow-400/10 rounded-full blur-[100px] animate-pulse delay-1000"></div>
-
-                    <div class="aspect-[4/5] bg-white rounded-[40px] md:rounded-[60px] p-6 md:p-16 border border-white/40 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] flex items-center justify-center relative overflow-hidden backdrop-blur-sm">
-                        <!-- Progress Indicator -->
-                        <div id="slideshow-progress" class="absolute top-0 left-0 h-1 bg-[#19DC7E]/30 w-0 z-30 transition-none"></div>
-                        
-                        <img id="mainImage" src="<?php echo get_url(ltrim($product['image'], './')); ?>" class="w-full h-full object-contain transform group-hover:scale-110 transition-all duration-[800ms] cubic-bezier(0.16, 1, 0.3, 1) z-10 drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)] <?php echo $product['stock'] <= 0 ? 'grayscale' : ''; ?>">
-                        
-                        <!-- Premium Interactive Label -->
-                        <div class="absolute top-6 right-6 md:top-10 md:right-10 flex flex-col items-end gap-3 z-20">
-                            <?php if($product['is_new']): ?>
-                                <span class="bg-black text-white px-3 md:px-5 py-1.5 md:py-2.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl floating-badge">Fresh Drop</span>
-                            <?php endif; ?>
-                            <span class="bg-[#19DC7E] text-black px-3 md:px-5 py-1.5 md:py-2.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl floating-badge delay-700">100% Organic</span>
-                        </div>
-
-                        <!-- Zoom Indicator -->
-                        <div class="absolute bottom-10 left-10 w-12 h-12 bg-white/80 backdrop-blur-md rounded-full shadow-lg flex items-center justify-center text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity translate-y-4 group-hover:translate-y-0 duration-500 cursor-zoom-in">
-                            <i class="fas fa-search-plus"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vertical/Horizontal Gallery Refined -->
-                <div class="flex gap-3 md:gap-4 overflow-x-auto hide-scrollbar py-2 px-1 snap-x snap-mandatory scroll-pl-1 justify-center md:justify-start">
-                    <div onclick="changeImage('<?php echo get_url(ltrim($product['image'], './')); ?>', this)" class="thumb-item thumb-active w-20 h-20 md:w-24 md:h-24 rounded-[24px] md:rounded-[30px] bg-white border-2 border-transparent p-2 cursor-pointer shrink-0 transition-all shadow-sm">
+            <!-- LEFT: VISUALS UNIT (STIKCY) -->
+            <div class="lg:sticky lg:top-32 h-fit space-y-6">
+                <!-- Gallery Section -->
+                <div class="flex flex-col lg:flex-row gap-4 md:gap-6">
+                <!-- Vertical Thumbs (Desktop) / Horizontal (Mobile) -->
+                <div class="order-2 lg:order-1 flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto hide-scrollbar snap-x snap-mandatory lg:max-h-[500px] shrink-0">
+                    <div onclick="changeImage('<?php echo get_url(ltrim($product['image'], './')); ?>', this)" class="thumb-item thumb-active w-16 h-16 md:w-20 md:h-20 rounded-[15px] bg-white border-2 border-transparent p-1.5 cursor-pointer shrink-0 transition-all shadow-sm snap-center">
                         <img src="<?php echo get_url(ltrim($product['image'], './')); ?>" class="w-full h-full object-contain">
                     </div>
                     <?php foreach($gallery as $img): ?>
-                        <div onclick="changeImage('<?php echo get_url(ltrim($img['image_path'], './')); ?>', this)" class="thumb-item w-20 h-20 md:w-24 md:h-24 rounded-[24px] md:rounded-[30px] bg-white border-2 border-transparent p-2 cursor-pointer shrink-0 transition-all hover:scale-105 shadow-sm">
+                        <div onclick="changeImage('<?php echo get_url(ltrim($img['image_path'], './')); ?>', this)" class="thumb-item w-16 h-16 md:w-20 md:h-20 rounded-[15px] bg-white border-2 border-transparent p-1.5 cursor-pointer shrink-0 transition-all hover:scale-105 shadow-sm snap-center">
                             <img src="<?php echo get_url(ltrim($img['image_path'], './')); ?>" class="w-full h-full object-contain">
                         </div>
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Quick Benefits Grid -->
-                <div class="grid grid-cols-3 gap-3 md:gap-4 md:pt-4">
-                    <div class="bg-white/50 backdrop-blur-sm p-4 md:p-5 rounded-[24px] md:rounded-[32px] border border-white/20 text-center benefit-card transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1 group cursor-default">
-                        <div class="w-10 h-10 md:w-12 md:h-12 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-seedling text-amber-500 text-lg md:text-xl"></i>
+                <!-- Main Showcase -->
+                <div class="order-1 lg:order-2 flex-1 relative group">
+                    <!-- Decor Blobs -->
+                    <div class="absolute -top-10 -left-10 w-64 h-64 bg-[#24B25D]/10 rounded-full blur-[100px] animate-pulse"></div>
+                    <div class="absolute -bottom-10 -right-0 w-64 h-64 bg-yellow-400/10 rounded-full blur-[100px] animate-pulse delay-1000"></div>
+
+                    <div class="aspect-[4/3] bg-white rounded-[32px] md:rounded-[40px] p-6 md:p-12 border border-white/40 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] flex items-center justify-center relative overflow-hidden backdrop-blur-sm">
+                        <!-- Progress Indicator -->
+                        <div id="slideshow-progress" class="absolute top-0 left-0 h-1 bg-[#24B25D]/30 w-0 z-30 transition-none"></div>
+                        
+                        <img id="mainImage" src="<?php echo get_url(ltrim($product['image'], './')); ?>" class="w-full h-full object-contain transform group-hover:scale-105 transition-all duration-[1000ms] cubic-bezier(0.16, 1, 0.3, 1) z-10 drop-shadow-[0_20px_40px_rgba(0,0,0,0.12)] <?php echo $product['stock'] <= 0 ? 'grayscale' : ''; ?>">
+                        
+                        <div class="absolute top-6 left-6 flex flex-col gap-3 z-30">
+                            <?php if($product['is_new']): ?>
+                                <span class="bg-black text-white px-3 md:px-5 py-1.5 md:py-2.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl floating-badge">Fresh Drop</span>
+                            <?php endif; ?>
+                            <span class="bg-[#24B25D] text-white px-3 md:px-5 py-1.5 md:py-2.5 rounded-full text-[8px] md:text-[9px] font-black uppercase tracking-widest shadow-2xl floating-badge delay-700">100% Organic</span>
                         </div>
-                        <span class="block text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-amber-500 transition-colors">All Natural</span>
                     </div>
-                    <div class="bg-white/50 backdrop-blur-sm p-4 md:p-5 rounded-[24px] md:rounded-[32px] border border-white/20 text-center benefit-card transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1 group cursor-default">
-                        <div class="w-10 h-10 md:w-12 md:h-12 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-apple-whole text-green-500 text-lg md:text-xl"></i>
+                </div>
+                </div>
+                
+                <!-- Quick Benefits Grid (Sits below visuals) -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-white/50 backdrop-blur-sm p-4 rounded-[24px] border border-white/20 text-center benefit-card transition-all duration-300 hover:bg-white hover:shadow-lg hover:-translate-y-1 group cursor-default">
+                        <div class="w-8 h-8 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-seedling text-amber-500 text-sm"></i>
                         </div>
-                        <span class="block text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-green-500 transition-colors">100% Real Fruit</span>
+                        <span class="block text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-amber-600 transition-colors">All Natural</span>
                     </div>
-                    <div class="bg-white/50 backdrop-blur-sm p-4 md:p-5 rounded-[24px] md:rounded-[32px] border border-white/20 text-center benefit-card transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1 group cursor-default">
-                        <div class="w-10 h-10 md:w-12 md:h-12 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4 group-hover:scale-110 transition-transform duration-300">
-                            <i class="fas fa-heart text-rose-500 text-lg md:text-xl"></i>
+                    <div class="bg-white/50 backdrop-blur-sm p-4 rounded-[24px] border border-white/20 text-center benefit-card transition-all duration-300 hover:bg-white hover:shadow-lg hover:-translate-y-1 group cursor-default">
+                        <div class="w-8 h-8 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-apple-whole text-green-500 text-sm"></i>
                         </div>
-                        <span class="block text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-rose-500 transition-colors">No Added Sugar</span>
+                        <span class="block text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-green-500 transition-colors">100% Real Fruit</span>
+                    </div>
+                    <div class="bg-white/50 backdrop-blur-sm p-4 rounded-[24px] border border-white/20 text-center benefit-card transition-all duration-300 hover:bg-white hover:shadow-lg hover:-translate-y-1 group cursor-default">
+                        <div class="w-8 h-8 bg-rose-50 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-heart text-rose-500 text-sm"></i>
+                        </div>
+                        <span class="block text-[8px] md:text-[9px] font-black uppercase tracking-widest text-gray-400 group-hover:text-rose-500 transition-colors">No Added Sugar</span>
                     </div>
                 </div>
             </div>
 
             <!-- RIGHT: DETAILS -->
-            <div class="lg:pt-10">
+            <div class="lg:pt-2">
               
 
                 <div class="mb-10">
@@ -260,7 +291,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     else echo '<i class="far fa-star"></i>';
                                 }
                             else:
-                                echo '<span class="text-[#19DC7E] font-black text-[8px] uppercase tracking-widest bg-[#19DC7E]/10 px-2 py-0.5 rounded-full">New Drop</span>';
+                                echo '<span class="text-[#24B25D] font-black text-[8px] uppercase tracking-widest bg-[#24B25D]/10 px-2 py-0.5 rounded-full">New Drop</span>';
                             endif;
                             ?>
                         </div>
@@ -268,25 +299,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <?php echo $total_reviews > 0 ? $avg_rating . " (" . $total_reviews . " Reviews)" : "No reviews yet"; ?>
                         </span>
                     </div>
-                    <h1 class="text-[clamp(2.5rem,10vw,8rem)] font-heading font-black text-gray-900 mb-6 leading-[0.9] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>
+                    <div class="anim-up">
+                        <h1 id="product-title-anchor" class="text-[clamp(2.2rem,7vw,4.5rem)] font-heading font-black text-gray-900 mb-2 leading-[0.85] tracking-tighter uppercase whitespace-pre-wrap"><?php echo $product['name']; ?></h1>
+                    </div>
                     
-                    <div class="flex items-center gap-6">
-                        <span class="text-5xl sm:text-7xl font-black text-gray-900 font-heading tracking-tighter leading-none">₹<?php echo $product['price']; ?></span>
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="text-5xl sm:text-7xl font-black text-[#004F42] font-heading tracking-tighter leading-none">₹<?php echo $product['price']; ?></span>
                         <?php if($product['original_price'] > $product['price']): ?>
                             <div class="flex flex-col">
-                                <span class="text-xl sm:text-2xl text-gray-300 line-through font-bold leading-none italic">₹<?php echo $product['original_price']; ?></span>
-                                <span class="text-[#FF6B6B] font-black text-[9px] uppercase tracking-widest mt-1">Save <?php echo round((($product['original_price']-$product['price'])/$product['original_price'])*100); ?>% Today</span>
+                                <span class="text-lg sm:text-xl text-gray-300 line-through font-bold leading-none italic">₹<?php echo $product['original_price']; ?></span>
+                                <span class="text-[#FF6B6B] font-black text-[8px] md:text-[9px] uppercase tracking-widest mt-1">Save <?php echo round((($product['original_price']-$product['price'])/$product['original_price'])*100); ?>% Today</span>
                             </div>
                         <?php endif; ?>
                     </div>
                 </div>
 
-                <p class="text-xl sm:text-2xl text-gray-500 font-medium mb-12 leading-relaxed max-w-xl font-heading tracking-tight">
-                    <?php echo $product['description']; ?>
+                <p class="text-base md:text-lg text-gray-500 font-medium mb-8 leading-relaxed max-w-xl font-heading tracking-tight">
+                    <?php echo mb_convert_encoding($product['description'], 'UTF-8', 'ISO-8859-1'); ?>
                 </p>
 
                 <!-- Stock Scarcity Bar -->
-                <div class="mb-12 max-w-sm">
+                <div class="mb-8 max-w-sm">
                     <div class="flex justify-between items-end mb-3">
                         <span class="text-[10px] font-black uppercase tracking-widest text-gray-900">
                             <?php 
@@ -314,21 +347,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
 
                 <!-- ADD TO CART & QUANTITY -->
-                <div class="flex flex-col sm:flex-row gap-4 md:gap-5 mb-16 lg:pr-10">
-                    <div class="flex items-center bg-white rounded-[40px] p-2 border-2 border-transparent shadow-xl ring-1 ring-gray-100 w-full sm:w-auto justify-between sm:justify-start">
-                        <button onclick="updateQty(-1)" class="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all">
-                            <i class="fas fa-minus text-xs"></i>
+                <div class="flex flex-col gap-3 md:gap-4 mb-8 lg:pr-10">
+                    <div class="flex items-center bg-white rounded-[20px] p-1.5 border border-gray-100 shadow-lg w-full sm:w-auto justify-between sm:justify-start">
+                        <button onclick="updateQty(-1)" class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-[15px] transition-all">
+                            <i class="fas fa-minus text-[10px]"></i>
                         </button>
-                        <input type="number" id="qty" value="1" min="1" class="w-12 md:w-14 text-center font-black text-xl md:text-2xl bg-transparent outline-none pointer-events-none">
-                        <button onclick="updateQty(1)" class="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all">
-                            <i class="fas fa-plus text-xs"></i>
+                        <input type="number" id="qty" value="1" min="1" class="w-10 md:w-12 text-center font-black text-xl md:text-2xl bg-transparent outline-none pointer-events-none">
+                        <button onclick="updateQty(1)" class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-50 rounded-[15px] transition-all">
+                            <i class="fas fa-plus text-[10px]"></i>
                         </button>
                     </div>
                     <div class="flex flex-1 gap-3 md:gap-5 order-first sm:order-none">
                         <button 
                             onclick="addToCart(<?php echo $id; ?>, this, document.getElementById('qty').value)" 
                             <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                            class="flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed' : 'bg-white text-black border-2 border-black hover:bg-amber-400 hover:border-amber-500 hover:text-white'; ?> text-base md:text-lg px-6 md:px-8 py-5 md:py-6 rounded-[30px] md:rounded-[40px] shadow-xl transition-all duration-500 font-black tracking-tight active:scale-95 group">
+                            class="flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed' : 'bg-white text-black border-2 border-black hover:bg-[#004F42] hover:border-[#004F42] hover:text-white'; ?> text-base md:text-lg px-6 md:px-8 py-4 md:py-5 rounded-[20px] shadow-lg transition-all duration-500 font-black tracking-tight active:scale-95 group">
                             <?php echo $product['stock'] <= 0 ? 'Out of Bag' : 'Add to Bag'; ?>
                         </button>
                         <?php $is_wishlisted = in_array($id, $wishlist_ids); ?>
@@ -339,7 +372,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <button 
                         onclick="quickBuy(<?php echo $id; ?>, this, document.getElementById('qty').value)" 
                         <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="w-full sm:flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-[#19DC7E] text-black shadow-[0_30px_60px_-15px_rgba(25,220,126,0.3)] hover:scale-[1.02]'; ?> text-base md:text-lg px-8 md:px-12 py-5 md:py-6 rounded-[30px] md:rounded-[40px] transition-all duration-500 font-black tracking-tight active:scale-95 group">
+                        class="w-full sm:flex-1 <?php echo $product['stock'] <= 0 ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-[#24B25D] text-white shadow-[0_20px_40px_-10px_rgba(36,178,93,0.3)] hover:scale-[1.02]'; ?> text-base md:text-lg px-8 md:px-12 py-4 md:py-5 rounded-[20px] transition-all duration-500 font-black tracking-tight active:scale-95 group">
                         <?php echo $product['stock'] <= 0 ? 'Sold Out' : 'Quick Buy — <span class="group-hover:translate-x-1 inline-block transition tracking-tighter">₹' . $product['price'] . '</span>'; ?>
                     </button>
                     
@@ -348,20 +381,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </button>
                 </div>
 
-                <!-- STICKY MOBILE BAR -->
-                <div class="sticky-mobile-bar md:hidden">
-                    <div class="flex-1">
-                        <p class="text-[10px] font-black uppercase text-gray-400 mb-1">Total</p>
-                        <p class="text-2xl font-black text-gray-900">₹<?php echo $product['price']; ?></p>
-                    </div>
-                    <button onclick="addToCart(<?php echo $id; ?>, this, 1)" class="bg-[#111827] text-white rounded-3xl font-black uppercase tracking-widest px-8 py-5 shadow-xl active:bg-[#19DC7E] active:text-black transition-all">
-                        Quick Add
-                    </button>
-                </div>
+               
                 
                 <!-- Pincode Checker -->
-                <div class="bg-white rounded-[40px] p-8 border border-white/50 shadow-sm mb-6">
-                    <h3 class="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-gray-900 mb-6 pb-4 border-b border-gray-50">
+                <div class="bg-white rounded-[24px] p-6 border border-white/50 shadow-sm mb-6">
+                    <h3 class="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-900 mb-4 pb-3 border-b border-gray-50">
                         <i class="fas fa-map-marker-alt text-[#19DC7E]"></i> Delivery Check
                     </h3>
                     <div class="flex flex-col sm:flex-row gap-2">
@@ -372,10 +396,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
 
                 <!-- PREMIUM ACCORDIONS -->
-                <div class="space-y-6 lg:pr-10">
+                <div class="space-y-4 lg:pr-10">
                     <!-- Ingredients Card -->
-                    <div class="bg-white rounded-[40px] p-8 border border-white/50 shadow-sm hover:shadow-xl transition-all duration-500">
-                        <h3 class="flex items-center gap-4 text-sm font-black uppercase tracking-widest text-gray-900 mb-8 border-b border-gray-50 pb-6">
+                    <div class="bg-white rounded-[24px] p-6 border border-white/50 shadow-sm hover:shadow-lg transition-all duration-500">
+                        <h3 class="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-900 mb-6 border-b border-gray-50 pb-4">
                             <i class="fas fa-atom text-[#19DC7E]"></i> Composition & Nutrition
                         </h3>
                         
@@ -470,7 +494,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
 
                     <!-- Shipping Hint -->
-                    <div class="flex items-center gap-6 p-8 bg-black text-white rounded-[40px] shadow-2xl relative overflow-hidden group">
+                    <div class="flex items-center gap-6 p-6 bg-[#004F42] text-white rounded-[24px] shadow-lg relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-[#19DC7E] rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity"></div>
                         <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">🚚</div>
                         <div>
@@ -484,45 +508,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <!-- COMMUNITY STORIES (REVIEWS) -->
-        <div id="reviews" class="pt-40 border-t border-gray-100">
+        <div id="reviews" class="pt-24 md:pt-40 border-t border-gray-100 px-4 sm:px-0">
             <div class="max-w-7xl mx-auto">
-                <div class="flex flex-col lg:flex-row gap-20 items-start">
+                <div class="flex flex-col lg:flex-row gap-20 ">
                     <!-- Sidebar Summary -->
                     <div class="lg:w-1/3 lg:sticky lg:top-32">
-                        <h2 class="text-6xl sm:text-8xl font-heading font-black text-gray-900 mb-10 leading-[0.8] tracking-tighter anim-up">
-                            THE <br><span class="text-[#19DC7E]">DRIYUM</span> <br>DEBATE.
+                        <h2 class="text-4xl sm:text-5xl font-heading font-black text-gray-900 mb-10 leading-[0.8] tracking-tighter anim-up">
+                            THE <span class="text-[#24B25D]">DRIYUM</span> <br>DEBATE.
                         </h2>
-                        <div class="bg-white rounded-[60px] p-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.06)] border border-gray-50 relative overflow-hidden group hover:shadow-2xl transition-all duration-700 anim-up text-center">
-                            <div class="inline-flex items-baseline gap-2 mb-4">
-                                <span class="text-8xl font-black text-gray-900 font-heading tracking-tighter" id="rating-number"><?php echo $total_reviews > 0 ? 0 : '0.0'; ?></span>
-                                <span class="text-2xl font-black text-[#19DC7E]">/5</span>
-                            </div>
-                            <div class="flex justify-center text-[#FFD700] text-lg gap-1 mb-6">
-                                <?php 
-                                if ($total_reviews > 0):
-                                    for($i=1; $i<=5; $i++) {
-                                        if($i <= floor($avg_rating)) echo '<i class="fas fa-star drop-shadow-sm"></i>';
-                                        elseif($i <= ceil($avg_rating)) echo '<i class="fas fa-star-half-alt drop-shadow-sm"></i>';
-                                        else echo '<i class="far fa-star drop-shadow-sm"></i>';
-                                    }
-                                else:
-                                    for($i=0;$i<5;$i++) echo '<i class="far fa-star text-gray-100 drop-shadow-sm"></i>';
-                                endif;
-                                ?>
-                            </div>
-                            <div class="h-1.5 w-full bg-gray-50 rounded-full overflow-hidden mb-10">
-                                <div id="rating-bar" class="h-full bg-gradient-to-r from-[#19DC7E] to-[#14c06e] rounded-full shadow-[0_0_10px_rgba(25,220,126,0.3)] transition-all duration-[1.5s] ease-out" style="width: 0%"></div>
-                            </div>
-                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-10"><?php echo $total_reviews > 0 ? "Verified Authentic Stories" : "Be the first to tell yours"; ?></p>
+                        <div class="bg-white rounded-[24px] p-8 md:p-10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.05)] border border-gray-50 relative overflow-hidden group/card hover:shadow-xl transition-all duration-700 anim-up text-center">
+                            <!-- Premium Header Label -->
+                            <span class="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-[#24B25D] bg-[#24B25D]/10 px-4 py-1.5 rounded-full mb-8">Community Verdict</span>
 
-                            <button onclick="document.getElementById('review-form-container').scrollIntoView({behavior:'smooth'})" class="w-full bg-gray-50 hover:bg-black hover:text-white py-6 rounded-3xl text-[10px] font-black uppercase tracking-widest transition-all">Share Your Experience</button>
+                            <div class="flex flex-col items-center mb-10">
+                                <div class="inline-flex items-baseline gap-2 mb-2">
+                                    <span class="text-7xl md:text-8xl font-black text-gray-900 font-heading tracking-tighter" id="rating-number"><?php echo $total_reviews > 0 ? $avg_rating : '0.0'; ?></span>
+                                    <span class="text-xl font-black text-gray-300">/ 5</span>
+                                </div>
+                                <div class="flex text-yellow-500 gap-1 text-sm mb-2 justify-center">
+                                    <?php 
+                                    if ($total_reviews > 0):
+                                        for($i=1; $i<=5; $i++) {
+                                            if($i <= floor($avg_rating)) echo '<i class="fas fa-star"></i>';
+                                            elseif($i <= ceil($avg_rating)) echo '<i class="fas fa-star-half-alt"></i>';
+                                            else echo '<i class="far fa-star"></i>';
+                                        }
+                                    else:
+                                        for($i=0;$i<5;$i++) echo '<i class="far fa-star text-gray-100"></i>';
+                                    endif;
+                                    ?>
+                                </div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Base on <?php echo $total_reviews; ?> Stories</p>
+                            </div>
+
+                           
+
+                            <!-- Thinner Technical Progress Bar -->
+                            <div class="px-2 mb-10">
+                                <div class="h-1 w-full bg-gray-50 rounded-full overflow-hidden mb-3">
+                                    <div id="rating-bar" class="h-full bg-gradient-to-r from-[#24B25D] to-[#17775D] rounded-full shadow-sm transition-all duration-[2s] ease-out" style="width: 0%"></div>
+                                </div>
+                                <p class="text-[9px] font-black text-gray-300 uppercase tracking-widest">Authenticity Verified</p>
+                            </div>
+
+                            <button onclick="document.getElementById('review-form-container').scrollIntoView({behavior:'smooth'})" class="block w-full bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#24B25D] transition-all transform hover:-translate-y-1 active:scale-95 shadow-lg">Tell Your Story</button>
                         </div>
                     </div>
 
                     <!-- Vertical Story Scroll -->
                     <div class="lg:w-2/3 w-full">
                         <?php if (is_admin() && !empty($reviews)): ?>
-                            <div class="mb-8 flex items-center justify-between bg-white p-6 rounded-[30px] border border-gray-100 shadow-sm anim-up">
+                            <div class="mb-8 flex items-center justify-between bg-white p-6 rounded-3xl border border-gray-100 shadow-sm anim-up">
                                 <div class="flex items-center gap-4">
                                     <label class="flex items-center gap-3 cursor-pointer">
                                         <input type="checkbox" id="selectAllReviews" class="w-5 h-5 rounded border-gray-300 text-[#19DC7E] focus:ring-[#19DC7E]">
@@ -538,7 +574,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <form id="bulkReviewForm" method="POST" class="space-y-12">
                             <input type="hidden" name="delete_reviews" value="1">
                             <?php if(empty($reviews)): ?>
-                                <div class="bg-white rounded-[50px] p-24 text-center border-2 border-dashed border-gray-100">
+                                <div class="bg-white rounded-3xl p-24 text-center border-2 border-dashed border-gray-100">
                                     <h3 class="text-3xl font-black text-gray-900 mb-4 tracking-tight">No stories told yet.</h3>
                                     <p class="text-gray-400 max-w-xs mx-auto mb-10 text-lg font-medium">Be the pioneer explorer and tell the world how these taste.</p>
                                 </div>
@@ -546,13 +582,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                             <?php foreach($reviews as $i => $r): ?>
                                 <div class="relative group anim-up" style="animation-delay: <?php echo $i * 100; ?>ms">
-                                    <div class="bg-white rounded-[50px] p-8 md:p-16 border border-gray-50 group-hover:border-[#19DC7E]/30 shadow-sm group-hover:shadow-[0_60px_100px_-30px_rgba(0,0,0,0.12)] transition-all duration-700 relative z-10">
+                                    <div class="bg-white rounded-[24px] p-8 md:p-12 border border-gray-50 group-hover:border-[#24B25D]/30 shadow-sm group-hover:shadow-[0_60px_100px_-30px_rgba(0,0,0,0.12)] transition-all duration-700 relative z-10">
                                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-12">
                                             <div class="flex items-center gap-6">
                                                 <?php if (is_admin()): ?>
                                                     <input type="checkbox" name="review_ids[]" value="<?php echo $r['id']; ?>" class="review-selector w-6 h-6 rounded-lg border-gray-100 bg-gray-50 text-[#19DC7E] focus:ring-[#19DC7E] cursor-pointer">
                                                 <?php endif; ?>
-                                                <div class="w-16 h-16 md:w-20 md:h-20 rounded-[28px] bg-gradient-to-br from-[#19DC7E] to-[#14c06e] p-[2px]">
+                                                <div class="w-16 h-16 md:w-20 md:h-20 rounded-[20px] bg-gradient-to-br from-[#24B25D] to-[#14c06e] p-[2px]">
                                                     <div class="w-full h-full bg-white rounded-[26px] flex items-center justify-center font-heading font-black text-2xl text-gray-900">
                                                         <?php echo strtoupper(substr($r['user_name'],0,1)); ?>
                                                     </div>
@@ -560,7 +596,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                 <div>
                                                     <h4 class="font-black text-2xl md:text-3xl text-gray-900 tracking-tighter mb-1"><?php echo htmlspecialchars($r['user_name']); ?></h4>
                                                     <div class="flex items-center gap-3">
-                                                        <span class="text-[10px] font-black text-[#19DC7E] uppercase tracking-widest">Verified Taster</span>
+                                                        <span class="text-[10px] font-black text-[#24B25D] uppercase tracking-widest">Verified Taster</span>
                                                         <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest">/ <?php echo date('M d, Y', strtotime($r['created_at'])); ?></span>
                                                     </div>
                                                 </div>
@@ -578,7 +614,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                                 </div>
                                             </div>
                                         </div>
-                                        <p class="text-3xl md:text-5xl text-gray-800 font-heading font-black leading-tight tracking-tighter">
+                                        <p class="text-2xl md:text-4xl text-gray-800 font-heading font-black leading-tight tracking-tighter">
                                             "<?php echo htmlspecialchars($r['comment']); ?>"
                                         </p>
                                     </div>
@@ -597,8 +633,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                         <!-- Review Form -->
                         <div id="review-form-container" class="mt-32 pt-32 border-t border-gray-100/50">
-                            <h3 class="text-4xl sm:text-5xl font-heading font-black text-gray-900 mb-6 tracking-tighter">YOUR <span class="text-[#19DC7E]">VERDICT.</span></h3>
-                            <p class="text-gray-400 text-lg sm:text-xl font-medium mb-12 max-w-md">Your words echo in the valley. How was the drop?</p>
+                            <h3 class="text-3xl sm:text-4xl font-heading font-black text-gray-900 mb-6 tracking-tighter">YOUR <span class="text-[#19DC7E]">VERDICT.</span></h3>
+                            <p class="text-gray-400 text-base sm:text-lg font-medium mb-12 max-w-md">Your words echo in the valley. How was the drop?</p>
                             
                             <?php if(is_logged_in()): ?>
                                 <form method="POST" class="space-y-12">
@@ -606,21 +642,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                         <?php for($i=1; $i<=5; $i++): ?>
                                             <label class="relative cursor-pointer group/star">
                                                 <input type="radio" name="rating" value="<?php echo $i; ?>" class="hidden peer" <?php echo $i==5?'checked':''; ?>>
-                                                <div class="w-16 h-16 md:w-20 md:h-20 bg-white border-2 border-transparent peer-checked:border-black rounded-2xl md:rounded-[28px] flex items-center justify-center text-lg transition-all hover:scale-110 shadow-xl font-black">
+                                                <div class="w-16 h-16 md:w-20 md:h-20 bg-white border-2 border-transparent peer-checked:border-black rounded-2xl md:rounded-3xl flex items-center justify-center text-lg transition-all hover:scale-110 shadow-xl font-black">
                                                     <?php echo $i; ?> ⭐
                                                 </div>
                                             </label>
                                         <?php endfor; ?>
                                     </div>
-                                    <textarea name="comment" rows="5" placeholder="Spill the tea... What makes this snack special?" class="w-full bg-white border-none rounded-[30px] md:rounded-[40px] p-6 md:p-10 font-heading font-medium text-lg md:text-2xl focus:ring-4 focus:ring-[#19DC7E]/10 transition-all placeholder:text-gray-200 shadow-xl"></textarea>
-                                    <button type="submit" class="w-full md:w-auto bg-black text-white px-12 md:px-20 py-6 md:py-8 hover:bg-[#19DC7E] hover:text-black font-black tracking-widest uppercase rounded-3xl md:rounded-full shadow-2xl transition-all active:scale-95">Post Verdict</button>
+                                    <textarea name="comment" rows="5" placeholder="Spill the tea... What makes this snack special?" class="w-full bg-white border-none rounded-3xl p-6 md:p-8 font-heading font-medium text-base md:text-lg focus:ring-4 focus:ring-[#24B25D]/10 transition-all placeholder:text-gray-200 shadow-lg"></textarea>
+                                    <button type="submit" class="w-full md:w-auto bg-black text-white px-12 md:px-16 py-5 md:py-6 hover:bg-[#24B25D] hover:text-white font-black tracking-widest uppercase rounded-full shadow-xl transition-all active:scale-95">Post Verdict</button>
                                 </form>
                             <?php else: ?>
-                                <div class="bg-black rounded-[50px] p-16 text-center shadow-2xl relative overflow-hidden">
-                                     <div class="absolute inset-0 bg-gradient-to-br from-[#19DC7E]/10 to-transparent"></div>
-                                    <h4 class="text-3xl font-black text-white mb-6 tracking-tight italic relative z-10">Explorers Only.</h4>
-                                    <p class="text-gray-400 font-medium mb-12 relative z-10">Sign in to share your snacks experience with the community.</p>
-                                    <a href="<?php echo get_url('login'); ?>" class="bg-white text-black px-12 py-5 font-black uppercase tracking-widest rounded-3xl shadow-xl hover:bg-[#19DC7E] transition-colors relative z-10">Sign In Now</a>
+                                <div class="bg-black rounded-3xl p-12 text-center shadow-xl relative overflow-hidden">
+                                     <div class="absolute inset-0 bg-gradient-to-br from-[#24B25D]/10 to-transparent"></div>
+                                    <h4 class="text-2xl font-black text-white mb-4 tracking-tight italic relative z-10">Explorers Only.</h4>
+                                    <p class="text-gray-400 font-medium mb-10 relative z-10">Sign in to share your snacks experience with the community.</p>
+                                    <a href="<?php echo get_url('login'); ?>" class="bg-white text-black px-12 py-5 font-black uppercase tracking-widest rounded-xl shadow-xl hover:bg-[#24B25D] transition-colors relative z-10">Sign In Now</a>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -631,29 +667,57 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- EXPLORE MORE -->
         <div class="mt-40">
-            <div class="flex items-end justify-between mb-16">
-                <div class="mb-10 md:mb-0">
-                    <span class="text-[#19DC7E] font-black tracking-widest uppercase text-[10px] md:text-xs mb-4 block">Wait, there's more!</span>
-                    <h3 class="text-4xl sm:text-6xl font-heading font-black text-gray-900 tracking-tighter leading-none">PEOPLE <br>ALSO GRABBED.</h3>
+            <div class="flex items-end justify-between mb-16 px-4 sm:px-0">
+                <div class="mb-6 md:mb-0">
+                    <span class="text-[#24B25D] font-black tracking-widest uppercase text-[9px] md:text-[10px] mb-3 block">Wait, there's more!</span>
+                    <h3 class="text-3xl sm:text-3xl font-heading font-black text-gray-900 tracking-tighter leading-none">PEOPLE ALSO GRABBED.</h3>
                 </div>
-                <a href="<?php echo get_url('shop'); ?>" class="bg-black text-white px-8 py-4 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-[#19DC7E] hover:text-black transition-all">Hunt All</a>
+                <a href="<?php echo get_url('shop'); ?>" class="bg-black text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#24B25D] hover:text-white transition-all">View All</a>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            <div class="flex flex-row overflow-x-auto lg:grid lg:grid-cols-4 gap-4 md:gap-8 pb-8 lg:pb-0 hide-scrollbar snap-x snap-mandatory px-4 sm:px-0">
                 <?php 
-                $colors = ['card-color-1', 'card-color-2', 'card-color-3', 'card-color-4'];
-                foreach($related as $i => $rp): 
-                    $current_color = $colors[$i % count($colors)];
+                $i = 0;
+                foreach($related as $rp): 
+                    $color_raw = $default_bg_colors[$i % count($default_bg_colors)];
+                    $i++;
                 ?>
-                    <div class="group relative anim-up" style="animation-delay: <?php echo $i * 100; ?>ms">
-                        <a href="<?php echo product_url($rp['slug']); ?>" class="block">
-                            <div class="<?php echo $current_color; ?> rounded-[40px] aspect-square mb-6 overflow-hidden relative p-8 border-2 border-transparent group-hover:border-[#19DC7E] transition-all duration-500 shadow-sm hover:shadow-2xl">
-                                <img src="<?php echo get_url(ltrim($rp['image'], './')); ?>" class="w-full h-full object-contain group-hover:scale-110 transition duration-1000">
-                                <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                            </div>
-                            <h4 class="text-2xl font-black font-heading text-gray-900 mb-2 truncate group-hover:text-[#19DC7E] transition"><?php echo $rp['name']; ?></h4>
-                            <div>
-                                <span class="text-3xl font-black text-gray-900 font-heading">₹<?php echo $rp['price']; ?></span>
+                    <div class="flex-none w-[85vw] sm:w-[50%] lg:w-auto group relative anim-up snap-center" style="animation-delay: <?php echo $i * 100; ?>ms">
+                        <a href="<?php echo product_url($rp['slug']); ?>" class="block h-full group">
+                            <!-- Outer Tinted Container (The Boutique collective Style) -->
+                            <div class="rounded-[2rem] md:rounded-[2.5rem] p-2 transition-transform duration-500 group-hover:scale-[1.02] h-full flex flex-col shadow-sm border border-[#004F42]/5" style="background-color: <?php echo $color_raw; ?>;">
+                                <!-- Inner White Card -->
+                                <div class="bg-white rounded-[1.8rem] md:rounded-[2rem] p-4 px-6 flex flex-col flex-1 h-full shadow-sm">
+                                    <!-- Image -->
+                                    <div class="relative w-full aspect-square rounded-2xl overflow-hidden mb-4 bg-gray-50/50">
+                                        <img src="<?php echo get_url(ltrim($rp['image'], './')); ?>" class="w-full h-full object-contain group-hover:scale-110 transition duration-1000">
+                                        <?php if(isset($rp['discount_percentage']) && $rp['discount_percentage'] > 0): ?>
+                                            <div class="absolute top-3 left-3 bg-[#EDB02C] text-white text-[8px] font-black px-2 py-1 rounded-md shadow-md">
+                                                -<?php echo $rp['discount_percentage']; ?>%
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <!-- Stars -->
+                                    <div class="flex gap-1 mb-2">
+                                        <i class="fas fa-star text-[#EDB12B] text-[8px]"></i>
+                                        <i class="fas fa-star text-[#EDB12B] text-[8px]"></i>
+                                        <i class="fas fa-star text-[#EDB12B] text-[8px]"></i>
+                                        <i class="fas fa-star text-[#EDB12B] text-[8px]"></i>
+                                        <i class="fas fa-star text-[#EDB12B] text-[8px]"></i>
+                                    </div>
+                                    <!-- Info -->
+                                    <div class="mb-4">
+                                        <h4 class="text-xl font-black text-[#004F42] leading-tight mb-1 group-hover:text-[#24B25D] transition"><?php echo $rp['name']; ?></h4>
+                                        <p class="text-gray-400 text-[9px] font-bold uppercase tracking-widest"><?php echo $rp['category_name'] ?? 'Premium Snacks'; ?></p>
+                                    </div>
+                                    <!-- Price Slot -->
+                                    <div class="mt-auto pt-4 flex items-center justify-between">
+                                        <span class="text-3xl font-black text-black font-heading leading-none">₹<?php echo $rp['price']; ?></span>
+                                        <div class="w-10 h-10 bg-gray-900 text-white rounded-xl flex items-center justify-center group-hover:bg-[#24B25D] transition-colors">
+                                            <i class="fas fa-arrow-right text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </a>
                     </div>
@@ -681,6 +745,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
     });
     </script>
+
     <?php include 'includes/footer.php'; ?>
     
     <script>
@@ -834,6 +899,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             resultDiv.innerHTML = '<div class="p-4 bg-red-50 text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-widest">Error checking delivery</div>';
         }
     }
+
+    // Sticky Buy Bar Logic for Desktop
+    window.addEventListener('scroll', () => {
+        const stickyBar = document.getElementById('desktop-sticky-buy-bar');
+        const anchor = document.getElementById('product-title-anchor');
+        if (!stickyBar || !anchor) return;
+
+        const rect = anchor.getBoundingClientRect();
+        if (rect.top < 0) {
+            stickyBar.classList.add('visible');
+        } else {
+            stickyBar.classList.remove('visible');
+        }
+    });
+
 
     </script>
 </body>

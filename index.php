@@ -312,7 +312,7 @@ $wishlist_json = json_encode($wishlist_ids);
             </div>
 
             <!-- THE COUNTDOWN -->
-            <div class="hero-sale-timer-row flex items-center gap-2.5 sm:gap-4 lg:gap-6 bg-[#002A23] px-4 sm:px-5 py-1 sm:py-1.5 rounded-full shadow-lg" data-end="<?php echo $active_sale['end_date']; ?>">
+            <div class="hero-sale-timer-row flex items-center gap-2.5 sm:gap-4 lg:gap-4 bg-[#002A23] px-4 sm:px-5 py-1 sm:py-1.5 rounded-full shadow-lg" data-end="<?php echo $active_sale['end_date']; ?>">
                 <div class="flex items-center gap-2 sm:gap-3">
                     <div class="flex flex-col items-center">
                         <span class="hero-days text-xs sm:text-sm lg:text-base font-black text-[#19DC7E] leading-none">00</span>
@@ -348,12 +348,12 @@ $wishlist_json = json_encode($wishlist_ids);
     <!-- PREMIUM FULL-WIDTH BANNER HERO -->
     <style>
         .hero-banner-container {
-            height: 62vh;
-            min-height: 400px;
-            max-height: 550px;
+            height: 65vh;
+            min-height: 480px;
+            max-height: 720px;
         }
         @media (max-width: 768px) {
-            .hero-banner-container { height: 45vh; min-height: 280px; }
+            .hero-banner-container { height: 55vh; min-height: 320px; }
         }
         .banner-slide {
             transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -379,7 +379,7 @@ $wishlist_json = json_encode($wishlist_ids);
                     <img src="<?php echo get_url($slide['image']); ?>" 
                          class="w-full h-full object-cover object-center transform transition-transform duration-[10000ms] ease-linear <?php echo $index === 0 ? 'scale-110' : ''; ?>" 
                          alt="<?php echo htmlspecialchars($slide['name']); ?>">
-                    <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent"></div>
+                    <!-- <div class="absolute inset-0 bg-gradient-to-r from-black/20 via-black/20 to-transparent"></div> -->
                 </div>
 
                 <!-- Overlay Content -->
@@ -399,7 +399,7 @@ $wishlist_json = json_encode($wishlist_ids);
                             </h2>
                             <?php endif; ?>
 
-                            <div class="flex items-center gap-4 md:gap-6 transform translate-y-10 opacity-0 transition-all duration-700 delay-700 banner-reveal-item active:translate-y-0 active:opacity-100 pointer-events-auto">
+                            <div class="flex items-center gap-4 md:gap-4 transform translate-y-10 opacity-0 transition-all duration-700 delay-700 banner-reveal-item active:translate-y-0 active:opacity-100 pointer-events-auto">
                                 <span class="px-6 py-3 md:px-8 md:py-4 bg-[#19DC7E] text-[#002A23] font-black text-[10px] md:text-sm uppercase tracking-[0.1em] rounded-xl hover:bg-white hover:text-black transition-all transform hover:scale-105 active:scale-95 shadow-2xl inline-block cursor-pointer">
                                     <?php echo !empty($slide['cta_text']) ? htmlspecialchars($slide['cta_text']) : 'ORDER NOW'; ?>
                                 </span>
@@ -707,111 +707,325 @@ $wishlist_json = json_encode($wishlist_ids);
 
 
     <!-- CATEGORIES CAROUSEL (Scroll Snap) -->
-    <section class="py-16 anim-up delay-200 overflow-hidden">
-        <div class="container mx-auto px-6 mb-8 flex justify-between items-end">
-             <div>
-                    <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-sans">Browse by Vibe</span>
-                    <h2 class="text-3xl md:text-5xl font-heading font-black text-gray-900 leading-none">Find Your Crunch </h2>
+    <!-- COMBO BUNDLES SECTION -->
+    <section class="py-10 md:py-28 bg-white relative overflow-hidden anim-up">
+        <div class="container mx-auto px-6 md:px-16 mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
+            <div class="anim-reveal">
+                <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-[10px] mb-2 md:mb-3 block">Curated Value Droplets</span>
+                <h2 class="text-4xl md:text-6xl font-heading font-black text-gray-900 leading-none tracking-tighter">Our <span class="text-[#24B25D]">Combos.</span></h2>
+            </div>
+            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
+                <div class="flex gap-2.5 md:gap-3">
+                    <button onclick="document.getElementById('combo-slider-container').scrollBy({left: -350, behavior: 'smooth'})" class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black transition-all shadow-sm active:scale-90">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button onclick="document.getElementById('combo-slider-container').scrollBy({left: 350, behavior: 'smooth'})" class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-black text-[#24B25D] flex items-center justify-center hover:scale-105 transition-all shadow-xl active:scale-90">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
                 </div>
-
-            <!-- Category Slider Controls -->
-            <div class="hidden md:flex gap-3">
-                <button onclick="scrollCategories('left')" class="w-16 h-16 rounded-[24px] bg-white border-3 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black hover:rotate-[-5deg] transition-all shadow-sm active:scale-90" aria-label="Previous categories">
-                    <i class="fas fa-arrow-left text-xl"></i>
-                </button>
-                <button onclick="scrollCategories('right')" class="w-16 h-16 rounded-[24px] bg-black text-[#24B25D] flex items-center justify-center hover:scale-105 hover:rotate-[5deg] transition-all shadow-2xl active:scale-90" aria-label="Next categories">
-                    <i class="fas fa-arrow-right text-xl"></i>
-                </button>
             </div>
         </div>
 
-        <!-- Constrained Slider Wrapper -->
+        <!-- Combo Slider Wrapper -->
         <div class="w-full relative overflow-hidden">
-            <div id="category-slider-container" class="flex w-full overflow-x-auto gap-6 px-6 pb-12 hide-scrollbar scroll-smooth">
+            <div id="combo-slider-container" class="flex w-full overflow-x-auto gap-4 px-8 md:px-16 pb-12 hide-scrollbar scroll-smooth">
                 <?php 
-                $cats = get_all_categories();
-                $styles = [
-                    ['bg'=>'bg-[#E0F2FE]', 'text'=>'text-[#0c4a6e]', 'sub'=>'SWEET & TANGY', 'emoji'=>'🍎'],
-                    ['bg'=>'bg-[#DCFCE7]', 'text'=>'text-[#14532d]', 'sub'=>'TRADITIONAL', 'emoji'=>'🥦'],
-                    ['bg'=>'bg-[#FEF3C7]', 'text'=>'text-[#78350f]', 'sub'=>'POWER SNACK', 'emoji'=>'🌰'],
-                    ['bg'=>'bg-[#FEE2E2]', 'text'=>'text-[#7f1d1d]', 'sub'=>'HOT & SPICY', 'emoji'=>'🌶️'],
-                    ['bg'=>'bg-[#F3E8FF]', 'text'=>'text-[#581c87]', 'sub'=>'EXOTIC', 'emoji'=>'🍇']
-                ];
+                // 1. First, fetch real Combo/Bundle/Pack products (Now using the explicit is_combo flag)
+                $combos = fetch_all("SELECT * FROM products WHERE is_combo = 1 AND is_active = 1 ORDER BY id DESC LIMIT 3");
+                
+                // Gap Filling: If less than 4 combos exist, fill with featured gems to ensure a crisp UI
+                $combo_count = count($combos);
+                if($combo_count < 4) {
+                    $needed = 4 - $combo_count;
+                    $ids = !empty($combos) ? implode(',', array_column($combos, 'id')) : '0';
+                    $fillers = fetch_all("SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 AND id NOT IN ($ids) LIMIT $needed");
+                    $combos = array_merge($combos, $fillers);
+                }
+
                 $i = 0;
-                ?>
-                <?php foreach($cats as $c): 
-                    $s = $styles[$i % count($styles)];
+                $delay = 0;
+                $default_colors = ['#E0F2FE', '#DCFCE7', '#FEF3C7', '#FEE2E2', '#F3E8FF', '#FFEDD5'];
+
+                foreach($combos as $p): 
+                    $color_raw = !empty($p['bg_color']) ? $p['bg_color'] : $default_colors[$i % count($default_colors)];
                     $i++;
+                    $delay += 100;
                 ?>
-                <div class="flex-none w-[85vw] sm:w-[calc(50%-1.5rem)] md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-2rem)] xl:w-[calc(25%-2.5rem)] snap-start h-full">
-                    <a href="<?php echo category_url($c['slug']); ?>" class="block h-[400px] md:h-[450px] <?php echo $s['bg']; ?> rounded-[12px] p-6 flex flex-col justify-between relative overflow-hidden group transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:-translate-y-2">
-                
-                <!-- Inner Glow/Border for 3D Feel -->
-                <div class="absolute inset-0 border border-white/40 rounded-[12px] z-20 pointer-events-none"></div>
-                <div class="absolute inset-0 border-2 border-white/20 rounded-[12px] z-20 pointer-events-none translate-y-1 translate-x-1 blur-[1px]"></div>
+                <!-- Standardized Boutique Card -->
+                <div class="flex-none flex-shrink-0 w-[82vw] sm:w-[48%] md:w-[32%] lg:w-[24%] snap-start px-2 md:px-3 pb-8 h-full">
+                    <a href="<?php echo product_url($p['slug']); ?>" class="block h-full group">
+                        <!-- Outer Tinted Container (Alternating Brand Colors) -->
+                        <div class="rounded-[2.5rem] p-2.5 md:p-3 transition-transform duration-500 group-hover:scale-[1.02] h-full flex flex-col anim-up shadow-sm border border-[#004F42]/5" style="background-color: <?php echo $color_raw; ?>; animation-delay: <?php echo $delay; ?>ms">
+                            
+                            <!-- Inner White Card -->
+                            <div class="bg-white rounded-[2rem] p-4 px-6 flex flex-col flex-1 h-full shadow-sm">
+                                
+                                <!-- Product Image Area -->
+                                <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-gray-50/50">
+                                    <img src="<?php echo get_url($p['image']); ?>" 
+                                         loading="lazy"
+                                         alt="<?php echo htmlspecialchars($p['name']); ?>"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                    
+                                    <!-- Premium Bundle Branding -->
+                                    <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                                        
+                                        <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): 
+                                            $savings = round((($p['original_price'] - $p['price']) / $p['original_price']) * 100);
+                                        ?>
+                                            <div class="bg-[#EDB02C] text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-2xl border border-white/20 anim-pulse-subtle">
+                                                SAVE <?php echo $savings; ?>%
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
 
-                <!-- Holographic Sheen Animation -->
-                <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out z-30 pointer-events-none"></div>
+                                    <!-- Quick Discovery Arrow -->
+                                    <div class="absolute top-4 right-4 w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-xl group-hover:bg-[#24B25D] group-hover:text-white transition-all duration-500 scale-90 group-hover:scale-100 z-20 overflow-hidden">
+                                         <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-500 text-xs"></i>
+                                    </div>
+                                </div>
 
-                <!-- Text Container with Glass Effect -->
-                <div class="relative z-20 bg-white/40 backdrop-blur-md rounded-[12px] md:rounded-[14px] p-4 md:p-6 border border-white/60 shadow-[0_8px_32px_rgba(255,255,255,0.2)] group-hover:scale-[1.02] transition-transform duration-500 origin-top-left">
-                    <div class="flex justify-between items-start mb-1 md:mb-2">
-                        <span class="px-2 py-1 md:px-3 md:py-1 rounded-full text-[8px] md:text-[10px] font-black tracking-widest uppercase bg-white/80 backdrop-blur-sm <?php echo $s['text']; ?> shadow-sm"><?php echo $s['sub']; ?></span>
-                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:bg-black group-hover:text-white transition-colors duration-300">
-                             <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform duration-300 text-xs md:text-base"></i>
+                                <!-- High-Quality Stars & Branding -->
+                                <div class="flex gap-1 mb-2">
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                </div>
+
+                                <!-- Title & Specs -->
+                                <div class="mb-5">
+                                    <h3 class="text-xl font-black text-[#004F42] leading-tight mb-1 truncate-1 group-hover:text-[#24B25D] transition-colors"><?php echo $p['name']; ?></h3>
+                                    
+                                </div>
+
+                                <!-- Interactive Price Strip -->
+                                <div class="flex items-center justify-between mb-5 mt-auto">
+                                    <div class="flex flex-col">
+                                        <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
+                                            <span class="text-[10px] text-gray-400 font-bold line-through">MRP <?php echo format_price($p['original_price']); ?></span>
+                                        <?php endif; ?>
+                                        <span class="text-3xl font-black text-black leading-none tracking-tighter">
+                                            <?php echo format_price($p['price']); ?>
+                                        </span>
+                                    </div>
+                                    <!-- Quick Actions -->
+                                    <div class="flex gap-2">
+                                        <button onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="w-11 h-11 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center hover:bg-white hover:text-red-500 transition-all border border-gray-100">
+                                            <i class="far fa-heart text-[15px]"></i>
+                                        </button>
+                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-11 h-11 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
+                                            <i class="fas fa-shopping-bag text-[15px]"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Full Action Button -->
+                                <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
+                                    class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-xl font-black text-[18px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy">
+                                    Quick Buy  <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <h3 class="text-xl md:text-4xl font-heading font-black <?php echo $s['text']; ?> leading-none mb-1 md:mb-2 drop-shadow-sm card-title"><?php echo $c['name']; ?></h3>
-                    <p class="<?php echo $s['text']; ?>/80 font-sans font-bold text-[10px] md:text-sm tracking-wide flex items-center gap-2">
-                        <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current animate-pulse"></span>
-                        <?php echo $c['product_count']; ?> Varieties
-                    </p>
+                    </a>
                 </div>
-                
-                <!-- Main Image - Floating 3D Effect -->
-                <?php if($c['image']): ?>
-                    <div class="absolute inset-0 flex items-end justify-center z-10 perspective-[1000px]">
-                         <img src="<?php echo $c['image']; ?>" alt="<?php echo htmlspecialchars($c['name']); ?>" class="w-64 h-64 object-contain transform translate-y-8 scale-95 group-hover:translate-y-0 group-hover:scale-110 group-hover:rotate-3 transition duration-700 ease-out drop-shadow-2xl brightness-105">
-                    </div>
-                <?php else: ?>
-                    <!-- Fallback Emoji Art -->
-                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 text-[12rem] transform translate-y-10 group-hover:translate-y-0 group-hover:scale-110 group-hover:rotate-6 transition duration-700 opacity-90 filter drop-shadow-2xl grayscale-[0.2] group-hover:grayscale-0">
-                        <?php echo $s['emoji']; ?>
-                    </div>
-                <?php endif; ?>
-
-
-                <!-- Background Abstract Blob -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/30 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
-            </a>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
 
-    <!-- CHUNKY PRODUCT GRID (Clickable Cards) -->
-    <section class="py-16 bg-white rounded-t-[3rem] shadow-[0_-20px_40px_rgba(0,0,0,0.05)] relative z-20 overflow-hidden">
-        <div class="cantainer mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
-                <div>
-                    <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-xs mb-3 block font-sans">Fresh From The Farm</span>
-                    <h2 class="text-3xl md:text-5xl font-heading font-black text-gray-900 leading-none">Our Products</h2>
+    <!-- THE DRIYUM DIFFERENCE (Full Width Direct Comparison) -->
+    <section class="min-h-screen bg-white w-full relative overflow-hidden flex flex-col justify-center">
+        <!-- Full Width Comparison Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-0 w-full min-h-screen shadow-2xl border-y border-gray-100/50 bg-black overflow-hidden relative" id="comparison-trigger">
+            
+            <!-- Pillar: The "Oily" Junk Choice -->
+            <div class="md:col-span-6 relative group overflow-hidden bg-gray-100 flex flex-col min-h-[50vh] md:min-h-screen will-change-transform" id="junk-pillar" style="transform: translateX(-50%); opacity: 0.5;">
+                <!-- Junk Snacking Background -->
+                <div class="absolute inset-0 z-0">
+                    <img src="<?php echo get_url('assets/images/unhealthy_junk.png'); ?>" alt="Unhealthy Junk Snacking" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10000ms] grayscale-40">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent"></div>
                 </div>
-                <!-- Slider Controls -->
-                <div class="flex gap-3">
-                    <button onclick="scrollProducts('left')" class="w-16 h-16 rounded-[24px] bg-white border-3 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black hover:rotate-[-5deg] transition-all shadow-sm active:scale-90" aria-label="Previous products">
-                        <i class="fas fa-arrow-left text-xl"></i>
+                <!-- Simple Language Content -->
+                <div class="relative z-10 p-10 md:p-24 flex flex-col h-full text-white">
+                        <div class="flex items-center gap-4 mb-10">
+                            <div class="w-12 h-12 rounded-2xl bg-red-500/20 backdrop-blur-md flex items-center justify-center text-red-400 border border-red-500/20">
+                                <i class="fas fa-burger text-xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-black uppercase tracking-widest text-white/80">Oily Junk</h3>
+                        </div>
+
+                        <ul class="space-y-8 mb-12">
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/30">
+                                    <i class="fas fa-times text-white text-[10px] font-black"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-white text-lg leading-none mb-1">Fried in Oil</p>
+                                    <p class="text-white/60 text-sm font-bold leading-relaxed">Most snacks are deep-fried and greasy.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/30">
+                                    <i class="fas fa-times text-white text-[10px] font-black"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-white text-lg leading-none mb-1">Added Chemicals</p>
+                                    <p class="text-white/60 text-sm font-bold leading-relaxed">Made with powders and fake colors.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center shrink-0 shadow-lg shadow-red-500/30">
+                                    <i class="fas fa-times text-white text-[10px] font-black"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-white text-lg leading-none mb-1">Too Much Salt/Sugar</p>
+                                    <p class="text-white/60 text-sm font-bold leading-relaxed">Added sugar and syrups make you heavy.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Pillar: The Driyum Choice -->
+                <div class="md:col-span-6 relative group overflow-hidden bg-[#002A23] flex flex-col min-h-[50vh] md:min-h-screen will-change-transform" id="driyum-pillar" style="transform: translateX(50%); opacity: 0.5;">
+                    <!-- Healthy Driyum Background (User Provided Image) -->
+                    <div class="absolute inset-0 z-0">
+                        <img src="<?php echo get_url('assets/images/driyumchoice.jpeg'); ?>" alt="Healthy Driyum Choice" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10000ms]">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#002A23]/95 via-[#002A23]/60 to-transparent"></div>
+                    </div>
+
+                    <!-- Simple Language Content -->
+                    <div class="relative z-10 p-10 md:p-24 flex flex-col h-full text-white">
+                        <div class="flex items-center gap-4 mb-10">
+                            <div class="w-12 h-12 rounded-2xl bg-[#24B25D] flex items-center justify-center text-[#002A23] shadow-lg shadow-[#24B25D]/30 border-2 border-white/10">
+                                <i class="fas fa-leaf text-xl text-[#002A23] font-black"></i>
+                            </div>
+                            <h3 class=" font-black uppercase tracking-widest text-[#24B25D]"><img src="./assets/images/logo.png" alt="" class="w-32 "></h3>
+                        </div>
+
+                        <ul class="space-y-8 mb-12">
+                            <li class="flex items-start gap-4 transform transition-transform hover:translate-x-1 duration-300">
+                                <div class="mt-1 w-6 h-6 rounded-full bg-[#19DC7E] flex items-center justify-center shrink-0 shadow-lg shadow-[#19DC7E]/40">
+                                    <i class="fas fa-check text-[#002A23] text-[10px] font-black"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-white text-lg leading-none mb-1">No Oil</p>
+                                    <p class="text-[#19DC7E]/80 text-sm font-bold leading-relaxed">Not fried. No grease. Only dry fruits.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-4 transform transition-transform hover:translate-x-1 duration-300">
+                                <div class="mt-1 w-6 h-6 rounded-full bg-[#19DC7E] flex items-center justify-center shrink-0 shadow-lg shadow-[#19DC7E]/40">
+                                    <i class="fas fa-check text-[#002A23] text-[10px] font-black"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-white text-lg leading-none mb-1">Pure Raw Nature</p>
+                                    <p class="text-[#19DC7E]/80 text-sm font-bold leading-relaxed">No chemicals. Pure fruits from the farm.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-4 transform transition-transform hover:translate-x-1 duration-300">
+                                <div class="mt-1 w-6 h-6 rounded-full bg-[#19DC7E] flex items-center justify-center shrink-0 shadow-lg shadow-[#19DC7E]/40">
+                                    <i class="fas fa-check text-[#002A23] text-[10px] font-black"></i>
+                                </div>
+                                <div>
+                                    <p class="font-black text-white text-lg leading-none mb-1">Natural Sweetness</p>
+                                    <p class="text-[#19DC7E]/80 text-sm font-bold leading-relaxed">Energy from nature that keeps you active.</p>
+                                </div>
+                            </li>
+                        </ul>
+
+                        <!-- Trust Statement -->
+                        <div class="mt-auto pt-10 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-[9px] font-black uppercase tracking-[0.2em] text-[#24B25D]">The Better Choice</span>
+                            <div class="flex items-center gap-3">
+                                <div class="h-1.5 w-1.5 rounded-full bg-[#24B25D] animate-pulse"></div>
+                                <span class="text-[9px] font-black text-white/40 uppercase">Healthy Everyday</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Butter-Smooth Scroll-Linked Comparison Engine (LERP Physics) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const junkPillar = document.getElementById('junk-pillar');
+            const driyumPillar = document.getElementById('driyum-pillar');
+            const trigger = document.getElementById('comparison-trigger');
+            
+            if(!junkPillar || !driyumPillar || !trigger) return;
+
+            // Physics Variables
+            let targetProgress = 0;
+            let currentProgress = 0;
+            const lerpFactor = 0.08; // The "Smoothness" - Lower is smoother/heavier
+
+            function updateScrollProgress() {
+                const rect = trigger.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                
+                // Optimized Visibility Window
+                let startPos = windowHeight * 1.2;
+                let endPos = windowHeight * 0.1;
+                
+                let progress = (startPos - rect.top) / (startPos - endPos);
+                targetProgress = Math.max(0, Math.min(1, progress));
+                
+                // Smooth LERP Calculation
+                currentProgress += (targetProgress - currentProgress) * lerpFactor;
+                
+                // Split-to-Center Physics (80% to 0%)
+                const slideFactor = (1 - currentProgress) * 80;
+                
+                // Apply transformations with high-performance hardware acceleration
+                // Note: We use JS for raw values to avoid CSS transition conflicts
+                junkPillar.style.transform = `translateX(${-slideFactor}%) translateZ(0)`;
+                driyumPillar.style.transform = `translateX(${slideFactor}%) translateZ(0)`;
+                
+                // Vivid Sharp Opacity Focus
+                const opacityVal = Math.min(1, currentProgress * 2.5);
+                junkPillar.style.opacity = opacityVal;
+                driyumPillar.style.opacity = opacityVal;
+                
+                // Parallax Interior Images
+                const junkImg = junkPillar.querySelector('img');
+                const driyumImg = driyumPillar.querySelector('img');
+                if(junkImg) junkImg.style.transform = `scale(1.1) translateX(${slideFactor * 0.12}%) translateZ(0)`;
+                if(driyumImg) driyumImg.style.transform = `scale(1.1) translateX(${-slideFactor * 0.12}%) translateZ(0)`;
+                
+                requestAnimationFrame(updateScrollProgress);
+            }
+
+            // Start High-Frequency Loop
+            requestAnimationFrame(updateScrollProgress);
+        });
+    </script>
+
+    <!-- UNIFIED PRODUCT GRID (Exactly Like Combo Section) -->
+    <section class="py-16 md:py-24 bg-[#f8f9fa] relative overflow-hidden border-t border-gray-100/50">
+        <div class="container mx-auto px-6 md:px-16 mb-10 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
+            <div class="anim-reveal">
+                <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-[10px] mb-2 md:mb-3 block">Fresh From The Farm</span>
+                <h2 class="text-4xl md:text-6xl font-heading font-black text-gray-900 leading-none tracking-tighter">Our <span class="text-[#24B25D]">Products.</span></h2>
+            </div>
+            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
+                <div class="flex gap-2.5 md:gap-3">
+                    <button onclick="document.getElementById('product-slider-container').scrollBy({left: -350, behavior: 'smooth'})" class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black transition-all shadow-sm active:scale-90">
+                        <i class="fas fa-arrow-left"></i>
                     </button>
-                    <button onclick="scrollProducts('right')" class="w-16 h-16 rounded-[24px] bg-black text-[#24B25D] flex items-center justify-center hover:scale-105 hover:rotate-[5deg] transition-all shadow-2xl active:scale-90" aria-label="Next products">
-                        <i class="fas fa-arrow-right text-xl"></i>
+                    <button onclick="document.getElementById('product-slider-container').scrollBy({left: 350, behavior: 'smooth'})" class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-black flex items-center justify-center text-[#24B25D] hover:bg-[#24B25D] hover:text-black transition-all shadow-xl shadow-[#24B25D]/20 active:scale-90">
+                        <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
+        </div>
             
             <!-- Constrained Product Slider Wrapper -->
             <div class="w-full relative overflow-hidden">
-                <div id="product-slider-container" class="flex flex-row flex-nowrap w-full gap-6 overflow-x-auto hide-scrollbar scroll-smooth px-2 pb-12 snap-x mandatory">
+                <div id="product-slider-container" class="flex flex-row flex-nowrap w-full gap-4 overflow-x-auto hide-scrollbar scroll-smooth px-2 pb-12 snap-x mandatory">
                 <?php 
                 $delay = 0;
                 $default_bg_colors = ['#E0F2FE', '#DCFCE7', '#FEF3C7', '#FEE2E2', '#F3E8FF', '#FFEDD5'];
@@ -824,68 +1038,72 @@ $wishlist_json = json_encode($wishlist_ids);
                     $delay += 100;              
                 ?>
                 <!-- "The Boutique Collective" Reference Card -->
-                <div class="flex-none flex-shrink-0 w-[82vw] sm:w-[50%] md:w-[33.333%] lg:w-[25%] snap-start px-2 pb-8 h-full">
+                <div class="flex-none flex-shrink-0 w-[82vw] sm:w-[48%] md:w-[32%] lg:w-[24%] snap-start px-2 md:px-3 pb-8 h-full">
                     <!-- Outer Tinted Container (Alternating Brand Colors) -->
-                    <div class="rounded-[2.5rem] p-3 transition-transform duration-500 hover:scale-[1.02] h-full flex flex-col anim-up shadow-sm border border-[#004F42]/5" style="background-color: <?php echo $color_raw; ?>; animation-delay: <?php echo $delay; ?>ms">
-                        
-                        <!-- Inner White Card -->
-                        <div class="bg-white rounded-[2rem] p-4 flex flex-col flex-1 h-full shadow-sm">
+                    <a href="<?php echo product_url($p['slug']); ?>" class="block h-full group">
+                        <div class="rounded-[2.5rem] p-2.5 md:p-3 transition-transform duration-500 group-hover:scale-[1.02] h-full flex flex-col anim-up shadow-sm border border-[#004F42]/5" style="background-color: <?php echo $color_raw; ?>; animation-delay: <?php echo $delay; ?>ms">
                             
-                            <!-- Product Image (Reference Corners) -->
-                            <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-gray-50/50">
-                                <img src="<?php echo get_url($p['image']); ?>" 
-                                     loading="lazy"
-                                     alt="<?php echo htmlspecialchars($p['name']); ?>"
-                                     class="w-full h-full object-cover">
+                            <!-- Inner White Card -->
+                            <div class="bg-white rounded-[2rem] p-4 px-6 flex flex-col flex-1 h-full shadow-sm">
                                 
-                                <!-- deal badge if any -->
-                                <?php if(isset($p['discount_percentage']) && $p['discount_percentage'] > 0): ?>
-                                    <div class="absolute top-3 left-3 bg-[#EDB02C] text-white text-[9px] font-black px-2 py-1 rounded-md shadow-md">
-                                        -<?php echo $p['discount_percentage']; ?>%
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-
-                            <!-- High-Quality Stars & Branding -->
-                            <div class="flex gap-1 mb-2">
-                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
-                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
-                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
-                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
-                                <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
-                            </div>
-
-                            <!-- Title & Specs -->
-                            <div class="mb-5">
-                                <h3 class="text-xl font-black text-[#004F42] leading-tight mb-1 truncate-1"><?php echo $p['name']; ?></h3>
-                                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                                    <?php echo !empty($p['tagline']) ? $p['tagline'] : 'Premium Natural Selection'; ?>
-                                </p>
-                            </div>
-
-                            <!-- Interactive Price Strip (Reference Layout) -->
-                            <div class="flex items-center justify-between mb-5 mt-auto">
-                                <div class="flex flex-col">
-                                    <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
-                                        <span class="text-[10px] text-gray-400 font-bold line-through">MRP <?php echo format_price($p['original_price']); ?></span>
+                                <!-- Product Image (Reference Corners) -->
+                                <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-gray-50/50">
+                                    <img src="<?php echo get_url($p['image']); ?>" 
+                                         loading="lazy"
+                                         alt="<?php echo htmlspecialchars($p['name']); ?>"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                    
+                                    <!-- Premium Savings Badge -->
+                                    <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): 
+                                        $savings = round((($p['original_price'] - $p['price']) / $p['original_price']) * 100);
+                                    ?>
+                                        <div class="absolute top-4 left-4 bg-black/80 text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow-lg border border-white/10 backdrop-blur-sm">
+                                            -<?php echo $savings; ?>% OFF
+                                        </div>
                                     <?php endif; ?>
-                                    <span class="text-3xl font-black text-black leading-none">
-                                        <?php echo format_price($p['price']); ?>
-                                    </span>
                                 </div>
-                                <!-- Cart Icon Pill -->
-                                <button onclick="addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-[#212121] text-white rounded-xl flex items-center justify-center hover:bg-[#004F42] transition-colors shadow-md">
-                                    <i class="fas fa-shopping-cart text-sm"></i>
+
+                                <!-- High-Quality Stars & Branding -->
+                                <div class="flex gap-1 mb-2">
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                    <i class="fas fa-star text-[#EDB12B] text-[10px]"></i>
+                                </div>
+
+                                <!-- Title & Specs -->
+                                <div class="mb-5">
+                                    <h3 class="text-xl font-black text-[#004F42] leading-tight mb-1 truncate-1 group-hover:text-[#24B25D] transition-colors"><?php echo $p['name']; ?></h3>
+                                    <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                                        <?php echo !empty($p['tagline']) ? $p['tagline'] : 'Premium Natural Selection'; ?>
+                                    </p>
+                                </div>
+
+                                <!-- Interactive Price Strip (Reference Layout) -->
+                                <div class="flex items-center justify-between mb-5 mt-auto">
+                                    <div class="flex flex-col">
+                                        <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
+                                            <span class="text-[10px] text-gray-400 font-bold line-through">MRP <?php echo format_price($p['original_price']); ?></span>
+                                        <?php endif; ?>
+                                        <span class="text-4xl font-black text-black leading-none">
+                                            <?php echo format_price($p['price']); ?>
+                                        </span>
+                                    </div>
+                                    <!-- Cart Icon Pill -->
+                                    <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-[#212121] text-white rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:scale-110 transition-all shadow-md active:scale-95 z-10">
+                                        <i class="fas fa-shopping-cart text-sm"></i>
+                                    </button>
+                                </div>
+
+                                <!-- "Buy Now" Action -->
+                                <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
+                                    class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-2xl font-black text-[18px] transition-all shadow-md active:scale-95 z-10">
+                                    BUY NOW <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
                                 </button>
                             </div>
-
-                            <!-- "Buy Now" Action (Quick Buy Enabled) -->
-                            <button onclick="quickBuy(<?php echo $p['id']; ?>, this)" 
-                                class="w-full bg-[#24B25D] hover:bg-[#17775D] text-white py-4 rounded-2xl font-black text-lg transition-all shadow-md active:scale-95">
-                                Buy Now
-                            </button>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -893,7 +1111,7 @@ $wishlist_json = json_encode($wishlist_ids);
         
             
             <div class="text-center mt-16">
-                <a href="<?php echo get_url('shop'); ?>" class="btn-chunky btn-outline px-12 py-4 text-lg border-2">View All Products</a>
+                <a href="<?php echo get_url('shop'); ?>" class="btn  rounded-xl hover:bg-[#f67e42] hover:text-white btn-outline px-12 py-4 text-lg border-2">View All Products</a>
             </div>
         </div>
     </section>
@@ -1009,7 +1227,7 @@ $wishlist_json = json_encode($wishlist_ids);
         ];
     }
     ?>
-    <section class="py-20 md:py-32 bg-black relative overflow-hidden text-white" id="reviews-section">
+    <section class="py-10 md:py-28 bg-black relative overflow-hidden text-white" id="reviews-section">
         <!-- Background Accents -->
         <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
             <div class="absolute top-[-20%] left-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-[#24B25D] rounded-full blur-[100px] md:blur-[150px] animate-pulse"></div>
@@ -1052,9 +1270,9 @@ $wishlist_json = json_encode($wishlist_ids);
             </div>
 
             <!-- Mobile-Friendly Controls -->
-            <div class="flex flex-col-reverse md:flex-row justify-center items-center gap-6 md:gap-8 mt-12 md:mt-20 relative z-20">
+            <div class="flex flex-col-reverse md:flex-row justify-center items-center gap-4 md:gap-8 mt-12 md:mt-20 relative z-20">
                 <!-- Mobile Arrows + Dots Container -->
-                <div class="flex items-center gap-6 w-full justify-center md:w-auto">
+                <div class="flex items-center gap-4 w-full justify-center md:w-auto">
                     <button onclick="prevReview()" class="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition duration-300 group active:scale-95" aria-label="Previous Review">
                         <i class="fas fa-arrow-left text-lg md:text-xl group-hover:-translate-x-1 transition-transform"></i>
                     </button>
