@@ -100,6 +100,27 @@ $wishlist_json = json_encode($wishlist_ids);
         .snap-x-mandatory { scroll-snap-type: x mandatory; }
         .snap-center { scroll-snap-align: center; }
 
+        /* Partners Marquee Animation for Mobile/Tablet */
+        @media (max-width: 1023px) {
+            .partners-marquee-container {
+                mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+                -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+                cursor: grab;
+            }
+            .partners-marquee-container:active { cursor: grabbing; }
+            .partners-marquee-content {
+                animation: partners-marquee 40s linear infinite;
+            }
+            .partners-marquee-container:hover .partners-marquee-content {
+                animation-play-state: paused;
+            }
+        }
+
+        @keyframes partners-marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
      
     </style>
     <!-- HERO LOGIC: VIVID SCENE SWITCHER -->
@@ -443,26 +464,39 @@ $wishlist_json = json_encode($wishlist_ids);
                 </div>
                 
                 <!-- Partners Horizon (Strict Single Line) -->
-                <div class="flex-grow w-full overflow-x-auto hide-scrollbar">
-                    <div class="flex flex-nowrap items-center justify-center lg:justify-end gap-12 md:gap-16 lg:gap-24 min-w-max pb-2 md:pb-0">
-                        <?php if(!empty($partners)): ?>
-                            <?php foreach($partners as $partner): ?>
+                <div class="flex-grow w-full overflow-hidden partners-marquee-container">
+                    <div class="flex flex-nowrap items-center lg:justify-end gap-12 md:gap-16 lg:gap-24 min-w-max pb-2 md:pb-0 partners-marquee-content">
+                        <?php 
+                        $partner_list = $partners;
+                        if(empty($partner_list)) {
+                            $partner_list = [
+                                ['name' => 'ecogrocery', 'location' => 'RAJBAGH'],
+                                ['name' => 'Basket', 'location' => 'RAJBAGH'],
+                                ['name' => 'City Max', 'location' => 'RAJBAGH'],
+                                ['name' => 'Pick N Choose', 'location' => 'BAGHAT']
+                            ];
+                        }
+                        
+                        // Render twice for seamless marquee loop on mobile
+                        for($i=0; $i<2; $i++):
+                            foreach($partner_list as $partner): 
+                                $p_name = is_array($partner) ? $partner['name'] : $partner->name;
+                                $p_loc = is_array($partner) ? $partner['location'] : $partner->location;
+                        ?>
                             <div class="flex flex-col items-center group cursor-default">
                                  <h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#19DC7E]">
-                                    <?php echo htmlspecialchars($partner['name']); ?>
+                                    <?php echo htmlspecialchars($p_name); ?>
                                  </h4>
                                  <span class="text-[9px] md:text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-1.5 border-t border-gray-50 pt-1 w-full text-center group-hover:text-gray-500 transition-colors">
-                                    <?php echo htmlspecialchars($partner['location']); ?>
+                                    <?php echo htmlspecialchars($p_loc); ?>
                                  </span>
                             </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <!-- Fallback Static Items -->
-                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">ecogrocery</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">RAJBAGH</span></div>
-                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">Basket</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">RAJBAGH</span></div>
-                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">City Max</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">RAJBAGH</span></div>
-                            <div class="flex flex-col items-center"><h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none">Pick N Choose</h4><span class="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest">BAGHAT</span></div>
-                        <?php endif; ?>
+                        <?php 
+                            endforeach;
+                            // Only repeat once (two sets total)
+                            if($i >= 1) break; 
+                        endfor; 
+                        ?>
                     </div>
                 </div>
             </div>
@@ -708,7 +742,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
     <!-- CATEGORIES CAROUSEL (Scroll Snap) -->
     <!-- COMBO BUNDLES SECTION -->
-    <section class="py-10 md:py-28 bg-white relative overflow-hidden anim-up">
+    <section class="py-4 md:py-8 bg-white relative overflow-hidden anim-up">
         <div class="container mx-auto px-6 md:px-16 mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
             <div class="anim-reveal">
                 <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-[10px] mb-2 md:mb-3 block">Curated Value Droplets</span>
@@ -1221,7 +1255,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
 
     <?php if(!empty($trust_badges)): ?>
-    <section class="bg-white py-10 lg:py-16 overflow-hidden border-b border-gray-100 relative group/marquee">
+    <section class="bg-white py-4 lg:py-16 overflow-hidden border-b border-gray-100 relative group/marquee">
         <!-- Subtle Background Glow -->
         <div class="absolute top-0 right-0 w-[100px] h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
         <div class="absolute top-0 left-0 w-[100px] h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
@@ -1278,7 +1312,7 @@ $wishlist_json = json_encode($wishlist_ids);
         ];
     }
     ?>
-    <section class="py-10 px-4 mb-20 md:mb-0" id="video_brand_story">
+    <section class="py-4 px-4 mb-20 md:mb-0" id="video_brand_story">
         <div class="cantainer mx-auto">
             <div class="relative w-full rounded-[40px] overflow-hidden shadow-2xl group cursor-pointer aspect-[16/10] md:aspect-video bg-black">
                 
@@ -1330,7 +1364,7 @@ $wishlist_json = json_encode($wishlist_ids);
         ];
     }
     ?>
-    <section class="py-10 md:py-28 bg-black relative overflow-hidden text-white" id="reviews-section">
+    <section class="py-4 md:py-8 bg-black relative overflow-hidden text-white" id="reviews-section">
         <!-- Background Accents -->
         <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
             <div class="absolute top-[-20%] left-[-10%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-[#24B25D] rounded-full blur-[100px] md:blur-[150px] animate-pulse"></div>
