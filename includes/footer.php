@@ -109,7 +109,7 @@
     #driyum-mobile-dock-v2 {
         display: none;
         position: fixed;
-        bottom: 20px;
+        bottom: 10px;
         left: 0;
         right: 0;
         justify-content: center;
@@ -140,9 +140,9 @@
                 0 10px 10px -5px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.15); /* Top highlight */
             
-            border-radius: 16px;
+            border-radius: 10px;
             padding: 0 28px;
-            height: 76px;
+            height: 60px;
             width: 650px;
             min-width: 320px;
             max-width: 95%;
@@ -188,14 +188,14 @@
 
         /* Hover/Active Effects */
         .dock-item-v2 i {
-            font-size: 20px;
+            font-size: 18px;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
         .dock-item-v2.active i {
             color: #24B25D;
-            transform: translateY(-2px) scale(1.15);
+            transform: translateY(-1px) scale(1.05);
             filter: drop-shadow(0 0 12px rgba(25, 220, 126, 0.4));
         }
 
