@@ -15,6 +15,7 @@ newsletter_subscribers | PK: YES | AI: YES
 order_items | PK: YES | AI: YES
 order_status_history | PK: YES | AI: YES
 orders | PK: YES | AI: YES
+partners | PK: YES | AI: YES
 password_resets | PK: NO | AI: NO
 product_images | PK: NO | AI: NO
 product_reviews | PK: NO | AI: NO

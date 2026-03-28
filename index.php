@@ -348,12 +348,12 @@ $wishlist_json = json_encode($wishlist_ids);
     <!-- PREMIUM FULL-WIDTH BANNER HERO -->
     <style>
         .hero-banner-container {
-            height: 65vh;
+            height: 64vh;
             min-height: 480px;
             max-height: 720px;
         }
         @media (max-width: 768px) {
-            .hero-banner-container { height: 55vh; min-height: 320px; }
+            .hero-banner-container { height: 50vh; min-height: 320px; }
         }
         .banner-slide {
             transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1115,8 +1115,111 @@ $wishlist_json = json_encode($wishlist_ids);
             </div>
         </div>
     </section>
+    <!-- THE CRAFT JOURNEY (Immersive Discovery Boards) -->
+    <section class="bg-black relative overflow-hidden" id="craft-journey-trigger">
+        
+        <!-- Step 1: Selection (Full Billboard) -->
+        <div class="relative w-full min-h-screen flex items-center overflow-hidden border-b border-white/5 craft-board" id="craft-step-1">
+            <div class="absolute inset-0 z-0 bg-black">
+                <img src="<?php echo get_url('assets/images/craft_selection.png'); ?>" alt="Selection" class="w-full h-full object-cover opacity-60 scale-110 craft-img">
+                <div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
+            </div>
+            <div class="container mx-auto px-6 md:px-24 relative z-10">
+                <div class="max-w-2xl craft-content opacity-0 transform translate-x-[-50px]">
+                    <span class="text-[#24B25D] font-black tracking-[0.3em] uppercase text-xs mb-4 block">Stage 01</span>
+                    <h2 class="text-5xl md:text-8xl font-heading font-black text-white leading-none tracking-tighter mb-8 uppercase">Nature's <br><span class="text-[#24B25D]">Best.</span></h2>
+                    <p class="text-white/60 font-bold text-lg md:text-xl leading-relaxed">We select only the ripest, hand-picked fruits from our partner orchards in Kashmir. Each piece is inspected for the Driyum standard of vibrant color and natural peak sweetness.</p>
+                </div>
+            </div>
+        </div>
 
-      <!-- INFINITE BRAND TRUST MARQUEE -->
+        <!-- Step 2: Precision Dehydration (Full Billboard) -->
+        <div class="relative w-full min-h-screen flex items-center overflow-hidden border-b border-white/5 craft-board" id="craft-step-2">
+            <div class="absolute inset-0 z-0 bg-black">
+                <img src="<?php echo get_url('assets/images/craft_dehydration.png'); ?>" alt="Dehydration" class="w-full h-full object-cover opacity-60 scale-110 craft-img">
+                <div class="absolute inset-0 bg-gradient-to-l from-black via-black/40 to-transparent"></div>
+            </div>
+            <div class="container mx-auto px-6 md:px-24 flex justify-end relative z-10">
+                <div class="max-w-2xl text-right craft-content opacity-0 transform translate-x-[50px]">
+                    <span class="text-[#24B25D] font-black tracking-[0.3em] uppercase text-xs mb-4 block">Stage 02</span>
+                    <h2 class="text-5xl md:text-8xl font-heading font-black text-white leading-none tracking-tighter mb-8 uppercase">Slow <br><span class="text-[#24B25D]">Dehydrate.</span></h2>
+                    <p class="text-white/60 font-bold text-lg md:text-xl leading-relaxed">No frying. No oils. Our precision dehydration uses gentle heat to remove moisture while keeping 100% of the fiber and natural nutrients locked deep inside the fruit.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Boutique Packing (Full Billboard) -->
+        <div class="relative w-full min-h-screen flex items-center overflow-hidden craft-board" id="craft-step-3">
+            <div class="absolute inset-0 z-0 bg-black">
+                <img src="<?php echo get_url('assets/images/craft_packing.png'); ?>" alt="Packing" class="w-full h-full object-cover opacity-70 scale-110 craft-img">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+            </div>
+            <div class="container mx-auto px-6 md:px-24 relative z-10">
+                <div class="max-w-2xl craft-content opacity-0 transform translate-y-[50px]">
+                    <span class="text-[#24B25D] font-black tracking-[0.3em] uppercase text-xs mb-4 block">Stage 03</span>
+                    <h2 class="text-5xl md:text-8xl font-heading font-black text-white leading-none tracking-tighter mb-8 uppercase">Purely <br><span class="text-[#24B25D]">Packed.</span></h2>
+                    <p class="text-white/60 font-bold text-lg md:text-xl leading-relaxed">Sealed in clean-room environments. Our boutique packing ensures that every crunch reaches you as fresh as the day it was harvested. Pure fruit. Zero additives.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Immersive Craft Journey Engine -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const trigger = document.getElementById('craft-journey-trigger');
+            const boards = document.querySelectorAll('.craft-board');
+            if(!trigger) return;
+
+            // Smooth Interpolation Logic
+            let targetProgress = [];
+            let currentProgress = [];
+            const lerpFactor = 0.08;
+
+            boards.forEach((board, i) => {
+                targetProgress[i] = 0;
+                currentProgress[i] = 0;
+            });
+
+            function updateCraftProgress() {
+                boards.forEach((board, i) => {
+                    const rect = board.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    
+                    // Visibility Window per board
+                    let startPos = windowHeight * 1.1;
+                    let endPos = windowHeight * 0.2;
+                    let progress = (startPos - rect.top) / (startPos - endPos);
+                    targetProgress[i] = Math.max(0, Math.min(1, progress));
+                    
+                    // LERP Smoothness
+                    currentProgress[i] += (targetProgress[i] - currentProgress[i]) * lerpFactor;
+                    
+                    // Content Reveal
+                    const content = board.querySelector('.craft-content');
+                    const img = board.querySelector('.craft-img');
+                    
+                    if(content) {
+                        content.style.opacity = currentProgress[i];
+                        // Stagger the slide-in based on stage index
+                        let slideX = (1 - currentProgress[i]) * (i % 2 === 0 ? -50 : 50);
+                        let slideY = (i === 2) ? (1 - currentProgress[i]) * 50 : 0;
+                        content.style.transform = `translate(${slideX}px, ${slideY}px)`;
+                    }
+
+                    if(img) {
+                        img.style.transform = `scale(${1.1 - (currentProgress[i] * 0.1)}) rotate(${ (1 - currentProgress[i]) * 1 }deg)`;
+                    }
+                });
+                
+                requestAnimationFrame(updateCraftProgress);
+            }
+
+            requestAnimationFrame(updateCraftProgress);
+        });
+    </script>
+
+
     <?php if(!empty($trust_badges)): ?>
     <section class="bg-white py-10 lg:py-16 overflow-hidden border-b border-gray-100 relative group/marquee">
         <!-- Subtle Background Glow -->
