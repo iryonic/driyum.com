@@ -556,7 +556,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
         function resetTimer() {
             clearInterval(slideTimer);
-            slideTimer = setInterval(nextSlide, 7000);
+            slideTimer = setInterval(nextSlide, 4000);
         }
 
         // Touch Swipe Support
