@@ -1255,7 +1255,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
 
     <?php if(!empty($trust_badges)): ?>
-    <section class="bg-white py-4 lg:py-16 overflow-hidden border-b border-gray-100 relative group/marquee">
+    <section class="bg-white py-10 md:py-10 overflow-hidden border-b border-gray-100 relative group/marquee">
         <!-- Subtle Background Glow -->
         <div class="absolute top-0 right-0 w-[100px] h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
         <div class="absolute top-0 left-0 w-[100px] h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
