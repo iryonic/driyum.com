@@ -739,7 +739,7 @@ $wishlist_json = json_encode($wishlist_ids);
     <!-- CATEGORIES CAROUSEL (Scroll Snap) -->
     <!-- COMBO BUNDLES SECTION -->
     <section class="py-4 md:py-8 bg-white relative overflow-hidden anim-up">
-        <div class="container mx-auto px-6 md:px-16 mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
+        <div class="container mx-auto px-6  mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
             <div class="anim-reveal">
                 <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-[10px] mb-2 md:mb-3 block">Curated Value Droplets</span>
                 <h2 class="text-4xl md:text-6xl font-heading font-black text-gray-900 leading-none tracking-tighter">Our <span class="text-[#24B25D]">Combos.</span></h2>
@@ -758,7 +758,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
         <!-- Combo Slider Wrapper -->
         <div class="w-full relative overflow-hidden">
-            <div id="combo-slider-container" class="flex w-full overflow-x-auto gap-4 px-8 md:px-16 pb-12 hide-scrollbar scroll-smooth">
+            <div id="combo-slider-container" class="flex w-full overflow-x-auto gap-4 px-8  pb-12 hide-scrollbar scroll-smooth">
                 <?php 
                 // 1. First, fetch real Combo/Bundle/Pack products (Now using the explicit is_combo flag)
                 $combos = fetch_all("SELECT * FROM products WHERE is_combo = 1 AND is_active = 1 ORDER BY id DESC LIMIT 3");
@@ -1012,7 +1012,7 @@ $wishlist_json = json_encode($wishlist_ids);
 
     <!-- UNIFIED PRODUCT GRID (Exactly Like Combo Section) -->
     <section class="py-16 md:py-24 bg-[#f8f9fa] relative overflow-hidden border-t border-gray-100/50">
-        <div class="container mx-auto px-6 md:px-16 mb-10 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
+        <div class="container mx-auto px-6  mb-10 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
             <div class="anim-reveal">
                 <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-[10px] mb-2 md:mb-3 block">Fresh From The Farm</span>
                 <h2 class="text-4xl md:text-6xl font-heading font-black text-gray-900 leading-none tracking-tighter">Our <span class="text-[#24B25D]">Products.</span></h2>
