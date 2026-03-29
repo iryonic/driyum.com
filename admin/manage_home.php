@@ -887,11 +887,72 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                                 </label>
                             </div>
                         </div>
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Title</label>
+                                <input type="text" name="slide_title" placeholder="e.g. FIG ROLLS" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg shadow-inner">
+                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                    <input type="checkbox" name="show_title" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Title on Slide</span>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sub-Headline</label>
+                                <input type="text" name="slide_subtitle" placeholder="e.g. Pure Energy" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
+                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                    <input type="checkbox" name="show_subtitle" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Subtitle</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Badge Text</label>
+                                    <input type="text" name="badge_text" placeholder="FREE SHIPPING" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-[10px] uppercase shadow-sm">
+                                    <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                        <input type="checkbox" name="show_badge" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                        <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show Badge</span>
+                                    </label>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Price Label</label>
+                                    <input type="number" step="0.01" name="price" placeholder="249.00" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-sm shadow-sm">
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">CTA Button Text</label>
+                                <input type="text" name="slide_cta_text" placeholder="SHOP NOW" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
+                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                    <input type="checkbox" name="show_cta" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show CTA Button</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-6">
                         <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Color</label>
+                            <input type="color" name="accent_color" value="#19DC7E" class="w-full h-14 bg-white border border-gray-100 rounded-2xl p-2 outline-none cursor-pointer">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 1</label>
+                            <input type="text" name="v_text_1" placeholder="SNACKING" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 2</label>
+                            <input type="text" name="v_text_2" placeholder="REIMAGINED" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                         <div class="space-y-1">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
                             <input type="number" name="slide_sort_order" id="add-slide-sort" value="0" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner" placeholder="0">
                         </div>
                     </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                         <div class="space-y-1">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Link to Product</label>
@@ -992,6 +1053,66 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                             </div>
                             <p class="text-[8px] text-gray-400 font-bold uppercase mt-2 text-center">Leave blank to keep current</p>
                         </div>
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Title</label>
+                                <input type="text" name="slide_title" id="edit-slide-title" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg shadow-inner">
+                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                    <input type="checkbox" name="show_title" id="edit-show-title" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Title</span>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sub-Headline</label>
+                                <input type="text" name="slide_subtitle" id="edit-slide-subtitle" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
+                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                    <input type="checkbox" name="show_subtitle" id="edit-show-subtitle" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Subtitle</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Badge Text</label>
+                                    <input type="text" name="badge_text" id="edit-badge-text" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-[10px] uppercase shadow-sm">
+                                    <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                        <input type="checkbox" name="show_badge" id="edit-show-badge" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                        <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show Badge</span>
+                                    </label>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Price Label</label>
+                                    <input type="number" step="0.01" name="price" id="edit-price" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-sm shadow-sm">
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">CTA Button Text</label>
+                                <input type="text" name="slide_cta_text" id="edit-cta-text" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
+                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
+                                    <input type="checkbox" name="show_cta" id="edit-show-cta" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show CTA Button</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Color</label>
+                            <input type="color" name="accent_color" id="edit-accent-color" class="w-full h-14 bg-white border border-gray-100 rounded-2xl p-2 outline-none cursor-pointer">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 1</label>
+                            <input type="text" name="v_text_1" id="edit-v-text-1" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 2</label>
+                            <input type="text" name="v_text_2" id="edit-v-text-2" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                         <div class="space-y-1">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
                             <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner" placeholder="0">
@@ -1173,56 +1294,7 @@ function openEditPartner(partner) {
     document.getElementById('modal-partner-id').value = partner.id;
     document.getElementById('modal-partner-name').value = partner.name;
     document.getElementById('modal-partner-location').value = partner.location;
-    document.getElementById('modal-partner-link').value = partner.website_url;
     document.getElementById('modal-partner-sort').value = partner.sort_order;
-    document.getElementById('modal-partner-active').checked = partner.is_active == 1;
-    document.getElementById('modal-partner-current-logo').value = partner.logo;
-    
-    if(partner.logo) {
-        document.getElementById('modal-partner-logo-preview').src = '../' + partner.logo;
-        document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
-        document.getElementById('modal-partner-logo-icon').classList.add('hidden');
-    }
-    
-    document.getElementById('modal-partner-action-add').disabled = true;
-    document.getElementById('modal-partner-action-edit').disabled = false;
-    showModal('partner-modal');
-}
-
-function closePartnerModal() {
-    hideModal('partner-modal');
-    setTimeout(() => {
-        document.getElementById('partner-modal-title').innerText = 'Add Partner';
-        document.getElementById('modal-partner-action-add').disabled = false;
-        document.getElementById('modal-partner-action-edit').disabled = true;
-        document.getElementById('modal-partner-id').value = '';
-        document.getElementById('modal-partner-logo-preview').src = '';
-        document.getElementById('modal-partner-logo-preview').classList.add('hidden');
-        document.getElementById('modal-partner-logo-icon').classList.remove('hidden');
-    }, 300);
-}
-
-function previewPartnerLogo(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('modal-partner-logo-preview').src = e.target.result;
-            document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
-            document.getElementById('modal-partner-logo-icon').classList.add('hidden');
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-// --- PARTNER LOGIC ---
-function openEditPartner(partner) {
-    document.getElementById('partner-modal-title').innerText = 'Edit Partner';
-    document.getElementById('modal-partner-id').value = partner.id;
-    document.getElementById('modal-partner-name').value = partner.name;
-    document.getElementById('modal-partner-location').value = partner.location;
-    document.getElementById('modal-partner-link').value = partner.website_url;
-    document.getElementById('modal-partner-sort').value = partner.sort_order;
-    document.getElementById('modal-partner-active').checked = partner.is_active == 1;
     document.getElementById('modal-partner-current-logo').value = partner.logo;
     
     if(partner.logo) {
@@ -1337,10 +1409,28 @@ function openEditSlide(slide) {
     document.getElementById('edit-current-image-tablet').value = slide.image_tablet || '';
     document.getElementById('edit-current-image-mobile').value = slide.image_mobile || '';
     
-    document.getElementById('edit-product-id').value = slide.product_id || '';
+    // Core Fields
+    document.getElementById('edit-slide-title').value = slide.title || '';
+    document.getElementById('edit-slide-subtitle').value = slide.subtitle || '';
+    document.getElementById('edit-badge-text').value = slide.badge_text || '';
+    document.getElementById('edit-price').value = slide.price || 0;
+    document.getElementById('edit-cta-text').value = slide.cta_text || '';
     document.getElementById('edit-cta-link').value = slide.cta_link || '';
     document.getElementById('edit-slide-sort').value = slide.sort_order || 0;
     
+    // Visibility Checkboxes
+    document.getElementById('edit-show-title').checked = slide.show_title == 1;
+    document.getElementById('edit-show-subtitle').checked = slide.show_subtitle == 1;
+    document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
+    document.getElementById('edit-show-cta').checked = slide.show_cta == 1;
+    
+    // Extended Aesthetics
+    document.getElementById('edit-accent-color').value = slide.accent_color || '#19DC7E';
+    document.getElementById('edit-v-text-1').value = slide.v_text_1 || 'SNACKING';
+    document.getElementById('edit-v-text-2').value = slide.v_text_2 || 'REIMAGINED';
+    document.getElementById('edit-product-id').value = slide.product_id || '';
+    
+    // Previews
     document.getElementById('edit-preview-bg').src = '../' + slide.image;
     document.getElementById('edit-preview-tablet').src = slide.image_tablet ? '../' + slide.image_tablet : '../assets/images/hero.jpg';
     document.getElementById('edit-preview-mobile').src = slide.image_mobile ? '../' + slide.image_mobile : '../assets/images/hero.jpg';
