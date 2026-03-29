@@ -782,7 +782,7 @@ $wishlist_json = json_encode($wishlist_ids);
                     $delay += 100;
                 ?>
                 <!-- Standardized Boutique Card -->
-                <div class="flex-none flex-shrink-0 w-[82vw] sm:w-[48%] md:w-[32%] lg:w-[24%] snap-start px-2 md:px-3 pb-8 h-full">
+                <div class="flex-none flex-shrink-0 w-[82vw] sm:w-[48%] md:w-[32.5%] lg:w-[31%] xl:w-[24%] snap-start px-2 md:px-3 pb-8 h-full">
                     <a href="<?php echo product_url($p['slug']); ?>" class="block h-full group">
                         <!-- Outer Tinted Container (Alternating Brand Colors) -->
                         <div class="rounded-[2.5rem] p-2.5 md:p-3 transition-transform duration-500 group-hover:scale-[1.02] h-full flex flex-col anim-up shadow-sm border border-[#004F42]/5" style="background-color: <?php echo $color_raw; ?>; animation-delay: <?php echo $delay; ?>ms">
@@ -825,9 +825,8 @@ $wishlist_json = json_encode($wishlist_ids);
                                 </div>
 
                                 <!-- Title & Specs -->
-                                <div class="mb-5">
-                                    <h3 class="text-xl font-black text-[#004F42] leading-tight mb-1 truncate-1 group-hover:text-[#24B25D] transition-colors"><?php echo $p['name']; ?></h3>
-                                    
+                                <div class="mb-3 lg:mb-5">
+                                    <h3 class="text-base sm:text-lg lg:text-xl font-black text-[#004F42] leading-tight mb-1 truncate-1 group-hover:text-[#24B25D] transition-colors"><?php echo $p['name']; ?></h3>
                                 </div>
 
                                 <!-- Interactive Price Strip -->
@@ -836,25 +835,24 @@ $wishlist_json = json_encode($wishlist_ids);
                                         <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
                                             <span class="text-[10px] text-gray-400 font-bold line-through">MRP <?php echo format_price($p['original_price']); ?></span>
                                         <?php endif; ?>
-                                        <span class="text-3xl font-black text-black leading-none tracking-tighter">
+                                        <span class="text-2xl lg:text-3xl font-black text-black leading-none tracking-tighter">
                                             <?php echo format_price($p['price']); ?>
                                         </span>
                                     </div>
-                                    <!-- Quick Actions -->
-                                    <div class="flex gap-2">
-                                        <button onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="w-11 h-11 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center hover:bg-white hover:text-red-500 transition-all border border-gray-100">
-                                            <i class="far fa-heart text-[15px]"></i>
+                                    <div class="flex gap-1.5 md:gap-2">
+                                        <button onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="w-9 h-9 md:w-11 md:h-11 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center hover:bg-white hover:text-red-500 transition-all border border-gray-100">
+                                            <i class="far fa-heart text-[13px] md:text-[15px]"></i>
                                         </button>
-                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-11 h-11 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
-                                            <i class="fas fa-shopping-bag text-[15px]"></i>
+                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-9 h-9 md:w-11 md:h-11 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
+                                            <i class="fas fa-shopping-bag text-[13px] md:text-[15px]"></i>
                                         </button>
                                     </div>
                                 </div>
 
                                 <!-- Full Action Button -->
                                 <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
-                                    class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-xl font-black text-[18px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy">
-                                    Quick Buy  <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
+                                    class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-3 lg:py-4 rounded-xl font-black text-[14px] lg:text-[15px] xl:text-[17px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy flex items-center justify-center gap-2">
+                                    <span>Quick Buy</span> <i class="fas fa-bolt group-hover/buy:animate-pulse"></i>
                                 </button>
                             </div>
                         </div>
@@ -1065,7 +1063,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                     <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): 
                                         $savings = round((($p['original_price'] - $p['price']) / $p['original_price']) * 100);
                                     ?>
-                                        <div class="absolute top-4 left-4 bg-black/80 text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow-lg border border-white/10 backdrop-blur-sm">
+                                        <div class="absolute top-4 left-4 bg-[#EDB02C] text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow-lg border border-white/10 backdrop-blur-sm">
                                             -<?php echo $savings; ?>% OFF
                                         </div>
                                     <?php endif; ?>
