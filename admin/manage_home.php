@@ -241,9 +241,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $redirect = true;
     }
     
-    // --- HERO SLIDES MANAGEMENT ---
+    // --- HERO SLIDE MANAGEMENT ---
     if (isset($_POST['add_slide']) || isset($_POST['edit_slide'])) {
-        $title = $_POST['slide_title'] ?? '';
+        // Debug Logging
+        $log_data = "Time: " . date('Y-m-d H:i:s') . "\n";
+        $log_data .= "POST: " . print_r($_POST, true) . "\n";
+        $log_data .= "FILES: " . print_r($_FILES, true) . "\n";
+        file_put_contents('../tmp/slider_debug.log', $log_data, FILE_APPEND);
+
+        $title = sanitize_input($_POST['slide_title'] ?? '');
         $subtitle = $_POST['slide_subtitle'] ?? '';
         $badge_text = $_POST['badge_text'] ?? '';
         $cta_text = $_POST['slide_cta_text'] ?? '';
@@ -280,14 +286,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
                 
+                $image_tablet_url = null;
                 if (isset($_FILES['slide_image_tablet']) && $_FILES['slide_image_tablet']['error'] == 0) {
+                    $target_dir = "../assets/images/uploads/";
+                    if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
                     $filename = "slide_tab_" . uniqid() . "_" . basename($_FILES["slide_image_tablet"]["name"]);
                     if (move_uploaded_file($_FILES["slide_image_tablet"]["tmp_name"], $target_dir . $filename)) {
                         $image_tablet_url = "assets/images/uploads/" . $filename;
                     }
                 }
-
+                
+                $image_mobile_url = null;
                 if (isset($_FILES['slide_image_mobile']) && $_FILES['slide_image_mobile']['error'] == 0) {
+                    $target_dir = "../assets/images/uploads/";
+                    if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
                     $filename = "slide_mob_" . uniqid() . "_" . basename($_FILES["slide_image_mobile"]["name"]);
                     if (move_uploaded_file($_FILES["slide_image_mobile"]["tmp_name"], $target_dir . $filename)) {
                         $image_mobile_url = "assets/images/uploads/" . $filename;
@@ -597,8 +609,22 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                                     <img src="../<?php echo $slide['image']; ?>" class="w-full h-full object-cover">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                                     
+                                    <!-- Responsive Indicators -->
+                                    <div class="absolute top-4 left-4 flex gap-1.5">
+                                        <?php if(!empty($slide['image_tablet'])): ?>
+                                            <div class="w-6 h-6 rounded-lg bg-blue-500/20 backdrop-blur-md border border-blue-400/30 flex items-center justify-center text-blue-200 text-[10px]" title="Tablet Version Present">
+                                                <i class="fas fa-tablet-alt"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if(!empty($slide['image_mobile'])): ?>
+                                            <div class="w-6 h-6 rounded-lg bg-amber-500/20 backdrop-blur-md border border-amber-400/30 flex items-center justify-center text-amber-200 text-[10px]" title="Mobile Version Present">
+                                                <i class="fas fa-mobile-alt"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+
                                     <!-- Status & Sort Badge -->
-                                    <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                    <div class="absolute top-4 right-4 flex items-center gap-2">
                                         <?php if($slide['is_active']): ?>
                                             <span class="bg-[#24B25D] text-black text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-xl flex items-center gap-1.5">
                                                 <span class="w-1 h-1 bg-black rounded-full animate-pulse"></span> Active
@@ -887,6 +913,11 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
             <form method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
                 <div class="relative h-[220px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner group/preview">
                     <img id="add-preview-bg" src="../assets/images/hero.jpg" class="w-full h-full object-cover">
+                    <!-- Overlays for Tablet/Mobile Preview -->
+                    <div class="absolute bottom-4 right-4 flex gap-2">
+                        <img id="add-preview-tablet" src="../assets/images/hero.jpg" class="w-12 h-16 object-cover rounded-lg border-2 border-white shadow-lg opacity-0 transition-opacity">
+                        <img id="add-preview-mobile" src="../assets/images/hero.jpg" class="w-8 h-12 object-cover rounded-lg border-2 border-white shadow-lg opacity-0 transition-opacity">
+                    </div>
                     <div class="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 group-hover/preview:opacity-100 transition-opacity">
                          <span class="text-[10px] font-black text-black bg-white/80 px-4 py-2 rounded-full uppercase tracking-widest">Banner Preview</span>
                     </div>
@@ -1319,15 +1350,21 @@ function previewSlideFile(input, type) {
         const reader = new FileReader();
         const previewMap = {
             'add': 'add-preview-bg',
-            'add-tablet': null,
-            'add-mobile': null,
+            'add-tablet': 'add-preview-tablet', // Added tablet/mobile preview for "add" modal too
+            'add-mobile': 'add-preview-mobile',
             'edit': 'edit-preview-bg',
             'edit-tablet': 'edit-preview-tablet',
             'edit-mobile': 'edit-preview-mobile'
         };
         const targetId = previewMap[type];
         reader.onload = function(e) { 
-            if(targetId) document.getElementById(targetId).src = e.target.result; 
+            if(targetId) {
+                const el = document.getElementById(targetId);
+                if(el) {
+                    el.src = e.target.result;
+                    el.style.opacity = '1';
+                }
+            } 
         }
         reader.readAsDataURL(input.files[0]);
     }
