@@ -244,16 +244,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if(!$error) {
                 $image_url = 'assets/images/hero.jpg';
+                $image_tablet_url = null;
+                $image_mobile_url = null;
+                
+                $target_dir = "../assets/images/uploads/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+
                 if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
-                    $target_dir = "../assets/images/uploads/";
-                    if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
                     $filename = "slide_" . uniqid() . "_" . basename($_FILES["slide_image"]["name"]);
                     if (move_uploaded_file($_FILES["slide_image"]["tmp_name"], $target_dir . $filename)) {
                         $image_url = "assets/images/uploads/" . $filename;
                     }
                 }
-                $stmt = $conn->prepare("INSERT INTO hero_slides (title, show_title, subtitle, show_subtitle, image, cta_text, cta_link, show_cta, sort_order, is_active, badge_text, show_badge, price, accent_color, v_text_1, v_text_2, product_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sisisssiisidsssi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id);
+                
+                if (isset($_FILES['slide_image_tablet']) && $_FILES['slide_image_tablet']['error'] == 0) {
+                    $filename = "slide_tab_" . uniqid() . "_" . basename($_FILES["slide_image_tablet"]["name"]);
+                    if (move_uploaded_file($_FILES["slide_image_tablet"]["tmp_name"], $target_dir . $filename)) {
+                        $image_tablet_url = "assets/images/uploads/" . $filename;
+                    }
+                }
+
+                if (isset($_FILES['slide_image_mobile']) && $_FILES['slide_image_mobile']['error'] == 0) {
+                    $filename = "slide_mob_" . uniqid() . "_" . basename($_FILES["slide_image_mobile"]["name"]);
+                    if (move_uploaded_file($_FILES["slide_image_mobile"]["tmp_name"], $target_dir . $filename)) {
+                        $image_mobile_url = "assets/images/uploads/" . $filename;
+                    }
+                }
+
+                $stmt = $conn->prepare("INSERT INTO hero_slides (title, show_title, subtitle, show_subtitle, image, image_tablet, image_mobile, cta_text, cta_link, show_cta, sort_order, is_active, badge_text, show_badge, price, accent_color, v_text_1, v_text_2, product_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("sisisssssiiisidssi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id);
                 if ($stmt->execute()) {
                     $_SESSION['msg'] = "New dynamic slide added!";
                     $redirect = true;
@@ -263,9 +282,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = intval($_POST['slide_id']);
             if(!$error) {
                 $image_url = $_POST['current_image'] ?? '';
+                $image_tablet_url = $_POST['current_image_tablet'] ?? null;
+                $image_mobile_url = $_POST['current_image_mobile'] ?? null;
+                
+                $target_dir = "../assets/images/uploads/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+
                 if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
-                    $target_dir = "../assets/images/uploads/";
-                    if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
                     $filename = "slide_" . uniqid() . "_" . basename($_FILES["slide_image"]["name"]);
                     if (move_uploaded_file($_FILES["slide_image"]["tmp_name"], $target_dir . $filename)) {
                         $image_url = "assets/images/uploads/" . $filename;
@@ -276,8 +299,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     }
                 }
-                $stmt = $conn->prepare("UPDATE hero_slides SET title=?, show_title=?, subtitle=?, show_subtitle=?, image=?, cta_text=?, cta_link=?, show_cta=?, sort_order=?, badge_text=?, show_badge=?, price=?, accent_color=?, v_text_1=?, v_text_2=?, product_id=? WHERE id=?");
-                $stmt->bind_param("sisisssiisidsssii", $title, $show_title, $subtitle, $show_subtitle, $image_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id, $id);
+
+                if (isset($_FILES['slide_image_tablet']) && $_FILES['slide_image_tablet']['error'] == 0) {
+                    $filename = "slide_tab_" . uniqid() . "_" . basename($_FILES["slide_image_tablet"]["name"]);
+                    if (move_uploaded_file($_FILES["slide_image_tablet"]["tmp_name"], $target_dir . $filename)) {
+                        $image_tablet_url = "assets/images/uploads/" . $filename;
+                        // Delete old image if it's an upload
+                        $old_slide = fetch_one("SELECT image_tablet FROM hero_slides WHERE id = $id");
+                        if ($old_slide && !empty($old_slide['image_tablet']) && strpos($old_slide['image_tablet'], 'assets/images/uploads/') === 0) {
+                            @unlink("../" . $old_slide['image_tablet']);
+                        }
+                    }
+                }
+
+                if (isset($_FILES['slide_image_mobile']) && $_FILES['slide_image_mobile']['error'] == 0) {
+                    $filename = "slide_mob_" . uniqid() . "_" . basename($_FILES["slide_image_mobile"]["name"]);
+                    if (move_uploaded_file($_FILES["slide_image_mobile"]["tmp_name"], $target_dir . $filename)) {
+                        $image_mobile_url = "assets/images/uploads/" . $filename;
+                        // Delete old image if it's an upload
+                        $old_slide = fetch_one("SELECT image_mobile FROM hero_slides WHERE id = $id");
+                        if ($old_slide && !empty($old_slide['image_mobile']) && strpos($old_slide['image_mobile'], 'assets/images/uploads/') === 0) {
+                            @unlink("../" . $old_slide['image_mobile']);
+                        }
+                    }
+                }
+
+                $stmt = $conn->prepare("UPDATE hero_slides SET title=?, show_title=?, subtitle=?, show_subtitle=?, image=?, image_tablet=?, image_mobile=?, cta_text=?, cta_link=?, show_cta=?, sort_order=?, badge_text=?, show_badge=?, price=?, accent_color=?, v_text_1=?, v_text_2=?, product_id=? WHERE id=?");
+                $stmt->bind_param("sisisssssiiisidssii", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id, $id);
                 if ($stmt->execute()) {
                     $_SESSION['msg'] = "Dynamic slide updated!";
                     $redirect = true;
@@ -288,10 +336,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['delete_slide'])) {
         $id = intval($_POST['slide_id']);
-        $old_slide = fetch_one("SELECT image FROM hero_slides WHERE id = $id");
-        if ($old_slide && strpos($old_slide['image'], 'assets/images/uploads/') === 0) {
-            $old_path = "../" . $old_slide['image'];
-            if (file_exists($old_path)) @unlink($old_path);
+        $old_slide = fetch_one("SELECT image, image_tablet, image_mobile FROM hero_slides WHERE id = $id");
+        if ($old_slide) {
+            $images = ['image', 'image_tablet', 'image_mobile'];
+            foreach($images as $key) {
+                if(!empty($old_slide[$key]) && strpos($old_slide[$key], 'assets/images/uploads/') === 0) {
+                    $old_path = "../" . $old_slide[$key];
+                    if (file_exists($old_path)) @unlink($old_path);
+                }
+            }
         }
         $conn->query("DELETE FROM hero_slides WHERE id = $id");
         $_SESSION['msg'] = "Slide removed!";
@@ -808,13 +861,31 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                 </div>
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Banner Image File</label>
-                            <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
-                            <label for="add-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-2xl px-4 py-8 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                <i class="fas fa-image text-2xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
-                                <span class="font-bold text-xs text-gray-500">UPLOAD HIGH-RES BANNER</span>
-                            </label>
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Desktop Banner (1920x...) </label>
+                                <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
+                                <label for="add-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                    <i class="fas fa-desktop text-xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
+                                    <span class="font-bold text-[10px] text-gray-500">UPLOAD DESKTOP BANNER</span>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tablet Banner (768px-1024px) </label>
+                                <input type="file" name="slide_image_tablet" id="add-file-tablet-input" onchange="previewSlideFile(this, 'add-tablet')" class="hidden">
+                                <label for="add-file-tablet-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                    <i class="fas fa-tablet-alt text-xl text-gray-300 group-hover/btn:text-blue-500 transition-colors"></i>
+                                    <span class="font-bold text-[10px] text-gray-500">UPLOAD TABLET BANNER (OPTIONAL)</span>
+                                </label>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Mobile Banner (Max 768px) </label>
+                                <input type="file" name="slide_image_mobile" id="add-file-mobile-input" onchange="previewSlideFile(this, 'add-mobile')" class="hidden">
+                                <label for="add-file-mobile-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                    <i class="fas fa-mobile-alt text-xl text-gray-300 group-hover/btn:text-amber-500 transition-colors"></i>
+                                    <span class="font-bold text-[10px] text-gray-500">UPLOAD MOBILE BANNER (OPTIONAL)</span>
+                                </label>
+                            </div>
                         </div>
                         <div class="space-y-1">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
@@ -864,25 +935,62 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                 <input type="hidden" name="edit_slide_action" value="1">
                 <input type="hidden" name="slide_id" id="edit-slide-id">
                 <input type="hidden" name="current_image" id="edit-current-image">
+                <input type="hidden" name="current_image_tablet" id="edit-current-image-tablet">
+                <input type="hidden" name="current_image_mobile" id="edit-current-image-mobile">
                 
-                <div class="relative h-[220px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner group/preview">
-                    <!-- Pure Image Preview -->
+                <div class="relative h-[220px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner group/preview mb-4">
+                    <!-- Pure Image Preview (Desktop) -->
                     <img id="edit-preview-bg" src="" class="w-full h-full object-cover">
                     <div class="absolute inset-0 flex items-center justify-center bg-black/5 opacity-0 group-hover/preview:opacity-100 transition-opacity">
-                         <span class="text-[10px] font-black text-black bg-white/80 px-4 py-2 rounded-full uppercase tracking-widest">Banner Preview</span>
+                         <span class="text-[10px] font-black text-black bg-white/80 px-4 py-2 rounded-full uppercase tracking-widest">Main Banner Preview</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="space-y-1">
+                        <label class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1 text-center">Tablet Preview</label>
+                        <div class="aspect-video rounded-xl bg-gray-50 border border-gray-100 overflow-hidden">
+                            <img id="edit-preview-tablet" src="" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1 text-center">Mobile Preview</label>
+                        <div class="aspect-[9/16] h-[100px] mx-auto rounded-xl bg-gray-50 border border-gray-100 overflow-hidden">
+                            <img id="edit-preview-mobile" src="" class="w-full h-full object-cover">
+                        </div>
                     </div>
                 </div>
                 
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Banner Image file</label>
-                            <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
-                            <label for="edit-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-2xl px-4 py-8 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                <i class="fas fa-camera text-2xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
-                                <span class="font-bold text-xs text-gray-500">UPDATE BANNER IMAGE</span>
-                            </label>
-                             <p class="text-[8px] text-gray-400 font-bold uppercase mt-2 text-center">Leave blank to keep current</p>
+                        <div class="space-y-4">
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Desktop Banner Image</label>
+                                <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
+                                <label for="edit-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                    <i class="fas fa-desktop text-xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
+                                    <span class="font-bold text-[10px] text-gray-500 uppercase">Change Desktop Banner (1920x...)</span>
+                                </label>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tablet Banner Image</label>
+                                <input type="file" name="slide_image_tablet" id="edit-file-tablet-input" onchange="previewSlideFile(this, 'edit-tablet')" class="hidden">
+                                <label for="edit-file-tablet-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                    <i class="fas fa-tablet-alt text-xl text-gray-300 group-hover/btn:text-blue-500 transition-colors"></i>
+                                    <span class="font-bold text-[10px] text-gray-500 uppercase">Change Tablet Banner (768px-1024px)</span>
+                                </label>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Mobile Banner Image</label>
+                                <input type="file" name="slide_image_mobile" id="edit-file-mobile-input" onchange="previewSlideFile(this, 'edit-mobile')" class="hidden">
+                                <label for="edit-file-mobile-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
+                                    <i class="fas fa-mobile-alt text-xl text-gray-300 group-hover/btn:text-amber-500 transition-colors"></i>
+                                    <span class="font-bold text-[10px] text-gray-500 uppercase">Change Mobile Banner (Max 768px)</span>
+                                </label>
+                            </div>
+                            <p class="text-[8px] text-gray-400 font-bold uppercase mt-2 text-center">Leave blank to keep current</p>
                         </div>
                         <div class="space-y-1">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
@@ -1207,7 +1315,18 @@ function updatePreview(type) {
 function previewSlideFile(input, type) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) { document.getElementById(type + '-preview-bg').src = e.target.result; }
+        const previewMap = {
+            'add': 'add-preview-bg',
+            'add-tablet': null,
+            'add-mobile': null,
+            'edit': 'edit-preview-bg',
+            'edit-tablet': 'edit-preview-tablet',
+            'edit-mobile': 'edit-preview-mobile'
+        };
+        const targetId = previewMap[type];
+        reader.onload = function(e) { 
+            if(targetId) document.getElementById(targetId).src = e.target.result; 
+        }
         reader.readAsDataURL(input.files[0]);
     }
 }
@@ -1215,10 +1334,17 @@ function previewSlideFile(input, type) {
 function openEditSlide(slide) {
     document.getElementById('edit-slide-id').value = slide.id;
     document.getElementById('edit-current-image').value = slide.image;
+    document.getElementById('edit-current-image-tablet').value = slide.image_tablet || '';
+    document.getElementById('edit-current-image-mobile').value = slide.image_mobile || '';
+    
     document.getElementById('edit-product-id').value = slide.product_id || '';
     document.getElementById('edit-cta-link').value = slide.cta_link || '';
     document.getElementById('edit-slide-sort').value = slide.sort_order || 0;
+    
     document.getElementById('edit-preview-bg').src = '../' + slide.image;
+    document.getElementById('edit-preview-tablet').src = slide.image_tablet ? '../' + slide.image_tablet : '../assets/images/hero.jpg';
+    document.getElementById('edit-preview-mobile').src = slide.image_mobile ? '../' + slide.image_mobile : '../assets/images/hero.jpg';
+    
     showModal('edit-slide-modal');
 }
 

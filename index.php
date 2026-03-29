@@ -45,6 +45,8 @@ if(!empty($slides_data)) {
             'name' => $s['title'],
             'price' => $s['price'] > 0 ? $s['price'] : '249',
             'image' => $s['image'],
+            'image_tablet' => $s['image_tablet'],
+            'image_mobile' => $s['image_mobile'],
             'bg' => $s['accent_color'],
             'v1' => $s['v_text_1'] ?? 'SNACKING',
             'v2' => $s['v_text_2'] ?? 'REIMAGINED',
@@ -63,6 +65,8 @@ if(!empty($slides_data)) {
             'name' => $f['name'],
             'price' => $f['price'],
             'image' => $f['image'],
+            'image_tablet' => null,
+            'image_mobile' => null,
             'bg' => '#19DC7E',
             'v1' => 'ORGANIC',
             'v2' => 'HARVEST',
@@ -74,10 +78,10 @@ if(!empty($slides_data)) {
 // Global High-End Fallback if still empty
 if(empty($hero_variants)) {
     $hero_variants = [
-        ['id'=>1, 'product_id'=>1, 'slug'=>'signature-almonds', 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'bg'=>'#19DC7E', 'v1'=>'PURE', 'v2'=>'ENERGY', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>2, 'product_id'=>2, 'slug'=>'crispy-apple-chips', 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'bg'=>'#EDB02C', 'v1'=>'NATURE\'S', 'v2'=>'SWEET', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>3, 'product_id'=>3, 'slug'=>'spiced-walnuts', 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'bg'=>'#F67E42', 'v1'=>'BOLD', 'v2'=>'CRUNCH', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>4, 'product_id'=>4, 'slug'=>'sweet-berries', 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'bg'=>'#EC4899', 'v1'=>'WILD', 'v2'=>'PICKED', 'tagline'=>'Your New Healthy Habit']
+        ['id'=>1, 'product_id'=>1, 'slug'=>'signature-almonds', 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#19DC7E', 'v1'=>'PURE', 'v2'=>'ENERGY', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>2, 'product_id'=>2, 'slug'=>'crispy-apple-chips', 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#EDB02C', 'v1'=>'NATURE\'S', 'v2'=>'SWEET', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>3, 'product_id'=>3, 'slug'=>'spiced-walnuts', 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#F67E42', 'v1'=>'BOLD', 'v2'=>'CRUNCH', 'tagline'=>'Your New Healthy Habit'],
+        ['id'=>4, 'product_id'=>4, 'slug'=>'sweet-berries', 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#EC4899', 'v1'=>'WILD', 'v2'=>'PICKED', 'tagline'=>'Your New Healthy Habit']
     ];
 }
 
@@ -395,12 +399,19 @@ $wishlist_json = json_encode($wishlist_ids);
                 <!-- Clickable Link -->
                 <a href="<?php echo $slide_link; ?>" class="absolute inset-0 z-10 w-full h-full"></a>
 
-                <!-- Background Image -->
+                <!-- Background Image (Responsive) -->
                 <div class="absolute inset-0 w-full h-full overflow-hidden">
-                    <img src="<?php echo get_url($slide['image']); ?>" 
-                         class="w-full h-full object-cover object-center transform transition-transform duration-[10000ms] ease-linear <?php echo $index === 0 ? 'scale-110' : ''; ?>" 
-                         alt="<?php echo htmlspecialchars($slide['name']); ?>">
-                    <!-- <div class="absolute inset-0 bg-gradient-to-r from-black/20 via-black/20 to-transparent"></div> -->
+                    <picture>
+                        <?php if(!empty($slide['image_mobile'])): ?>
+                            <source media="(max-width: 768px)" srcset="<?php echo get_url($slide['image_mobile']); ?>">
+                        <?php endif; ?>
+                        <?php if(!empty($slide['image_tablet'])): ?>
+                            <source media="(max-width: 1024px)" srcset="<?php echo get_url($slide['image_tablet']); ?>">
+                        <?php endif; ?>
+                        <img src="<?php echo get_url($slide['image']); ?>" 
+                             class="w-full h-full object-cover object-center transform transition-transform duration-[10000ms] ease-linear <?php echo $index === 0 ? 'scale-110' : ''; ?>" 
+                             alt="<?php echo htmlspecialchars($slide['name']); ?>">
+                    </picture>
                 </div>
 
                 <!-- Overlay Content -->
