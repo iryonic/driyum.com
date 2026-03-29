@@ -324,8 +324,12 @@ function require_admin() {
 
 // Homepage Functions
 function get_hero_slides($include_inactive = false) {
-    $where = $include_inactive ? "" : "WHERE is_active = 1";
-    $sql = "SELECT * FROM hero_slides $where ORDER BY sort_order ASC";
+    $where = $include_inactive ? "" : "WHERE s.is_active = 1";
+    $sql = "SELECT s.*, p.slug as product_slug 
+            FROM hero_slides s 
+            LEFT JOIN products p ON s.product_id = p.id 
+            $where 
+            ORDER BY s.sort_order ASC";
     return fetch_all($sql);
 }
 

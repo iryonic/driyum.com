@@ -19,24 +19,8 @@ $slides_data = get_hero_slides();
 if(!empty($slides_data)) {
     $hero_variants = [];
     foreach($slides_data as $s) {
-        $pid = $s['product_id'];
-        $pslug = '';
-        
-        if(empty($pid)) {
-            // Try to match by title as fallback
-            $match = fetch_one("SELECT id, slug FROM products WHERE name LIKE ? LIMIT 1", ["%".$s['title']."%"]);
-            if($match) {
-                $pid = $match['id'];
-                $pslug = $match['slug'];
-            } else {
-                $fallback = fetch_one("SELECT id, slug FROM products WHERE is_active = 1 LIMIT 1");
-                $pid = $fallback['id'];
-                $pslug = $fallback['slug'];
-            }
-        } else {
-            $pinfo = fetch_one("SELECT slug FROM products WHERE id = ?", [$pid]);
-            $pslug = $pinfo ? $pinfo['slug'] : '';
-        }
+        $pid = $s['product_id'] ?? 0;
+        $pslug = $s['product_slug'] ?? '';
 
         $hero_variants[] = [
             'id' => $s['id'],
