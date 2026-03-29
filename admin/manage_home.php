@@ -295,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $stmt = $conn->prepare("INSERT INTO hero_slides (title, show_title, subtitle, show_subtitle, image, image_tablet, image_mobile, cta_text, cta_link, show_cta, sort_order, is_active, badge_text, show_badge, price, accent_color, v_text_1, v_text_2, product_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sisisssssiiisidssi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id);
+                $stmt->bind_param("sisisssssiisidsssi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id);
                 if ($stmt->execute()) {
                     $_SESSION['msg'] = "New dynamic slide added!";
                     $redirect = true;
@@ -349,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $stmt = $conn->prepare("UPDATE hero_slides SET title=?, show_title=?, subtitle=?, show_subtitle=?, image=?, image_tablet=?, image_mobile=?, cta_text=?, cta_link=?, show_cta=?, sort_order=?, badge_text=?, show_badge=?, price=?, accent_color=?, v_text_1=?, v_text_2=?, product_id=? WHERE id=?");
-                $stmt->bind_param("sisisssssiiisidssii", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id, $id);
+                $stmt->bind_param("sisisssssiisidsssii", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id, $id);
                 if ($stmt->execute()) {
                     $_SESSION['msg'] = "Dynamic slide updated!";
                     $redirect = true;
