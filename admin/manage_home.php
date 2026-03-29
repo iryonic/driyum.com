@@ -1181,6 +1181,27 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
+    .loader {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .btn-loading {
+        opacity: 0.7;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
 </style>
 
 <script>
@@ -1379,6 +1400,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+// Global Form Submission Loading State
+document.addEventListener('submit', function(e) {
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    if (submitBtn) {
+        // Prevent double submission
+        submitBtn.classList.add('btn-loading');
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        
+        // Add spinner
+        submitBtn.innerHTML = '<span class="loader"></span> PROCESSING...';
+    }
+});
+</script>
 </body>
 </html>
 
