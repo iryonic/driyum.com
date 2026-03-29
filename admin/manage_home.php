@@ -803,57 +803,7 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
 
     </div>
 
-    <!-- PARTNERS MANAGEMENT SECTION -->
-    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up mb-10">
-        <div class="px-8 py-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-sm">
-                    <i class="fas fa-store-alt"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900 font-heading leading-tight">Retail Partners</h3>
-                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Manage 'Available At' stockists</p>
-                </div>
-            </div>
-            <button onclick="showModal('partner-modal')" class="bg-emerald-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg flex items-center gap-2">
-                <i class="fas fa-plus"></i> Add New Partner
-            </button>
-        </div>
-
-        <div class="p-8">
-            <?php if(empty($partners)): ?>
-                <div class="bg-emerald-50 rounded-2xl p-10 text-center border border-emerald-100/50">
-                    <i class="fas fa-store text-4xl text-emerald-200 mb-4 block"></i>
-                    <p class="text-xs font-bold text-emerald-800 uppercase tracking-widest">No Partners Found</p>
-                </div>
-            <?php else: ?>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                    <?php foreach($partners as $p): ?>
-                    <div class="group relative bg-white border border-gray-100 rounded-3xl p-5 hover:shadow-xl transition-all text-center">
-                        <div class="absolute top-3 right-3 z-10">
-                             <span class="bg-black text-white text-[7px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter shadow-sm">#<?php echo $p['sort_order']; ?></span>
-                        </div>
-                        <div class="h-16 flex items-center justify-center mb-4">
-                            <img src="../<?php echo $p['logo']; ?>" class="max-h-full max-w-full object-contain filter <?php echo !$p['is_active'] ? 'grayscale opacity-30 drop-shadow-sm' : ''; ?>">
-                        </div>
-                        <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-900 truncate"><?php echo htmlspecialchars($p['name']); ?></h4>
-                        <p class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter mt-1"><?php echo htmlspecialchars($p['location']); ?></p>
-                        
-                        <!-- Quick Actions -->
-                        <div class="absolute inset-0 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-3">
-                             <button onclick='openEditPartner(<?php echo json_encode($p); ?>)' class="w-full max-w-[80px] py-1.5 bg-gray-900 text-white text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-600 transition-all">Edit</button>
-                             <form method="POST" class="w-full max-w-[80px]">
-                                 <input type="hidden" name="partner_id" value="<?php echo $p['id']; ?>">
-                                 <button type="submit" name="toggle_partner" class="w-full py-1.5 <?php echo $p['is_active'] ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'; ?> text-[8px] font-black uppercase tracking-widest rounded-lg mb-2"><?php echo $p['is_active'] ? 'Disable' : 'Enable'; ?></button>
-                                 <button type="submit" name="delete_partner" class="w-full py-1.5 bg-red-100 text-red-600 text-[8px] font-black uppercase tracking-widest rounded-lg" onclick="return confirm('Delete partner?')">Delete</button>
-                             </form>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
+   
 </div>
 
 
