@@ -470,9 +470,10 @@ $wishlist_json = json_encode($wishlist_ids);
                         $partner_list = $partners;
                         if(empty($partner_list)) {
                             $partner_list = [
-                                ['name' => 'ecogrocery', 'location' => 'RAJBAGH'],
-                                ['name' => 'Basket', 'location' => 'RAJBAGH'],
-                                ['name' => 'City Max', 'location' => 'RAJBAGH'],
+                                ['name' => 'Ecogrocery', 'location' => 'Lal Nagar'],
+                                ['name' => 'Basket', 'location' => 'Chanapora'],
+                                ['name' => 'Extracts', 'location' => 'RAJBAGH'],
+                                ['name' => 'Extracts', 'location' => 'Peerbagh'],
                                 ['name' => 'Pick N Choose', 'location' => 'BAGHAT']
                             ];
                         }
@@ -870,12 +871,12 @@ $wishlist_json = json_encode($wishlist_ids);
     </section>
 
     <!-- THE DRIYUM DIFFERENCE (Full Width Direct Comparison) -->
-    <section class="min-h-screen bg-white w-full relative overflow-hidden flex flex-col justify-center">
-        <!-- Full Width Comparison Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-0 w-full min-h-screen shadow-2xl border-y border-gray-100/50 bg-black overflow-hidden relative" id="comparison-trigger">
+    <section class="h-auto md:h-[50vh] lg:h-screen bg-white w-full relative overflow-hidden flex flex-col justify-center p-0 m-0">
+        <!-- Full Width Comparison Grid (Breakout for perfect edge-to-edge) -->
+        <div class="flex flex-col md:flex-row gap-0 w-screen relative left-1/2 -translate-x-1/2 h-full md:h-full shadow-2xl border-y border-gray-100/50 bg-black overflow-hidden" id="comparison-trigger">
             
             <!-- Pillar: The "Oily" Junk Choice -->
-            <div class="md:col-span-6 relative group overflow-hidden bg-gray-100 flex flex-col min-h-[50vh] md:min-h-screen will-change-transform" id="junk-pillar" style="transform: translateX(-50%); opacity: 0.5;">
+            <div class="w-full md:w-1/2 relative group overflow-hidden bg-gray-100 flex flex-col py-16 md:py-8 will-change-transform" id="junk-pillar">
                 <!-- Junk Snacking Background -->
                 <div class="absolute inset-0 z-0">
                     <img src="<?php echo get_url('assets/images/unhealthy_junk.png'); ?>" alt="Unhealthy Junk Snacking" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10000ms] grayscale-40">
@@ -923,7 +924,7 @@ $wishlist_json = json_encode($wishlist_ids);
                 </div>
 
                 <!-- Pillar: The Driyum Choice -->
-                <div class="md:col-span-6 relative group overflow-hidden bg-[#002A23] flex flex-col min-h-[50vh] md:min-h-screen will-change-transform" id="driyum-pillar" style="transform: translateX(50%); opacity: 0.5;">
+                <div class="w-full md:w-1/2 relative group overflow-hidden bg-[#002A23] flex flex-col py-16 md:py-8 will-change-transform" id="driyum-pillar">
                     <!-- Healthy Driyum Background (User Provided Image) -->
                     <div class="absolute inset-0 z-0">
                         <img src="<?php echo get_url('assets/images/driyumchoice.jpeg'); ?>" alt="Healthy Driyum Choice" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[10000ms]">
@@ -983,58 +984,36 @@ $wishlist_json = json_encode($wishlist_ids);
         </div>
     </section>
 
-    <!-- Butter-Smooth Scroll-Linked Comparison Engine (LERP Physics) -->
+    <!-- GSAP Comparison Animation Engine -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const junkPillar = document.getElementById('junk-pillar');
-            const driyumPillar = document.getElementById('driyum-pillar');
-            const trigger = document.getElementById('comparison-trigger');
-            
-            if(!junkPillar || !driyumPillar || !trigger) return;
-
-            // Physics Variables
-            let targetProgress = 0;
-            let currentProgress = 0;
-            const lerpFactor = 0.08; // The "Smoothness" - Lower is smoother/heavier
-
-            function updateScrollProgress() {
-                const rect = trigger.getBoundingClientRect();
-                const windowHeight = window.innerHeight;
-                
-                // Optimized Visibility Window
-                let startPos = windowHeight * 1.2;
-                let endPos = windowHeight * 0.1;
-                
-                let progress = (startPos - rect.top) / (startPos - endPos);
-                targetProgress = Math.max(0, Math.min(1, progress));
-                
-                // Smooth LERP Calculation
-                currentProgress += (targetProgress - currentProgress) * lerpFactor;
-                
-                // Split-to-Center Physics (80% to 0%)
-                const slideFactor = (1 - currentProgress) * 80;
-                
-                // Apply transformations with high-performance hardware acceleration
-                // Note: We use JS for raw values to avoid CSS transition conflicts
-                junkPillar.style.transform = `translateX(${-slideFactor}%) translateZ(0)`;
-                driyumPillar.style.transform = `translateX(${slideFactor}%) translateZ(0)`;
-                
-                // Vivid Sharp Opacity Focus
-                const opacityVal = Math.min(1, currentProgress * 2.5);
-                junkPillar.style.opacity = opacityVal;
-                driyumPillar.style.opacity = opacityVal;
-                
-                // Parallax Interior Images
-                const junkImg = junkPillar.querySelector('img');
-                const driyumImg = driyumPillar.querySelector('img');
-                if(junkImg) junkImg.style.transform = `scale(1.1) translateX(${slideFactor * 0.12}%) translateZ(0)`;
-                if(driyumImg) driyumImg.style.transform = `scale(1.1) translateX(${-slideFactor * 0.12}%) translateZ(0)`;
-                
-                requestAnimationFrame(updateScrollProgress);
+            if (typeof gsap === 'undefined') {
+                console.warn('GSAP not loaded. Animation fallback to static.');
+                return;
             }
+            
+            gsap.registerPlugin(ScrollTrigger);
+            
+            const trigger = document.getElementById('comparison-trigger');
+            if(!trigger) return;
 
-            // Start High-Frequency Loop
-            requestAnimationFrame(updateScrollProgress);
+            // Set Initial States - offset more aggressively to ensure clean entry
+            gsap.set("#junk-pillar", { xPercent: -100, opacity: 0 });
+            gsap.set("#driyum-pillar", { xPercent: 100, opacity: 0 });
+
+            // Pillar Smooth Expansion Timeline
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: trigger,
+                    start: "top 100%", 
+                    end: "top 10%",   // Finish even earlier for maximum impact
+                    scrub: 0.4,       // Very responsive
+                    toggleActions: "play none none reverse"
+                }
+            });
+
+            tl.to("#junk-pillar", { xPercent: 0, opacity: 1, ease: "power2.out" }, 0)
+              .to("#driyum-pillar", { xPercent: 0, opacity: 1, ease: "power2.out" }, 0);
         });
     </script>
 
@@ -1153,7 +1132,7 @@ $wishlist_json = json_encode($wishlist_ids);
     <section class="bg-black relative overflow-hidden" id="craft-journey-trigger">
         
         <!-- Step 1: Selection (Full Billboard) -->
-        <div class="relative w-full min-h-screen flex items-center overflow-hidden border-b border-white/5 craft-board" id="craft-step-1">
+        <div class="relative w-full h-[60vh]  md:h-[40vh ] flex items-center overflow-hidden border-b border-white/5 craft-board" id="craft-step-1">
             <div class="absolute inset-0 z-0 bg-black">
                 <img src="<?php echo get_url('assets/images/craft_selection.png'); ?>" alt="Selection" class="w-full h-full object-cover opacity-60 scale-110 craft-img">
                 <div class="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent"></div>
@@ -1168,7 +1147,7 @@ $wishlist_json = json_encode($wishlist_ids);
         </div>
 
         <!-- Step 2: Precision Dehydration (Full Billboard) -->
-        <div class="relative w-full min-h-screen flex items-center overflow-hidden border-b border-white/5 craft-board" id="craft-step-2">
+        <div class="relative w-full h-[60vh]  md:h-[40vh ] flex items-center overflow-hidden border-b border-white/5 craft-board" id="craft-step-2">
             <div class="absolute inset-0 z-0 bg-black">
                 <img src="<?php echo get_url('assets/images/craft_dehydration.png'); ?>" alt="Dehydration" class="w-full h-full object-cover opacity-60 scale-110 craft-img">
                 <div class="absolute inset-0 bg-gradient-to-l from-black via-black/40 to-transparent"></div>
@@ -1183,7 +1162,7 @@ $wishlist_json = json_encode($wishlist_ids);
         </div>
 
         <!-- Step 3: Boutique Packing (Full Billboard) -->
-        <div class="relative w-full min-h-screen flex items-center overflow-hidden craft-board" id="craft-step-3">
+        <div class="relative w-full h-[60vh]  md:h-[40vh ] flex items-center overflow-hidden craft-board" id="craft-step-3">
             <div class="absolute inset-0 z-0 bg-black">
                 <img src="<?php echo get_url('assets/images/craft_packing.png'); ?>" alt="Packing" class="w-full h-full object-cover opacity-70 scale-110 craft-img">
                 <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
@@ -1198,58 +1177,55 @@ $wishlist_json = json_encode($wishlist_ids);
         </div>
     </section>
 
-    <!-- Immersive Craft Journey Engine -->
+    <!-- GSAP Craft Journey Animation Engine -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const trigger = document.getElementById('craft-journey-trigger');
-            const boards = document.querySelectorAll('.craft-board');
-            if(!trigger) return;
+             if (typeof gsap === 'undefined') return;
 
-            // Smooth Interpolation Logic
-            let targetProgress = [];
-            let currentProgress = [];
-            const lerpFactor = 0.08;
+             const boards = document.querySelectorAll('.craft-board');
+             
+             boards.forEach((board, i) => {
+                 const content = board.querySelector('.craft-content');
+                 const img = board.querySelector('.craft-img');
+                 if(!content || !img) return;
 
-            boards.forEach((board, i) => {
-                targetProgress[i] = 0;
-                currentProgress[i] = 0;
-            });
+                 // Dynamic Move Vectors
+                 let xDir = i % 2 === 0 ? -80 : 80;
+                 let yDir = (i === 2) ? 60 : 0;
 
-            function updateCraftProgress() {
-                boards.forEach((board, i) => {
-                    const rect = board.getBoundingClientRect();
-                    const windowHeight = window.innerHeight;
-                    
-                    // Visibility Window per board
-                    let startPos = windowHeight * 1.1;
-                    let endPos = windowHeight * 0.2;
-                    let progress = (startPos - rect.top) / (startPos - endPos);
-                    targetProgress[i] = Math.max(0, Math.min(1, progress));
-                    
-                    // LERP Smoothness
-                    currentProgress[i] += (targetProgress[i] - currentProgress[i]) * lerpFactor;
-                    
-                    // Content Reveal
-                    const content = board.querySelector('.craft-content');
-                    const img = board.querySelector('.craft-img');
-                    
-                    if(content) {
-                        content.style.opacity = currentProgress[i];
-                        // Stagger the slide-in based on stage index
-                        let slideX = (1 - currentProgress[i]) * (i % 2 === 0 ? -50 : 50);
-                        let slideY = (i === 2) ? (1 - currentProgress[i]) * 50 : 0;
-                        content.style.transform = `translate(${slideX}px, ${slideY}px)`;
+                 // Set Initial State
+                 gsap.set(content, { opacity: 0, x: xDir, y: yDir });
+
+                 // Content Reveal with early finish
+                 gsap.to(content, {
+                    opacity: 1,
+                    x: 0,
+                    y: 0,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: board,
+                        start: "top 90%",
+                        end: "top 45%", // Finish earlier so user sees the text clearly
+                        scrub: 0.4
                     }
+                 });
 
-                    if(img) {
-                        img.style.transform = `scale(${1.1 - (currentProgress[i] * 0.1)}) rotate(${ (1 - currentProgress[i]) * 1 }deg)`;
+                 // High Performance Image Scaling - purely parallax
+                 gsap.fromTo(img,
+                    { scale: 1.12, rotation: 1 },
+                    { 
+                        scale: 1, 
+                        rotation: 0, 
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: board,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: true
+                        }
                     }
-                });
-                
-                requestAnimationFrame(updateCraftProgress);
-            }
-
-            requestAnimationFrame(updateCraftProgress);
+                 );
+             });
         });
     </script>
 

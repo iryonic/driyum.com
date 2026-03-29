@@ -232,7 +232,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Website</h4>
                 <div class="space-y-1">
                     <a href="manage_home.php" class="nav-link <?php echo $p=='manage_home.php'?'nav-link-active':'text-white'; ?>">
-                        <i class="fas fa-home w-5 text-sm"></i> <span>Homepage</span>
+                        <i class="fas fa-home w-5 text-sm"></i> 
+                        <span>Homepage</span>
+                    </a>
+                    <a href="manage_partners.php" class="nav-link <?php echo $p=='manage_partners.php'?'nav-link-active':'text-white'; ?>">
+                        <i class="fas fa-handshake w-5 text-sm"></i> 
+                        <span class="flex-1">Retail Partners</span>
+                        <span class="bg-[#24B25D] text-black text-[9px] font-black px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(25,220,126,0.5)]">NEW</span>
                     </a>
                     <a href="manage_pages.php" class="nav-link <?php echo $p=='manage_pages.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-file w-5 text-sm"></i> <span>Pages</span>
