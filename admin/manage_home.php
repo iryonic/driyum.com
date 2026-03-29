@@ -241,131 +241,92 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $redirect = true;
     }
     
-    // --- HERO SLIDE MANAGEMENT ---
-    if (isset($_POST['add_slide']) || isset($_POST['edit_slide'])) {
-        // Debug Logging
-        $log_data = "Time: " . date('Y-m-d H:i:s') . "\n";
-        $log_data .= "POST: " . print_r($_POST, true) . "\n";
-        $log_data .= "FILES: " . print_r($_FILES, true) . "\n";
-        file_put_contents('../tmp/slider_debug.log', $log_data, FILE_APPEND);
-
-        $title = sanitize_input($_POST['slide_title'] ?? '');
-        $subtitle = $_POST['slide_subtitle'] ?? '';
-        $badge_text = $_POST['badge_text'] ?? '';
-        $cta_text = $_POST['slide_cta_text'] ?? '';
-        $cta_link = $_POST['slide_cta_link'] ?? '';
-        $sort_order = intval($_POST['slide_sort_order'] ?? 0);
+    // --- HERO SLIDE MANAGEMENT --- (Add/Update)
+    if (isset($_POST['add_slide']) || isset($_POST['edit_slide']) || isset($_POST['add_slide_action']) || isset($_POST['edit_slide_action'])) {
+        $id = isset($_POST['slide_id']) ? intval($_POST['slide_id']) : 0;
         
-        $show_title = isset($_POST['show_title']) ? 1 : 0;
-        $show_subtitle = isset($_POST['show_subtitle']) ? 1 : 0;
-        $show_badge = isset($_POST['show_badge']) ? 1 : 0;
-        $show_cta = isset($_POST['show_cta']) ? 1 : 0;
-        $product_id = !empty($_POST['product_id']) ? intval($_POST['product_id']) : null;
+        // 1. Fetch existing data (if editing) to preserve hidden fields
+        $existing = null;
+        if ($id > 0) {
+            $existing = fetch_one("SELECT * FROM hero_slides WHERE id = ?", [$id]);
+        }
+        
+        // 2. Map form data with defaults (preserving old if missing)
+        $title         = $_POST['slide_title'] ?? ($existing['title'] ?? '');
+        $show_title    = isset($_POST['show_title']) ? 1 : ($existing['show_title'] ?? 1);
+        $subtitle      = $_POST['slide_subtitle'] ?? ($existing['subtitle'] ?? '');
+        $show_subtitle = isset($_POST['show_subtitle']) ? 1 : ($existing['show_subtitle'] ?? 1);
+        
+        $image_url        = $_POST['current_image'] ?? ($existing['image'] ?? '');
+        $image_tablet_url = $_POST['current_image_tablet'] ?? ($existing['image_tablet'] ?? null);
+        $image_mobile_url = $_POST['current_image_mobile'] ?? ($existing['image_mobile'] ?? null);
+        
+        $cta_text     = $_POST['slide_cta_text'] ?? ($existing['cta_text'] ?? '');
+        $cta_link     = $_POST['slide_cta_link'] ?? ($existing['cta_link'] ?? '');
+        $show_cta     = isset($_POST['show_cta']) ? 1 : ($existing['show_cta'] ?? 1);
+        
+        $sort_order   = intval($_POST['slide_sort_order'] ?? ($existing['sort_order'] ?? 0));
+        $badge_text   = $_POST['badge_text'] ?? ($existing['badge_text'] ?? '');
+        $show_badge   = isset($_POST['show_badge']) ? 1 : ($existing['show_badge'] ?? 1);
+        
+        $price        = floatval($_POST['price'] ?? ($existing['price'] ?? 0));
+        $accent_color = $_POST['accent_color'] ?? ($existing['accent_color'] ?? '#19DC7E');
+        $v_text_1     = $_POST['v_text_1'] ?? ($existing['v_text_1'] ?? 'SNACKING');
+        $v_text_2     = $_POST['v_text_2'] ?? ($existing['v_text_2'] ?? 'REIMAGINED');
+        
+        $product_id   = !empty($_POST['product_id']) ? intval($_POST['product_id']) : ($existing['product_id'] ?? null);
 
-        $price = floatval($_POST['price'] ?? 0);
-        $accent_color = $_POST['accent_color'] ?? '#19DC7E';
-        $v_text_1 = $_POST['v_text_1'] ?? 'SNACKING';
-        $v_text_2 = $_POST['v_text_2'] ?? 'REIMAGINED';
+        // 3. Handle File Uploads
+        $target_dir = "../assets/images/uploads/";
+        if (!file_exists($target_dir)) @mkdir($target_dir, 0777, true);
 
-        if (isset($_POST['add_slide'])) {
-            if($_FILES['slide_image']['error'] != 0) $error = "Missing Input: Slide Photo/Image is mandatory.";
-            
-            if(!$error) {
-                resolve_sort_conflict('hero_slides', $sort_order);
-                $image_url = 'assets/images/hero.jpg';
-                $image_tablet_url = null;
-                $image_mobile_url = null;
-                
-                $target_dir = "../assets/images/uploads/";
-                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+        // Files to process
+        $files_to_check = [
+            'slide_image' => [&$image_url, 'slide_'],
+            'slide_image_tablet' => [&$image_tablet_url, 'slide_tab_'],
+            'slide_image_mobile' => [&$image_mobile_url, 'slide_mob_']
+        ];
 
-                if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
-                    $filename = "slide_" . uniqid() . "_" . basename($_FILES["slide_image"]["name"]);
-                    if (move_uploaded_file($_FILES["slide_image"]["tmp_name"], $target_dir . $filename)) {
-                        $image_url = "assets/images/uploads/" . $filename;
+        foreach ($files_to_check as $input_name => &$data) {
+            if (isset($_FILES[$input_name]) && $_FILES[$input_name]['error'] === UPLOAD_ERR_OK) {
+                $unique_name = $data[1] . uniqid() . "_" . basename($_FILES[$input_name]["name"]);
+                if (move_uploaded_file($_FILES[$input_name]["tmp_name"], $target_dir . $unique_name)) {
+                    // Update variable with new path
+                    $old_path = $data[0];
+                    $data[0] = "assets/images/uploads/" . $unique_name;
+                    // Delete old file if it exists and was an upload
+                    if ($id > 0 && !empty($old_path) && strpos($old_path, 'assets/images/uploads/') === 0) {
+                        @unlink("../" . $old_path);
                     }
                 }
-                
-                $image_tablet_url = null;
-                if (isset($_FILES['slide_image_tablet']) && $_FILES['slide_image_tablet']['error'] == 0) {
-                    $target_dir = "../assets/images/uploads/";
-                    if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-                    $filename = "slide_tab_" . uniqid() . "_" . basename($_FILES["slide_image_tablet"]["name"]);
-                    if (move_uploaded_file($_FILES["slide_image_tablet"]["tmp_name"], $target_dir . $filename)) {
-                        $image_tablet_url = "assets/images/uploads/" . $filename;
-                    }
-                }
-                
-                $image_mobile_url = null;
-                if (isset($_FILES['slide_image_mobile']) && $_FILES['slide_image_mobile']['error'] == 0) {
-                    $target_dir = "../assets/images/uploads/";
-                    if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-                    $filename = "slide_mob_" . uniqid() . "_" . basename($_FILES["slide_image_mobile"]["name"]);
-                    if (move_uploaded_file($_FILES["slide_image_mobile"]["tmp_name"], $target_dir . $filename)) {
-                        $image_mobile_url = "assets/images/uploads/" . $filename;
-                    }
-                }
-
-                $stmt = $conn->prepare("INSERT INTO hero_slides (title, show_title, subtitle, show_subtitle, image, image_tablet, image_mobile, cta_text, cta_link, show_cta, sort_order, is_active, badge_text, show_badge, price, accent_color, v_text_1, v_text_2, product_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sisisssssiisidsssi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id);
-                if ($stmt->execute()) {
-                    $_SESSION['msg'] = "New dynamic slide added!";
-                    $redirect = true;
-                } else $error = "Failed to add slide: " . $conn->error;
+            } elseif (isset($_FILES[$input_name]) && $_FILES[$input_name]['error'] !== UPLOAD_ERR_NO_FILE) {
+                $error = "File Upload Error ($input_name): code " . $_FILES[$input_name]['error'];
+                break;
             }
-        } elseif (isset($_POST['edit_slide'])) {
-            $id = intval($_POST['slide_id']);
-            if(!$error) {
-                resolve_sort_conflict('hero_slides', $sort_order, $id);
-                $image_url = $_POST['current_image'] ?? '';
-                $image_tablet_url = $_POST['current_image_tablet'] ?? null;
-                $image_mobile_url = $_POST['current_image_mobile'] ?? null;
-                
-                $target_dir = "../assets/images/uploads/";
-                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+        }
 
-                if (isset($_FILES['slide_image']) && $_FILES['slide_image']['error'] == 0) {
-                    $filename = "slide_" . uniqid() . "_" . basename($_FILES["slide_image"]["name"]);
-                    if (move_uploaded_file($_FILES["slide_image"]["tmp_name"], $target_dir . $filename)) {
-                        $image_url = "assets/images/uploads/" . $filename;
-                        // Delete old image if it's an upload
-                        $old_slide = fetch_one("SELECT image FROM hero_slides WHERE id = $id");
-                        if ($old_slide && strpos($old_slide['image'], 'assets/images/uploads/') === 0) {
-                            @unlink("../" . $old_slide['image']);
-                        }
-                    }
-                }
-
-                if (isset($_FILES['slide_image_tablet']) && $_FILES['slide_image_tablet']['error'] == 0) {
-                    $filename = "slide_tab_" . uniqid() . "_" . basename($_FILES["slide_image_tablet"]["name"]);
-                    if (move_uploaded_file($_FILES["slide_image_tablet"]["tmp_name"], $target_dir . $filename)) {
-                        $image_tablet_url = "assets/images/uploads/" . $filename;
-                        // Delete old image if it's an upload
-                        $old_slide = fetch_one("SELECT image_tablet FROM hero_slides WHERE id = $id");
-                        if ($old_slide && !empty($old_slide['image_tablet']) && strpos($old_slide['image_tablet'], 'assets/images/uploads/') === 0) {
-                            @unlink("../" . $old_slide['image_tablet']);
-                        }
-                    }
-                }
-
-                if (isset($_FILES['slide_image_mobile']) && $_FILES['slide_image_mobile']['error'] == 0) {
-                    $filename = "slide_mob_" . uniqid() . "_" . basename($_FILES["slide_image_mobile"]["name"]);
-                    if (move_uploaded_file($_FILES["slide_image_mobile"]["tmp_name"], $target_dir . $filename)) {
-                        $image_mobile_url = "assets/images/uploads/" . $filename;
-                        // Delete old image if it's an upload
-                        $old_slide = fetch_one("SELECT image_mobile FROM hero_slides WHERE id = $id");
-                        if ($old_slide && !empty($old_slide['image_mobile']) && strpos($old_slide['image_mobile'], 'assets/images/uploads/') === 0) {
-                            @unlink("../" . $old_slide['image_mobile']);
-                        }
-                    }
-                }
-
-                $stmt = $conn->prepare("UPDATE hero_slides SET title=?, show_title=?, subtitle=?, show_subtitle=?, image=?, image_tablet=?, image_mobile=?, cta_text=?, cta_link=?, show_cta=?, sort_order=?, badge_text=?, show_badge=?, price=?, accent_color=?, v_text_1=?, v_text_2=?, product_id=? WHERE id=?");
+        // 4. Database Persistence
+        if (!$error) {
+            resolve_sort_conflict('hero_slides', $sort_order, $id);
+            
+            if ((isset($_POST['add_slide']) || isset($_POST['add_slide_action'])) && !isset($_POST['edit_slide_action'])) {
+                // INSERT
+                $query = "INSERT INTO hero_slides (title, show_title, subtitle, show_subtitle, image, image_tablet, image_mobile, cta_text, cta_link, show_cta, sort_order, is_active, badge_text, show_badge, price, accent_color, v_text_1, v_text_2, product_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("sisisssssiisidsssi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id);
+            } else {
+                // UPDATE
+                $query = "UPDATE hero_slides SET title=?, show_title=?, subtitle=?, show_subtitle=?, image=?, image_tablet=?, image_mobile=?, cta_text=?, cta_link=?, show_cta=?, sort_order=?, badge_text=?, show_badge=?, price=?, accent_color=?, v_text_1=?, v_text_2=?, product_id=? WHERE id=?";
+                $stmt = $conn->prepare($query);
                 $stmt->bind_param("sisisssssiisidsssii", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id, $id);
-                if ($stmt->execute()) {
-                    $_SESSION['msg'] = "Dynamic slide updated!";
-                    $redirect = true;
-                } else $error = "Failed to update slide: " . $conn->error;
+            }
+
+            if ($stmt && $stmt->execute()) {
+                $_SESSION['msg'] = isset($_POST['add_slide']) ? "New dynamic slide added!" : "Dynamic slide updated!";
+                $redirect = true;
+            } else {
+                $err_msg = ($stmt ? $stmt->error : $conn->error);
+                $error = "Database Error: " . $err_msg;
             }
         }
     }
@@ -911,6 +872,7 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
         </div>
         <div class="overflow-y-auto custom-scrollbar flex-1">
             <form method="POST" enctype="multipart/form-data" class="p-8 space-y-8">
+                <input type="hidden" name="add_slide_action" value="1">
                 <div class="relative h-[220px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 shadow-inner group/preview">
                     <img id="add-preview-bg" src="../assets/images/hero.jpg" class="w-full h-full object-cover">
                     <!-- Overlays for Tablet/Mobile Preview -->
@@ -927,7 +889,7 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="space-y-1">
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Desktop</label>
-                            <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
+                            <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden">
                             <label for="add-file-input" class="w-full border-2 border-dashed border-gray-100 rounded-xl p-4 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col items-center gap-2 group/btn transition-all">
                                 <i class="fas fa-desktop text-gray-300 group-hover/btn:text-emerald-500"></i>
                                 <span class="text-[8px] font-bold text-gray-400 uppercase">Banner</span>
