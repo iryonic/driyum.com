@@ -2,6 +2,24 @@
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
+/**
+ * Automagically shifts existing items to prevent sort order conflicts
+ */
+function resolve_sort_conflict($table, $new_sort, $exclude_id = 0) {
+    global $conn;
+    $new_sort = intval($new_sort);
+    $exclude_id = intval($exclude_id);
+    
+    // Check if any other item already uses this sort order
+    $sql_check = "SELECT id FROM $table WHERE sort_order = $new_sort AND id != $exclude_id LIMIT 1";
+    $exists = $conn->query($sql_check)->fetch_assoc();
+    
+    if ($exists) {
+        // Shift all matching or higher items up by 1
+        $conn->query("UPDATE $table SET sort_order = sort_order + 1 WHERE sort_order >= $new_sort AND id != $exclude_id");
+    }
+}
+
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 // Strict Admin Check
@@ -77,16 +95,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sort_order = intval($_POST['sort_order']);
         
         if (isset($_POST['add_badge'])) {
-            $stmt = $conn->prepare("INSERT INTO trust_badges (title, subtitle, icon, bg_color, icon_color, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssi", $title, $subtitle, $icon, $bg_color, $icon_color, $sort_order);
+            resolve_sort_conflict('trust_badges', $sort_order);
+            $stmt = $conn->prepare("INSERT INTO trust_badges (title, subtitle, icon, sort_order, is_active, bg_color, icon_color) VALUES (?, ?, ?, ?, 1, ?, ?)");
+            $stmt->bind_param("sssiss", $title, $subtitle, $icon, $sort_order, $bg_color, $icon_color);
             if ($stmt->execute()) $_SESSION['msg'] = "Badge added!";
-            else $_SESSION['error'] = "Failed to add badge.";
+            else $_SESSION['error'] = "Failed to add badge: " . $conn->error;
         } else {
             $id = intval($_POST['badge_id']);
-            $stmt = $conn->prepare("UPDATE trust_badges SET title=?, subtitle=?, icon=?, bg_color=?, icon_color=?, sort_order=? WHERE id=?");
-            $stmt->bind_param("sssssii", $title, $subtitle, $icon, $bg_color, $icon_color, $sort_order, $id);
+            resolve_sort_conflict('trust_badges', $sort_order, $id);
+            $stmt = $conn->prepare("UPDATE trust_badges SET title=?, subtitle=?, icon=?, sort_order=?, bg_color=?, icon_color=? WHERE id=?");
+            $stmt->bind_param("sssisss", $title, $subtitle, $icon, $sort_order, $bg_color, $icon_color, $id);
             if ($stmt->execute()) $_SESSION['msg'] = "Badge updated!";
-            else $_SESSION['error'] = "Failed to update badge.";
+            else $_SESSION['error'] = "Failed to update badge: " . $conn->error;
         }
         $redirect = true;
     }
@@ -187,12 +207,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (isset($_POST['add_partner'])) {
+            resolve_sort_conflict('partners', $sort_order);
             $stmt = $conn->prepare("INSERT INTO partners (name, logo, location, website_url, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("ssssii", $name, $logo_url, $location, $link, $sort_order, $is_active);
             if ($stmt->execute()) $_SESSION['msg'] = "Partner added!";
             else $_SESSION['error'] = "Failed to add partner: " . $conn->error;
         } else {
             $id = intval($_POST['partner_id']);
+            resolve_sort_conflict('partners', $sort_order, $id);
             $stmt = $conn->prepare("UPDATE partners SET name=?, logo=?, location=?, website_url=?, sort_order=?, is_active=? WHERE id=?");
             $stmt->bind_param("ssssiii", $name, $logo_url, $location, $link, $sort_order, $is_active, $id);
             if ($stmt->execute()) $_SESSION['msg'] = "Partner updated!";
@@ -243,6 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($_FILES['slide_image']['error'] != 0) $error = "Missing Input: Slide Photo/Image is mandatory.";
             
             if(!$error) {
+                resolve_sort_conflict('hero_slides', $sort_order);
                 $image_url = 'assets/images/hero.jpg';
                 $image_tablet_url = null;
                 $image_mobile_url = null;
@@ -281,6 +304,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (isset($_POST['edit_slide'])) {
             $id = intval($_POST['slide_id']);
             if(!$error) {
+                resolve_sort_conflict('hero_slides', $sort_order, $id);
                 $image_url = $_POST['current_image'] ?? '';
                 $image_tablet_url = $_POST['current_image_tablet'] ?? null;
                 $image_mobile_url = $_POST['current_image_mobile'] ?? null;
@@ -481,6 +505,7 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                                 <tr class="text-left border-b border-gray-100">
                                     <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4">Icon & Title</th>
                                     <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Style</th>
+                                    <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Order</th>
                                     <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Status</th>
                                     <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-right">Actions</th>
                                 </tr>
@@ -508,6 +533,7 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                                             <span class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">Icon: <?php echo $ic; ?></span>
                                         </div>
                                     </td>
+                                    <td class="py-5 px-4 text-center font-black text-xs text-gray-900"><?php echo $badge['sort_order']; ?></td>
                                     <td class="py-5 px-4 text-center">
                                         <form method="POST">
                                             <input type="hidden" name="badge_id" value="<?php echo $badge['id']; ?>">
@@ -571,8 +597,8 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                                     <img src="../<?php echo $slide['image']; ?>" class="w-full h-full object-cover">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                                     
-                                    <!-- Status Badge -->
-                                    <div class="absolute top-4 left-4">
+                                    <!-- Status & Sort Badge -->
+                                    <div class="absolute top-4 left-4 flex flex-col gap-2">
                                         <?php if($slide['is_active']): ?>
                                             <span class="bg-[#24B25D] text-black text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-xl flex items-center gap-1.5">
                                                 <span class="w-1 h-1 bg-black rounded-full animate-pulse"></span> Active
@@ -580,6 +606,9 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                                         <?php else: ?>
                                             <span class="bg-gray-500 text-white text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-xl">Hidden</span>
                                         <?php endif; ?>
+                                        <span class="bg-black/80 backdrop-blur-sm text-white text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-xl w-fit">
+                                            Order: <?php echo $slide['sort_order']; ?>
+                                        </span>
                                     </div>
 
                                     <!-- Actions Overlay -->
@@ -814,6 +843,9 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     <?php foreach($partners as $p): ?>
                     <div class="group relative bg-white border border-gray-100 rounded-3xl p-5 hover:shadow-xl transition-all text-center">
+                        <div class="absolute top-3 right-3 z-10">
+                             <span class="bg-black text-white text-[7px] font-black px-2 py-0.5 rounded-md uppercase tracking-tighter shadow-sm">#<?php echo $p['sort_order']; ?></span>
+                        </div>
                         <div class="h-16 flex items-center justify-center mb-4">
                             <img src="../<?php echo $p['logo']; ?>" class="max-h-full max-w-full object-contain filter <?php echo !$p['is_active'] ? 'grayscale opacity-30 drop-shadow-sm' : ''; ?>">
                         </div>
@@ -860,112 +892,52 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                     </div>
                 </div>
                 <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-4">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Desktop Banner (1920x...) </label>
-                                <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
-                                <label for="add-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                    <i class="fas fa-desktop text-xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
-                                    <span class="font-bold text-[10px] text-gray-500">UPLOAD DESKTOP BANNER</span>
-                                </label>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tablet Banner (768px-1024px) </label>
-                                <input type="file" name="slide_image_tablet" id="add-file-tablet-input" onchange="previewSlideFile(this, 'add-tablet')" class="hidden">
-                                <label for="add-file-tablet-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                    <i class="fas fa-tablet-alt text-xl text-gray-300 group-hover/btn:text-blue-500 transition-colors"></i>
-                                    <span class="font-bold text-[10px] text-gray-500">UPLOAD TABLET BANNER (OPTIONAL)</span>
-                                </label>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Mobile Banner (Max 768px) </label>
-                                <input type="file" name="slide_image_mobile" id="add-file-mobile-input" onchange="previewSlideFile(this, 'add-mobile')" class="hidden">
-                                <label for="add-file-mobile-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                    <i class="fas fa-mobile-alt text-xl text-gray-300 group-hover/btn:text-amber-500 transition-colors"></i>
-                                    <span class="font-bold text-[10px] text-gray-500">UPLOAD MOBILE BANNER (OPTIONAL)</span>
-                                </label>
-                            </div>
+                    <!-- Image Uploads -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Desktop</label>
+                            <input type="file" name="slide_image" id="add-file-input" onchange="previewSlideFile(this, 'add')" class="hidden" required>
+                            <label for="add-file-input" class="w-full border-2 border-dashed border-gray-100 rounded-xl p-4 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col items-center gap-2 group/btn transition-all">
+                                <i class="fas fa-desktop text-gray-300 group-hover/btn:text-emerald-500"></i>
+                                <span class="text-[8px] font-bold text-gray-400 uppercase">Banner</span>
+                            </label>
                         </div>
-                        <div class="space-y-4">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Title</label>
-                                <input type="text" name="slide_title" placeholder="e.g. FIG ROLLS" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg shadow-inner">
-                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                    <input type="checkbox" name="show_title" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Title on Slide</span>
-                                </label>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sub-Headline</label>
-                                <input type="text" name="slide_subtitle" placeholder="e.g. Pure Energy" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
-                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                    <input type="checkbox" name="show_subtitle" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Subtitle</span>
-                                </label>
-                            </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tablet</label>
+                            <input type="file" name="slide_image_tablet" id="add-file-tablet-input" onchange="previewSlideFile(this, 'add-tablet')" class="hidden">
+                            <label for="add-file-tablet-input" class="w-full border-2 border-dashed border-gray-100 rounded-xl p-4 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col items-center gap-2 group/btn transition-all">
+                                <i class="fas fa-tablet-alt text-gray-300 group-hover/btn:text-blue-500"></i>
+                                <span class="text-[8px] font-bold text-gray-400 uppercase">Banner</span>
+                            </label>
                         </div>
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Badge Text</label>
-                                    <input type="text" name="badge_text" placeholder="FREE SHIPPING" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-[10px] uppercase shadow-sm">
-                                    <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                        <input type="checkbox" name="show_badge" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                        <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show Badge</span>
-                                    </label>
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Price Label</label>
-                                    <input type="number" step="0.01" name="price" placeholder="249.00" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-sm shadow-sm">
-                                </div>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">CTA Button Text</label>
-                                <input type="text" name="slide_cta_text" placeholder="SHOP NOW" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
-                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                    <input type="checkbox" name="show_cta" checked class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show CTA Button</span>
-                                </label>
-                            </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Mobile</label>
+                            <input type="file" name="slide_image_mobile" id="add-file-mobile-input" onchange="previewSlideFile(this, 'add-mobile')" class="hidden">
+                            <label for="add-file-mobile-input" class="w-full border-2 border-dashed border-gray-100 rounded-xl p-4 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col items-center gap-2 group/btn transition-all">
+                                <i class="fas fa-mobile-alt text-gray-300 group-hover/btn:text-amber-500"></i>
+                                <span class="text-[8px] font-bold text-gray-400 uppercase">Banner</span>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-6">
+                    <!-- Links & Sorting -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Color</label>
-                            <input type="color" name="accent_color" value="#19DC7E" class="w-full h-14 bg-white border border-gray-100 rounded-2xl p-2 outline-none cursor-pointer">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 1</label>
-                            <input type="text" name="v_text_1" placeholder="SNACKING" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 2</label>
-                            <input type="text" name="v_text_2" placeholder="REIMAGINED" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                         <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
-                            <input type="number" name="slide_sort_order" id="add-slide-sort" value="0" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner" placeholder="0">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Link to Product</label>
-                            <select name="product_id" id="add-product-id" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
-                                <option value="">-- No Product Linked --</option>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Product Link</label>
+                            <select name="product_id" id="add-product-id" class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-bold text-xs shadow-sm">
+                                <option value="">-- None --</option>
                                 <?php foreach($all_products as $p): ?>
                                     <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">OR Custom Link</label>
-                            <input type="text" name="slide_cta_link" placeholder="https://driyum.com/shop" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Custom Link</label>
+                            <input type="text" name="slide_cta_link" placeholder="https://..." class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-bold text-xs shadow-sm">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort order</label>
+                            <input type="number" name="slide_sort_order" id="add-slide-sort" value="0" class="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner">
                         </div>
                     </div>
                 </div>
@@ -1023,115 +995,52 @@ $partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
                 </div>
                 
                 <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-4">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Desktop Banner Image</label>
-                                <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
-                                <label for="edit-file-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                    <i class="fas fa-desktop text-xl text-gray-300 group-hover/btn:text-emerald-500 transition-colors"></i>
-                                    <span class="font-bold text-[10px] text-gray-500 uppercase">Change Desktop Banner (1920x...)</span>
-                                </label>
-                            </div>
-
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tablet Banner Image</label>
-                                <input type="file" name="slide_image_tablet" id="edit-file-tablet-input" onchange="previewSlideFile(this, 'edit-tablet')" class="hidden">
-                                <label for="edit-file-tablet-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                    <i class="fas fa-tablet-alt text-xl text-gray-300 group-hover/btn:text-blue-500 transition-colors"></i>
-                                    <span class="font-bold text-[10px] text-gray-500 uppercase">Change Tablet Banner (768px-1024px)</span>
-                                </label>
-                            </div>
-
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Mobile Banner Image</label>
-                                <input type="file" name="slide_image_mobile" id="edit-file-mobile-input" onchange="previewSlideFile(this, 'edit-mobile')" class="hidden">
-                                <label for="edit-file-mobile-input" class="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-4 text-center bg-gray-50 hover:bg-gray-100 hover:border-emerald-300 cursor-pointer flex flex-col items-center justify-center gap-2 group/btn transition-all">
-                                    <i class="fas fa-mobile-alt text-xl text-gray-300 group-hover/btn:text-amber-500 transition-colors"></i>
-                                    <span class="font-bold text-[10px] text-gray-500 uppercase">Change Mobile Banner (Max 768px)</span>
-                                </label>
-                            </div>
-                            <p class="text-[8px] text-gray-400 font-bold uppercase mt-2 text-center">Leave blank to keep current</p>
+                    <!-- Image Uploads -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Desktop</label>
+                            <input type="file" name="slide_image" id="edit-file-input" onchange="previewSlideFile(this, 'edit')" class="hidden">
+                            <label for="edit-file-input" class="w-full border-2 border-dashed border-gray-100 rounded-xl p-4 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col items-center gap-2 group/btn transition-all">
+                                <i class="fas fa-desktop text-gray-300 group-hover/btn:text-emerald-500"></i>
+                                <span class="text-[8px] font-bold text-gray-400 uppercase">Change Banner</span>
+                            </label>
                         </div>
-                        <div class="space-y-4">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Hero Title</label>
-                                <input type="text" name="slide_title" id="edit-slide-title" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg shadow-inner">
-                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                    <input type="checkbox" name="show_title" id="edit-show-title" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Title</span>
-                                </label>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sub-Headline</label>
-                                <input type="text" name="slide_subtitle" id="edit-slide-subtitle" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
-                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                    <input type="checkbox" name="show_subtitle" id="edit-show-subtitle" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Show Subtitle</span>
-                                </label>
-                            </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Tablet</label>
+                            <input type="file" name="slide_image_tablet" id="edit-file-tablet-input" onchange="previewSlideFile(this, 'edit-tablet')" class="hidden">
+                            <label for="edit-file-tablet-input" class="w-full border-2 border-dashed border-gray-100 rounded-xl p-4 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col items-center gap-2 group/btn transition-all">
+                                <i class="fas fa-tablet-alt text-gray-300 group-hover/btn:text-blue-500"></i>
+                                <span class="text-[8px] font-bold text-gray-400 uppercase">Change Banner</span>
+                            </label>
                         </div>
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Badge Text</label>
-                                    <input type="text" name="badge_text" id="edit-badge-text" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-[10px] uppercase shadow-sm">
-                                    <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                        <input type="checkbox" name="show_badge" id="edit-show-badge" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                        <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show Badge</span>
-                                    </label>
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Price Label</label>
-                                    <input type="number" step="0.01" name="price" id="edit-price" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-sm shadow-sm">
-                                </div>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">CTA Button Text</label>
-                                <input type="text" name="slide_cta_text" id="edit-cta-text" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
-                                <label class="flex items-center gap-2 mt-2 ml-1 cursor-pointer">
-                                    <input type="checkbox" name="show_cta" id="edit-show-cta" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
-                                    <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Show CTA Button</span>
-                                </label>
-                            </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Mobile</label>
+                            <input type="file" name="slide_image_mobile" id="edit-file-mobile-input" onchange="previewSlideFile(this, 'edit-mobile')" class="hidden">
+                            <label for="edit-file-mobile-input" class="w-full border-2 border-dashed border-gray-100 rounded-xl p-4 text-center bg-gray-50 hover:bg-gray-100 cursor-pointer flex flex-col items-center gap-2 group/btn transition-all">
+                                <i class="fas fa-mobile-alt text-gray-300 group-hover/btn:text-amber-500"></i>
+                                <span class="text-[8px] font-bold text-gray-400 uppercase">Change Banner</span>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-6">
+                    <!-- Links & Sorting -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Accent Color</label>
-                            <input type="color" name="accent_color" id="edit-accent-color" class="w-full h-14 bg-white border border-gray-100 rounded-2xl p-2 outline-none cursor-pointer">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 1</label>
-                            <input type="text" name="v_text_1" id="edit-v-text-1" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Vertical Text 2</label>
-                            <input type="text" name="v_text_2" id="edit-v-text-2" class="w-full bg-white border border-gray-100 rounded-2xl px-4 py-4 outline-none focus:border-emerald-500 font-black text-[10px] uppercase shadow-sm">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Priority</label>
-                            <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full bg-gray-50 border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner" placeholder="0">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Link to Product</label>
-                            <select name="product_id" id="edit-product-id" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
-                                <option value="">-- No Product Linked --</option>
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Product Link</label>
+                            <select name="product_id" id="edit-product-id" class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-bold text-xs shadow-sm">
+                                <option value="">-- None --</option>
                                 <?php foreach($all_products as $p): ?>
                                     <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['name']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="space-y-1">
-                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">OR Custom Link</label>
-                            <input type="text" name="slide_cta_link" id="edit-cta-link" placeholder="https://driyum.com/shop" class="w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-emerald-500 font-bold text-sm shadow-sm">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Custom Link</label>
+                            <input type="text" name="slide_cta_link" id="edit-cta-link" class="w-full bg-white border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-bold text-xs shadow-sm">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort order</label>
+                            <input type="number" name="slide_sort_order" id="edit-slide-sort" class="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-black text-lg text-center shadow-inner">
                         </div>
                     </div>
                 </div>
@@ -1410,24 +1319,10 @@ function openEditSlide(slide) {
     document.getElementById('edit-current-image-mobile').value = slide.image_mobile || '';
     
     // Core Fields
-    document.getElementById('edit-slide-title').value = slide.title || '';
-    document.getElementById('edit-slide-subtitle').value = slide.subtitle || '';
-    document.getElementById('edit-badge-text').value = slide.badge_text || '';
-    document.getElementById('edit-price').value = slide.price || 0;
-    document.getElementById('edit-cta-text').value = slide.cta_text || '';
     document.getElementById('edit-cta-link').value = slide.cta_link || '';
     document.getElementById('edit-slide-sort').value = slide.sort_order || 0;
     
-    // Visibility Checkboxes
-    document.getElementById('edit-show-title').checked = slide.show_title == 1;
-    document.getElementById('edit-show-subtitle').checked = slide.show_subtitle == 1;
-    document.getElementById('edit-show-badge').checked = slide.show_badge == 1;
-    document.getElementById('edit-show-cta').checked = slide.show_cta == 1;
-    
-    // Extended Aesthetics
-    document.getElementById('edit-accent-color').value = slide.accent_color || '#19DC7E';
-    document.getElementById('edit-v-text-1').value = slide.v_text_1 || 'SNACKING';
-    document.getElementById('edit-v-text-2').value = slide.v_text_2 || 'REIMAGINED';
+    // Select Product
     document.getElementById('edit-product-id').value = slide.product_id || '';
     
     // Previews
