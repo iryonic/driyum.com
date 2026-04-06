@@ -28,6 +28,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-T3LPLX64');</script>
 <!-- End Google Tag Manager -->
 
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
     <meta charset="UTF-8">
     <title>Label_<?php echo $order['order_number']; ?></title>
     <style>
@@ -42,8 +44,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .recipient p { margin: 5px 0; font-size: 14px; line-height: 1.4; }
         .cod-box { background: #000; color: #fff; padding: 10px; text-align: center; font-size: 18px; font-weight: bold; margin: 10px 0; }
         .prepaid-box { border: 2px solid #000; padding: 10px; text-align: center; font-size: 18px; font-weight: bold; margin: 10px 0; }
-        .barcode-area { text-align: center; padding: 20px 0; border-top: 2px solid #000; }
-        .order-num { font-size: 14px; font-weight: bold; margin-top: 5px; }
+        .barcode-area { text-align: center; padding: 10px 0; border-top: 2px solid #000; }
+        .barcode-area svg { max-width: 100%; height: auto; }
+        .order-num { font-size: 14px; font-weight: bold; margin-top: -5px; }
         @media print { .no-print { display: none; } }
     </style>
 </head>
@@ -92,11 +95,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <?php endif; ?>
 
             <div class="barcode-area">
-                <div style="font-size: 30px; letter-spacing: 5px;">||||||||||||||||||</div>
+                <svg id="barcode"></svg>
                 <div class="order-num"><?php echo $order['order_number']; ?></div>
             </div>
         </div>
     </div>
+
+    <script>
+        JsBarcode("#barcode", "<?php echo $order['order_number']; ?>", {
+            format: "CODE128",
+            width: 2,
+            height: 60,
+            displayValue: false
+        });
+    </script>
 
 </body>
 </html>

@@ -35,6 +35,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-T3LPLX64');</script>
 <!-- End Google Tag Manager -->
 
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
     <meta charset="UTF-8">
     <title>Batch_<?php echo ucfirst($type); ?>_<?php echo date('Ymd_His'); ?></title>
     <style>
@@ -81,7 +83,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .label-recipient p { margin: 8px 0; font-size: 13px; line-height: 1.4; }
         .cod-box { background: #000; color: #fff; padding: 10px; text-align: center; font-size: 18px; font-weight: bold; margin: 10px 0; }
         .prepaid-box { border: 2px solid #000; padding: 10px; text-align: center; font-size: 18px; font-weight: bold; margin: 10px 0; }
-        .barcode-area { text-align: center; padding: 15px 0; border-top: 2px solid #000; margin-top: auto; }
+        .barcode-area { text-align: center; padding: 10px 0; border-top: 2px solid #000; margin-top: auto; }
+        .barcode-area svg { max-width: 100%; height: auto; }
         
         /* Invoice Styles (A4 scale) */
         .invoice-page {
@@ -237,8 +240,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="prepaid-box">PREPAID</div>
                     <?php endif; ?>
                     <div class="barcode-area">
-                        <div style="font-size: 24px; letter-spacing: 4px;">||||||||||||||||||||</div>
-                        <div style="font-size: 12px; font-weight: 900; margin-top: 5px;"><?php echo $order['order_number']; ?></div>
+                        <svg class="barcode" data-value="<?php echo $order['order_number']; ?>"></svg>
+                        <div style="font-size: 12px; font-weight: 900; margin-top: -5px;"><?php echo $order['order_number']; ?></div>
                     </div>
                 </div>
             </div>
@@ -341,6 +344,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <?php endforeach; ?>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var barcodeElements = document.querySelectorAll(".barcode");
+            barcodeElements.forEach(function(el) {
+                JsBarcode(el, el.getAttribute("data-value"), {
+                    format: "CODE128",
+                    width: 2,
+                    height: 50,
+                    displayValue: false
+                });
+            });
+        });
+    </script>
 </body>
 </html>
 
