@@ -359,13 +359,13 @@ $wishlist_json = json_encode($wishlist_ids);
         .hero-banner-container {
             width: 100vw;
             aspect-ratio: 16 / 9;
-            max-height: 75vh;
+            max-height: 78vh;
         }
         @media (max-width: 1024px) {
             .hero-banner-container { aspect-ratio: 4 / 3; max-height: none; }
         }
         @media (max-width: 768px) {
-            .hero-banner-container { aspect-ratio: 3 / 4; max-height:75vh; }
+            .hero-banner-container { aspect-ratio: 3 / 4; max-height:78vh; }
         }
         .banner-slide {
             transition: opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1), filter 1.2s ease;
