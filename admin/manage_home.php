@@ -309,13 +309,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$error) {
             resolve_sort_conflict('hero_slides', $sort_order, $id);
             
-            if ((isset($_POST['add_slide']) || isset($_POST['add_slide_action'])) && !isset($_POST['edit_slide_action'])) {
-                // INSERT
+            if ($id <= 0) {
+                // INSERT - Brand New Slide
                 $query = "INSERT INTO hero_slides (title, show_title, subtitle, show_subtitle, image, image_tablet, image_mobile, cta_text, cta_link, show_cta, sort_order, is_active, badge_text, show_badge, price, accent_color, v_text_1, v_text_2, product_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($query);
                 $stmt->bind_param("sisisssssiisidsssi", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id);
             } else {
-                // UPDATE
+                // UPDATE - Existing Slide
                 $query = "UPDATE hero_slides SET title=?, show_title=?, subtitle=?, show_subtitle=?, image=?, image_tablet=?, image_mobile=?, cta_text=?, cta_link=?, show_cta=?, sort_order=?, badge_text=?, show_badge=?, price=?, accent_color=?, v_text_1=?, v_text_2=?, product_id=? WHERE id=?";
                 $stmt = $conn->prepare($query);
                 $stmt->bind_param("sisisssssiisidsssii", $title, $show_title, $subtitle, $show_subtitle, $image_url, $image_tablet_url, $image_mobile_url, $cta_text, $cta_link, $show_cta, $sort_order, $badge_text, $show_badge, $price, $accent_color, $v_text_1, $v_text_2, $product_id, $id);

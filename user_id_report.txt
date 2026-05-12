@@ -1,6 +1,0 @@
-Table: affiliates | Column: user_id | Null: NO
-Table: orders | Column: user_id | Null: YES
-Table: product_reviews | Column: user_id | Null: NO
-Table: reviews | Column: user_id | Null: NO
-Table: user_addresses | Column: user_id | Null: NO
-Table: wishlist | Column: user_id | Null: NO

@@ -272,8 +272,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             animation: dock-pop-up 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        body { padding-bottom: 140px; }
     }
 </style>
 

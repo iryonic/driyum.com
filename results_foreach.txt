@@ -1,5 +1,0 @@
-  46: foreach ($_SESSION['cart'] as $pid => $qty) {
- 268: foreach ($_SESSION['cart'] as $pid => $qty) {
- 285: foreach ($_SESSION['cart'] as $pid => $qty) {
- 521: <?php foreach($products_data as $id => $p):
- 544: <?php endforeach; ?>

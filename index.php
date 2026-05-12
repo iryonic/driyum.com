@@ -357,21 +357,36 @@ $wishlist_json = json_encode($wishlist_ids);
     <!-- PREMIUM FULL-WIDTH BANNER HERO -->
     <style>
         .hero-banner-container {
-            height: 64vh;
-            min-height: 480px;
-            max-height: 720px;
+            width: 100vw;
+            aspect-ratio: 16 / 9;
+            max-height: 75vh;
+        }
+        @media (max-width: 1024px) {
+            .hero-banner-container { aspect-ratio: 4 / 3; max-height: none; }
         }
         @media (max-width: 768px) {
-            .hero-banner-container { height: 50vh; min-height: 320px; }
+            .hero-banner-container { aspect-ratio: 3 / 4; max-height:75vh; }
         }
         .banner-slide {
-            transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1), filter 1.2s ease;
+            will-change: opacity, transform, filter;
         }
-        .banner-slide.active { opacity: 1 !important; z-index: 10; transform: scale(1) !important; }
+        .banner-slide.active { opacity: 1 !important; z-index: 10; transform: scale(1) translateZ(0) !important; filter: blur(0) !important; }
+        .banner-slide.active img { animation: kenburns 15s ease-out forwards; }
+     
         .banner-slide.inactive {
-            opacity: 0 !important; z-index: 0; transform: scale(1.05) !important;
+            opacity: 0 !important; z-index: 0; transform: scale(1.1) translateZ(0) !important;
+            filter: blur(15px) !important;
             position: absolute !important; top: 0; left: 0; width: 100%; height: 100%;
         }
+        .availbleatsection::-webkit-scrollbar {
+    display: none; /* For WebKit browsers */
+}
+.availbleatsection {
+    -ms-overflow-style: none;  /* For IE and Edge */
+    scrollbar-width: none;  /* For Firefox */
+}
+
     </style>
 
     <section id="hero-slider-section" class="relative hero-banner-container w-[100vw] mx-auto overflow-hidden bg-black group">
@@ -383,6 +398,9 @@ $wishlist_json = json_encode($wishlist_ids);
                 <!-- Clickable Link -->
                 <a href="<?php echo $slide_link; ?>" class="absolute inset-0 z-10 w-full h-full"></a>
 
+                <!-- Seamless Top Integration -->
+                <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-white/10 to-transparent z-20 pointer-events-none"></div>
+
                 <!-- Background Image (Responsive) -->
                 <div class="absolute inset-0 w-full h-full overflow-hidden">
                     <picture>
@@ -393,8 +411,9 @@ $wishlist_json = json_encode($wishlist_ids);
                             <source media="(max-width: 1024px)" srcset="<?php echo get_url($slide['image_tablet']); ?>">
                         <?php endif; ?>
                         <img src="<?php echo get_url($slide['image']); ?>" 
-                             class="w-full h-full object-cover object-center transform transition-transform duration-[10000ms] ease-linear <?php echo $index === 0 ? 'scale-110' : ''; ?>" 
-                             alt="<?php echo htmlspecialchars($slide['name']); ?>">
+                             class="w-full h-full object-cover object-center transform transition-all duration-[10000ms] ease-linear <?php echo $index === 0 ? 'scale-110' : ''; ?> will-change-transform" 
+                             style="transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1), opacity 1s ease;"
+                             alt="<?php echo htmlspecialchars($slide['name'] ?? ''); ?>">
                     </picture>
                 </div>
 
@@ -446,53 +465,48 @@ $wishlist_json = json_encode($wishlist_ids);
                     <button onclick="goToSlide(<?php echo $i; ?>)" class="w-6 md:w-10 h-1 rounded-full transition-all slider-dot <?php echo $i === 0 ? 'bg-[#19DC7E] w-10 md:w-14' : 'bg-white/20 hover:bg-white/40'; ?>"></button>
                 <?php endforeach; ?>
             </div>
+
+            <!-- Premium Organic Wave Shape -->
+            <div class="absolute bottom-0 left-0 w-full z-30 pointer-events-none translate-y-[1px]">
+                <svg class="w-full h-[30px] md:h-[60px] lg:h-[100px] fill-white" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                    <path d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                </svg>
+            </div>
         </div>
     </section>
 
-    <!-- NOW AVAILABLE AT SECTION (Panoramic Text Row) -->
+    <!-- NOW AVAILABLE AT SECTION (Original Panoramic Text Row) -->
     <section id="partners-section" class="bg-white border-b border-gray-100 overflow-hidden">
-        <div class="container mx-auto px-10 lg:px-40 py-2 md:py-6">
+        <div class="container mx-auto px-10 lg:px-40 py-6 md:py-10">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
                 <!-- Sidebar Title -->
                 <div class="flex-shrink-0">
                     <span class="text-[12px] md:text-[14px] font-black tracking-[0.3em] text-gray-900 uppercase">NOW AVAILABLE AT</span>
                 </div>
                 
-                <!-- Partners Horizon (Strict Single Line) -->
-                <div class="flex-grow w-full overflow-hidden partners-marquee-container">
-                    <div class="flex flex-nowrap items-center lg:justify-end gap-12 md:gap-16 lg:gap-24 min-w-max pb-2 md:pb-0 partners-marquee-content">
+                <!-- Partners Horizon -->
+                <div class="flex-grow w-full overflow-auto availbleatsection">
+                    <div class="flex flex-nowrap items-center lg:justify-end gap-12 md:gap-16 lg:gap-24 min-w-max pb-2 md:pb-0">
                         <?php 
-                        $partner_list = $partners;
-                        if(empty($partner_list)) {
-                            $partner_list = [
-                                ['name' => 'Ecogrocery', 'location' => 'Lal Nagar'],
-                                ['name' => 'Basket', 'location' => 'Chanapora'],
-                                ['name' => 'Extracts', 'location' => 'RAJBAGH'],
-                                ['name' => 'Extracts', 'location' => 'Peerbagh'],
-                                ['name' => 'Pick N Choose', 'location' => 'BAGHAT']
-                            ];
-                        }
+                        $partner_list = [
+                            ['name' => 'Ecogrocery', 'location' => 'Lal Nagar'],
+                            ['name' => 'Basket', 'location' => 'Boulevard'],
+                            ['name' => 'Extracts', 'location' => 'RAJBAGH'],
+                            ['name' => 'City Max', 'location' => 'Peerbagh'],
+                            ['name' => 'Pick N Choose', 'location' => 'BAGHAT']
+                        ];
                         
-                        // Render twice for seamless marquee loop on mobile
-                        for($i=0; $i<2; $i++):
-                            foreach($partner_list as $partner): 
-                                $p_name = is_array($partner) ? $partner['name'] : $partner->name;
-                                $p_loc = is_array($partner) ? $partner['location'] : $partner->location;
+                        foreach($partner_list as $p): 
                         ?>
                             <div class="flex flex-col items-center group cursor-default">
                                  <h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#19DC7E]">
-                                    <?php echo htmlspecialchars($p_name); ?>
+                                    <?php echo $p['name']; ?>
                                  </h4>
                                  <span class="text-[9px] md:text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-1.5 border-t border-gray-50 pt-1 w-full text-center group-hover:text-gray-500 transition-colors">
-                                    <?php echo htmlspecialchars($p_loc); ?>
+                                    <?php echo $p['location']; ?>
                                  </span>
                             </div>
-                        <?php 
-                            endforeach;
-                            // Only repeat once (two sets total)
-                            if($i >= 1) break; 
-                        endfor; 
-                        ?>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -579,7 +593,20 @@ $wishlist_json = json_encode($wishlist_ids);
              window.nextSlide = nextSlide;
              window.prevSlide = prevSlide;
              window.goToSlide = goToSlide;
+
+             // Smooth Mouse Parallax with Momentum
+             let mouseX = 0, mouseY = 0;
+             document.addEventListener('mousemove', (e) => {
+                 mouseX = (window.innerWidth - e.pageX * 2) / 100;
+                 mouseY = (window.innerHeight - e.pageY * 2) / 100;
+                 
+                 const activeImg = document.querySelector('.banner-slide.active img');
+                 if(activeImg) {
+                     activeImg.style.transform = `scale(1.08) translate(${mouseX}px, ${mouseY}px)`;
+                 }
+             });
         });
+
     </script>
 
   

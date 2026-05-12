@@ -6,7 +6,7 @@ if ($host == 'localhost' || $host == '127.0.0.1') {
     define('DB_HOST', '127.0.0.1');
     define('DB_USER', 'root');
     define('DB_PASS', '');
-    define('DB_NAME', 'driyum_db');
+    define('DB_NAME', 'driyum');
 
     // Mail Configuration (SMTP)
     define('MAIL_HOST', 'smtp.hostinger.com');
