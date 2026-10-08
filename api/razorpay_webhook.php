@@ -47,11 +47,21 @@ if ($data['event'] === 'payment.captured') {
             // Update to Paid
             execute_query("UPDATE orders SET razorpay_payment_id = ?, payment_status = 'paid', order_status = 'pending' WHERE id = ?", [$razorpay_payment_id, $internal_order_id]);
             
+            // Decrement Stock for Order Items
+            $items = fetch_all("SELECT product_id, quantity FROM order_items WHERE order_id = ?", [$internal_order_id]);
+            foreach ($items as $item) {
+                execute_query("UPDATE products SET stock = GREATEST(0, stock - ?) WHERE id = ?", [(int)$item['quantity'], (int)$item['product_id']]);
+            }
+
             // Add history
             execute_query("INSERT INTO order_status_history (order_id, status, notes) VALUES (?, 'pending', 'Order confirmed via Webhook')", [$internal_order_id]);
             
-            // Send email
-            send_order_confirmation($internal_order_id);
+            // Send email non-blocking
+            try {
+                send_order_confirmation($internal_order_id);
+            } catch (Throwable $e) {
+                error_log("Webhook order confirmation email failed: " . $e->getMessage());
+            }
             
             // Log for admin
             create_admin_notification("Payment Captured for Order #$order_number via Webhook", 'order', "orders.php?id=$internal_order_id");

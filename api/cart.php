@@ -19,7 +19,7 @@ try {
     // --- ADD ITEM ---
     if ($action === 'add') {
         $product_id = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
-        $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
+        $quantity = max(1, (int)($_POST['quantity'] ?? 1));
 
         if ($product_id > 0) {
             $product = fetch_one("SELECT name, price, image, stock FROM products WHERE id = ?", [$product_id]);

@@ -227,21 +227,45 @@ function get_live_users_list($minutes = 5) {
     return fetch_all("SELECT * FROM live_users WHERE last_activity > (NOW() - INTERVAL ? MINUTE) ORDER BY last_activity DESC", [$minutes]);
 }
 
-// Remember Me Logic (Cookie Check)
-if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
-    $token = $_COOKIE['remember_token'];
-    // In production, you would lookup this token in a 'user_tokens' table
-    // For this implementation, we'll look for a base64 encoded string: user_id:random_hash
+// Cryptographically Secure Remember Me Token Management
+function create_remember_token($user) {
+    $uid = (int)($user['id'] ?? 0);
+    $pwd = $user['password'] ?? '';
+    $salt = bin2hex(random_bytes(16));
+    $secret = defined('AUTH_SECRET_KEY') ? AUTH_SECRET_KEY : 'driyum_default_key';
+    $signature = hash_hmac('sha256', $uid . ':' . $pwd . ':' . $salt, $secret);
+    return base64_encode($uid . ':' . $salt . ':' . $signature);
+}
+
+function validate_remember_token($token) {
+    if (!$token) return null;
     $decoded = base64_decode($token);
-    if ($decoded && strpos($decoded, ':') !== false) {
-        list($uid, $hash) = explode(':', $decoded);
-        $user = fetch_one("SELECT * FROM users WHERE id = ?", [(int)$uid]);
-        // Validate hash (simple check for this demo)
-        if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['is_admin'] = (int)($user['is_admin'] ?? 0);
-        }
+    if (!$decoded || substr_count($decoded, ':') !== 2) return null;
+    list($uid, $salt, $signature) = explode(':', $decoded, 3);
+    $uid = (int)$uid;
+    if ($uid <= 0) return null;
+    
+    $user = fetch_one("SELECT * FROM users WHERE id = ? AND (is_active = 1 OR is_active IS NULL)", [$uid]);
+    if (!$user) return null;
+    
+    $secret = defined('AUTH_SECRET_KEY') ? AUTH_SECRET_KEY : 'driyum_default_key';
+    $expected_signature = hash_hmac('sha256', $uid . ':' . $user['password'] . ':' . $salt, $secret);
+    if (!hash_equals($expected_signature, $signature)) {
+        return null;
+    }
+    return $user;
+}
+
+// Remember Me Auto-Login Check
+if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_token'])) {
+    $authenticated_user = validate_remember_token($_COOKIE['remember_token']);
+    if ($authenticated_user) {
+        $_SESSION['user_id'] = $authenticated_user['id'];
+        $_SESSION['user_name'] = $authenticated_user['name'];
+        $_SESSION['is_admin'] = (int)($authenticated_user['is_admin'] ?? 0);
+    } else {
+        // Invalidate forged or expired cookie
+        setcookie('remember_token', '', time() - 3600, '/');
     }
 }
 

@@ -476,13 +476,17 @@ input#header-search-input.search-input-premium:focus {
 }
 
 /* Hide scrollbars but keep functionality */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
+.no-scrollbar::-webkit-scrollbar,
+.availbleatsection::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
 }
 
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+.no-scrollbar,
+.availbleatsection {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
 }
 
 

@@ -15,13 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = fetch_one("SELECT * FROM users WHERE email = ?", [$email]);
     
     if ($user && password_verify($password, $user['password'])) {
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['name'];
         $_SESSION['is_admin'] = (int)($user['is_admin'] ?? 0);
         
-        // Handle Remember Me
+        // Handle Secure Remember Me
         if ($remember) {
-            $token = base64_encode($user['id'] . ":" . bin2hex(random_bytes(16)));
+            $token = create_remember_token($user);
             setcookie('remember_token', $token, time() + (30 * 24 * 60 * 60), '/', '', false, true);
         }
         

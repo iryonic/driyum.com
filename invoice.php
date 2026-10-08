@@ -18,15 +18,16 @@ $can_view = false;
 
 if (is_admin()) {
     $can_view = true;
-} elseif (isset($_SESSION['user_id']) && $order['user_id'] == $_SESSION['user_id']) {
+} elseif (isset($_SESSION['user_id']) && !empty($order['user_id']) && $order['user_id'] == $_SESSION['user_id']) {
     $can_view = true;
-} elseif (isset($_GET['contact'])) {
-    $contact = sanitize_input($_GET['contact']);
-    $address = json_decode($order['shipping_address'], true);
-    $order_email = $address['email'] ?? '';
-    $order_phone = $address['phone'] ?? '';
+} elseif (isset($_GET['contact']) && trim($_GET['contact']) !== '') {
+    $contact = trim(sanitize_input($_GET['contact']));
+    $address = json_decode($order['shipping_address'] ?? '{}', true);
+    $order_email = trim($address['email'] ?? ($order['user_email'] ?? ''));
+    $order_phone = trim($address['phone'] ?? ($order['user_phone'] ?? ''));
     
-    if (strtolower(trim($contact)) === strtolower(trim($order_email)) || trim($contact) === trim($order_phone)) {
+    if (($order_email !== '' && strtolower($contact) === strtolower($order_email)) || 
+        ($order_phone !== '' && $contact === $order_phone)) {
         $can_view = true;
     }
 }
@@ -35,12 +36,12 @@ if (!$can_view) {
     die("Access denied. Please login or provide verification contact.");
 }
 
-// Restriction: Customers can only see invoice after delivery (can be relaxed if needed)
-if (!is_admin() && !in_array($order['order_status'], ['confirmed', 'shipped', 'out_for_delivery', 'delivered'])) {
-    die("Your order has not been confirmed yet. Invoice is available once processed.");
+// Invoices are available for any active/completed order, unless explicitly cancelled
+if (!is_admin() && $order['order_status'] === 'cancelled') {
+    die("This order has been cancelled. Invoice is not available.");
 }
 
-$items = fetch_all("SELECT oi.*, p.name, p.sku FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?", [$order['id']]);
+$items = fetch_all("SELECT oi.*, COALESCE(p.name, 'Archived Item') as name, COALESCE(p.sku, 'N/A') as sku FROM order_items oi LEFT JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?", [$order['id']]);
 $address = json_decode($order['shipping_address'], true);
 ?>
 <!DOCTYPE html>

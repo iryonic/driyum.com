@@ -325,6 +325,10 @@ $wishlist_json = json_encode($wishlist_ids);
     </section>
 
     <!-- NOW AVAILABLE AT SECTION (Original Panoramic Text Row) -->
+    <style>
+        .availbleatsection::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+        .availbleatsection { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+    </style>
     <section id="partners-section" class="bg-white border-b border-gray-100 overflow-hidden relative">
         <div class="container mx-auto px-10 lg:px-40 py-6 md:py-10">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
@@ -333,8 +337,8 @@ $wishlist_json = json_encode($wishlist_ids);
                     <span class="text-[12px] md:text-[14px] font-black tracking-[0.3em] text-gray-900 uppercase">NOW AVAILABLE AT</span>
                 </div>
                 
-                <!-- Partners Horizon -->
-                <div class="flex-grow w-full overflow-auto availbleatsection">
+                <!-- Partners Horizon (Scrollbar hidden) -->
+                <div class="flex-grow w-full overflow-x-auto no-scrollbar availbleatsection" style="scrollbar-width: none; -ms-overflow-style: none;">
                     <div class="flex flex-nowrap items-center lg:justify-end gap-12 md:gap-16 lg:gap-24 min-w-max pb-2 md:pb-0">
                         <?php 
                         $partner_list = [

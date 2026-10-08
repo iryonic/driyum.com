@@ -32,7 +32,7 @@ if (!empty($_SESSION['cart'])) {
 }
 
 // Free Shipping Logic
-$shipping_threshold = (float)get_setting('free_shipping_threshold', 500);
+$shipping_threshold = (float)get_setting('free_shipping_threshold', 499);
 
 // Coupon Logic
 $coupon_discount = 0;

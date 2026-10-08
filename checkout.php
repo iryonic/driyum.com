@@ -257,7 +257,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             // Update Affiliate Total Earnings (Pending until order completed ideally, but simplest is tracking it now or via status changes)
             // For now, let's just record it in the order.
             if ($final_affiliate_id) {
-                $conn->query("UPDATE affiliates SET total_earnings = total_earnings + $final_affiliate_commission WHERE id = $final_affiliate_id");
+                $stmt_aff = $conn->prepare("UPDATE affiliates SET total_earnings = total_earnings + ? WHERE id = ?");
+                $stmt_aff->bind_param("di", $final_affiliate_commission, $final_affiliate_id);
+                $stmt_aff->execute();
             }
         }
 
@@ -281,7 +283,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
         $total_discount_db = $final_coupon_discount + $final_affiliate_discount;
 
         $existing_order_id = $_POST['existing_order_id'] ?? null;
+        $already_finalized = false;
         if ($existing_order_id) {
+            $existing_check = fetch_one("SELECT order_status, payment_status, order_number FROM orders WHERE id = ?", [$existing_order_id]);
+            if ($existing_check && $existing_check['payment_status'] === 'paid' && $existing_check['order_status'] !== 'pending_payment') {
+                $already_finalized = true;
+            }
             // Update Existing Draft Order
             $stmt = $conn->prepare("UPDATE orders SET razorpay_payment_id = ?, payment_status = ?, order_status = ?, created_at = CURRENT_TIMESTAMP WHERE id = ?");
             $paid_status = 'paid';
@@ -323,17 +330,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             "orders.php?id=$order_id"
         );
 
-        // Update product stock
-        $stmt_stock = $conn->prepare("UPDATE products SET stock = stock - ? WHERE id = ?");
-        foreach ($_SESSION['cart'] as $pid => $qty) {
-            if (!isset($products_data[$pid])) continue;
-            $stmt_stock->bind_param("ii", $qty, $pid);
-            $stmt_stock->execute();
+        // Update product stock with race condition prevention
+        if (!$already_finalized) {
+            $stmt_stock = $conn->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
+            foreach ($_SESSION['cart'] as $pid => $qty) {
+                if (!isset($products_data[$pid])) continue;
+                $qty_int = (int)$qty;
+                $pid_int = (int)$pid;
+                $stmt_stock->bind_param("iii", $qty_int, $pid_int, $qty_int);
+                $stmt_stock->execute();
+                if ($stmt_stock->affected_rows === 0) {
+                    $p_name = $products_data[$pid]['name'] ?? "Product #$pid";
+                    throw new Exception("Sorry, '$p_name' is sold out or insufficient quantity is available.");
+                }
+            }
         }
 
         // Update Coupon Usage
-        if (isset($_SESSION['coupon'])) {
-            $conn->query("UPDATE coupons SET usage_count = usage_count + 1 WHERE id = $coupon_id");
+        if (isset($_SESSION['coupon']) && !empty($coupon_id)) {
+            $stmt_cpn = $conn->prepare("UPDATE coupons SET usage_count = usage_count + 1 WHERE id = ?");
+            $stmt_cpn->bind_param("i", $coupon_id);
+            $stmt_cpn->execute();
         }
 
         // Add to Status History
@@ -342,8 +359,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
         $conn->commit();
         
-        // Send Order Confirmation Email
-        send_order_confirmation($order_id);
+        // Send Order Confirmation Email (non-blocking try-catch to protect user order flow)
+        try {
+            send_order_confirmation($order_id);
+        } catch (Throwable $mail_err) {
+            error_log("Order confirmation email failed for order #$order_id: " . $mail_err->getMessage());
+        }
 
         // Success - Clear Cart and Coupon and Redirect
         if (is_logged_in()) {

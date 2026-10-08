@@ -41,7 +41,7 @@ if ($query) {
     }
 
     if ($order) {
-        $items = fetch_all("SELECT oi.*, p.name, p.image FROM order_items oi JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?", [$order['id']]);
+        $items = fetch_all("SELECT oi.*, COALESCE(p.name, 'Archived Item') as name, COALESCE(p.image, 'assets/images/placeholder.png') as image FROM order_items oi LEFT JOIN products p ON oi.product_id = p.id WHERE oi.order_id = ?", [$order['id']]);
         $history = fetch_all("SELECT * FROM order_status_history WHERE order_id = ? ORDER BY created_at DESC", [$order['id']]);
         $shipping_addr = json_decode($order['shipping_address'], true);
         

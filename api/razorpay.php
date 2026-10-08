@@ -15,8 +15,18 @@ if ($action === 'create_order') {
     require_once '../includes/functions.php';
     $conn = get_db_connection();
     
+    if (empty($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+        echo json_encode(['success' => false, 'message' => 'Cart is empty.']);
+        exit;
+    }
+
     $subtotal = 0;
-    $ids = implode(',', array_keys($_SESSION['cart']));
+    $cart_ids = array_map('intval', array_keys($_SESSION['cart']));
+    if (empty($cart_ids)) {
+        echo json_encode(['success' => false, 'message' => 'Cart is empty.']);
+        exit;
+    }
+    $ids = implode(',', $cart_ids);
     $products = fetch_all("SELECT id, price FROM products WHERE id IN ($ids)");
     foreach($products as $p) {
         $subtotal += $p['price'] * $_SESSION['cart'][$p['id']];

@@ -46,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
             $_SESSION['success'] = "Updated stock for " . count($ids) . " products";
         } elseif ($action === 'delete') {
             $ids_str = implode(',', array_map('intval', $ids));
-            $conn->query("DELETE FROM products WHERE id IN ($ids_str)");
-            $_SESSION['success'] = "Deleted " . count($ids) . " products";
+            $conn->query("UPDATE products SET is_active = 0, stock = 0 WHERE id IN ($ids_str)");
+            $_SESSION['success'] = "Archived/Deactivated " . count($ids) . " products safely";
         }
     }
     header("Location: inventory.php");

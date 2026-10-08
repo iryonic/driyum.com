@@ -1,6 +1,18 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once '../config/database.php';
 require_once '../includes/functions.php';
+
+// Strict Admin Check
+if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+    if (isset($_POST['ajax_action'])) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+        exit;
+    }
+    header("Location: ../login.php");
+    exit;
+}
 
 // AJAX DELETE GALLERY IMAGES
 if (isset($_POST['ajax_action']) && $_POST['ajax_action'] === 'delete_gallery') {
@@ -58,20 +70,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 1. Featured Image
     $image_path = $_POST['current_image'] ?? '';
+    $allowed_exts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
         $upload_dir = '../assets/images/products/';
         if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
         
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $filename = uniqid('prod_') . '.' . $ext;
-        
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
-            $image_path = 'assets/images/products/' . $filename;
-            // Optimize the uploaded image
-            if (function_exists('optimize_image')) {
-                $optimized = optimize_image($upload_dir . $filename, $upload_dir . $filename);
-                if ($optimized) $image_path = $optimized;
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, $allowed_exts)) {
+            $filename = uniqid('prod_') . '.' . $ext;
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
+                $image_path = 'assets/images/products/' . $filename;
+                // Optimize the uploaded image
+                if (function_exists('optimize_image')) {
+                    $optimized = optimize_image($upload_dir . $filename, $upload_dir . $filename);
+                    if ($optimized) $image_path = $optimized;
+                }
             }
+        } else {
+            $msg .= " | Invalid file type for product image";
         }
     }
 
@@ -99,19 +116,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $gallery_dir = '../assets/images/products/';
             if (!file_exists($gallery_dir)) mkdir($gallery_dir, 0777, true);
             
+            $stmt_gallery = $conn->prepare("INSERT INTO product_images (product_id, image_path) VALUES (?, ?)");
             foreach ($_FILES['gallery']['name'] as $key => $name) {
                 if ($_FILES['gallery']['error'][$key] === 0) {
-                    $ext = pathinfo($name, PATHINFO_EXTENSION);
-                    $new_name = uniqid('g_') . '.' . $ext;
-                    $target = $gallery_dir . $new_name;
-                    
-                    if (move_uploaded_file($_FILES['gallery']['tmp_name'][$key], $target)) {
-                        $g_path = 'assets/images/products/' . $new_name;
-                        if (!$conn->query("INSERT INTO product_images (product_id, image_path) VALUES ($id, '$g_path')")) {
-                            $msg .= " | DB Error for $name: " . $conn->error;
+                    $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                    if (in_array($ext, $allowed_exts)) {
+                        $new_name = uniqid('g_') . '.' . $ext;
+                        $target = $gallery_dir . $new_name;
+                        
+                        if (move_uploaded_file($_FILES['gallery']['tmp_name'][$key], $target)) {
+                            $g_path = 'assets/images/products/' . $new_name;
+                            if ($stmt_gallery) {
+                                $stmt_gallery->bind_param("is", $id, $g_path);
+                                $stmt_gallery->execute();
+                            }
+                        } else {
+                            $msg .= " | Failed to move $name";
                         }
                     } else {
-                        $msg .= " | Failed to move $name";
+                        $msg .= " | Invalid file type for gallery image $name";
                     }
                 } elseif ($_FILES['gallery']['error'][$key] !== UPLOAD_ERR_NO_FILE) {
                      $msg .= " | Upload Error Code: " . $_FILES['gallery']['error'][$key];

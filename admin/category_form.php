@@ -21,11 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $upload_dir = '../assets/images/categories/';
         if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
         
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $filename = uniqid('cat_') . '.' . $ext;
-        
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
-            $image_path = 'assets/images/categories/' . $filename;
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+        if (in_array($ext, $allowed)) {
+            $filename = uniqid('cat_') . '.' . $ext;
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
+                $image_path = 'assets/images/categories/' . $filename;
+            }
+        } else {
+            $err = "Invalid image file format. Allowed formats: " . implode(', ', $allowed);
         }
     }
 

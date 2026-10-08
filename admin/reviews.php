@@ -1,6 +1,18 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) session_start();
 require_once '../config/database.php';
 require_once '../includes/functions.php';
+
+// Strict Admin Check
+if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+    if (isset($_POST['ajax_action'])) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+        exit;
+    }
+    header("Location: ../login.php");
+    exit;
+}
 
 // AJAX Actions
 if (isset($_POST['ajax_action'])) {

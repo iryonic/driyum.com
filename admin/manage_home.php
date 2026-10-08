@@ -136,31 +136,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $old_data = fetch_one("SELECT media_url, video_url FROM homepage_sections WHERE section_name = 'video_brand_story'");
 
         // Image (Thumbnail)
+        $allowed_img_exts = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'];
         if (isset($_FILES['media']) && $_FILES['media']['error'] == 0) {
-            $target_dir = "../assets/images/uploads/";
-            if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-            $filename = "vid_thumb_" . uniqid() . "_" . basename($_FILES["media"]["name"]);
-            if (move_uploaded_file($_FILES["media"]["tmp_name"], $target_dir . $filename)) {
-                $media_url = "assets/images/uploads/" . $filename;
-                
-                // Cleanup old thumbnail
-                if ($old_data && !empty($old_data['media_url']) && strpos($old_data['media_url'], 'assets/images/uploads/') === 0) {
-                    $old_path = "../" . $old_data['media_url'];
-                    if (file_exists($old_path)) @unlink($old_path);
+            $ext = strtolower(pathinfo($_FILES['media']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed_img_exts)) {
+                $target_dir = "../assets/images/uploads/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+                $filename = "vid_thumb_" . uniqid() . "." . $ext;
+                if (move_uploaded_file($_FILES["media"]["tmp_name"], $target_dir . $filename)) {
+                    $media_url = "assets/images/uploads/" . $filename;
+                    
+                    // Cleanup old thumbnail
+                    if ($old_data && !empty($old_data['media_url']) && strpos($old_data['media_url'], 'assets/images/uploads/') === 0) {
+                        $old_path = "../" . $old_data['media_url'];
+                        if (file_exists($old_path)) @unlink($old_path);
+                    }
                 }
             }
         }
 
         // Video File
+        $allowed_vid_exts = ['mp4', 'webm', 'ogg', 'mov'];
         $video_uploaded = false;
         if (isset($_FILES['video_file']) && $_FILES['video_file']['error'] == 0) {
-            $target_dir = "../assets/videos/";
-            if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
             $ext = strtolower(pathinfo($_FILES['video_file']['name'], PATHINFO_EXTENSION));
-            $filename = "brand_v_" . uniqid() . "." . $ext;
-            if (move_uploaded_file($_FILES["video_file"]["tmp_name"], $target_dir . $filename)) {
-                $video_url = "assets/videos/" . $filename;
-                $video_uploaded = true;
+            if (in_array($ext, $allowed_vid_exts)) {
+                $target_dir = "../assets/videos/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+                $filename = "brand_v_" . uniqid() . "." . $ext;
+                if (move_uploaded_file($_FILES["video_file"]["tmp_name"], $target_dir . $filename)) {
+                    $video_url = "assets/videos/" . $filename;
+                    $video_uploaded = true;
+                }
             }
         }
 
@@ -194,14 +201,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $logo_url = $_POST['current_logo'] ?? '';
         if (isset($_FILES['partner_logo']) && $_FILES['partner_logo']['error'] == 0) {
-            $target_dir = "../assets/images/partners/";
-            if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-            $filename = "partner_" . uniqid() . "_" . basename($_FILES["partner_logo"]["name"]);
-            if (move_uploaded_file($_FILES["partner_logo"]["tmp_name"], $target_dir . $filename)) {
-                $logo_url = "assets/images/partners/" . $filename;
-                // Cleanup old logo
-                if(!empty($_POST['current_logo']) && strpos($_POST['current_logo'], 'assets/images/partners/') === 0) {
-                    @unlink("../" . $_POST['current_logo']);
+            $ext = strtolower(pathinfo($_FILES['partner_logo']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed_img_exts)) {
+                $target_dir = "../assets/images/partners/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+                $filename = "partner_" . uniqid() . "." . $ext;
+                if (move_uploaded_file($_FILES["partner_logo"]["tmp_name"], $target_dir . $filename)) {
+                    $logo_url = "assets/images/partners/" . $filename;
+                    // Cleanup old logo
+                    if(!empty($_POST['current_logo']) && strpos($_POST['current_logo'], 'assets/images/partners/') === 0) {
+                        @unlink("../" . $_POST['current_logo']);
+                    }
                 }
             }
         }

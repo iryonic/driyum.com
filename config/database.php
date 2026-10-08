@@ -1,34 +1,53 @@
 <?php
+// Load environment variables from .env if it exists
+$env_file = dirname(__DIR__) . '/.env';
+if (file_exists($env_file)) {
+    $lines = file($env_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) continue;
+        if (strpos($line, '=') !== false) {
+            list($env_k, $env_v) = explode('=', $line, 2);
+            $env_k = trim($env_k);
+            $env_v = trim($env_v, " \t\n\r\0\x0B\"'");
+            if (getenv($env_k) === false) {
+                putenv("$env_k=$env_v");
+                $_ENV[$env_k] = $env_v;
+            }
+        }
+    }
+}
+
 // Database Configuration
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 if ($host == 'localhost' || $host == '127.0.0.1') {
     // LOCAL
-    define('DB_HOST', '127.0.0.1');
-    define('DB_USER', 'root');
-    define('DB_PASS', '');
-    define('DB_NAME', 'driyum.com');
+    define('DB_HOST', getenv('DB_HOST') ?: '127.0.0.1');
+    define('DB_USER', getenv('DB_USER') ?: 'root');
+    define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+    define('DB_NAME', getenv('DB_NAME') ?: 'driyum.com');
 
     // Mail Configuration (SMTP)
-    define('MAIL_HOST', 'smtp.hostinger.com');
-    define('MAIL_USER', 'contact@driyum.com');
-    define('MAIL_PASS', 'Driyum@123'); // Often matches DB pass or is unique - placeholder if different
-    define('MAIL_PORT', 465);
+    define('MAIL_HOST', getenv('MAIL_HOST') ?: 'smtp.hostinger.com');
+    define('MAIL_USER', getenv('MAIL_USER') ?: 'contact@driyum.com');
+    define('MAIL_PASS', getenv('MAIL_PASS') ?: 'Driyum@123');
+    define('MAIL_PORT', (int)(getenv('MAIL_PORT') ?: 465));
 } else {
     // PRODUCTION
-    define('DB_HOST', 'localhost');
-    define('DB_USER', 'u167160735_newdry');
-    define('DB_PASS', 'NewDry@123');
-    define('DB_NAME', 'u167160735_newdry');
+    define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+    define('DB_USER', getenv('DB_USER') ?: 'u167160735_newdry');
+    define('DB_PASS', getenv('DB_PASS') ?: 'NewDry@123');
+    define('DB_NAME', getenv('DB_NAME') ?: 'u167160735_newdry');
     
     // Security: Hide errors in production
     error_reporting(0);
     ini_set('display_errors', 0);
     
     // Mail Configuration (SMTP)
-    define('MAIL_HOST', 'smtp.hostinger.com');
-    define('MAIL_USER', 'contact@driyum.com');
-    define('MAIL_PASS', 'Driyum@123'); // Often matches DB pass or is unique - placeholder if different
-    define('MAIL_PORT', 465);
+    define('MAIL_HOST', getenv('MAIL_HOST') ?: 'smtp.hostinger.com');
+    define('MAIL_USER', getenv('MAIL_USER') ?: 'contact@driyum.com');
+    define('MAIL_PASS', getenv('MAIL_PASS') ?: 'Driyum@123');
+    define('MAIL_PORT', (int)(getenv('MAIL_PORT') ?: 465));
 }       
 
 // Dynamic Base URL Configuration
@@ -53,6 +72,11 @@ if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ||
     $protocol = 'https';
 }
 define('FULL_BASE_URL', $protocol . "://" . $host . BASE_URL);
+
+// Authentication Secret Key for HMAC signatures
+if (!defined('AUTH_SECRET_KEY')) {
+    define('AUTH_SECRET_KEY', 'driyum_sec_7f9c2e48a1d560b384ef92c1074e5b');
+}
 
 // Create connection
 function get_db_connection() {

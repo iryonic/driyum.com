@@ -33,7 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         'maintenance_countdown_label',
         'payment_cod_enabled',
         'payment_online_enabled',
-        'backup_frequency'
+        'backup_frequency',
+        'storage_freshness_enabled',
+        'storage_freshness_title',
+        'storage_freshness_content'
     ];
 
     $error_found = false;
@@ -110,7 +113,10 @@ $s = [
     'favicon' => get_setting('site_favicon', ''),
     'm_show_timer' => get_setting('maintenance_show_timer', 'on'),
     'backup_freq' => get_setting('backup_frequency', 'manual'),
-    'last_backup' => get_setting('last_backup_at', 'Never')
+    'last_backup' => get_setting('last_backup_at', 'Never'),
+    'storage_enabled' => get_setting('storage_freshness_enabled', 'on'),
+    'storage_title' => get_setting('storage_freshness_title', 'Storage & Freshness'),
+    'storage_content' => get_setting('storage_freshness_content', "Store in a cool, dry place away from direct sunlight. Once opened, keep in an airtight container or seal the ziplock pouch tightly.\n\nBest consumed within 6 months from packaging date for maximum crunch and natural sweetness.")
 ];
 ?>
 
@@ -234,7 +240,37 @@ $s = [
                 </div>
             </div>
 
-            <!-- Visual Assets -->
+            <!-- Storage & Freshness Product Accordion -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-[#00875A] flex items-center justify-center">
+                            <i class="fas fa-boxes-packing"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 leading-tight">Storage & Freshness</h3>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Product Page Accordion</p>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer" title="Enable or disable on product page">
+                        <input type="hidden" name="storage_freshness_enabled" value="off">
+                        <input type="checkbox" name="storage_freshness_enabled" value="on" class="sr-only peer" <?php echo ($s['storage_enabled'] ?? 'on') == 'on' ? 'checked' : ''; ?>>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#24B25D]"></div>
+                    </label>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Accordion Title</label>
+                        <input type="text" name="storage_freshness_title" value="<?php echo htmlspecialchars($s['storage_title']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all" placeholder="Storage & Freshness">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Content / Storage Advice</label>
+                        <textarea name="storage_freshness_content" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-28 resize-none leading-relaxed" placeholder="Enter instructions for keeping dried fruits fresh..."><?php echo htmlspecialchars($s['storage_content']); ?></textarea>
+                        <p class="text-[9px] text-gray-400 ml-2">Tip: Separate paragraphs with a blank line for clean paragraph formatting on the product page.</p>
+                    </div>
+                </div>
+            </div>
 
         </div>
 

@@ -24,22 +24,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pages'])) {
     }
     // Handle Image Uploads
     $image_fields = ['about_story_image', 'about_tradition_image'];
+    $allowed_exts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
     foreach ($image_fields as $field) {
         if (isset($_FILES[$field]) && $_FILES[$field]['error'] === 0) {
-            $target_dir = "../assets/images/uploads/";
-            if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-            
-            $filename = "page_" . uniqid() . "_" . basename($_FILES[$field]["name"]);
-            if (move_uploaded_file($_FILES[$field]["tmp_name"], $target_dir . $filename)) {
-                $path = "assets/images/uploads/" . $filename;
+            $ext = strtolower(pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, $allowed_exts)) {
+                $target_dir = "../assets/images/uploads/";
+                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
                 
-                // Delete old file if it exists and is an upload
-                $old_path = get_setting($field, '');
-                if (!empty($old_path) && strpos($old_path, 'assets/images/uploads/') === 0) {
-                    if (file_exists("../" . $old_path)) @unlink("../" . $old_path);
+                $filename = "page_" . uniqid() . "." . $ext;
+                if (move_uploaded_file($_FILES[$field]["tmp_name"], $target_dir . $filename)) {
+                    $path = "assets/images/uploads/" . $filename;
+                    
+                    // Delete old file if it exists and is an upload
+                    $old_path = get_setting($field, '');
+                    if (!empty($old_path) && strpos($old_path, 'assets/images/uploads/') === 0) {
+                        if (file_exists("../" . $old_path)) @unlink("../" . $old_path);
+                    }
+                    
+                    update_setting($field, $path);
                 }
-                
-                update_setting($field, $path);
+            } else {
+                $error = "Invalid file type for $field. Allowed types: " . implode(', ', $allowed_exts);
             }
         }
     }

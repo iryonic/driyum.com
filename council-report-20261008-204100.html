@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Council Report: Driyum.com Codebase Audit</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --brand: #24B25D;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2.5rem 1rem;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-radius: 9999px;
+            background: #dcfce7;
+            color: #166534;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            color: #0f172a;
+            margin-bottom: 0.75rem;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Top Chairman Banner */
+        .verdict-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 2px solid #bbf7d0;
+            box-shadow: 0 20px 40px -15px rgba(36, 178, 93, 0.15);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .verdict-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .verdict-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: #ecfdf5;
+            color: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+        .verdict-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .first-step-box {
+            background: #fff1f2;
+            border-left: 5px solid var(--danger);
+            padding: 1.25rem 1.5rem;
+            border-radius: 0 16px 16px 0;
+            margin: 1.5rem 0;
+        }
+        .first-step-box h4 {
+            color: #9f1239;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.35rem;
+        }
+        .first-step-box p {
+            font-weight: 700;
+            color: #881337;
+            font-size: 1.05rem;
+        }
+
+        /* Triage Grid */
+        .triage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+        .triage-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .triage-card.p0 { border-top: 4px solid var(--danger); }
+        .triage-card.p1 { border-top: 4px solid var(--warning); }
+        .triage-card.p2 { border-top: 4px solid var(--info); }
+        .triage-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.75rem;
+        }
+        .triage-card.p0 .triage-title { color: var(--danger); }
+        .triage-card.p1 .triage-title { color: var(--warning); }
+        .triage-card.p2 .triage-title { color: var(--info); }
+        .triage-card ul {
+            list-style: none;
+            padding-left: 0;
+            font-size: 0.92rem;
+            color: #334155;
+        }
+        .triage-card li {
+            position: relative;
+            padding-left: 1.4rem;
+            margin-bottom: 0.6rem;
+        }
+        .triage-card li::before {
+            content: "•";
+            position: absolute;
+            left: 0.35rem;
+            font-weight: 900;
+            color: var(--text-muted);
+        }
+
+        /* Alignment Spectrum */
+        .alignment-section {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .alignment-section h3 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 1.25rem;
+        }
+        .alignment-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 0;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .alignment-label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .alignment-tag {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.3rem 0.75rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+        .tag-consensus { background: #dcfce7; color: #166534; }
+        .tag-clash { background: #fef3c7; color: #92400e; }
+        .tag-discovered { background: #ede9fe; color: #5b21b6; }
+
+        /* Collapsible Accordions */
+        details {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        details[open] {
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
+        }
+        summary {
+            padding: 1.25rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            background: #fff;
+        }
+        summary:hover {
+            background: #f8fafc;
+        }
+        .advisor-meta {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+        .details-content {
+            padding: 1.5rem;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.95rem;
+            color: #334155;
+            background: #fafafa;
+        }
+        .details-content p {
+            margin-bottom: 0.85rem;
+        }
+        .details-content code {
+            background: #e2e8f0;
+            padding: 0.2rem 0.45rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #0f172a;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="badge">Karpathy LLM Council Verdict</span>
+            <h1>Driyum.com Comprehensive System Audit</h1>
+            <p class="subtitle">5 AI advisors independently inspected the entire codebase, peer-reviewed each other anonymously, and synthesized this prioritized master plan.</p>
+        </header>
+
+        <!-- CHAIRMAN VERDICT -->
+        <section class="verdict-card">
+            <div class="verdict-header">
+                <div class="verdict-icon">✓</div>
+                <div>
+                    <h2 class="verdict-title">The Chairman's Executive Verdict</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Consensus synthesized across 5 advisors & 5 peer reviews</p>
+                </div>
+            </div>
+
+            <p style="font-size: 1.05rem; margin-bottom: 1.25rem;">
+                <strong>Verdict:</strong> The website has impressive frontend aesthetics and brand personality, but suffers from <strong>three critical structural liabilities</strong> that require immediate remediation before scaling traffic or running marketing campaigns.
+            </p>
+
+            <div class="first-step-box">
+                <h4>Mandatory Action #1 (Do This First)</h4>
+                <p>Patch <code>includes/functions.php</code> lines 231-246 immediately. The unauthenticated "Remember Me" cookie parser allows anyone to gain full Administrator access to User ID 1 by setting a cookie with zero password verification.</p>
+            </div>
+
+            <div class="triage-grid">
+                <div class="triage-card p0">
+                    <div class="triage-title">Tier 0: Critical Zero-Day (Fix Now)</div>
+                    <ul>
+                        <li><strong>Auth Bypass:</strong> Remove raw Remember Me cookie decoder in <code>functions.php</code>.</li>
+                        <li><strong>RCE Upload:</strong> Whitelist file extensions (jpg, png, webp) in <code>hero_slides.php</code> & <code>manage_home.php</code>.</li>
+                        <li><strong>Credential Leak:</strong> Move production DB/SMTP passwords from <code>database.php</code> into untracked <code>.env</code>.</li>
+                    </ul>
+                </div>
+                <div class="triage-card p1">
+                    <div class="triage-title">Tier 1: Payment & Data (Fix Next 24h)</div>
+                    <ul>
+                        <li><strong>Negative Stock:</strong> Add atomic guard <code>AND stock >= ?</code> in <code>checkout.php</code> stock updates.</li>
+                        <li><strong>Webhook Inventory:</strong> Update <code>razorpay_webhook.php</code> to decrement stock on async capture.</li>
+                        <li><strong>Invoice Lockout:</strong> Allow customers to download invoices immediately upon payment confirmation.</li>
+                        <li><strong>Soft Delete:</strong> Change hard deletes on products to <code>is_active = 0</code> to preserve order history.</li>
+                    </ul>
+                </div>
+                <div class="triage-card p2">
+                    <div class="triage-title">Tier 2: Speed & Trust (Fix This Week)</div>
+                    <ul>
+                        <li><strong>Async Emails:</strong> Move synchronous Hostinger SMTP out of checkout into background queue.</li>
+                        <li><strong>Shipping Threshold:</strong> Unify ₹499 vs ₹500 threshold mismatch across cart and header.</li>
+                        <li><strong>CSRF Enforce:</strong> Wire <code>verify_csrf_token()</code> into all admin and checkout POST handlers.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ALIGNMENT SPECTRUM -->
+        <section class="alignment-section">
+            <h3>Council Alignment & Findings Map</h3>
+            <div class="alignment-item">
+                <div class="alignment-label">Remember Me Cookie Admin Escalation (CVE-style flaw)</div>
+                <span class="alignment-tag tag-consensus">100% Agreement (High Confidence)</span>
+            </div>
+            <div class="alignment-item">
+                <div class="alignment-label">Arbitrary File Upload (RCE) in Banner & Video Admin Uploaders</div>
+                <span class="alignment-tag tag-consensus">100% Agreement (High Confidence)</span>
+            </div>
+            <div class="alignment-item">
+                <div class="alignment-label">Negative Stock Race Condition during Concurrent Checkouts</div>
+                <span class="alignment-tag tag-consensus">Strong Consensus</span>
+            </div>
+            <div class="alignment-item">
+                <div class="alignment-label">Synchronous SMTP Latency causing Checkout Freezes</div>
+                <span class="alignment-tag tag-discovered">Caught in Peer Review</span>
+            </div>
+            <div class="alignment-item">
+                <div class="alignment-label">Hardcoded Free Shipping Mismatch (₹499 in header vs. ₹500 in cart)</div>
+                <span class="alignment-tag tag-discovered">Caught by Outsider</span>
+            </div>
+            <div class="alignment-item">
+                <div class="alignment-label">Priority: Security Lockdown vs. Conversion/Invoice Fixes</div>
+                <span class="alignment-tag tag-clash">Resolved by Tiered Roadmap</span>
+            </div>
+        </section>
+
+        <!-- INDIVIDUAL ADVISOR PERSPECTIVES -->
+        <h3 style="margin-bottom: 1rem; font-size: 1.25rem; font-weight: 800;">Detailed Advisor Briefings</h3>
+
+        <details>
+            <summary>
+                <span>1. The Contrarian <span class="advisor-meta">Security & Exploitation Lens</span></span>
+                <span>+</span>
+            </summary>
+            <div class="details-content">
+                <p><strong>Primary Finding:</strong> The website is vulnerable to immediate administrative takeover via the Remember Me cookie implementation in <code>includes/functions.php</code> (lines 231-246). The script reads <code>$_COOKIE['remember_token']</code>, decodes base64, splits on a colon, and authenticates the user ID with <em>zero cryptographic verification</em> of the token hash!</p>
+                <p><strong>Second Exploit:</strong> In <code>admin/hero_slides.php</code> (lines 157-160) and <code>admin/manage_home.php</code>, files are uploaded directly using their client-supplied extension into web-executable folders (<code>assets/images/uploads/</code>). Uploading a file named <code>backdoor.php</code> yields instant Remote Code Execution.</p>
+                <p><strong>Third Risk:</strong> Plaintext production database credentials (<code>u167160735_newdry</code>, <code>NewDry@123</code>) and Hostinger SMTP credentials (<code>contact@driyum.com</code>, <code>Driyum@123</code>) are committed directly into the Git repository in <code>config/database.php</code>.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>
+                <span>2. The First Principles Thinker <span class="advisor-meta">Money, Inventory & State Invariants</span></span>
+                <span>+</span>
+            </summary>
+            <div class="details-content">
+                <p><strong>Primary Finding:</strong> Inventory decrement in <code>checkout.php</code> (line 327) executes <code>UPDATE products SET stock = stock - ? WHERE id = ?</code> without an <code>AND stock >= ?</code> condition. When multiple shoppers buy simultaneously, stock drives negative (-1, -2), forcing the store into unfulfilled backorders.</p>
+                <p><strong>Payment Desync:</strong> Razorpay payments that complete when a user drops connection before the frontend JS redirects to <code>form.submit()</code> are captured via <code>api/razorpay_webhook.php</code>. However, the webhook handler updates the order status to paid <em>without ever decrementing stock</em>!</p>
+                <p><strong>Historical Corruption:</strong> When an admin deletes a product in <code>admin/inventory.php</code>, it performs a hard SQL <code>DELETE</code>. But <code>invoice.php</code> and <code>track.php</code> perform an <code>INNER JOIN products</code>. Deleting a product wipes it out from past customer invoices and live order tracking.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>
+                <span>3. The Expansionist <span class="advisor-meta">Scale, Traffic Surges & Bottlenecks</span></span>
+                <span>+</span>
+            </summary>
+            <div class="details-content">
+                <p><strong>Primary Finding:</strong> In <code>checkout.php</code> (line 346), <code>send_order_confirmation($order_id)</code> executes a synchronous TLS connection to <code>smtp.hostinger.com:465</code> inside the customer's HTTP request before redirecting to <code>order-success.php</code>. When SMTP latency spikes, customer checkouts hang for 10-30 seconds, generating high bounce rates and duplicate checkout clicks.</p>
+                <p><strong>Table Bloat:</strong> Every checkout attempt creates an order row in <code>orders</code>. 10,000 abandoned checkouts create 10,000 zombie draft rows, degrading auto-increment IDs and slow-down admin queries.</p>
+                <p><strong>Indexing Gap:</strong> Key lookup columns like <code>orders.order_number</code>, <code>orders.user_id</code>, and <code>products.slug</code> lack compound indexes, leading to full-table scans under high visitor volume.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>
+                <span>4. The Outsider <span class="advisor-meta">Customer Friction & Trust Lens</span></span>
+                <span>+</span>
+            </summary>
+            <div class="details-content">
+                <p><strong>Primary Finding:</strong> In <code>invoice.php</code> (lines 38-41), paying customers are blocked from viewing or downloading their invoice with the error: <em>"Your order has not been confirmed yet. Invoice is available once processed."</em> When a shopper spends ₹1,500 and cannot get a receipt, their first reaction is panic and bank dispute/chargeback.</p>
+                <p><strong>Data Leak:</strong> In <code>invoice.php</code> (line 29), guest verification checks <code>trim($contact) === trim($order_phone)</code>. If an order has an empty phone string, requesting <code>invoice.php?id=...&contact=</code> allows anyone to see the full customer invoice and shipping address.</p>
+                <p><strong>Threshold Discrepancy:</strong> The top announcement banner displays "Free Shipping over ₹499" (hardcoded in <code>head.php</code>), but <code>cart.php</code> calculates free shipping starting at ₹500, causing confusion at checkout.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>
+                <span>5. The Executor <span class="advisor-meta">Immediate Engineering Roadmap</span></span>
+                <span>+</span>
+            </summary>
+            <div class="details-content">
+                <p><strong>Implementation Strategy:</strong></p>
+                <ol style="padding-left: 1.5rem; line-height: 1.8;">
+                    <li><strong>Step 1:</strong> Patch <code>includes/functions.php</code> Remember Me cookie handling immediately.</li>
+                    <li><strong>Step 2:</strong> Add file extension whitelist in <code>admin/hero_slides.php</code> and <code>admin/manage_home.php</code>.</li>
+                    <li><strong>Step 3:</strong> Update stock query in <code>checkout.php</code> with atomic guard: <code>UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?</code>.</li>
+                    <li><strong>Step 4:</strong> Update <code>api/razorpay_webhook.php</code> to decrement stock upon webhook receipt.</li>
+                    <li><strong>Step 5:</strong> Remove invoice download restriction in <code>invoice.php</code>.</li>
+                    <li><strong>Step 6:</strong> Decouple Hostinger SMTP into the existing <code>email_queue</code> table via background cron.</li>
+                </ol>
+            </div>
+        </details>
+
+        <footer>
+            <p>Generated by Karpathy LLM Council Protocol • Driyum.com Audit • Full transcript stored in <code>council-transcript-20261008-204100.md</code></p>
+        </footer>
+    </div>
+</body>
+</html>

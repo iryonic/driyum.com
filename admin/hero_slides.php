@@ -152,10 +152,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'file_mobile'  => ['var' => &$image_mobile,  'prefix' => 'slide_mob_']
         ];
 
+        $allowed_img_exts = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'];
         foreach ($upload_map as $file_key => &$cfg) {
             if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
-                $ext = pathinfo($_FILES[$file_key]['name'], PATHINFO_EXTENSION);
-                $clean_filename = $cfg['prefix'] . uniqid() . '.' . strtolower($ext);
+                $ext = strtolower(pathinfo($_FILES[$file_key]['name'], PATHINFO_EXTENSION));
+                if (!in_array($ext, $allowed_img_exts)) {
+                    $err = "Invalid image file format ($ext). Only JPG, PNG, WEBP, SVG, and GIF are allowed.";
+                    break;
+                }
+                $clean_filename = $cfg['prefix'] . uniqid() . '.' . $ext;
                 $dest = $upload_dir . $clean_filename;
                 if (move_uploaded_file($_FILES[$file_key]['tmp_name'], $dest)) {
                     $cfg['var'] = "assets/images/uploads/" . $clean_filename;
