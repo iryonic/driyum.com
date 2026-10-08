@@ -437,7 +437,12 @@ async function bulkUpdateAction(action, extraData = {}) {
 async function bulkDeleteProducts() {
     const checked = document.querySelectorAll('.product-checkbox:checked');
     if (checked.length === 0) return;
-    if (!confirm(`Danger! You are about to delete ${checked.length} products. This will also delete their gallery images and cannot be undone. Proceed?`)) return;
+    const ok = await showConfirm(`Danger! You are about to delete ${checked.length} products. This will also delete their gallery images and cannot be undone. Proceed?`, {
+        title: 'Delete Products Forever',
+        type: 'danger',
+        confirmText: 'Delete Products'
+    });
+    if (!ok) return;
 
     await bulkUpdateAction('bulk_delete');
 }

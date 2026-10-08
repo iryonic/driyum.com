@@ -1102,8 +1102,13 @@ function viewLargeImage(url, title) {
 }
 
 // --- DELETE CONFIRMATION ---
-function confirmDeleteSlide(id) {
-    if (confirm('Are you sure you want to delete this hero slide? This action cannot be undone.')) {
+async function confirmDeleteSlide(id) {
+    const ok = await showConfirm('Are you sure you want to delete this hero slide? This action cannot be undone.', {
+        title: 'Delete Hero Slide',
+        type: 'danger',
+        confirmText: 'Delete Slide'
+    });
+    if (ok) {
         document.getElementById('delete-slide-id').value = id;
         document.getElementById('single-delete-form').submit();
     }
@@ -1202,10 +1207,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function submitBulkDelete() {
+async function submitBulkDelete() {
     const checked = document.querySelectorAll('.row-checkbox:checked');
     if (checked.length === 0) return;
-    if (confirm(`Are you sure you want to delete ${checked.length} selected slides?`)) {
+    const ok = await showConfirm(`Are you sure you want to delete ${checked.length} selected slides?`, {
+        title: 'Delete Selected Slides',
+        type: 'danger',
+        confirmText: 'Delete Slides'
+    });
+    if (ok) {
         document.getElementById('bulk-form').submit();
     }
 }

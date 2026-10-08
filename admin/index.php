@@ -534,11 +534,16 @@ function updateBulkState() {
 
 async function applyBulkStatus() {
     const status = document.getElementById('bulk-status-select').value;
-    if (!status) return alert('Please select a status to apply.');
+    if (!status) return showAlert('Please select a status to apply.', { type: 'warning' });
 
     const selected = Array.from(document.querySelectorAll('.order-checkbox:checked')).map(cb => cb.value);
     
-    if (!confirm(`Are you sure you want to change the status of ${selected.length} orders to "${status}"?`)) return;
+    const ok = await showConfirm(`Are you sure you want to change the status of ${selected.length} orders to "${status}"?`, {
+        title: 'Bulk Status Update',
+        type: 'warning',
+        confirmText: 'Apply Status'
+    });
+    if (!ok) return;
 
     const btn = document.querySelector('#bulk-actions button');
     const originalText = btn.innerHTML;

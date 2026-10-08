@@ -597,17 +597,27 @@ initSelection();
 
 async function applyBulkStatus() {
     const status = document.getElementById('bulk-status-select').value;
-    if (!status) return alert('Select a status first');
+    if (!status) return showAlert('Select a status first', { type: 'warning' });
     
     const count = isAllSelectedAcrossPages ? TOTAL_RECORDS : getTracked().size;
-    if(!confirm(`Update ${count} orders to ${status}?`)) return;
+    const ok = await showConfirm(`Update ${count} orders to ${status}?`, {
+        title: 'Update Orders Status',
+        type: 'warning',
+        confirmText: 'Update'
+    });
+    if(!ok) return;
     
     await performBulkAction('bulk_status', { status });
 }
 
 async function applyBulkDelete() {
     const count = isAllSelectedAcrossPages ? TOTAL_RECORDS : getTracked().size;
-    if(!confirm(`DANGER! Delete ${count} orders forever? This cannot be undone.`)) return;
+    const ok = await showConfirm(`DANGER! Delete ${count} orders forever? This cannot be undone.`, {
+        title: 'Delete Orders Forever',
+        type: 'danger',
+        confirmText: 'Delete Forever'
+    });
+    if(!ok) return;
     
     await performBulkAction('bulk_delete');
 }

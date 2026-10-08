@@ -459,10 +459,11 @@ input#header-search-input.search-input-premium:focus {
     h2 {
         font-size: clamp(1.8rem, 8vw, 3.2rem) !important;
         line-height: 1.1 !important;
+        margin-bottom: 0.8rem !important;
     }
 
     h3 {
-        font-size: clamp(1.4rem, 6vw, 2.4rem) !important;
+        font-size: clamp(1.2rem, 4.8vw, 2.1rem) !important;
     }
 
     /* Buttons Scaling - Touch Friendly */

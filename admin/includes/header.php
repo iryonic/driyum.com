@@ -132,6 +132,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script>
         const BASE_URL = "<?php echo get_url(''); ?>";
     </script>
+    <script src="../assets/js/chunky.js"></script>
 </head>
 <body class="bg-gray-50">
 

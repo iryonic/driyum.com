@@ -602,7 +602,12 @@ function updateBulkBar() {
 }
 
 async function deleteGalleryImage(id) {
-    if (!confirm('Are you sure you want to delete this image?')) return;
+    const ok = await showConfirm('Are you sure you want to delete this image?', {
+        title: 'Delete Image',
+        type: 'danger',
+        confirmText: 'Delete'
+    });
+    if (!ok) return;
     
     const item = document.getElementById(`gallery-item-${id}`);
     item.style.opacity = '0.5';
@@ -637,7 +642,12 @@ async function deleteGalleryImage(id) {
 async function bulkDeleteImages() {
     const checked = document.querySelectorAll('.gallery-checkbox:checked');
     if (checked.length === 0) return;
-    if (!confirm(`Are you sure you want to delete ${checked.length} selected images?`)) return;
+    const ok = await showConfirm(`Are you sure you want to delete ${checked.length} selected images?`, {
+        title: 'Delete Selected Images',
+        type: 'danger',
+        confirmText: 'Delete'
+    });
+    if (!ok) return;
 
     const ids = Array.from(checked).map(cb => cb.value);
     const bar = document.getElementById('bulk-action-bar');

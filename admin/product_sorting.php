@@ -190,7 +190,7 @@ require_once 'includes/header.php';
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           
-            <h1 class="text-2xl sm:text-3xl font-black text-gray-900 font-heading tracking-tight">Product Sorting</h1>
+            <h1 class="text-xl sm:text-2xl font-black text-gray-900 font-heading tracking-tight">Product Sorting</h1>
             <p class="text-xs font-medium text-gray-500 mt-0.5 sm:mt-1">Drag and drop products to customize their exact appearance order on the Homepage & Shop</p>
         </div>
 
@@ -746,8 +746,13 @@ function saveOrder(containerId, actionName) {
 }
 
 // --- TOGGLE / REMOVE ACTIONS ---
-function toggleCombo(id, btn) {
-    if(!confirm('Remove this product from the Homepage Combos section?')) return;
+async function toggleCombo(id, btn) {
+    const confirmed = await showConfirm('Remove this product from the Homepage Combos section?', {
+        title: 'Remove from Combos',
+        type: 'danger',
+        confirmText: 'Remove'
+    });
+    if(!confirmed) return;
     if(btn) {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[11px]"></i>';
@@ -798,8 +803,13 @@ function toggleCombo(id, btn) {
     });
 }
 
-function toggleFeatured(id, btn) {
-    if(!confirm('Remove this product from Our Products?')) return;
+async function toggleFeatured(id, btn) {
+    const confirmed = await showConfirm('Remove this product from Our Products?', {
+        title: 'Remove from Featured',
+        type: 'danger',
+        confirmText: 'Remove'
+    });
+    if(!confirmed) return;
     if(btn) {
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[11px]"></i>';
