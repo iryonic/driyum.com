@@ -51,7 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $active = (int)$_POST['is_active'];
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name)));
     $is_featured = isset($_POST['is_featured']) ? (int)$_POST['is_featured'] : 0;
-    $is_combo = isset($_POST['is_combo']) ? (int)$_POST['is_combo'] : 0;
+    $is_combo = isset($_POST['is_combo']) ? (int)$_POST['is_combo'] : ($cat_id === 3 ? 1 : 0);
+    if ($cat_id === 3 && !isset($_POST['is_combo'])) $is_combo = 1;
     $bg_color = $_POST['bg_color'] ?? '';
 
 

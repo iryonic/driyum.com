@@ -293,7 +293,7 @@ try {
                                 <h4 class="text-[#19DC7E] mb-4 text-lg font-heading"><?php echo htmlspecialchars($cat['name']); ?></h4>
                                 <ul class="space-y-2 font-sans text-gray-500">
                                     <?php 
-                                    $cat_prods = fetch_all("SELECT id, name, slug FROM products WHERE category_id = ? AND is_active = 1 LIMIT 3", [$cat['id']]);
+                                    $cat_prods = fetch_all("SELECT id, name, slug FROM products WHERE category_id = ? AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, created_at DESC LIMIT 3", [$cat['id']]);
                                     if(empty($cat_prods)):
                                     ?>
                                         <li class="text-xs opacity-50">Coming Soon...</li>
@@ -309,8 +309,8 @@ try {
 
                             <!-- Highlight (Featured Product) -->
                             <?php 
-                            $highlight = fetch_one("SELECT id, name, slug, image FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY RAND() LIMIT 1");
-                            if(!$highlight) $highlight = fetch_one("SELECT id, name, slug, image FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT 1");
+                            $highlight = fetch_one("SELECT id, name, slug, image FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, RAND() LIMIT 1");
+                            if(!$highlight) $highlight = fetch_one("SELECT id, name, slug, image FROM products WHERE is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, created_at DESC LIMIT 1");
                             
                             if($highlight):
                             ?>

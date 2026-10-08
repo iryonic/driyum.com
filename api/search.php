@@ -16,9 +16,10 @@ try {
         exit;
     }
 
-    // Search by name or description
+    // Search by name or description (in-stock first)
     $sql = "SELECT id, name, price, image, slug FROM products 
-            WHERE name LIKE ? OR description LIKE ? 
+            WHERE (name LIKE ? OR description LIKE ?) AND is_active = 1
+            ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, name ASC 
             LIMIT 10";
     $term = "%$query%";
     $products = fetch_all($sql, [$term, $term]);

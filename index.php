@@ -26,15 +26,21 @@ if(!empty($slides_data)) {
             'id' => $s['id'],
             'product_id' => $pid,
             'slug' => $pslug,
-            'name' => $s['title'],
-            'price' => $s['price'] > 0 ? $s['price'] : '249',
-            'image' => $s['image'],
-            'image_tablet' => $s['image_tablet'],
-            'image_mobile' => $s['image_mobile'],
-            'bg' => $s['accent_color'],
+            'name' => $s['title'] ?? '',
+            'price' => isset($s['price']) && $s['price'] > 0 ? $s['price'] : '249',
+            'image' => $s['image'] ?? '',
+            'image_tablet' => $s['image_tablet'] ?? null,
+            'image_mobile' => $s['image_mobile'] ?? null,
+            'bg' => $s['accent_color'] ?? '#24B25D',
             'v1' => $s['v_text_1'] ?? 'SNACKING',
             'v2' => $s['v_text_2'] ?? 'REIMAGINED',
-            'tagline' => $s['badge_text'] ?? 'Your New Healthy Habit'
+            'tagline' => $s['badge_text'] ?? 'Your New Healthy Habit',
+            'cta_link' => $s['cta_link'] ?? '',
+            'cta_text' => $s['cta_text'] ?? 'ORDER NOW',
+            'alt_text' => $s['alt_text'] ?? '',
+            'show_title' => isset($s['show_title']) ? (int)$s['show_title'] : 1,
+            'show_subtitle' => isset($s['show_subtitle']) ? (int)$s['show_subtitle'] : 1,
+            'show_cta' => isset($s['show_cta']) ? (int)$s['show_cta'] : 1
         ];
     }
 } else {
@@ -51,10 +57,16 @@ if(!empty($slides_data)) {
             'image' => $f['image'],
             'image_tablet' => null,
             'image_mobile' => null,
-            'bg' => '#19DC7E',
+            'bg' => '#24B25D',
             'v1' => 'ORGANIC',
             'v2' => 'HARVEST',
-            'tagline' => 'Your New Healthy Habit'
+            'tagline' => 'Your New Healthy Habit',
+            'cta_link' => 'product/' . $f['slug'],
+            'cta_text' => 'ORDER NOW',
+            'alt_text' => $f['name'],
+            'show_title' => 1,
+            'show_subtitle' => 1,
+            'show_cta' => 1
         ];
     }
 }
@@ -62,10 +74,10 @@ if(!empty($slides_data)) {
 // Global High-End Fallback if still empty
 if(empty($hero_variants)) {
     $hero_variants = [
-        ['id'=>1, 'product_id'=>1, 'slug'=>'signature-almonds', 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#19DC7E', 'v1'=>'PURE', 'v2'=>'ENERGY', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>2, 'product_id'=>2, 'slug'=>'crispy-apple-chips', 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#EDB02C', 'v1'=>'NATURE\'S', 'v2'=>'SWEET', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>3, 'product_id'=>3, 'slug'=>'spiced-walnuts', 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#F67E42', 'v1'=>'BOLD', 'v2'=>'CRUNCH', 'tagline'=>'Your New Healthy Habit'],
-        ['id'=>4, 'product_id'=>4, 'slug'=>'sweet-berries', 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#EC4899', 'v1'=>'WILD', 'v2'=>'PICKED', 'tagline'=>'Your New Healthy Habit']
+        ['id'=>1, 'product_id'=>1, 'slug'=>'signature-almonds', 'name'=>'Signature Almonds', 'price'=>249, 'image'=>'assets/images/nuts/almonds.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#24B25D', 'v1'=>'PURE', 'v2'=>'ENERGY', 'tagline'=>'Your New Healthy Habit', 'cta_link'=>'shop', 'cta_text'=>'ORDER NOW', 'alt_text'=>'Signature Almonds', 'show_title'=>1, 'show_subtitle'=>1, 'show_cta'=>1],
+        ['id'=>2, 'product_id'=>2, 'slug'=>'crispy-apple-chips', 'name'=>'Crispy Apple Chips', 'price'=>199, 'image'=>'assets/images/chips/apple.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#24B25D', 'v1'=>'NATURE\'S', 'v2'=>'SWEET', 'tagline'=>'Your New Healthy Habit', 'cta_link'=>'shop', 'cta_text'=>'ORDER NOW', 'alt_text'=>'Crispy Apple Chips', 'show_title'=>1, 'show_subtitle'=>1, 'show_cta'=>1],
+        ['id'=>3, 'product_id'=>3, 'slug'=>'spiced-walnuts', 'name'=>'Spiced Walnuts', 'price'=>299, 'image'=>'assets/images/nuts/walnut.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#24B25D', 'v1'=>'BOLD', 'v2'=>'CRUNCH', 'tagline'=>'Your New Healthy Habit', 'cta_link'=>'shop', 'cta_text'=>'ORDER NOW', 'alt_text'=>'Spiced Walnuts', 'show_title'=>1, 'show_subtitle'=>1, 'show_cta'=>1],
+        ['id'=>4, 'product_id'=>4, 'slug'=>'sweet-berries', 'name'=>'Sweet Berries', 'price'=>349, 'image'=>'assets/images/berries.png', 'image_tablet'=>null, 'image_mobile'=>null, 'bg'=>'#24B25D', 'v1'=>'WILD', 'v2'=>'PICKED', 'tagline'=>'Your New Healthy Habit', 'cta_link'=>'shop', 'cta_text'=>'ORDER NOW', 'alt_text'=>'Sweet Berries', 'show_title'=>1, 'show_subtitle'=>1, 'show_cta'=>1]
     ];
 }
 
@@ -111,189 +123,12 @@ $wishlist_json = json_encode($wishlist_ids);
 
      
     </style>
-    <!-- HERO LOGIC: VIVID SCENE SWITCHER -->
-    <script>
-        let heroAutoPlay;
-        let currentHeroIndex = 0;
-        const heroVariants = <?php echo json_encode($hero_variants); ?>;
-        const wishlistIds = <?php echo json_encode($wishlist_ids); ?>;
-
-        function switchHeroProduct(index, el) {
-            if(index === undefined || index === null) return;
-            currentHeroIndex = parseInt(index);
-            const data = heroVariants[currentHeroIndex];
-            if(!data) return;
-            
-            // Clear existing autoplay
-            resetHeroTimer();
-
-            // Update Thumbnails Progress
-            document.querySelectorAll('.hero-thumb').forEach(t => {
-                t.classList.add('opacity-40');
-                t.classList.remove('active-scene', 'opacity-100');
-                const progress = t.querySelector('.thumb-progress');
-                if(progress) progress.style.width = '0%';
-            });
-            
-            if(el) {
-                el.classList.add('active-scene', 'opacity-100');
-                el.classList.remove('opacity-40');
-            }
-
-            const mainImg = document.getElementById('hero-main-img');
-            const mainTitle = document.getElementById('hero-main-title');
-            const mainPrice = document.getElementById('hero-price');
-            const accentPanel = document.getElementById('hero-accent-panel');
-            const vTexts = document.querySelectorAll('.hero-v-text');
-            const heartBtn = document.getElementById('hero-heart-btn');
-
-            if(!mainImg) return;
-
-            // Step 1: Arc Exit Animation (Up & Right)
-            mainImg.style.animation = 'none';
-            mainImg.offsetHeight; // force reflow
-            mainImg.style.animation = 'arcExit 0.75s cubic-bezier(1, 0, 0, 1) forwards';
-            
-            if(accentPanel) {
-                accentPanel.style.filter = 'blur(40px)';
-                accentPanel.style.transform = 'scale(1.3) skewX(-15deg) translate(80px, -40px)';
-                accentPanel.style.opacity = '0.3';
-            }
-
-            setTimeout(() => {
-                // Step 2: Content Handover
-                let imgPath = data.image;
-                if (!imgPath.includes('http')) {
-                    imgPath = '<?php echo get_url(''); ?>' + imgPath;
-                }
-                mainImg.src = imgPath;
-
-                if(mainPrice) mainPrice.innerText = data.price || '249';
-                
-                // Update Link
-                const productLink = document.getElementById('hero-product-link');
-                if(productLink && data.slug) {
-                    productLink.href = '<?php echo get_url('product/'); ?>' + data.slug;
-                }
-                
-                // Update ATC Button
-                const cartBtn = document.getElementById('hero-atc-btn');
-                const cartWrap = document.getElementById('hero-atc-wrap');
-                if(cartBtn && data.product_id) {
-                    cartBtn.setAttribute('onclick', `addToCart(${data.product_id}, this, 1)`);
-                    if(cartWrap) cartWrap.style.display = 'block';
-                }
-                
-                // Update Wishlist
-                if(heartBtn && data.product_id) {
-                    heartBtn.setAttribute('onclick', `toggleWishlist(${data.product_id}, this)`);
-                    heartBtn.className = heartBtn.className.replace(/active|text-red-500|text-[#19DC7E]/g, '').trim();
-                    if(wishlistIds.includes(parseInt(data.product_id))) {
-                        heartBtn.classList.add('active', 'text-red-500');
-                        heartBtn.querySelector('i').className = 'fas fa-heart text-xl lg:text-2xl transition-all duration-300';
-                    } else {
-                        heartBtn.classList.add('text-[#19DC7E]');
-                        heartBtn.querySelector('i').className = 'far fa-heart text-xl lg:text-2xl transition-all duration-300';
-                    }
-                }
-
-                if(mainTitle) {
-                    const words = (data.name || 'PURE CRUNCH').toUpperCase().split(' ');
-                    mainTitle.innerHTML = words.slice(0, 2).join(' ') + (words.length > 2 ? '<br>' + words.slice(2).join(' ') : '');
-                    mainTitle.style.animation = 'none';
-                    mainTitle.offsetHeight;
-                    mainTitle.style.animation = 'revealUp 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards';
-                }
-
-                // Step 3: Color Scene Transition
-                const sceneColor = data.bg || '#19DC7E';
-                if(accentPanel) {
-                    accentPanel.style.backgroundColor = sceneColor;
-                }
-                
-                if(vTexts.length >= 2) {
-                    vTexts[0].innerText = data.v1 || 'SNACKING';
-                    vTexts[1].innerText = data.v2 || 'REIMAGINED';
-                }
-
-                // Step 4: Arc Entrance Animation (From Bottom Left)
-                mainImg.style.animation = 'none';
-                mainImg.offsetHeight; // force reflow
-                mainImg.style.animation = 'arcEnter 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards';
-                
-                if(accentPanel) {
-                    accentPanel.style.filter = 'blur(0px)';
-                    accentPanel.style.transform = 'scale(1) skewX(0deg) translate(0, 0)';
-                    accentPanel.style.opacity = '1';
-                }
-
-                // Restore floating animation after scene entry
-                setTimeout(() => {
-                    if(mainImg.style.animationName === 'arcEnter') {
-                        mainImg.style.animation = 'floatSlow 6s ease-in-out infinite';
-                    }
-                }, 900);
-                
-                startHeroTimer();
-            }, 650);
-        }
-
-        function startHeroTimer() {
-            const activeThumb = document.querySelector('.hero-thumb.active-scene .thumb-progress');
-            if(activeThumb) {
-                activeThumb.style.transition = 'width 6s linear';
-                activeThumb.style.width = '100%';
-            }
-            heroAutoPlay = setTimeout(nextHero, 6000);
-        }
-
-        function resetHeroTimer() {
-            clearTimeout(heroAutoPlay);
-        }
-
-        function nextHero() {
-            currentHeroIndex = (currentHeroIndex + 1) % heroVariants.length;
-            const thumbs = document.querySelectorAll('.hero-thumb');
-            switchHeroProduct(currentHeroIndex, thumbs[currentHeroIndex]);
-        }
-
-        function prevHero() {
-            currentHeroIndex = (currentHeroIndex - 1 + heroVariants.length) % heroVariants.length;
-            const thumbs = document.querySelectorAll('.hero-thumb');
-            switchHeroProduct(currentHeroIndex, thumbs[currentHeroIndex]);
-        }
-
-        window.addEventListener('load', () => {
-            startHeroTimer();
-        });
-    </script>
 </head>
 <body class="bg-[#FFFEDC]">
 
     <?php include 'includes/header.php'; ?>
 
     <?php
-    $hero_slides = get_hero_slides();
-    if (empty($hero_slides)) {
-        // Fallback to static hero if no slides are in the database
-        $hero = fetch_one("SELECT * FROM homepage_sections WHERE section_name = 'hero'");
-        if(!$hero) {
-            $hero = [
-                'title' => "YOUR NEW HEALTHY HABIT.",
-                'subtitle' => "Absolutely No Sugar. 100% Guilt-Free.",
-                'cta_text' => "Start Crunching",
-                'cta_link' => "shop.php",
-                'image' => "assets/images/hero.jpg"
-            ];
-        } else {
-            // Map homepage_sections fields to slide fields for consistency
-            $hero['title'] = $hero['heading'];
-            $hero['subtitle'] = $hero['subheading'];
-            $hero['image'] = $hero['media_url'];
-        }
-        $hero_slides = [$hero];
-    }
-    
     // Fetch stats for the hero overlay
     $show_stats = get_setting('show_hero_stats', 'on');
     $total_reviews = fetch_one("SELECT COUNT(*) as c FROM reviews")['c'] ?? 5231;
@@ -351,132 +186,146 @@ $wishlist_json = json_encode($wishlist_ids);
             </div>
         </div>
     </div>
-    <?php endif; ?>
-
-    <!-- MODERN BRANDED HERO (True Viewport Engineering) -->
-    <!-- PREMIUM FULL-WIDTH BANNER HERO -->
+    <?php endif; ?>    <!-- MODERN BRANDED HERO SLIDER -->
     <style>
         .hero-banner-container {
-            width: 100vw;
-            aspect-ratio: 16 / 9;
-            max-height: 78vh;
+            width: 100%;
+            aspect-ratio: 1350 / 620;
+            max-height: 80vh;
         }
-        @media (max-width: 1024px) {
-            .hero-banner-container { aspect-ratio: 4 / 3; max-height: none; }
+        @media (max-width: 991px) {
+            .hero-banner-container {
+                aspect-ratio: 1024 / 640;
+                max-height: 75vh;
+            }
         }
-        @media (max-width: 768px) {
-            .hero-banner-container { aspect-ratio: 3 / 4; max-height:78vh; }
+        @media (max-width: 576px) {
+            .hero-banner-container {
+                aspect-ratio: 1 / 1;
+                max-height: 85vh;
+            }
         }
         .banner-slide {
-            transition: opacity 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), transform 1.4s cubic-bezier(0.645, 0.045, 0.355, 1), filter 1.2s ease;
-            will-change: opacity, transform, filter;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, transform;
         }
-        .banner-slide.active { opacity: 1 !important; z-index: 10; transform: scale(1) translateZ(0) !important; filter: blur(0) !important; }
-        .banner-slide.active img { animation: kenburns 15s ease-out forwards; }
-     
+        .banner-slide.active {
+            opacity: 1 !important;
+            z-index: 10;
+            transform: scale(1) translateZ(0) !important;
+            pointer-events: auto;
+        }
         .banner-slide.inactive {
-            opacity: 0 !important; z-index: 0; transform: scale(1.1) translateZ(0) !important;
-            filter: blur(15px) !important;
-            position: absolute !important; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0 !important;
+            z-index: 0;
+            transform: scale(1.02) translateZ(0) !important;
+            pointer-events: none;
+            position: absolute !important;
+            top: 0; left: 0; width: 100%; height: 100%;
         }
-        .availbleatsection::-webkit-scrollbar {
-    display: none; /* For WebKit browsers */
-}
-.availbleatsection {
-    -ms-overflow-style: none;  /* For IE and Edge */
-    scrollbar-width: none;  /* For Firefox */
-}
-
+        .slider-dot {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     </style>
 
-    <section id="hero-slider-section" class="relative hero-banner-container w-[100vw] mx-auto overflow-hidden bg-black group">
+    <section id="hero-slider-section" class="relative hero-banner-container mx-auto overflow-hidden bg-[#0A1A17] select-none group">
         <div class="relative w-full h-full">
             <?php foreach($hero_variants as $index => $slide): 
-                $slide_link = ($slide['cta_link'] ?? '') ?: 'product.php?id='.($slide['product_id'] ?? '0');
+                $slide_target = trim($slide['cta_link'] ?? '');
+                if(empty($slide_target) && !empty($slide['slug'])) {
+                    $slide_target = 'product/' . $slide['slug'];
+                }
+                if(!empty($slide_target)) {
+                    if(strpos($slide_target, 'http://') === 0 || strpos($slide_target, 'https://') === 0) {
+                        $slide_href = $slide_target;
+                    } else {
+                        $slide_href = get_url(ltrim($slide_target, '/'));
+                    }
+                } else {
+                    $slide_href = '';
+                }
+                
+                $desktop_img = $slide['image'] ?? '';
+                $tablet_img = $slide['image_tablet'] ?? '';
+                $mobile_img = $slide['image_mobile'] ?? '';
+                $fallback_img = $desktop_img ?: ($tablet_img ?: $mobile_img);
+                $alt_text = htmlspecialchars($slide['alt_text'] ?: ($slide['name'] ?: 'Driyum Special Offer Banner'));
             ?>
             <div class="banner-slide <?php echo $index === 0 ? 'active' : 'inactive'; ?> absolute inset-0 w-full h-full" data-index="<?php echo $index; ?>">
-                <!-- Clickable Link -->
-                <a href="<?php echo $slide_link; ?>" class="absolute inset-0 z-10 w-full h-full"></a>
+                <?php if(!empty($slide_href)): ?>
+                <!-- Whole Banner Click Target -->
+                <a href="<?php echo htmlspecialchars($slide_href); ?>" class="absolute inset-0 z-10 w-full h-full" aria-label="<?php echo $alt_text; ?>"></a>
+                <?php endif; ?>
 
-                <!-- Seamless Top Integration -->
-                <div class="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-white/10 to-transparent z-20 pointer-events-none"></div>
-
-                <!-- Background Image (Responsive) -->
-                <div class="absolute inset-0 w-full h-full overflow-hidden">
+                <!-- Clean Responsive Picture Banner (No Text Overlay) -->
+                <div class="absolute inset-0 w-full h-full overflow-hidden select-none">
                     <picture>
-                        <?php if(!empty($slide['image_mobile'])): ?>
-                            <source media="(max-width: 768px)" srcset="<?php echo get_url($slide['image_mobile']); ?>">
+                        <?php if(!empty($mobile_img)): ?>
+                            <source media="(max-width: 576px)" srcset="<?php echo get_url($mobile_img); ?>">
                         <?php endif; ?>
-                        <?php if(!empty($slide['image_tablet'])): ?>
-                            <source media="(max-width: 1024px)" srcset="<?php echo get_url($slide['image_tablet']); ?>">
+                        <?php if(!empty($tablet_img)): ?>
+                            <source media="(max-width: 991px)" srcset="<?php echo get_url($tablet_img); ?>">
                         <?php endif; ?>
-                        <img src="<?php echo get_url($slide['image']); ?>" 
-                             class="w-full h-full object-cover object-center transform transition-all duration-[10000ms] ease-linear <?php echo $index === 0 ? 'scale-110' : ''; ?> will-change-transform" 
-                             style="transition: transform 0.8s cubic-bezier(0.33, 1, 0.68, 1), opacity 1s ease;"
-                             alt="<?php echo htmlspecialchars($slide['name'] ?? ''); ?>">
+                        <img src="<?php echo get_url($fallback_img); ?>" 
+                             class="w-full h-full object-cover object-center" 
+                             alt="<?php echo $alt_text; ?>"
+                             loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
+                             <?php if($index === 0): ?>fetchpriority="high"<?php endif; ?>>
                     </picture>
                 </div>
-
-                <!-- Overlay Content -->
-                <?php if(!empty($slide['name']) || !empty($slide['tagline'])): ?>
-                <div class="container mx-auto px-6 lg:px-24 h-full flex flex-col justify-center relative z-20 pointer-events-none">
-                    <div class="max-w-3xl text-white">
-                        <div class="banner-content-reveal">
-                            <?php if(!empty($slide['tagline'])): ?>
-                            <span class="inline-block px-4 py-1.5 rounded-lg bg-[#19DC7E] text-[#002A23] text-[10px] md:text-xs font-black uppercase tracking-[0.2em] mb-4 md:mb-6 transform translate-y-10 opacity-0 transition-all duration-700 delay-300 banner-reveal-item active:translate-y-0 active:opacity-100">
-                                <?php echo htmlspecialchars($slide['tagline']); ?>
-                            </span>
-                            <?php endif; ?>
-
-                            <?php if(!empty($slide['name'])): ?>
-                            <h2 class="text-3xl md:text-4xl lg:text-6xl font-black leading-[1.0] tracking-tight mb-6 md:mb-8 transform translate-y-10 opacity-0 transition-all duration-700 delay-500 banner-reveal-item active:translate-y-0 active:opacity-100 font-heading">
-                                <?php echo nl2br(htmlspecialchars($slide['name'])); ?>
-                            </h2>
-                            <?php endif; ?>
-
-                            <div class="flex items-center gap-4 md:gap-4 transform translate-y-10 opacity-0 transition-all duration-700 delay-700 banner-reveal-item active:translate-y-0 active:opacity-100 pointer-events-auto">
-                                <span class="px-6 py-3 md:px-8 md:py-4 bg-[#19DC7E] text-[#002A23] font-black text-[10px] md:text-sm uppercase tracking-[0.1em] rounded-xl hover:bg-white hover:text-black transition-all transform hover:scale-105 active:scale-95 shadow-2xl inline-block cursor-pointer">
-                                    <?php echo !empty($slide['cta_text']) ? htmlspecialchars($slide['cta_text']) : 'ORDER NOW'; ?>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <?php endif; ?>
             </div>
             <?php endforeach; ?>
 
-
-            <!-- Side Arrows (Visible on Hover/Desktop) -->
-            <div class="absolute inset-y-0 left-4 md:left-8 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onclick="prevSlide()" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all flex items-center justify-center">
-                    <i class="fas fa-chevron-left text-xs"></i>
+            <?php if(count($hero_variants) > 1): ?>
+            <!-- Side Arrows (Visible on Hover / Desktop) -->
+            <div class="absolute inset-y-0 left-3 md:left-6 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button" onclick="event.stopPropagation(); prevSlide();" aria-label="Previous Slide" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/40 backdrop-blur-md text-white hover:bg-[#24B25D] hover:border-[#24B25D] transition-all flex items-center justify-center shadow-lg cursor-pointer">
+                    <i class="fas fa-chevron-left text-xs md:text-sm"></i>
                 </button>
             </div>
-            <div class="absolute inset-y-0 right-4 md:right-8 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onclick="nextSlide()" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all flex items-center justify-center">
-                    <i class="fas fa-chevron-right text-xs"></i>
+            <div class="absolute inset-y-0 right-3 md:right-6 z-30 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button" onclick="event.stopPropagation(); nextSlide();" aria-label="Next Slide" class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-black/40 backdrop-blur-md text-white hover:bg-[#24B25D] hover:border-[#24B25D] transition-all flex items-center justify-center shadow-lg cursor-pointer">
+                    <i class="fas fa-chevron-right text-xs md:text-sm"></i>
                 </button>
             </div>
 
             <!-- Centered Bottom Dots -->
-            <div class="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+            <div class="absolute bottom-3 md:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-[30]" style="z-index: 30;">
                 <?php foreach($hero_variants as $i => $v): ?>
-                    <button onclick="goToSlide(<?php echo $i; ?>)" class="w-6 md:w-10 h-1 rounded-full transition-all slider-dot <?php echo $i === 0 ? 'bg-[#19DC7E] w-10 md:w-14' : 'bg-white/20 hover:bg-white/40'; ?>"></button>
+                    <button type="button" onclick="event.stopPropagation(); goToSlide(<?php echo $i; ?>);" aria-label="Slide <?php echo $i + 1; ?>" class="h-1.5 rounded-full transition-all slider-dot cursor-pointer <?php echo $i === 0 ? 'bg-[#24B25D] w-8 md:w-12' : 'bg-white/40 hover:bg-white/70 w-3 md:w-4'; ?>"></button>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
 
-            <!-- Premium Organic Wave Shape -->
-            <div class="absolute bottom-0 left-0 w-full z-30 pointer-events-none translate-y-[1px]">
-                <svg class="w-full h-[30px] md:h-[60px] lg:h-[100px] fill-white" viewBox="0 0 1440 320" preserveAspectRatio="none">
-                    <path d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            <?php 
+            $hero_wave = get_hero_wave_data(); 
+            ?>
+            <!-- Organic Wavy Divider with Creamy Accent Border (Dynamic Admin Manageable) -->
+            <div class="absolute bottom-0 left-0 w-full pointer-events-none select-none leading-none z-[25] translate-y-[14px]" style="z-index: 25;">
+                <svg class="w-full h-[38px] sm:h-[56px] md:h-[76px] lg:h-[94px] block" viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <!-- Depth Drop Shadow -->
+                        <filter id="heroWaveShadow" x="-5%" y="-35%" width="110%" height="170%" filterUnits="userSpaceOnUse">
+                            <feDropShadow dx="0" dy="-4" stdDeviation="5" flood-color="#000000" flood-opacity="0.14" />
+                        </filter>
+                    </defs>
+                    <?php if ($hero_wave['intensity'] > 0): ?>
+                    <!-- Creamy Flowing Back Accent Border (Depth & Fun Vibe) -->
+                    <path d="<?php echo htmlspecialchars($hero_wave['cream_path']); ?>" 
+                          fill="#FFFEDC" 
+                          fill-opacity="0.95" 
+                          filter="url(#heroWaveShadow)"></path>
+                    <?php endif; ?>
+                    <!-- Main White Organic Wave -->
+                    <path d="<?php echo htmlspecialchars($hero_wave['white_path']); ?>" 
+                          fill="#FFFFFF"></path>
                 </svg>
             </div>
         </div>
     </section>
 
     <!-- NOW AVAILABLE AT SECTION (Original Panoramic Text Row) -->
-    <section id="partners-section" class="bg-white border-b border-gray-100 overflow-hidden">
+    <section id="partners-section" class="bg-white border-b border-gray-100 overflow-hidden relative">
         <div class="container mx-auto px-10 lg:px-40 py-6 md:py-10">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
                 <!-- Sidebar Title -->
@@ -499,7 +348,7 @@ $wishlist_json = json_encode($wishlist_ids);
                         foreach($partner_list as $p): 
                         ?>
                             <div class="flex flex-col items-center group cursor-default">
-                                 <h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#19DC7E]">
+                                 <h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#24B25D]">
                                     <?php echo $p['name']; ?>
                                  </h4>
                                  <span class="text-[9px] md:text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-1.5 border-t border-gray-50 pt-1 w-full text-center group-hover:text-gray-500 transition-colors">
@@ -513,10 +362,12 @@ $wishlist_json = json_encode($wishlist_ids);
         </div>
     </section>
 
+    <!-- HERO SLIDER LOGIC -->
     <script>
         let currentSlide = 0;
         const totalSlides = <?php echo count($hero_variants); ?>;
-        let slideTimer;
+        let slideTimer = null;
+        const slideDelay = 5000;
 
         function showSlide(index) {
             const slides = document.querySelectorAll('.banner-slide');
@@ -524,178 +375,107 @@ $wishlist_json = json_encode($wishlist_ids);
 
             if(!slides.length) return;
 
+            // Safe wrap index
+            index = (index + slides.length) % slides.length;
+
             slides.forEach((slide, i) => {
-                slide.classList.remove('active');
-                slide.classList.add('inactive');
-                slide.querySelectorAll('.banner-reveal-item').forEach(el => el.classList.remove('active'));
+                if(i === index) {
+                    slide.classList.remove('inactive');
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                    slide.classList.add('inactive');
+                }
             });
 
-            const active = slides[index];
-            if(active) {
-                active.classList.remove('inactive');
-                active.classList.add('active');
-                setTimeout(() => {
-                    active.querySelectorAll('.banner-reveal-item').forEach(el => el.classList.add('active'));
-                }, 100);
-            }
-
             dots.forEach((d, i) => {
-                d.classList.remove('bg-[#19DC7E]', 'w-12', 'md:w-16');
-                d.classList.add('bg-white/20', 'w-8', 'md:w-12');
                 if(i === index) {
-                    d.classList.remove('bg-white/20', 'w-8', 'md:w-12');
-                    d.classList.add('bg-[#19DC7E]', 'w-12', 'md:w-16');
+                    d.classList.remove('bg-white/40', 'w-3', 'md:w-4');
+                    d.classList.add('bg-[#24B25D]', 'w-8', 'md:w-12');
+                } else {
+                    d.classList.remove('bg-[#24B25D]', 'w-8', 'md:w-12');
+                    d.classList.add('bg-white/40', 'w-3', 'md:w-4');
                 }
             });
 
             currentSlide = index;
-            resetTimer();
         }
 
         function nextSlide() {
-            showSlide((currentSlide + 1) % totalSlides);
+            showSlide(currentSlide + 1);
+            resetTimer();
         }
 
         function prevSlide() {
-            showSlide((currentSlide - 1 + totalSlides) % totalSlides);
+            showSlide(currentSlide - 1);
+            resetTimer();
         }
 
         function goToSlide(index) {
             showSlide(index);
+            resetTimer();
+        }
+
+        function startTimer() {
+            if(totalSlides > 1) {
+                stopTimer();
+                slideTimer = setInterval(nextSlide, slideDelay);
+            }
+        }
+
+        function stopTimer() {
+            if(slideTimer) {
+                clearInterval(slideTimer);
+                slideTimer = null;
+            }
         }
 
         function resetTimer() {
-            clearInterval(slideTimer);
-            slideTimer = setInterval(nextSlide, 4000);
+            stopTimer();
+            startTimer();
         }
 
-        // Touch Swipe Support
-        let touchstartX = 0;
-        let touchendX = 0;
-        
         document.addEventListener('DOMContentLoaded', () => {
-             const sliderSection = document.getElementById('hero-slider-section');
-             if(sliderSection) {
-                 sliderSection.addEventListener('touchstart', e => {
-                     touchstartX = e.changedTouches[0].screenX;
-                 }, {passive: true});
+            const sliderSection = document.getElementById('hero-slider-section');
+            if(sliderSection && totalSlides > 1) {
+                // Pause autoplay when hovering over slider
+                sliderSection.addEventListener('mouseenter', stopTimer);
+                sliderSection.addEventListener('mouseleave', startTimer);
 
-                 sliderSection.addEventListener('touchend', e => {
-                     touchendX = e.changedTouches[0].screenX;
-                     if (touchendX < touchstartX - 60) nextSlide();
-                     if (touchendX > touchstartX + 60) prevSlide();
-                 }, {passive: true});
-             }
+                // Touch Swipe for mobile/tablet
+                let touchstartX = 0;
+                let touchstartY = 0;
+                let touchendX = 0;
+                let touchendY = 0;
 
-             if(totalSlides > 0) {
+                sliderSection.addEventListener('touchstart', e => {
+                    touchstartX = e.changedTouches[0].screenX;
+                    touchstartY = e.changedTouches[0].screenY;
+                }, {passive: true});
+
+                sliderSection.addEventListener('touchend', e => {
+                    touchendX = e.changedTouches[0].screenX;
+                    touchendY = e.changedTouches[0].screenY;
+                    const diffX = touchendX - touchstartX;
+                    const diffY = touchendY - touchstartY;
+                    if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+                        if (diffX < 0) nextSlide();
+                        else prevSlide();
+                    }
+                }, {passive: true});
+            }
+
+            if(totalSlides > 0) {
                 showSlide(0);
-             }
-             window.nextSlide = nextSlide;
-             window.prevSlide = prevSlide;
-             window.goToSlide = goToSlide;
+                startTimer();
+            }
 
-             // Smooth Mouse Parallax with Momentum
-             let mouseX = 0, mouseY = 0;
-             document.addEventListener('mousemove', (e) => {
-                 mouseX = (window.innerWidth - e.pageX * 2) / 100;
-                 mouseY = (window.innerHeight - e.pageY * 2) / 100;
-                 
-                 const activeImg = document.querySelector('.banner-slide.active img');
-                 if(activeImg) {
-                     activeImg.style.transform = `scale(1.08) translate(${mouseX}px, ${mouseY}px)`;
-                 }
-             });
+            // Expose globally
+            window.nextSlide = nextSlide;
+            window.prevSlide = prevSlide;
+            window.goToSlide = goToSlide;
         });
-
     </script>
-
-  
-
-    <!-- MODERN HERO SPECIFIC STYLES -->
-    <style>
-        #modern-hero { font-family: 'Montserrat', sans-serif; }
-
-        @keyframes revealUp {
-            from { transform: translateY(30px); opacity: 0; filter: blur(5px); }
-            to { transform: translateY(0); opacity: 1; filter: blur(0); }
-        }
-        .anim-reveal-up { animation: revealUp 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards; opacity: 0; }
-
-        @keyframes floatSlow {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(-1.5deg); }
-        }
-        .anim-float-slow { animation: floatSlow 6s ease-in-out infinite; }
-
-        @keyframes arcExit {
-            0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: blur(0); }
-            100% { transform: translate(500px, -300px) rotate(45deg) scale(0.6); opacity: 0; filter: blur(20px); }
-        }
-
-        @keyframes arcEnter {
-            0% { transform: translate(-500px, 300px) rotate(-45deg) scale(1.6); opacity: 0; filter: blur(20px); }
-            100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; filter: blur(0); }
-        }
-
-        /* Vertical Text Styling - Responsive Mode */
-        @media (min-width: 1024px) {
-            #hero-vertical-text-box {
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-            }
-        }
-
-        /* Mobile Adjustments for High Impact Composition */
-        /* Correct Centering for Locked Viewport */
-        @media (max-width: 1023px) {
-            #modern-hero {
-                height: calc(100dvh - var(--mobile-top-offset));
-            }
-            #hero-accent-panel {
-                inset: auto 0 0 0;
-                width: 100%;
-                height: 75%;
-                border-radius: 60px 60px 0 0;
-            }
-            #hero-vertical-text-box {
-                flex-direction: row;
-                gap: 2rem;
-                opacity: 0.1;
-                pointer-events: none;
-            }
-            .hero-v-text { white-space: nowrap; font-size: 20vw !important; }
-            #hero-main-img { 
-                max-height: 38vh; 
-                width: auto;
-                max-width: 95%;
-                object-fit: contain;
-            }
-            #hero-badges { margin-bottom: 0.8rem; gap: 0.6rem; }
-            #hero-atc-btn { transform-origin: center; }
-        }
-
-        @media (max-width: 640px) {
-            #hero-main-title { letter-spacing: -0.05em; margin-bottom: 0.5rem; font-size: 10vw !important; }
-        }
-        /* Infinite Marquee */
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-        .marquee-content {
-            animation: marquee 40s linear infinite;
-        }
-        .marquee-wrapper:hover .marquee-content {
-            animation-play-state: paused;
-        }
-
-        /* Active Scene Style */
-        .hero-thumb.active-scene { 
-            opacity: 1 !important; 
-            box-shadow: 0 0 20px rgba(25, 220, 126, 0.2); 
-            border-color: rgba(25, 220, 126, 0.4); 
-        }
-    </style>
 
 
 
@@ -763,7 +543,6 @@ $wishlist_json = json_encode($wishlist_ids);
 
 
 
-    <!-- CATEGORIES CAROUSEL (Scroll Snap) -->
     <!-- COMBO BUNDLES SECTION -->
     <section class="py-4 md:py-8 bg-white relative overflow-hidden anim-up">
         <div class="container mx-auto px-6  mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
@@ -788,16 +567,27 @@ $wishlist_json = json_encode($wishlist_ids);
             <div id="combo-slider-container" class="flex w-full overflow-x-auto gap-4 px-8  pb-12 hide-scrollbar scroll-smooth">
                 <?php 
                 // 1. First, fetch real Combo/Bundle/Pack products (Now using the explicit is_combo flag)
-                $combos = fetch_all("SELECT * FROM products WHERE is_combo = 1 AND is_active = 1 ORDER BY id DESC LIMIT 3");
+                $combos = fetch_all("SELECT * FROM products WHERE (is_combo = 1 OR category_id = 3) AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, combo_sort_order ASC, id DESC");
                 
                 // Gap Filling: If less than 4 combos exist, fill with featured gems to ensure a crisp UI
                 $combo_count = count($combos);
                 if($combo_count < 4) {
                     $needed = 4 - $combo_count;
                     $ids = !empty($combos) ? implode(',', array_column($combos, 'id')) : '0';
-                    $fillers = fetch_all("SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 AND id NOT IN ($ids) LIMIT $needed");
+                    $fillers = fetch_all("SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 AND id NOT IN ($ids) ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, combo_sort_order ASC, id DESC LIMIT $needed");
                     $combos = array_merge($combos, $fillers);
                 }
+
+                // Ensure in-stock items always appear before out-of-stock items, respecting custom combo sort order
+                usort($combos, function($a, $b) {
+                    $a_in = ($a['stock'] > 0) ? 0 : 1;
+                    $b_in = ($b['stock'] > 0) ? 0 : 1;
+                    if ($a_in !== $b_in) return $a_in - $b_in;
+                    $a_sort = isset($a['combo_sort_order']) ? (int)$a['combo_sort_order'] : (int)$a['id'];
+                    $b_sort = isset($b['combo_sort_order']) ? (int)$b['combo_sort_order'] : (int)$b['id'];
+                    if ($a_sort !== $b_sort) return $a_sort - $b_sort;
+                    return $b['id'] - $a['id'];
+                });
 
                 $i = 0;
                 $delay = 0;
@@ -822,7 +612,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                     <img src="<?php echo get_url($p['image']); ?>" 
                                          loading="lazy"
                                          alt="<?php echo htmlspecialchars($p['name']); ?>"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 <?php echo $p['stock'] <= 0 ? 'grayscale opacity-75' : ''; ?>">
                                     
                                     <!-- Premium Bundle Branding -->
                                     <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
@@ -835,6 +625,13 @@ $wishlist_json = json_encode($wishlist_ids);
                                             </div>
                                         <?php endif; ?>
                                     </div>
+
+                                    <!-- Stock Status Badge -->
+                                    <?php if($p['stock'] <= 0): ?>
+                                        <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center z-10">
+                                            <span class="bg-white text-black text-[10px] font-black px-4 py-2 rounded-full shadow-xl uppercase tracking-widest border border-gray-100">Out of Stock</span>
+                                        </div>
+                                    <?php endif; ?>
 
                                     <!-- Quick Discovery Arrow -->
                                     <div class="absolute top-4 right-4 w-10 h-10 rounded-2xl bg-white/95 backdrop-blur-sm flex items-center justify-center text-gray-900 shadow-xl group-hover:bg-[#24B25D] group-hover:text-white transition-all duration-500 scale-90 group-hover:scale-100 z-20 overflow-hidden">
@@ -870,17 +667,30 @@ $wishlist_json = json_encode($wishlist_ids);
                                         <button onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="w-9 h-9 md:w-11 md:h-11 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center hover:bg-white hover:text-red-500 transition-all border border-gray-100">
                                             <i class="far fa-heart text-[13px] md:text-[15px]"></i>
                                         </button>
-                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-9 h-9 md:w-11 md:h-11 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
-                                            <i class="fas fa-shopping-bag text-[13px] md:text-[15px]"></i>
-                                        </button>
+                                        <?php if($p['stock'] <= 0): ?>
+                                            <button disabled class="w-9 h-9 md:w-11 md:h-11 bg-gray-100 text-gray-300 rounded-xl flex items-center justify-center cursor-not-allowed">
+                                                <i class="fas fa-ban text-[13px] md:text-[15px]"></i>
+                                            </button>
+                                        <?php else: ?>
+                                            <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-9 h-9 md:w-11 md:h-11 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
+                                                <i class="fas fa-shopping-bag text-[13px] md:text-[15px]"></i>
+                                            </button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
 
                                 <!-- Full Action Button -->
-                                <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
-                                    class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-3 lg:py-4 rounded-xl font-black text-[14px] lg:text-[15px] xl:text-[17px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy flex items-center justify-center gap-2">
-                                    <span>Quick Buy</span> <i class="fas fa-bolt group-hover/buy:animate-pulse"></i>
-                                </button>
+                                <?php if($p['stock'] <= 0): ?>
+                                    <button disabled 
+                                        class="w-full bg-gray-100 text-gray-400 py-3 lg:py-4 rounded-xl font-black text-[14px] lg:text-[15px] xl:text-[17px] uppercase tracking-widest cursor-not-allowed flex items-center justify-center">
+                                        <span>Out of Stock</span>
+                                    </button>
+                                <?php else: ?>
+                                    <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
+                                        class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-3 lg:py-4 rounded-xl font-black text-[14px] lg:text-[15px] xl:text-[17px] uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy flex items-center justify-center gap-2">
+                                        <span>Quick Buy</span> <i class="fas fa-bolt group-hover/buy:animate-pulse"></i>
+                                    </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </a>
@@ -1084,7 +894,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                     <img src="<?php echo get_url($p['image']); ?>" 
                                          loading="lazy"
                                          alt="<?php echo htmlspecialchars($p['name']); ?>"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 <?php echo $p['stock'] <= 0 ? 'grayscale opacity-75' : ''; ?>">
                                     
                                     <!-- Premium Savings Badge -->
                                     <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): 
@@ -1092,6 +902,13 @@ $wishlist_json = json_encode($wishlist_ids);
                                     ?>
                                         <div class="absolute top-4 left-4 bg-[#EDB02C] text-white text-[9px] font-black px-2.5 py-1 rounded-full shadow-lg border border-white/10 backdrop-blur-sm">
                                             -<?php echo $savings; ?>% OFF
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <!-- Stock Status Badge -->
+                                    <?php if($p['stock'] <= 0): ?>
+                                        <div class="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex items-center justify-center z-10">
+                                            <span class="bg-white text-black text-[10px] font-black px-4 py-2 rounded-full shadow-xl uppercase tracking-widest border border-gray-100">Out of Stock</span>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -1124,16 +941,29 @@ $wishlist_json = json_encode($wishlist_ids);
                                         </span>
                                     </div>
                                     <!-- Cart Icon Pill -->
-                                    <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-[#212121] text-white rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:scale-110 transition-all shadow-md active:scale-95 z-10">
-                                        <i class="fas fa-shopping-cart text-sm"></i>
-                                    </button>
+                                    <?php if($p['stock'] <= 0): ?>
+                                        <button disabled class="w-12 h-12 bg-gray-100 text-gray-300 rounded-xl flex items-center justify-center cursor-not-allowed z-10" title="Out of stock">
+                                            <i class="fas fa-ban text-sm"></i>
+                                        </button>
+                                    <?php else: ?>
+                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-[#212121] text-white rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:scale-110 transition-all shadow-md active:scale-95 z-10">
+                                            <i class="fas fa-shopping-cart text-sm"></i>
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
 
                                 <!-- "Buy Now" Action -->
-                                <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
-                                    class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-2xl font-black text-[18px] transition-all shadow-md active:scale-95 z-10">
-                                    BUY NOW <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
-                                </button>
+                                <?php if($p['stock'] <= 0): ?>
+                                    <button disabled 
+                                        class="w-full bg-gray-100 text-gray-400 py-4 rounded-2xl font-black text-[18px] cursor-not-allowed z-10">
+                                        OUT OF STOCK
+                                    </button>
+                                <?php else: ?>
+                                    <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
+                                        class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-2xl font-black text-[18px] transition-all shadow-md active:scale-95 z-10">
+                                        BUY NOW <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
+                                    </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </a>

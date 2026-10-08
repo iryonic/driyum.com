@@ -6,7 +6,7 @@ require_once 'includes/functions.php';
 // Filter Logic from URL
 $cat_slug = isset($_GET['cat']) ? $_GET['cat'] : null;
 $search = isset($_GET['q']) ? trim($_GET['q']) : null;
-$sort = isset($_GET['sort']) ? $_GET['sort'] : 'newest';
+$sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
 
 // Pagination
 $limit = 20;
@@ -28,9 +28,15 @@ if ($cat_slug) {
     } else {
          $cat_row = fetch_one("SELECT id FROM categories WHERE slug = ?", [$cat_slug]);
          if ($cat_row) {
-             $where_clause .= " AND p.category_id = ?";
-             $params[] = $cat_row['id'];
-             $types .= "i";
+             if ($cat_slug === 'combos') {
+                 $where_clause .= " AND (p.category_id = ? OR p.is_combo = 1)";
+                 $params[] = $cat_row['id'];
+                 $types .= "i";
+             } else {
+                 $where_clause .= " AND p.category_id = ?";
+                 $params[] = $cat_row['id'];
+                 $types .= "i";
+             }
          }
     }
 }
@@ -50,9 +56,10 @@ $total_pages = ceil($total_items / $limit);
 // Sorting
 $order_by = "";
 switch ($sort) {
-    case 'price_asc': $order_by = " ORDER BY p.price ASC"; break;
-    case 'price_desc': $order_by = " ORDER BY p.price DESC"; break;
-    default: $order_by = " ORDER BY p.created_at DESC"; break;
+    case 'price_asc': $order_by = " ORDER BY CASE WHEN p.stock > 0 THEN 0 ELSE 1 END ASC, p.price ASC"; break;
+    case 'price_desc': $order_by = " ORDER BY CASE WHEN p.stock > 0 THEN 0 ELSE 1 END ASC, p.price DESC"; break;
+    case 'newest': $order_by = " ORDER BY CASE WHEN p.stock > 0 THEN 0 ELSE 1 END ASC, p.created_at DESC"; break;
+    default: $order_by = " ORDER BY CASE WHEN p.stock > 0 THEN 0 ELSE 1 END ASC, p.sort_order ASC, p.id DESC"; break;
 }
 
 $sql = "SELECT p.*, c.name as category_name" . $sql_base . $where_clause . $order_by . " LIMIT $limit OFFSET $offset";
@@ -101,7 +108,7 @@ if (isset($_SESSION['user_id'])) {
     <?php include 'includes/header.php'; ?>
 
     <!-- ENHANCED HERO HEADER -->
-    <header class="relative pt-16 pb-12 text-center px-4 overflow-hidden">
+    <header class="relative py-10 text-center px-4 overflow-hidden">
         <!-- Subtle Gradient -->
         <div class="absolute inset-0 bg-gradient-to-b from-green-50/30 to-transparent -z-10"></div>
 
@@ -113,9 +120,7 @@ if (isset($_SESSION['user_id'])) {
                     else echo "The <span class='text-[#24B25D]'>Snack</span> Shop";
                 ?>
             </h1>
-            <p class="text-lg md:text-xl text-gray-400 font-sans font-medium max-w-2xl mx-auto">
-                Discover the pure taste of nature. Hand-picked and delivered fresh from the valley.
-            </p>
+           
         </div>
     </header>
 
@@ -150,6 +155,7 @@ if (isset($_SESSION['user_id'])) {
                     <h3 class="font-bold text-xl mb-4 font-heading">Sort Collection</h3>
                     <div class="relative group">
                         <select onchange="window.location.href=this.value" class="input-chunky text-sm p-4 bg-gray-50 border-gray-100 appearance-none cursor-pointer">
+                            <option value="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'default'])); ?>" <?php echo $sort == 'default' ? 'selected' : ''; ?>>Featured / Default</option>
                             <option value="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'newest'])); ?>" <?php echo $sort == 'newest' ? 'selected' : ''; ?>>Newest Arrival</option>
                             <option value="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'price_asc'])); ?>" <?php echo $sort == 'price_asc' ? 'selected' : ''; ?>>Price: Low to High</option>
                             <option value="?<?php echo http_build_query(array_merge($_GET, ['sort' => 'price_desc'])); ?>" <?php echo $sort == 'price_desc' ? 'selected' : ''; ?>>Price: High to Low</option>
@@ -196,7 +202,7 @@ if (isset($_SESSION['user_id'])) {
                                             <img src="<?php echo get_url(ltrim($p['image'], './')); ?>" 
                                                  loading="lazy"
                                                  alt="<?php echo htmlspecialchars($p['name']); ?>"
-                                                 class="w-full h-full object-contain group-hover/card:scale-110 transition-transform duration-1000">
+                                                 class="w-full h-full object-contain group-hover/card:scale-110 transition-transform duration-1000 <?php echo $p['stock'] <= 0 ? 'grayscale opacity-75' : ''; ?>">
                                             
                                             <!-- deal badge -->
                                             <?php if(isset($p['discount_percentage']) && $p['discount_percentage'] > 0): ?>
@@ -245,17 +251,30 @@ if (isset($_SESSION['user_id'])) {
                                                 <button onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center hover:bg-white hover:text-red-500 transition-all border border-gray-100">
                                                     <i class="<?php echo in_array($p['id'], $wishlist_ids) ? 'fas text-red-500' : 'far'; ?> fa-heart text-sm"></i>
                                                 </button>
-                                                <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
-                                                    <i class="fas fa-shopping-bag text-sm"></i>
-                                                </button>
+                                                <?php if($p['stock'] <= 0): ?>
+                                                    <button disabled class="w-12 h-12 bg-gray-100 text-gray-300 rounded-xl flex items-center justify-center cursor-not-allowed" title="Out of stock">
+                                                        <i class="fas fa-ban text-sm"></i>
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
+                                                        <i class="fas fa-shopping-bag text-sm"></i>
+                                                    </button>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
 
                                         <!-- Buy Now Action -->
-                                        <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
-                                            class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-xl md:rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy">
-                                            Quick Buy — <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
-                                        </button>
+                                        <?php if($p['stock'] <= 0): ?>
+                                            <button disabled 
+                                                class="w-full bg-gray-100 text-gray-400 py-4 rounded-xl md:rounded-2xl font-black text-xs uppercase tracking-widest cursor-not-allowed">
+                                                Out of Stock
+                                            </button>
+                                        <?php else: ?>
+                                            <button onclick="event.preventDefault(); event.stopPropagation(); quickBuy(<?php echo $p['id']; ?>, this)" 
+                                                class="w-full bg-[#24B25D] hover:bg-[#004F42] text-white py-4 rounded-xl md:rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 group/buy">
+                                                Quick Buy — <i class="fas fa-bolt ml-1 group-hover/buy:animate-pulse"></i>
+                                            </button>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </a>

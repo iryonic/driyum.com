@@ -62,7 +62,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .admin-sidebar::-webkit-scrollbar { width: 3px; }
         .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.05); border-radius: 10px; }
         
-        .admin-content { margin-left: 260px; padding: 2rem 3rem; min-height: 100vh; transition: margin-left 0.3s ease; }
+        .admin-content { margin-left: 260px; padding: 2rem 1rem; padding-bottom: 150px; min-height: 100vh; transition: margin-left 0.3s ease; }
         
         .nav-link {
             transition: all 0.2s ease;
@@ -96,7 +96,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         @media (max-width: 1024px) {
             .admin-sidebar { transform: translateX(-100%); }
             .admin-sidebar.open { transform: translateX(0); }
-            .admin-content { margin-left: 0; padding: 1.5rem; }
+            .admin-content { margin-left: 0; padding: 1rem; padding-bottom:250px }
             
             .sidebar-overlay {
                 position: fixed;
@@ -186,6 +186,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <a href="products.php" class="nav-link <?php echo ($p=='products.php' || $p=='product_form.php')?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-apple-alt w-5 text-sm"></i> <span>Product List</span>
                     </a>
+                    <a href="product_sorting.php" class="nav-link <?php echo $p=='product_sorting.php'?'nav-link-active':'text-white'; ?>">
+                        <i class="fas fa-arrows-alt w-5 text-sm"></i> 
+                        <span class="flex-1">Product Sorting</span>
+                        <span class="bg-[#24B25D] text-black text-[9px] font-black px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(25,220,126,0.5)]">DRAG</span>
+                    </a>
                     <a href="categories.php" class="nav-link <?php echo ($p=='categories.php' || $p=='category_form.php')?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-th-list w-5 text-sm"></i> <span>Categories</span>
                     </a>
@@ -231,6 +236,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div>
                 <h4 class="px-4 text-[9px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3 opacity-40">Website</h4>
                 <div class="space-y-1">
+                    <a href="hero_slides.php" class="nav-link <?php echo $p=='hero_slides.php'?'nav-link-active':'text-white'; ?>">
+                        <i class="fas fa-images w-5 text-sm"></i> 
+                        <span>Hero Slides</span>
+                    </a>
                     <a href="manage_home.php" class="nav-link <?php echo $p=='manage_home.php'?'nav-link-active':'text-white'; ?>">
                         <i class="fas fa-home w-5 text-sm"></i> 
                         <span>Homepage</span>

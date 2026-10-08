@@ -325,11 +325,11 @@ function require_admin() {
 // Homepage Functions
 function get_hero_slides($include_inactive = false) {
     $where = $include_inactive ? "" : "WHERE s.is_active = 1";
-    $sql = "SELECT s.*, p.slug as product_slug 
+    $sql = "SELECT s.*, p.slug as product_slug, p.name as product_name 
             FROM hero_slides s 
             LEFT JOIN products p ON s.product_id = p.id 
             $where 
-            ORDER BY s.sort_order ASC";
+            ORDER BY s.sort_order ASC, s.id ASC";
     return fetch_all($sql);
 }
 
@@ -349,17 +349,38 @@ function get_all_categories() {
 }
 
 function get_featured_products($limit = 8) {
-    $sql = "SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY created_at DESC LIMIT ?";
-    return fetch_all($sql, [$limit]);
+    $sql = "SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, featured_sort_order ASC, id DESC LIMIT ?";
+    $products = fetch_all($sql, [$limit]);
+    if (count($products) < $limit) {
+        $needed = $limit - count($products);
+        $ids = !empty($products) ? implode(',', array_column($products, 'id')) : '0';
+        $fillers = fetch_all("SELECT * FROM products WHERE is_active = 1 AND id NOT IN ($ids) ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, featured_sort_order ASC, id DESC LIMIT ?", [$needed]);
+        $products = array_merge($products, $fillers);
+    }
+    // Always ensure in-stock items appear before out-of-stock items, while respecting custom order
+    usort($products, function($a, $b) {
+        $a_stock = ($a['stock'] > 0) ? 0 : 1;
+        $b_stock = ($b['stock'] > 0) ? 0 : 1;
+        if ($a_stock !== $b_stock) {
+            return $a_stock - $b_stock;
+        }
+        $a_sort = isset($a['featured_sort_order']) ? (int)$a['featured_sort_order'] : (int)$a['id'];
+        $b_sort = isset($b['featured_sort_order']) ? (int)$b['featured_sort_order'] : (int)$b['id'];
+        if ($a_sort !== $b_sort) {
+            return $a_sort - $b_sort;
+        }
+        return $b['id'] - $a['id'];
+    });
+    return $products;
 }
 
 function get_best_sellers($limit = 8) {
-    $sql = "SELECT p.*, COUNT(oi.id) as sales_count FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id WHERE p.is_active = 1 GROUP BY p.id ORDER BY sales_count DESC LIMIT ?";
+    $sql = "SELECT p.*, COUNT(oi.id) as sales_count FROM products p LEFT JOIN order_items oi ON oi.product_id = p.id WHERE p.is_active = 1 GROUP BY p.id ORDER BY CASE WHEN p.stock > 0 THEN 0 ELSE 1 END ASC, sales_count DESC LIMIT ?";
     return fetch_all($sql, [$limit]);
 }
 
 function get_new_arrivals($limit = 8) {
-    $sql = "SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT ?";
+    $sql = "SELECT * FROM products WHERE is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, created_at DESC LIMIT ?";
     return fetch_all($sql, [$limit]);
 }
 
@@ -393,7 +414,7 @@ function get_product_images($product_id) {
 }
 
 function get_related_products($product_id, $category_id, $limit = 4) {
-    $sql = "SELECT * FROM products WHERE category_id = ? AND id != ? AND is_active = 1 ORDER BY RAND() LIMIT ?";
+    $sql = "SELECT * FROM products WHERE category_id = ? AND id != ? AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, RAND() LIMIT ?";
     return fetch_all($sql, [$category_id, $product_id, $limit]);
 }
 
@@ -425,17 +446,17 @@ function get_products_by_filter($filters = [], $page = 1, $per_page = 12) {
     $total = $count_result['total'];
     // Get products
     $offset = ($page - 1) * $per_page;
-    $order_by = "ORDER BY created_at DESC";
+    $order_by = "ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, created_at DESC";
     if (!empty($filters['sort'])) {
         switch ($filters['sort']) {
             case 'price_low':
-                $order_by = "ORDER BY price ASC";
+                $order_by = "ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, price ASC";
                 break;
             case 'price_high':
-                $order_by = "ORDER BY price DESC";
+                $order_by = "ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, price DESC";
                 break;
             case 'name':
-                $order_by = "ORDER BY name ASC";
+                $order_by = "ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, name ASC";
                 break;
         }
     }
@@ -1464,6 +1485,14 @@ function run_crons() {
  * Pagination Helpers
  */
 function get_pagination_data($query, $params = [], $per_page = 10) {
+    // Allow user to choose how many elements to see per page via $_GET['per_page']
+    if (isset($_GET['per_page'])) {
+        $req_per_page = (int)$_GET['per_page'];
+        if ($req_per_page >= 5 && $req_per_page <= 500) {
+            $per_page = $req_per_page;
+        }
+    }
+
     $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
     if ($page < 1) $page = 1;
     
@@ -1502,39 +1531,287 @@ function get_status_color($status) {
     return $colors[strtolower($status)] ?? 'bg-gray-100 text-gray-600';
 }
 
-function render_pagination($total_pages, $current_page) {
-    if ($total_pages <= 1) return '';
-    
-    $html = '<div class="flex items-center justify-center gap-2 mt-12 pb-12 anim-up">';
-    
-    // Current URL without page param
-    $url = $_SERVER['PHP_SELF'];
+/**
+ * Dynamic Hero Wavy Divider Path Generator
+ * Calculates SVG paths based on an intensity factor (0% - 100%)
+ */
+function get_hero_wave_data($intensity = null) {
+    if ($intensity === null) {
+        $intensity = function_exists('get_setting') ? (int)get_setting('hero_wave_intensity', 75) : 75;
+    }
+    $intensity = max(0, min(100, (int)$intensity));
+    $f = $intensity / 100.0;
+    $B = 145; // Baseline level
+
+    // Key points: [cmd, x, dev] where dev is deviation from baseline B=145
+    $points = [
+        ['M', 0, 5],
+        ['C', 80, 65, 130, 90, 220, 85],
+        ['C', 320, 80, 370, -80, 480, -85],
+        ['C', 590, -90, 640, 80, 750, 75],
+        ['C', 860, 70, 910, -90, 1020, -95],
+        ['C', 1130, -100, 1180, 70, 1280, 65],
+        ['C', 1360, 60, 1400, 0, 1440, -25],
+    ];
+
+    $build_path = function($cream = false) use ($points, $B, $f) {
+        $offset = $cream ? -20 : 0;
+        $d = "";
+        foreach ($points as $p) {
+            $cmd = $p[0];
+            if ($cmd === 'M') {
+                $y = round($B + ($p[2] + $offset) * $f);
+                $d .= "M{$p[1]},{$y} ";
+            } elseif ($cmd === 'C') {
+                $y1 = round($B + ($p[2] + $offset) * $f);
+                $y2 = round($B + ($p[4] + $offset) * $f);
+                $y3 = round($B + ($p[6] + $offset) * $f);
+                $d .= "C{$p[1]},{$y1} {$p[3]},{$y2} {$p[5]},{$y3} ";
+            }
+        }
+        $d .= "L1440,320 L0,320 Z";
+        return trim($d);
+    };
+
+    return [
+        'intensity' => $intensity,
+        'white_path' => $build_path(false),
+        'cream_path' => $build_path(true)
+    ];
+}
+
+function render_pagination($total_pages, $current_page = 1, $per_page = null, $total_records = null) {
+    // Support passing entire $pagination array as first argument
+    if (is_array($total_pages)) {
+        $p_data = $total_pages;
+        $total_pages = $p_data['total_pages'] ?? 1;
+        $current_page = $p_data['current_page'] ?? 1;
+        $per_page = $p_data['per_page'] ?? null;
+        $total_records = $p_data['total_records'] ?? null;
+    }
+
+    $total_pages = (int)$total_pages;
+    $current_page = (int)$current_page;
+    if ($total_pages < 1) $total_pages = 1;
+    if ($current_page < 1) $current_page = 1;
+    if ($current_page > $total_pages) $current_page = $total_pages;
+
+    // Detect per_page if not explicitly passed
+    if ($per_page === null) {
+        if (isset($_GET['per_page']) && (int)$_GET['per_page'] > 0) {
+            $per_page = (int)$_GET['per_page'];
+        } elseif (isset($GLOBALS['pagination']['per_page'])) {
+            $per_page = (int)$GLOBALS['pagination']['per_page'];
+        } elseif (isset($GLOBALS['pagination_rates']['per_page'])) {
+            $per_page = (int)$GLOBALS['pagination_rates']['per_page'];
+        } else {
+            $per_page = 10;
+        }
+    }
+    $per_page = (int)$per_page;
+
+    // Detect total_records if not explicitly passed
+    if ($total_records === null) {
+        if (isset($GLOBALS['pagination']['total_records'])) {
+            $total_records = (int)$GLOBALS['pagination']['total_records'];
+        } elseif (isset($GLOBALS['pagination_rates']['total_records'])) {
+            $total_records = (int)$GLOBALS['pagination_rates']['total_records'];
+        }
+    }
+
+    $is_admin = (strpos($_SERVER['PHP_SELF'] ?? '', '/admin/') !== false);
+    // On non-admin pages, don't show pagination if only 1 page
+    if (!$is_admin && $total_pages <= 1 && !isset($_GET['per_page'])) {
+        return '';
+    }
+    // If no records at all, don't show pagination
+    if ($total_records !== null && $total_records <= 0) {
+        return '';
+    }
+
+    // Standard preset choices for elements per page
+    $options = [10, 25, 50, 100];
+    if (!in_array($per_page, $options) && $per_page > 0) {
+        $options[] = $per_page;
+        sort($options);
+    }
+
+    $url = htmlspecialchars($_SERVER['PHP_SELF'] ?? '');
     $params = $_GET;
-    
-    // Previous
-    if ($current_page > 1) {
-        $params['page'] = $current_page - 1;
-        $prev_url = $url . '?' . http_build_query($params);
-        $html .= "<a href='$prev_url' class='w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#24B25D] transition-all shadow-sm'><i class='fas fa-chevron-left'></i></a>";
+
+    $get_page_url = function($p) use ($url, $params, $per_page) {
+        $p_params = $params;
+        $p_params['page'] = $p;
+        $p_params['per_page'] = $per_page;
+        return $url . '?' . http_build_query($p_params);
+    };
+
+    // Calculate sliding window for desktop (always max 7 items to prevent awkward layout shifts)
+    $pages = [];
+    if ($total_pages <= 7) {
+        $pages = range(1, $total_pages);
+    } elseif ($current_page <= 4) {
+        $pages = [1, 2, 3, 4, 5, '...', $total_pages];
+    } elseif ($current_page >= $total_pages - 3) {
+        $pages = [1, '...', $total_pages - 4, $total_pages - 3, $total_pages - 2, $total_pages - 1, $total_pages];
+    } else {
+        $pages = [1, '...', $current_page - 1, $current_page, $current_page + 1, '...', $total_pages];
     }
 
-    // Pages
-    for ($i = 1; $i <= $total_pages; $i++) {
-        $params['page'] = $i;
-        $page_url = $url . '?' . http_build_query($params);
-        $active_class = ($i == $current_page) ? 'bg-[#24B25D] text-black border-transparent shadow-lg shadow-green-500/20 font-black' : 'bg-white text-gray-400 hover:bg-gray-50 border-gray-100';
-        
-        $html .= "<a href='$page_url' class='w-12 h-12 rounded-2xl border flex items-center justify-center text-sm transition-all $active_class'>$i</a>";
+    $prev_url = $get_page_url(max(1, $current_page - 1));
+    $next_url = $get_page_url(min($total_pages, $current_page + 1));
+    $first_url = $get_page_url(1);
+    $last_url = $get_page_url($total_pages);
+
+    $is_first = ($current_page <= 1);
+    $is_last = ($current_page >= $total_pages);
+
+    // Reusable per-page dropdown markup
+    $render_per_page_select = function() use ($options, $per_page) {
+        $out = '<div class="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-white border border-gray-200/80 px-3 py-2 rounded-xl shadow-xs">';
+        $out .= '<span class="text-gray-400 font-medium">Show</span>';
+        $out .= '<div class="relative inline-flex items-center">';
+        $out .= '<select onchange="window.handlePaginationPerPage(this.value)" aria-label="Items per page" class="appearance-none bg-gray-50 hover:bg-gray-100 text-black font-black text-xs pl-2.5 pr-6 py-1 rounded-lg border border-gray-200 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] cursor-pointer transition-all">';
+        foreach ($options as $opt) {
+            $sel = ($opt == $per_page) ? ' selected' : '';
+            $out .= "<option value=\"$opt\"$sel>$opt</option>";
+        }
+        $out .= '</select>';
+        $out .= '<i class="fas fa-chevron-down text-[9px] text-gray-400 pointer-events-none absolute right-2"></i>';
+        $out .= '</div>';
+        $out .= '<span class="text-gray-400 font-medium">per page</span>';
+        $out .= '</div>';
+        return $out;
+    };
+
+    $html = '<nav aria-label="Pagination Navigation" class="w-full flex flex-col items-center justify-center mt-10 mb-8 sm:mt-12 sm:pb-12 anim-up select-none">';
+
+    // Global helper script to update per_page and reset to page 1
+    $html .= '<script>
+    if (!window.handlePaginationPerPage) {
+        window.handlePaginationPerPage = function(perPage) {
+            try {
+                var url = new URL(window.location.href);
+                url.searchParams.set("per_page", perPage);
+                url.searchParams.set("page", "1");
+                window.location.href = url.toString();
+            } catch(e) {
+                var sep = window.location.href.indexOf("?") !== -1 ? "&" : "?";
+                window.location.href = window.location.pathname + "?page=1&per_page=" + perPage;
+            }
+        };
+    }
+    </script>';
+
+    // ================= MOBILE VIEW (< 640px) =================
+    // Compact, touch-friendly, fits comfortably on 320px+ viewports with zero horizontal overflow
+    $html .= '<div class="flex sm:hidden flex-col items-center w-full max-w-sm px-3 gap-3">';
+    
+    // Top row: mobile pagination controls
+    $html .= '<div class="flex items-center justify-between w-full gap-1.5">';
+    
+    // Mobile: First Page jump
+    if ($is_first) {
+        $html .= '<span class="w-9 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center justify-center text-xs opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-angles-left text-[11px]"></i></span>';
+    } else {
+        $html .= '<a href="' . $first_url . '" class="w-9 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" title="First Page" aria-label="First Page"><i class="fas fa-angles-left text-[11px]"></i></a>';
     }
 
-    // Next
-    if ($current_page < $total_pages) {
-        $params['page'] = $current_page + 1;
-        $next_url = $url . '?' . http_build_query($params);
-        $html .= "<a href='$next_url' class='w-12 h-12 bg-white border border-gray-100 rounded-2xl flex items-center justify-center text-gray-400 hover:bg-black hover:text-[#24B25D] transition-all shadow-sm'><i class='fas fa-chevron-right'></i></a>";
+    // Mobile: Previous button
+    if ($is_first) {
+        $html .= '<span class="px-3 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center gap-1.5 text-xs font-bold opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-chevron-left text-[10px]"></i> Prev</span>';
+    } else {
+        $html .= '<a href="' . $prev_url . '" class="px-3 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center gap-1.5 text-xs font-bold shadow-xs active:scale-95 transition-all" aria-label="Previous Page"><i class="fas fa-chevron-left text-[10px]"></i> Prev</a>';
     }
-    
+
+    // Mobile: Current Page Badge
+    $html .= '<div class="h-9 px-3 bg-white border border-gray-200/80 rounded-xl shadow-xs text-xs font-semibold text-gray-500 flex items-center justify-center gap-1">';
+    $html .= '<span class="text-black font-black text-sm">' . $current_page . '</span>';
+    $html .= '<span class="text-gray-300 font-normal">/</span>';
+    $html .= '<span class="text-gray-600 font-bold">' . $total_pages . '</span>';
     $html .= '</div>';
+
+    // Mobile: Next button
+    if ($is_last) {
+        $html .= '<span class="px-3 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center gap-1.5 text-xs font-bold opacity-50 cursor-not-allowed" aria-disabled="true">Next <i class="fas fa-chevron-right text-[10px]"></i></span>';
+    } else {
+        $html .= '<a href="' . $next_url . '" class="px-3 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center gap-1.5 text-xs font-bold shadow-xs active:scale-95 transition-all" aria-label="Next Page">Next <i class="fas fa-chevron-right text-[10px]"></i></a>';
+    }
+
+    // Mobile: Last Page jump
+    if ($is_last) {
+        $html .= '<span class="w-9 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center justify-center text-xs opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-angles-right text-[11px]"></i></span>';
+    } else {
+        $html .= '<a href="' . $last_url . '" class="w-9 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" title="Last Page" aria-label="Last Page"><i class="fas fa-angles-right text-[11px]"></i></a>';
+    }
+
+    $html .= '</div>';
+
+    // Bottom row: Mobile Per-page selector & item count
+    $html .= '<div class="flex items-center justify-center w-full gap-2">';
+    $html .= $render_per_page_select();
+    if ($total_records !== null) {
+        $html .= '<span class="text-gray-400 font-bold text-xs bg-white border border-gray-200/80 px-2.5 py-2 rounded-xl shadow-xs">' . number_format($total_records) . ' items</span>';
+    }
+    $html .= '</div>';
+
+    $html .= '</div>';
+
+    // ================= DESKTOP / TABLET VIEW (>= 640px) =================
+    // Smart 3-zone layout: [Show X per page] ... [Sliding Window] ... [Page info / count]
+    $html .= '<div class="hidden sm:flex flex-wrap items-center justify-between w-full max-w-5xl px-4 gap-3">';
+
+    // Left: Per-page selector
+    $html .= '<div class="flex items-center">';
+    $html .= $render_per_page_select();
+    $html .= '</div>';
+
+    // Center: Sliding window pagination bar (7 fixed slots maximum)
+    $html .= '<div class="flex items-center justify-center gap-1.5 md:gap-2">';
+
+    // Desktop: Previous Button
+    if ($is_first) {
+        $html .= '<span class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-100 bg-gray-50/70 text-gray-300 flex items-center justify-center text-xs cursor-not-allowed opacity-50" aria-disabled="true"><i class="fas fa-chevron-left text-xs"></i></span>';
+    } else {
+        $html .= '<a href="' . $prev_url . '" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-200/80 bg-white text-gray-600 hover:bg-black hover:text-[#24B25D] hover:border-black flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" aria-label="Previous Page"><i class="fas fa-chevron-left text-xs"></i></a>';
+    }
+
+    // Desktop: Number Buttons & Ellipsis
+    foreach ($pages as $item) {
+        if ($item === '...') {
+            $html .= '<span class="w-8 h-10 sm:w-10 sm:h-11 flex items-center justify-center text-gray-400 font-bold tracking-widest text-xs select-none">...</span>';
+        } else {
+            $page_num = (int)$item;
+            $page_url = $get_page_url($page_num);
+            if ($page_num === $current_page) {
+                $html .= '<span class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-[#24B25D] bg-[#24B25D] text-black font-black flex items-center justify-center text-xs sm:text-sm shadow-md shadow-green-500/25 scale-105" aria-current="page">' . $page_num . '</span>';
+            } else {
+                $html .= '<a href="' . $page_url . '" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center text-xs sm:text-sm font-bold shadow-xs active:scale-95 transition-all">' . $page_num . '</a>';
+            }
+        }
+    }
+
+    // Desktop: Next Button
+    if ($is_last) {
+        $html .= '<span class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-100 bg-gray-50/70 text-gray-300 flex items-center justify-center text-xs cursor-not-allowed opacity-50" aria-disabled="true"><i class="fas fa-chevron-right text-xs"></i></span>';
+    } else {
+        $html .= '<a href="' . $next_url . '" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-200/80 bg-white text-gray-600 hover:bg-black hover:text-[#24B25D] hover:border-black flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" aria-label="Next Page"><i class="fas fa-chevron-right text-xs"></i></a>';
+    }
+
+    $html .= '</div>';
+
+    // Right: Status Badge & Total Count
+    $html .= '<div class="flex items-center text-[11px] font-bold text-gray-400 uppercase tracking-wider bg-white border border-gray-200/80 px-3.5 py-2 rounded-xl shadow-xs">';
+    $html .= 'Page <span class="text-black font-black mx-1">' . $current_page . '</span> of <span class="text-gray-700 font-bold ml-1">' . $total_pages . '</span>';
+    if ($total_records !== null) {
+        $html .= '<span class="text-gray-300 mx-1.5">•</span>';
+        $html .= '<span class="text-gray-600 font-semibold">' . number_format($total_records) . ' items</span>';
+    }
+    $html .= '</div>';
+
+    $html .= '</div>';
+    $html .= '</nav>';
+
     return $html;
 }
 
