@@ -336,9 +336,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="relative group w-full md:w-64" id="omni-search-container">
                     <input type="text" id="omni-search-input" placeholder="Search..." class="w-full bg-gray-50/50 border border-gray-100 focus:border-[#24B25D] focus:bg-white rounded-xl pl-10 pr-12 py-2.5 text-xs font-bold transition-all outline-none shadow-sm group-hover:shadow-md">
                     <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#24B25D] transition-colors text-xs"></i>
-                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                        <span class="bg-white border border-gray-200 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">/</span>
-                    </div>
+                  
                     <div id="omni-results" class="absolute left-0 w-screen md:w-80 md:left-auto md:right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden hidden z-[200]">
                         <div id="omni-results-content" class="max-h-96 overflow-y-auto p-2 custom-scrollbar"></div>
                     </div>

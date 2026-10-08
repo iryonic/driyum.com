@@ -567,7 +567,7 @@ $wishlist_json = json_encode($wishlist_ids);
             <div id="combo-slider-container" class="flex w-full overflow-x-auto gap-4 px-8  pb-12 hide-scrollbar scroll-smooth">
                 <?php 
                 // 1. First, fetch real Combo/Bundle/Pack products (Now using the explicit is_combo flag)
-                $combos = fetch_all("SELECT * FROM products WHERE (is_combo = 1 OR category_id = 3) AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, combo_sort_order ASC, id DESC");
+                $combos = fetch_all("SELECT * FROM products WHERE is_combo = 1 AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, combo_sort_order ASC, id DESC");
                 
                 // Gap Filling: If less than 4 combos exist, fill with featured gems to ensure a crisp UI
                 $combo_count = count($combos);

@@ -70,26 +70,24 @@ if (isset($_GET['action'])) {
         exit;
     }
 
-    // 4. Toggle Combo Status
-    if ($action === 'toggle_combo') {
+    // 4. Remove / Toggle Combo Status
+    if ($action === 'remove_combo' || $action === 'toggle_combo') {
         $id = intval($_GET['id'] ?? 0);
         if ($id > 0) {
-            $conn->query("UPDATE products SET is_combo = 1 - is_combo WHERE id = $id");
-            $new_val = fetch_one("SELECT is_combo FROM products WHERE id = $id")['is_combo'] ?? 0;
-            echo json_encode(['success' => true, 'is_combo' => (int)$new_val]);
+            $conn->query("UPDATE products SET is_combo = 0 WHERE id = $id");
+            echo json_encode(['success' => true]);
             exit;
         }
         echo json_encode(['success' => false]);
         exit;
     }
 
-    // 5. Toggle Featured Status
-    if ($action === 'toggle_featured') {
+    // 5. Remove / Toggle Featured Status
+    if ($action === 'remove_featured' || $action === 'toggle_featured') {
         $id = intval($_GET['id'] ?? 0);
         if ($id > 0) {
-            $conn->query("UPDATE products SET is_featured = 1 - is_featured WHERE id = $id");
-            $new_val = fetch_one("SELECT is_featured FROM products WHERE id = $id")['is_featured'] ?? 0;
-            echo json_encode(['success' => true, 'is_featured' => (int)$new_val]);
+            $conn->query("UPDATE products SET is_featured = 0 WHERE id = $id");
+            echo json_encode(['success' => true]);
             exit;
         }
         echo json_encode(['success' => false]);
@@ -134,7 +132,7 @@ if (!in_array($active_tab, ['combos', 'featured', 'shop'])) {
 $combo_products = fetch_all("SELECT p.*, c.name as category_name 
                              FROM products p 
                              LEFT JOIN categories c ON p.category_id = c.id 
-                             WHERE (p.is_combo = 1 OR p.category_id = 3) AND p.is_active = 1 
+                             WHERE p.is_combo = 1 AND p.is_active = 1 
                              ORDER BY CASE WHEN p.stock > 0 THEN 0 ELSE 1 END ASC, p.combo_sort_order ASC, p.id DESC");
 
 $featured_products = fetch_all("SELECT p.*, c.name as category_name 
@@ -188,7 +186,7 @@ require_once 'includes/header.php';
         </div>
     <?php endif; ?>
 
-    <!-- HEADER TITLE & METRICS -->
+    <!-- HEADER TITLE -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
             <div class="flex items-center gap-2 text-[11px] sm:text-xs font-black text-[#24B25D] uppercase tracking-wider mb-1">
@@ -201,66 +199,22 @@ require_once 'includes/header.php';
 
     </div>
 
-    <!-- METRICS CARDS -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
-        <!-- Homepage Combos Metric -->
-        <div data-metric-tab="combos" onclick="switchTab('combos')" class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 border transition-all cursor-pointer shadow-sm hover:shadow-md <?php echo $active_tab === 'combos' ? 'border-[#24B25D] ring-2 ring-[#24B25D]/20' : 'border-gray-100'; ?>">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Homepage Combos</div>
-                    <div class="text-2xl sm:text-3xl font-black text-gray-900 font-heading mt-0.5 sm:mt-1"><?php echo $count_combos; ?></div>
-                    <div class="text-[11px] font-medium text-emerald-600 mt-0.5">"Our Combos" Carousel</div>
-                </div>
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg sm:text-xl shrink-0">
-                    <i class="fas fa-boxes"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Homepage Featured Metric -->
-        <div data-metric-tab="featured" onclick="switchTab('featured')" class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 border transition-all cursor-pointer shadow-sm hover:shadow-md <?php echo $active_tab === 'featured' ? 'border-[#24B25D] ring-2 ring-[#24B25D]/20' : 'border-gray-100'; ?>">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Homepage Products</div>
-                    <div class="text-2xl sm:text-3xl font-black text-gray-900 font-heading mt-0.5 sm:mt-1"><?php echo $count_featured; ?></div>
-                    <div class="text-[11px] font-medium text-emerald-600 mt-0.5">"Our Products" Section</div>
-                </div>
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg sm:text-xl shrink-0">
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Shop Catalog Metric -->
-        <div data-metric-tab="shop" onclick="switchTab('shop')" class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 border transition-all cursor-pointer shadow-sm hover:shadow-md <?php echo $active_tab === 'shop' ? 'border-[#24B25D] ring-2 ring-[#24B25D]/20' : 'border-gray-100'; ?>">
-            <div class="flex items-center justify-between">
-                <div>
-                    <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Shop Page Catalog</div>
-                    <div class="text-2xl sm:text-3xl font-black text-gray-900 font-heading mt-0.5 sm:mt-1"><?php echo $count_shop; ?></div>
-                    <div class="text-[11px] font-medium text-emerald-600 mt-0.5">Default Shop View (/shop)</div>
-                </div>
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-lg sm:text-xl shrink-0">
-                    <i class="fas fa-store"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
+ 
     <!-- NAVIGATION TABS (Mobile horizontally scrollable pills) -->
     <div class="bg-white p-1.5 sm:p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center overflow-x-auto no-scrollbar sm:flex-wrap gap-1.5 sm:gap-2">
         <button type="button" onclick="switchTab('combos')" id="tab-btn-combos" class="tab-btn shrink-0 whitespace-nowrap px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 <?php echo $active_tab === 'combos' ? 'bg-[#24B25D] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'; ?>">
             <i class="fas fa-cubes text-sm"></i>
-            <span>1. Combos (<?php echo $count_combos; ?>)</span>
+            <span>1. Combos (<span id="tab-count-combos"><?php echo $count_combos; ?></span>)</span>
         </button>
 
         <button type="button" onclick="switchTab('featured')" id="tab-btn-featured" class="tab-btn shrink-0 whitespace-nowrap px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 <?php echo $active_tab === 'featured' ? 'bg-[#24B25D] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'; ?>">
             <i class="fas fa-star text-sm"></i>
-            <span>2. Homepage "Our Products" (<?php echo $count_featured; ?>)</span>
+            <span>2. Our Products (<span id="tab-count-featured"><?php echo $count_featured; ?></span>)</span>
         </button>
 
         <button type="button" onclick="switchTab('shop')" id="tab-btn-shop" class="tab-btn shrink-0 whitespace-nowrap px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 <?php echo $active_tab === 'shop' ? 'bg-[#24B25D] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'; ?>">
             <i class="fas fa-shopping-bag text-sm"></i>
-            <span>3. Shop Catalog (<?php echo $count_shop; ?>)</span>
+            <span>3. Shop Catalog (<span id="tab-count-shop"><?php echo $count_shop; ?></span>)</span>
         </button>
     </div>
 
@@ -276,25 +230,13 @@ require_once 'includes/header.php';
                         <i class="fas fa-boxes"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-gray-900 font-heading">Homepage "Our Combos" Carousel Order</h3>
-                        <p class="text-[10px] text-gray-400 font-medium">Grab the handle on any row to drag & reorder which combo pack appears first</p>
-                    </div>
+                        <h3 class="text-sm font-black text-gray-900 font-heading">Our Combos</h3>
+                        </div>
                 </div>
                 <button type="button" onclick="openAddModal('combo')" class="inline-flex items-center justify-center gap-2 bg-[#24B25D] hover:bg-[#004F42] text-white px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-sm active:scale-95 w-full sm:w-auto">
                     <i class="fas fa-plus text-xs"></i>
                     <span>Add Product to Combos</span>
                 </button>
-            </div>
-
-            <!-- Stock Priority & Mobile Drag Hint -->
-            <div class="px-4 py-2.5 bg-emerald-50/80 border-b border-emerald-100/80 text-[11px] font-medium text-emerald-800 flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-emerald-600 shrink-0"></i>
-                    <span><strong>Stock Priority Engine:</strong> In-stock products rank first. Out-of-stock packs automatically stay at the bottom.</span>
-                </div>
-                <div class="sm:hidden text-[10px] text-amber-800 font-bold flex items-center gap-1">
-                    <i class="fas fa-hand-pointer text-amber-600"></i> Hold grip (<i class="fas fa-grip-vertical"></i>) to reorder
-                </div>
             </div>
 
             <!-- Table -->
@@ -369,7 +311,7 @@ require_once 'includes/header.php';
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right">
-                                    <button type="button" onclick="toggleCombo(<?php echo $p['id']; ?>)" title="Remove from Combos" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 text-xs font-bold transition">
+                                    <button type="button" onclick="toggleCombo(<?php echo $p['id']; ?>, this)" title="Remove from Combos" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 text-xs font-bold transition">
                                         <i class="fas fa-trash-alt text-[11px]"></i>
                                         <span class="hidden sm:inline">Remove</span>
                                     </button>
@@ -395,8 +337,7 @@ require_once 'includes/header.php';
                         <i class="fas fa-star"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-gray-900 font-heading">Homepage "Our Products" Slider Order</h3>
-                        <p class="text-[10px] text-gray-400 font-medium">Drag & drop to decide which items appear in the homepage "Our Products" slider</p>
+                        <h3 class="text-sm font-black text-gray-900 font-heading">Our Products</h3>
                     </div>
                 </div>
                 <button type="button" onclick="openAddModal('featured')" class="inline-flex items-center justify-center gap-2 bg-[#24B25D] hover:bg-[#004F42] text-white px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-sm active:scale-95 w-full sm:w-auto">
@@ -488,7 +429,7 @@ require_once 'includes/header.php';
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right">
-                                    <button type="button" onclick="toggleFeatured(<?php echo $p['id']; ?>)" title="Remove from Featured" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 text-xs font-bold transition">
+                                    <button type="button" onclick="toggleFeatured(<?php echo $p['id']; ?>, this)" title="Remove from Featured" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 text-xs font-bold transition">
                                         <i class="fas fa-trash-alt text-[11px]"></i>
                                         <span class="hidden sm:inline">Remove</span>
                                     </button>
@@ -514,8 +455,7 @@ require_once 'includes/header.php';
                         <i class="fas fa-store"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-gray-900 font-heading">Shop Page Default Catalog Order</h3>
-                        <p class="text-[10px] text-gray-400 font-medium">Reorder the master product catalog on /shop when customers browse by default</p>
+                        <h3 class="text-sm font-black text-gray-900 font-heading">Shop Page Order</h3>
                     </div>
                 </div>
 
@@ -826,25 +766,107 @@ function saveOrder(containerId, actionName) {
     });
 }
 
-// --- TOGGLE ACTIONS ---
-function toggleCombo(id) {
+// --- TOGGLE / REMOVE ACTIONS ---
+function toggleCombo(id, btn) {
     if(!confirm('Remove this product from the Homepage Combos section?')) return;
-    fetch(`product_sorting.php?action=toggle_combo&id=${id}`)
+    if(btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[11px]"></i>';
+    }
+    fetch(`product_sorting.php?action=remove_combo&id=${id}`)
     .then(r => r.json())
     .then(data => {
-        if(data.success) {
-            window.location.href = 'product_sorting.php?tab=combos';
+        if(data && data.success) {
+            const row = document.querySelector(`#sortable-combos tr[data-id="${id}"]`);
+            if(row) {
+                row.style.transition = 'all 0.3s ease';
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    row.remove();
+                    const tbody = document.getElementById('sortable-combos');
+                    if(tbody) {
+                        tbody.querySelectorAll('tr[data-id]').forEach((r, idx) => {
+                            const badge = r.querySelector('.sort-rank');
+                            if(badge) badge.textContent = idx + 1;
+                        });
+                        const remaining = tbody.querySelectorAll('tr[data-id]').length;
+                        const countEl = document.getElementById('tab-count-combos');
+                        if(countEl) countEl.textContent = remaining;
+                        if(remaining === 0) {
+                            window.location.reload();
+                        }
+                    }
+                }, 300);
+            } else {
+                window.location.href = 'product_sorting.php?tab=combos';
+            }
+            showToast('Product successfully removed from Combos!', 'success');
+        } else {
+            showToast(data.message || 'Error removing product', 'error');
+            if(btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
+            }
+        }
+    })
+    .catch(() => {
+        showToast('Network error while removing product', 'error');
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
         }
     });
 }
 
-function toggleFeatured(id) {
-    if(!confirm('Remove this product from Homepage "Our Products"?')) return;
-    fetch(`product_sorting.php?action=toggle_featured&id=${id}`)
+function toggleFeatured(id, btn) {
+    if(!confirm('Remove this product from Our Products?')) return;
+    if(btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[11px]"></i>';
+    }
+    fetch(`product_sorting.php?action=remove_featured&id=${id}`)
     .then(r => r.json())
     .then(data => {
-        if(data.success) {
-            window.location.href = 'product_sorting.php?tab=featured';
+        if(data && data.success) {
+            const row = document.querySelector(`#sortable-featured tr[data-id="${id}"]`);
+            if(row) {
+                row.style.transition = 'all 0.3s ease';
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    row.remove();
+                    const tbody = document.getElementById('sortable-featured');
+                    if(tbody) {
+                        tbody.querySelectorAll('tr[data-id]').forEach((r, idx) => {
+                            const badge = r.querySelector('.sort-rank');
+                            if(badge) badge.textContent = idx + 1;
+                        });
+                        const remaining = tbody.querySelectorAll('tr[data-id]').length;
+                        const countEl = document.getElementById('tab-count-featured');
+                        if(countEl) countEl.textContent = remaining;
+                        if(remaining === 0) {
+                            window.location.reload();
+                        }
+                    }
+                }, 300);
+            } else {
+                window.location.href = 'product_sorting.php?tab=featured';
+            }
+            showToast('Product successfully removed from Featured!', 'success');
+        } else {
+            showToast(data.message || 'Error removing product', 'error');
+            if(btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
+            }
+        }
+    })
+    .catch(() => {
+        showToast('Network error while removing product', 'error');
+        if(btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
         }
     });
 }
@@ -859,7 +881,7 @@ function openAddModal(type) {
         heading.textContent = 'Add Product to Homepage Combos';
         form.action = 'product_sorting.php?action=add_combo';
     } else {
-        heading.textContent = 'Add Product to Homepage "Our Products"';
+        heading.textContent = 'Add Product to Our Products';
         form.action = 'product_sorting.php?action=add_featured';
     }
     
