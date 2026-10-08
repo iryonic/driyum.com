@@ -1103,11 +1103,13 @@ function viewLargeImage(url, title) {
 
 // --- DELETE CONFIRMATION ---
 async function confirmDeleteSlide(id) {
-    const ok = await showConfirm('Are you sure you want to delete this hero slide? This action cannot be undone.', {
-        title: 'Delete Hero Slide',
-        type: 'danger',
-        confirmText: 'Delete Slide'
-    });
+    const ok = typeof window.showConfirm === 'function'
+        ? await window.showConfirm('Are you sure you want to delete this hero slide? This action cannot be undone.', {
+            title: 'Delete Hero Slide',
+            type: 'danger',
+            confirmText: 'Delete Slide'
+        })
+        : confirm('Are you sure you want to delete this hero slide? This action cannot be undone.');
     if (ok) {
         document.getElementById('delete-slide-id').value = id;
         document.getElementById('single-delete-form').submit();
@@ -1210,11 +1212,13 @@ document.addEventListener('DOMContentLoaded', () => {
 async function submitBulkDelete() {
     const checked = document.querySelectorAll('.row-checkbox:checked');
     if (checked.length === 0) return;
-    const ok = await showConfirm(`Are you sure you want to delete ${checked.length} selected slides?`, {
-        title: 'Delete Selected Slides',
-        type: 'danger',
-        confirmText: 'Delete Slides'
-    });
+    const ok = typeof window.showConfirm === 'function'
+        ? await window.showConfirm(`Are you sure you want to delete ${checked.length} selected slides?`, {
+            title: 'Delete Selected Slides',
+            type: 'danger',
+            confirmText: 'Delete Slides'
+        })
+        : confirm(`Are you sure you want to delete ${checked.length} selected slides?`);
     if (ok) {
         document.getElementById('bulk-form').submit();
     }

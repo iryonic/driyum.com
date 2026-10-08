@@ -747,11 +747,13 @@ function saveOrder(containerId, actionName) {
 
 // --- TOGGLE / REMOVE ACTIONS ---
 async function toggleCombo(id, btn) {
-    const confirmed = await showConfirm('Remove this product from the Homepage Combos section?', {
-        title: 'Remove from Combos',
-        type: 'danger',
-        confirmText: 'Remove'
-    });
+    const confirmed = typeof window.showConfirm === 'function'
+        ? await window.showConfirm('Remove this product from the Homepage Combos section?', {
+            title: 'Remove from Combos',
+            type: 'danger',
+            confirmText: 'Remove'
+        })
+        : confirm('Remove this product from the Homepage Combos section?');
     if(!confirmed) return;
     if(btn) {
         btn.disabled = true;
@@ -804,11 +806,13 @@ async function toggleCombo(id, btn) {
 }
 
 async function toggleFeatured(id, btn) {
-    const confirmed = await showConfirm('Remove this product from Our Products?', {
-        title: 'Remove from Featured',
-        type: 'danger',
-        confirmText: 'Remove'
-    });
+    const confirmed = typeof window.showConfirm === 'function'
+        ? await window.showConfirm('Remove this product from Our Products?', {
+            title: 'Remove from Featured',
+            type: 'danger',
+            confirmText: 'Remove'
+        })
+        : confirm('Remove this product from Our Products?');
     if(!confirmed) return;
     if(btn) {
         btn.disabled = true;

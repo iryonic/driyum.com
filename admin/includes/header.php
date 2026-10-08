@@ -132,7 +132,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script>
         const BASE_URL = "<?php echo get_url(''); ?>";
     </script>
-    <script src="../assets/js/chunky.js"></script>
+    <script src="<?php echo get_url('assets/js/dialogs.js'); ?>?v=<?php echo time(); ?>"></script>
+    <script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=<?php echo time(); ?>"></script>
 </head>
 <body class="bg-gray-50">
 

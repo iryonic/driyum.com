@@ -84,6 +84,7 @@ if (function_exists('render_seo_tags')) {
     const BASE_URL = "<?php echo get_url(''); ?>";
     const FREE_SHIPPING_THRESHOLD = <?php echo get_setting('free_shipping_threshold', 499); ?>;
 </script>
-<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=1.0.3" defer></script>
+<script src="<?php echo get_url('assets/js/dialogs.js'); ?>?v=<?php echo time(); ?>"></script>
+<script src="<?php echo get_url('assets/js/chunky.js'); ?>?v=<?php echo time(); ?>" defer></script>
 
 

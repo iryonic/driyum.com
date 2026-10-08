@@ -597,14 +597,20 @@ initSelection();
 
 async function applyBulkStatus() {
     const status = document.getElementById('bulk-status-select').value;
-    if (!status) return showAlert('Select a status first', { type: 'warning' });
+    if (!status) {
+        if (typeof window.showAlert === 'function') await window.showAlert('Select a status first', { type: 'warning' });
+        else alert('Select a status first');
+        return;
+    }
     
     const count = isAllSelectedAcrossPages ? TOTAL_RECORDS : getTracked().size;
-    const ok = await showConfirm(`Update ${count} orders to ${status}?`, {
-        title: 'Update Orders Status',
-        type: 'warning',
-        confirmText: 'Update'
-    });
+    const ok = typeof window.showConfirm === 'function'
+        ? await window.showConfirm(`Update ${count} orders to ${status}?`, {
+            title: 'Update Orders Status',
+            type: 'warning',
+            confirmText: 'Update'
+        })
+        : confirm(`Update ${count} orders to ${status}?`);
     if(!ok) return;
     
     await performBulkAction('bulk_status', { status });
@@ -612,11 +618,13 @@ async function applyBulkStatus() {
 
 async function applyBulkDelete() {
     const count = isAllSelectedAcrossPages ? TOTAL_RECORDS : getTracked().size;
-    const ok = await showConfirm(`DANGER! Delete ${count} orders forever? This cannot be undone.`, {
-        title: 'Delete Orders Forever',
-        type: 'danger',
-        confirmText: 'Delete Forever'
-    });
+    const ok = typeof window.showConfirm === 'function'
+        ? await window.showConfirm(`DANGER! Delete ${count} orders forever? This cannot be undone.`, {
+            title: 'Delete Orders Forever',
+            type: 'danger',
+            confirmText: 'Delete Forever'
+        })
+        : confirm(`DANGER! Delete ${count} orders forever? This cannot be undone.`);
     if(!ok) return;
     
     await performBulkAction('bulk_delete');

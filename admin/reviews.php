@@ -173,11 +173,13 @@ function updateBulkBar() {
 async function bulkReviewAction(action) {
     const checked = document.querySelectorAll('.review-checkbox:checked');
     if (checked.length === 0) return;
-    const ok = await showConfirm('Delete selected reviews? This cannot be undone.', {
-        title: 'Delete Reviews',
-        type: 'danger',
-        confirmText: 'Delete Reviews'
-    });
+    const ok = typeof window.showConfirm === 'function'
+        ? await window.showConfirm('Delete selected reviews? This cannot be undone.', {
+            title: 'Delete Reviews',
+            type: 'danger',
+            confirmText: 'Delete Reviews'
+        })
+        : confirm('Delete selected reviews? This cannot be undone.');
     if (!ok) return;
     const ids = Array.from(checked).map(cb => cb.value);
     const formData = new FormData();
