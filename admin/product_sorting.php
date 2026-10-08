@@ -189,10 +189,7 @@ require_once 'includes/header.php';
     <!-- HEADER TITLE -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-            <div class="flex items-center gap-2 text-[11px] sm:text-xs font-black text-[#24B25D] uppercase tracking-wider mb-1">
-                <i class="fas fa-arrows-alt"></i>
-                <span>Visual Sequence Engine</span>
-            </div>
+          
             <h1 class="text-2xl sm:text-3xl font-black text-gray-900 font-heading tracking-tight">Product Sorting</h1>
             <p class="text-xs font-medium text-gray-500 mt-0.5 sm:mt-1">Drag and drop products to customize their exact appearance order on the Homepage & Shop</p>
         </div>
@@ -346,16 +343,7 @@ require_once 'includes/header.php';
                 </button>
             </div>
 
-            <!-- Stock Priority & Mobile Drag Hint -->
-            <div class="px-4 py-2.5 bg-emerald-50/80 border-b border-emerald-100/80 text-[11px] font-medium text-emerald-800 flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-emerald-600 shrink-0"></i>
-                    <span><strong>Stock Priority Engine:</strong> In-stock products rank first. Out-of-stock items automatically stay at the bottom.</span>
-                </div>
-                <div class="sm:hidden text-[10px] text-amber-800 font-bold flex items-center gap-1">
-                    <i class="fas fa-hand-pointer text-amber-600"></i> Hold grip (<i class="fas fa-grip-vertical"></i>) to reorder
-                </div>
-            </div>
+            
 
             <!-- Table -->
             <div class="overflow-x-auto">
@@ -476,16 +464,7 @@ require_once 'includes/header.php';
                 </div>
             </div>
 
-            <!-- Stock Priority & Mobile Drag Hint -->
-            <div class="px-4 py-2.5 bg-emerald-50/80 border-b border-emerald-100/80 text-[11px] font-medium text-emerald-800 flex flex-wrap items-center justify-between gap-2">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-emerald-600 shrink-0"></i>
-                    <span><strong>Stock Priority Engine:</strong> In-stock products rank first. Out-of-stock items automatically stay at the bottom of /shop.</span>
-                </div>
-                <div class="sm:hidden text-[10px] text-amber-800 font-bold flex items-center gap-1">
-                    <i class="fas fa-hand-pointer text-amber-600"></i> Hold grip (<i class="fas fa-grip-vertical"></i>) to reorder
-                </div>
-            </div>
+         
 
             <!-- Table -->
             <div class="overflow-x-auto">
