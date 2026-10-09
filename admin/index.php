@@ -99,46 +99,46 @@ $top_customers = fetch_all("SELECT u.name, u.email, COUNT(o.id) as order_count, 
     </div>
 
     <!-- Revenue -->
-    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+    <div class="bg-[#168718] rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
         <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Revenue</span>
+            <span class="text-xs font-semibold text-slate-100 uppercase tracking-wider">Total Revenue</span>
             <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center text-xs">
                 <i class="fas fa-rupee-sign"></i>
             </div>
         </div>
         <div>
-            <div class="text-2xl font-bold text-slate-900 leading-none">₹<?php echo number_format($revenue, 0); ?></div>
-            <p class="text-[11px] text-emerald-600 font-medium mt-1.5 flex items-center gap-1">
+            <div class="text-2xl font-bold text-white leading-none">₹<?php echo number_format($revenue, 0); ?></div>
+            <p class="text-[11px] text-slate-200 font-medium mt-1.5 flex items-center gap-1">
                 <i class="fas fa-arrow-trend-up text-[10px]"></i> ₹<?php echo number_format($sales_today); ?> today
             </p>
         </div>
     </div>
 
     <!-- Total Orders -->
-    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+    <div class="bg-[#00C04D] rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
         <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Completed Orders</span>
+            <span class="text-xs font-semibold text-slate-100 uppercase tracking-wider">Completed Orders</span>
             <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
                 <i class="fas fa-shopping-bag"></i>
             </div>
         </div>
         <div>
-            <div class="text-2xl font-bold text-slate-900 leading-none"><?php echo $orders_count; ?></div>
-            <p class="text-[11px] text-slate-400 mt-1.5">Processed orders</p>
+            <div class="text-2xl font-bold text-white leading-none"><?php echo $orders_count; ?></div>
+            <p class="text-[11px] text-slate-200 mt-1.5">Processed orders</p>
         </div>
     </div>
 
     <!-- Pending Dispatch -->
-    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors relative overflow-hidden">
+    <div class="bg-[#ffdb00] rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors relative overflow-hidden">
         <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Orders</span>
+            <span class="text-xs font-semibold text-slate-800  uppercase tracking-wider">Pending Orders</span>
             <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs">
                 <i class="fas fa-clock"></i>
             </div>
         </div>
         <div>
-            <div class="text-2xl font-bold <?php echo $pending_orders > 0 ? 'text-amber-600' : 'text-slate-900'; ?> leading-none" id="pending-orders-count"><?php echo $pending_orders; ?></div>
-            <p class="text-[11px] text-slate-400 mt-1.5">Needs fulfillment</p>
+            <div class="text-2xl font-bold <?php echo $pending_orders > 0 ? 'text-black' : 'text-slate-900'; ?> leading-none" id="pending-orders-count"><?php echo $pending_orders; ?></div>
+            <p class="text-[11px] text-slate-800 letter-spacing-[-0.02em] mt-1.5">Needs fulfillment</p>
         </div>
         <?php if($pending_orders > 0): ?>
             <div class="absolute top-0 right-0 w-1 h-full bg-amber-500"></div>
@@ -146,7 +146,7 @@ $top_customers = fetch_all("SELECT u.name, u.email, COUNT(o.id) as order_count, 
     </div>
 
     <!-- Active Products -->
-    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+    <div class="bg-slate-300 rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
         <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Products</span>
             <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
@@ -155,21 +155,21 @@ $top_customers = fetch_all("SELECT u.name, u.email, COUNT(o.id) as order_count, 
         </div>
         <div>
             <div class="text-2xl font-bold text-slate-900 leading-none"><?php echo $products_count; ?></div>
-            <p class="text-[11px] text-slate-400 mt-1.5">Listed in catalog</p>
+            <p class="text-[11px] text-slate-600 mt-1.5">Listed in catalog</p>
         </div>
     </div>
 
     <!-- Newsletter Subscribers -->
-    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+    <div class="bg-[#ff5700] rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
         <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Subscribers</span>
+            <span class="text-xs font-semibold text-slate-100 uppercase tracking-wider">Subscribers</span>
             <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs">
                 <i class="fas fa-envelope-open-text"></i>
             </div>
         </div>
         <div>
-            <div class="text-2xl font-bold text-slate-900 leading-none"><?php echo $subscribers_count; ?></div>
-            <p class="text-[11px] text-slate-400 mt-1.5">Active readership</p>
+            <div class="text-2xl font-bold text-white leading-none"><?php echo $subscribers_count; ?></div>
+            <p class="text-[11px] text-slate-100 mt-1.5">Active readership</p>
         </div>
     </div>
 

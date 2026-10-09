@@ -92,8 +92,16 @@
         <!-- COPYRIGHT -->
         <div class="pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-sans">
             <p>&copy; <?php echo date('Y'); ?> <?php echo get_setting('store_name', 'DRIYUM'); ?>. All rights reserved.</p>
-            <p>Powered By <a href="https://saastify.fmmediatnetwork.com/" target="_blank" class="text-[#24B25D] hover:underline transition">Saastify</a> </p>
-            <!-- <p>Powered By <a href="https://irfanmanzoor.in/" target="_blank" class="text-[#24B25D] hover:underline transition">EXORA.DEV</a> </p> -->
+            <?php 
+            $footer_powered_enabled = get_setting('footer_powered_by_enabled', 'on');
+            $footer_powered_text = get_setting('footer_powered_by_text', 'Powered By');
+            $footer_powered_name = get_setting('footer_powered_by_name', 'Saastify');
+            $footer_powered_url = get_setting('footer_powered_by_url', 'https://saastify.fmmedianetwork.com/');
+            
+            if ($footer_powered_enabled === 'on' && !empty($footer_powered_name)):
+            ?>
+            <p><?php echo htmlspecialchars($footer_powered_text); ?> <?php if (!empty($footer_powered_url)): ?><a href="<?php echo htmlspecialchars($footer_powered_url); ?>" target="_blank" rel="noopener noreferrer" class="text-[#24B25D] hover:underline transition"><?php echo htmlspecialchars($footer_powered_name); ?></a><?php else: ?><span class="text-[#24B25D]"><?php echo htmlspecialchars($footer_powered_name); ?></span><?php endif; ?></p>
+            <?php endif; ?>
             <div class="flex gap-6 mt-4 md:mt-0 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
                 <i class="fab fa-cc-visa text-2xl"></i>
                 <i class="fab fa-cc-mastercard text-2xl"></i>

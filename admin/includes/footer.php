@@ -2,7 +2,13 @@
         
         <footer class="mt-auto px-4 sm:px-6 lg:px-8 py-4 border-t border-slate-200/80 bg-white/50 text-slate-400 text-xs flex flex-col sm:flex-row items-center justify-between gap-2">
             <div>
-                &copy; <?php echo date('Y'); ?> <span class="font-semibold text-slate-600">Driyum</span> Ecommerce Operations Console <span class="text-xs text-[#24B25D]">Powered by Saastify</span>
+                &copy; <?php echo date('Y'); ?> <span class="font-semibold text-slate-600"><?php echo htmlspecialchars(get_setting('store_name', 'Driyum')); ?></span> Ecommerce Operations Console<?php 
+                $admin_pb_enabled = get_setting('footer_powered_by_enabled', 'on');
+                $admin_pb_text = get_setting('footer_powered_by_text', 'Powered by');
+                $admin_pb_name = get_setting('footer_powered_by_name', 'Saastify');
+                $admin_pb_url = get_setting('footer_powered_by_url', 'https://saastify.fmmedianetwork.com/');
+                if ($admin_pb_enabled === 'on' && !empty($admin_pb_name)):
+                ?> <span class="text-xs text-[#24B25D] ml-1.5"><?php echo htmlspecialchars($admin_pb_text); ?> <?php if (!empty($admin_pb_url)): ?><a href="<?php echo htmlspecialchars($admin_pb_url); ?>" target="_blank" rel="noopener noreferrer" class="hover:underline"><?php echo htmlspecialchars($admin_pb_name); ?></a><?php else: ?><?php echo htmlspecialchars($admin_pb_name); ?><?php endif; ?></span><?php endif; ?>
             </div>
             <div class="flex items-center gap-4 text-[11px]">
                 <a href="../" target="_blank" class="hover:text-slate-600 transition-colors">Storefront</a>

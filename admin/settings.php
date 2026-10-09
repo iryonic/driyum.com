@@ -36,7 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
         'backup_frequency',
         'storage_freshness_enabled',
         'storage_freshness_title',
-        'storage_freshness_content'
+        'storage_freshness_content',
+        'footer_powered_by_enabled',
+        'footer_powered_by_text',
+        'footer_powered_by_name',
+        'footer_powered_by_url'
     ];
 
     $error_found = false;
@@ -116,7 +120,11 @@ $s = [
     'last_backup' => get_setting('last_backup_at', 'Never'),
     'storage_enabled' => get_setting('storage_freshness_enabled', 'on'),
     'storage_title' => get_setting('storage_freshness_title', 'Storage & Freshness'),
-    'storage_content' => get_setting('storage_freshness_content', "Store in a cool, dry place away from direct sunlight. Once opened, keep in an airtight container or seal the ziplock pouch tightly.\n\nBest consumed within 6 months from packaging date for maximum crunch and natural sweetness.")
+    'storage_content' => get_setting('storage_freshness_content', "Store in a cool, dry place away from direct sunlight. Once opened, keep in an airtight container or seal the ziplock pouch tightly.\n\nBest consumed within 6 months from packaging date for maximum crunch and natural sweetness."),
+    'powered_by_enabled' => get_setting('footer_powered_by_enabled', 'on'),
+    'powered_by_text' => get_setting('footer_powered_by_text', 'Powered By'),
+    'powered_by_name' => get_setting('footer_powered_by_name', 'Saastify'),
+    'powered_by_url' => get_setting('footer_powered_by_url', 'https://saastify.fmmedianetwork.com/')
 ];
 ?>
 
@@ -181,6 +189,36 @@ $s = [
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1.5">Footer Description</label>
                             <textarea name="footer_description" rows="3" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($s['footer_desc']); ?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Attribution / Powered By -->
+                <div class="admin-card p-5">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-bolt text-emerald-600"></i> Footer Attribution
+                        </h3>
+                        <label class="relative inline-flex items-center cursor-pointer" title="Enable Powered By in footer">
+                            <input type="hidden" name="footer_powered_by_enabled" value="off">
+                            <input type="checkbox" name="footer_powered_by_enabled" value="on" class="rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer" <?php echo ($s['powered_by_enabled'] ?? 'on') == 'on' ? 'checked' : ''; ?>>
+                        </label>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Prefix Label</label>
+                                <input type="text" name="footer_powered_by_text" value="<?php echo htmlspecialchars($s['powered_by_text']); ?>" class="admin-input text-xs" placeholder="Powered By">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Brand / Name</label>
+                                <input type="text" name="footer_powered_by_name" value="<?php echo htmlspecialchars($s['powered_by_name']); ?>" class="admin-input text-xs" placeholder="Saastify">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Target Website URL</label>
+                            <input type="text" name="footer_powered_by_url" value="<?php echo htmlspecialchars($s['powered_by_url']); ?>" class="admin-input text-xs font-mono" placeholder="https://saastify.fmmedianetwork.com/">
+                            <p class="text-[10px] text-slate-400 mt-1">Leave empty if you don't want the name to be clickable.</p>
                         </div>
                     </div>
                 </div>
