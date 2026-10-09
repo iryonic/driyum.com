@@ -100,25 +100,51 @@ $wishlist_json = json_encode($wishlist_ids);
         .snap-x-mandatory { scroll-snap-type: x mandatory; }
         .snap-center { scroll-snap-align: center; }
 
-        /* Partners Marquee Animation for Mobile/Tablet */
-        @media (max-width: 1023px) {
-            .partners-marquee-container {
-                mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-                -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-                cursor: grab;
-            }
-            .partners-marquee-container:active { cursor: grabbing; }
-            .partners-marquee-content {
-                animation: partners-marquee 40s linear infinite;
-            }
-            .partners-marquee-container:hover .partners-marquee-content {
-                animation-play-state: paused;
+        /* Industry-Level Partners Infinite Marquee */
+        .partners-marquee-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
+            user-select: none;
+            cursor: default;
+        }
+
+        @media (max-width: 640px) {
+            .partners-marquee-wrapper {
+                mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
             }
         }
 
-        @keyframes partners-marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        .partners-marquee-track {
+            display: flex;
+            align-items: center;
+            width: max-content;
+            will-change: transform;
+            animation: partners-scroll 28s linear infinite;
+        }
+
+        .partners-marquee-wrapper:hover .partners-marquee-track,
+        .partners-marquee-wrapper:focus-within .partners-marquee-track {
+            animation-play-state: paused;
+        }
+
+        @keyframes partners-scroll {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+            100% {
+                transform: translate3d(-50%, 0, 0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .partners-marquee-track {
+                animation: none;
+                overflow-x: auto;
+            }
         }
 
      
@@ -324,42 +350,74 @@ $wishlist_json = json_encode($wishlist_ids);
         </div>
     </section>
 
-    <!-- NOW AVAILABLE AT SECTION (Original Panoramic Text Row) -->
-    <style>
-        .availbleatsection::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
-        .availbleatsection { -ms-overflow-style: none !important; scrollbar-width: none !important; }
-    </style>
-    <section id="partners-section" class="bg-white border-b border-gray-100 overflow-hidden relative">
-        <div class="container mx-auto px-10 lg:px-40 py-6 md:py-10">
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
-                <!-- Sidebar Title -->
-                <div class="flex-shrink-0">
-                    <span class="text-[12px] md:text-[14px] font-black tracking-[0.3em] text-gray-900 uppercase">NOW AVAILABLE AT</span>
+    <!-- NOW AVAILABLE AT SECTION (Industry-Grade Responsive Infinite Marquee) -->
+    <?php 
+    $partner_items = !empty($partners) ? $partners : [
+        ['name' => 'Ecogrocery', 'location' => 'Lal Nagar'],
+        ['name' => 'Basket', 'location' => 'Boulevard'],
+        ['name' => 'Extracts', 'location' => 'RAJBAGH'],
+        ['name' => 'City Max', 'location' => 'Peerbagh'],
+        ['name' => 'Pick N Choose', 'location' => 'BAGHAT']
+    ];
+    
+    // Ensure sufficient items for smooth looping on all viewport widths (including ultra-wide)
+    $display_partners = $partner_items;
+    while (count($display_partners) < 8) {
+        $display_partners = array_merge($display_partners, $partner_items);
+    }
+    ?>
+    <section id="partners-section" class="bg-white border-b border-gray-100 overflow-hidden relative py-5 sm:py-6 md:py-7">
+        <div class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-10">
+            <div class="flex flex-col lg:flex-row items-center gap-4 sm:gap-6 lg:gap-10">
+                <!-- Sidebar Title Badge -->
+                <div class="flex-shrink-0 flex items-center justify-center lg:border-r lg:border-gray-200/80 lg:pr-8 py-0.5">
+                    <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full shadow-2xs">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#24B25D] opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#24B25D]"></span>
+                        </span>
+                        <span class="text-[11px] sm:text-xs font-bold tracking-[0.25em] text-slate-800 uppercase whitespace-nowrap">
+                            Now Available At
+                        </span>
+                    </div>
                 </div>
                 
-                <!-- Partners Horizon (Scrollbar hidden) -->
-                <div class="flex-grow w-full overflow-x-auto no-scrollbar availbleatsection" style="scrollbar-width: none; -ms-overflow-style: none;">
-                    <div class="flex flex-nowrap items-center lg:justify-end gap-12 md:gap-16 lg:gap-24 min-w-max pb-2 md:pb-0">
-                        <?php 
-                        $partner_list = [
-                            ['name' => 'Ecogrocery', 'location' => 'Lal Nagar'],
-                            ['name' => 'Basket', 'location' => 'Boulevard'],
-                            ['name' => 'Extracts', 'location' => 'RAJBAGH'],
-                            ['name' => 'City Max', 'location' => 'Peerbagh'],
-                            ['name' => 'Pick N Choose', 'location' => 'BAGHAT']
-                        ];
+                <!-- Panoramic Infinite Marquee -->
+                <div class="partners-marquee-wrapper flex-1 min-w-0">
+                    <div class="partners-marquee-track flex items-center">
+                        <!-- Group 1 -->
+                        <div class="partners-marquee-group flex items-center shrink-0 gap-8 sm:gap-12 md:gap-16 pr-8 sm:pr-12 md:pr-16">
+                            <?php foreach($display_partners as $p): ?>
+                                <div class="flex items-center gap-8 sm:gap-12 md:gap-16">
+                                    <div class="flex flex-col items-center group cursor-pointer transition-transform duration-200 hover:-translate-y-0.5">
+                                        <h4 class="text-xl sm:text-2xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#24B25D] whitespace-nowrap">
+                                            <?php echo htmlspecialchars($p['name']); ?>
+                                        </h4>
+                                        <span class="text-[9px] sm:text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1.5 border-t border-gray-100 pt-1 w-full text-center group-hover:text-emerald-700 transition-colors whitespace-nowrap">
+                                            <?php echo htmlspecialchars($p['location']); ?>
+                                        </span>
+                                    </div>
+                                    <span class="text-gray-300 text-sm md:text-base select-none">&bull;</span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                         
-                        foreach($partner_list as $p): 
-                        ?>
-                            <div class="flex flex-col items-center group cursor-default">
-                                 <h4 class="text-xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#24B25D]">
-                                    <?php echo $p['name']; ?>
-                                 </h4>
-                                 <span class="text-[9px] md:text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-1.5 border-t border-gray-50 pt-1 w-full text-center group-hover:text-gray-500 transition-colors">
-                                    <?php echo $p['location']; ?>
-                                 </span>
-                            </div>
-                        <?php endforeach; ?>
+                        <!-- Group 2 (Duplicate for continuous seamless loop) -->
+                        <div class="partners-marquee-group flex items-center shrink-0 gap-8 sm:gap-12 md:gap-16 pr-8 sm:pr-12 md:pr-16" aria-hidden="true">
+                            <?php foreach($display_partners as $p): ?>
+                                <div class="flex items-center gap-8 sm:gap-12 md:gap-16">
+                                    <div class="flex flex-col items-center group cursor-pointer transition-transform duration-200 hover:-translate-y-0.5">
+                                        <h4 class="text-xl sm:text-2xl md:text-3xl font-serif font-black text-gray-900 leading-none transition-colors group-hover:text-[#24B25D] whitespace-nowrap">
+                                            <?php echo htmlspecialchars($p['name']); ?>
+                                        </h4>
+                                        <span class="text-[9px] sm:text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-1.5 border-t border-gray-100 pt-1 w-full text-center group-hover:text-emerald-700 transition-colors whitespace-nowrap">
+                                            <?php echo htmlspecialchars($p['location']); ?>
+                                        </span>
+                                    </div>
+                                    <span class="text-gray-300 text-sm md:text-base select-none">&bull;</span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
             </div>
