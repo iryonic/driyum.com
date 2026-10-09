@@ -10,7 +10,6 @@
 /uploads
 *.log
 
-# Uploaded images
 
 mail_log.txt
 

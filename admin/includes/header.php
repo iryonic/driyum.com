@@ -634,7 +634,7 @@ $active_meta = $page_meta[$curr_page] ?? ['title' => 'Administration', 'group' =
         </header>
 
         <!-- MAIN PAGE CONTAINER -->
-        <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-100 w-full mx-auto">
             
             <!-- Global Toast Container -->
             <div id="toast-container" class="fixed top-20 right-6 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
