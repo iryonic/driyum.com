@@ -48,7 +48,7 @@ if (isset($_GET['delete_review_id']) && is_admin()) {
 }
 
 $reviews = get_product_reviews($id);
-$related = get_related_products($id, $product['category_id']);
+$related = get_related_products($id, $product['category_id'], 6);
 
 // Calculate Average Rating
 $total_reviews = count($reviews);
@@ -222,8 +222,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
         <!-- LEFT COLUMN: PRODUCT GALLERY -->
         <div class="lg:col-span-6 space-y-3 sm:space-y-4 lg:sticky lg:top-24">
-            <!-- Showcase Card -->
-            <div class="relative bg-[#F8F9FA] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 flex items-center justify-center border border-gray-100 overflow-hidden aspect-square sm:aspect-[4/3] lg:aspect-auto lg:min-h-[480px] group shadow-sm">
+            <!-- Showcase Card with Hand Swipe / Touch Support -->
+            <div id="productShowcaseCard" style="touch-action: pan-y;" class="relative bg-[#F8F9FA] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 flex items-center justify-center border border-gray-100 overflow-hidden aspect-square sm:aspect-[4/3] lg:aspect-auto lg:min-h-[480px] group shadow-sm select-none cursor-grab active:cursor-grabbing">
                 
                 <!-- Expand / Fullscreen Button -->
                 <button onclick="openImageModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 sm:w-10 sm:h-10 bg-white/90 hover:bg-white text-gray-600 hover:text-black rounded-full shadow-sm border border-gray-200/60 flex items-center justify-center transition hover:scale-105 active:scale-95" title="Expand View">
@@ -242,7 +242,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <!-- Main Image Display -->
                 <div class="w-full h-full flex items-center justify-center p-2 sm:p-4">
-                    <img id="mainProductImage" src="<?php echo $all_images[0]; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class=" w-auto max-w-full object-contain filter drop-shadow-md select-none group-hover:scale-105 transition-transform duration-500">
+                    <img id="mainProductImage" src="<?php echo $all_images[0]; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-auto max-w-full object-contain filter drop-shadow-md select-none pointer-events-none group-hover:scale-105 transition-transform duration-500">
                 </div>
 
                 <!-- Dots Pagination on Mobile -->
@@ -585,7 +585,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- SWIPER CAROUSEL CONTAINER -->
         <div class="swiper recommended-swiper pb-10">
             <div class="swiper-wrapper">
-                <?php foreach ($related as $rel): ?>
+                <?php foreach ($related as $rel): 
+                    if ((int)$rel['stock'] <= 0) continue;
+                ?>
                 <div class="swiper-slide h-auto">
                     <!-- Beautiful Product Card matching Screenshot 4 -->
                     <div class="bg-white rounded-2xl sm:rounded-3xl p-3.5 sm:p-4 border border-gray-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full group">
@@ -736,16 +738,35 @@ window.dataLayer.push({
 const galleryImages = <?php echo json_encode($all_images); ?>;
 let activeImageIndex = 0;
 
-function selectImage(index) {
+function selectImage(index, direction = 0) {
     if (index < 0 || index >= galleryImages.length) return;
     activeImageIndex = index;
     const mainImg = document.getElementById('mainProductImage');
+    if (!mainImg) return;
     
-    mainImg.style.opacity = '0';
-    setTimeout(() => {
-        mainImg.src = galleryImages[activeImageIndex];
-        mainImg.style.opacity = '1';
-    }, 150);
+    if (direction !== 0) {
+        // Directional slide transition (-1 left, 1 right)
+        mainImg.style.transition = 'transform 0.16s ease-out, opacity 0.16s ease-out';
+        mainImg.style.transform = `translateX(${direction > 0 ? '-25px' : '25px'}) scale(0.96)`;
+        mainImg.style.opacity = '0';
+        
+        setTimeout(() => {
+            mainImg.src = galleryImages[activeImageIndex];
+            mainImg.style.transform = `translateX(${direction > 0 ? '25px' : '-25px'}) scale(0.96)`;
+            
+            setTimeout(() => {
+                mainImg.style.transition = 'transform 0.2s ease-out, opacity 0.2s ease-out';
+                mainImg.style.transform = 'translateX(0) scale(1)';
+                mainImg.style.opacity = '1';
+            }, 20);
+        }, 160);
+    } else {
+        mainImg.style.opacity = '0';
+        setTimeout(() => {
+            mainImg.src = galleryImages[activeImageIndex];
+            mainImg.style.opacity = '1';
+        }, 150);
+    }
 
     // Update Thumbs
     document.querySelectorAll('.thumb-btn').forEach((btn, idx) => {
@@ -770,13 +791,99 @@ function selectImage(index) {
 
 function prevImage() {
     let nextIdx = (activeImageIndex - 1 + galleryImages.length) % galleryImages.length;
-    selectImage(nextIdx);
+    selectImage(nextIdx, -1);
 }
 
 function nextImage() {
     let nextIdx = (activeImageIndex + 1) % galleryImages.length;
-    selectImage(nextIdx);
+    selectImage(nextIdx, 1);
 }
+
+// Hand Swipe Touch & Drag Support for Main Product Images
+document.addEventListener('DOMContentLoaded', () => {
+    const showcaseCard = document.getElementById('productShowcaseCard');
+    if (showcaseCard && galleryImages.length > 1) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        let isSwiping = false;
+
+        showcaseCard.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchEndX = touchStartX;
+                touchEndY = touchStartY;
+                isSwiping = true;
+            }
+        }, { passive: true });
+
+        showcaseCard.addEventListener('touchmove', (e) => {
+            if (!isSwiping || e.touches.length !== 1) return;
+            touchEndX = e.touches[0].clientX;
+            touchEndY = e.touches[0].clientY;
+            
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            
+            // Add subtle interactive resistance preview if horizontal swipe is dominant
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 8) {
+                const mainImg = document.getElementById('mainProductImage');
+                if (mainImg) {
+                    mainImg.style.transition = 'none';
+                    mainImg.style.transform = `translateX(${diffX * 0.35}px)`;
+                }
+            }
+        }, { passive: true });
+
+        showcaseCard.addEventListener('touchend', (e) => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            const minSwipe = 35; // minimum px to trigger swipe action
+            
+            const mainImg = document.getElementById('mainProductImage');
+            if (mainImg) {
+                mainImg.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+                mainImg.style.transform = 'translateX(0)';
+            }
+
+            if (Math.abs(diffX) > minSwipe && Math.abs(diffX) > Math.abs(diffY) * 1.1) {
+                if (diffX < 0) {
+                    // Hand swiped left -> Next image
+                    nextImage();
+                } else {
+                    // Hand swiped right -> Previous image
+                    prevImage();
+                }
+            }
+        });
+
+        // Mouse drag swipe support for desktop & trackpad
+        let mouseStartX = 0;
+        let isMouseDown = false;
+        showcaseCard.addEventListener('mousedown', (e) => {
+            if (e.button === 0) {
+                mouseStartX = e.clientX;
+                isMouseDown = true;
+                showcaseCard.style.cursor = 'grabbing';
+            }
+        });
+        window.addEventListener('mouseup', (e) => {
+            if (!isMouseDown) return;
+            isMouseDown = false;
+            if (showcaseCard) showcaseCard.style.cursor = 'grab';
+            const diffX = e.clientX - mouseStartX;
+            if (Math.abs(diffX) > 45) {
+                if (diffX < 0) nextImage();
+                else prevImage();
+            }
+        });
+    }
+});
 
 // Lightbox Modal
 function openImageModal() {

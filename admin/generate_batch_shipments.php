@@ -172,32 +172,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 
-    <div class="no-print">
-        <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 bg-[#24B25D] rounded-2xl flex items-center justify-center text-black">
-                <i class="fas fa-shipping-fast text-xl"></i>
+    <div class="no-print" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); border: 1px solid #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+            <div style="width: 42px; height: 42px; background: #e6f4ea; border: 1px solid #c2e7cc; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #004f42;">
+                <i class="fas fa-shipping-fast" style="font-size: 18px;"></i>
             </div>
             <div>
-                <h3 style="margin: 0; font-weight: 900;">Shipping Desk</h3>
-                <p class="small-text"><?php echo count($orders); ?> Orders Prepared</p>
+                <h3 style="margin: 0; font-weight: 800; font-size: 15px; color: #0f172a;">Shipping Desk</h3>
+                <p style="margin: 2px 0 0; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;"><?php echo count($orders); ?> Orders Selected</p>
             </div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="window.print()" style="padding: 16px; cursor: pointer; background: #000; border: none; border-radius: 18px; font-weight: 900; color: #24B25D; width: 100%; display: flex; items-center; justify-content: center; gap: 10px; transition: all 0.2s;">
-                <i class="fas fa-print"></i> PRINT BATCH
+            <button onclick="window.print()" style="padding: 13px 18px; cursor: pointer; background: #004f42; border: none; border-radius: 10px; font-weight: 700; color: #ffffff; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: background 0.2s;">
+                <i class="fas fa-print"></i> Print Batch Documents
             </button>
             
-            <div style="height: 1px; background: #eee; margin: 10px 0;"></div>
+            <div style="height: 1px; background: #e2e8f0; margin: 6px 0;"></div>
             
-            <p class="small-text" style="text-align: center;">Display Options</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button onclick="location.href='?ids=<?php echo $ids; ?>&type=labels'" style="padding: 10px; cursor: pointer; background: <?php echo $type=='labels'?'#f1f5f9':'#fff'; ?>; border: 1px solid #ddd; border-radius: 12px; font-size: 11px; font-weight: 700;">LABELS</button>
-                <button onclick="location.href='?ids=<?php echo $ids; ?>&type=invoices'" style="padding: 10px; cursor: pointer; background: <?php echo $type=='invoices'?'#f1f5f9':'#fff'; ?>; border: 1px solid #ddd; border-radius: 12px; font-size: 11px; font-weight: 700;">INVOICES</button>
+            <p style="margin: 0; text-align: center; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Document Filter</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="location.href='?ids=<?php echo $ids; ?>&type=labels'" style="padding: 9px; cursor: pointer; background: <?php echo $type=='labels'?'#004f42':'#f8fafc'; ?>; color: <?php echo $type=='labels'?'#fff':'#334155'; ?>; border: 1px solid <?php echo $type=='labels'?'#004f42':'#cbd5e1'; ?>; border-radius: 8px; font-size: 11px; font-weight: 700;">LABELS</button>
+                <button onclick="location.href='?ids=<?php echo $ids; ?>&type=invoices'" style="padding: 9px; cursor: pointer; background: <?php echo $type=='invoices'?'#004f42':'#f8fafc'; ?>; color: <?php echo $type=='invoices'?'#fff':'#334155'; ?>; border: 1px solid <?php echo $type=='invoices'?'#004f42':'#cbd5e1'; ?>; border-radius: 8px; font-size: 11px; font-weight: 700;">INVOICES</button>
             </div>
-            <button onclick="location.href='?ids=<?php echo $ids; ?>&type=all'" style="padding: 12px; cursor: pointer; background: <?php echo $type=='all'?'#f1f5f9':'#fff'; ?>; border: 1px solid #ddd; border-radius: 12px; font-size: 11px; font-weight: 700; width: 100%;">BOTH (SEQUENTIAL)</button>
+            <button onclick="location.href='?ids=<?php echo $ids; ?>&type=all'" style="padding: 10px; cursor: pointer; background: <?php echo $type=='all'?'#004f42':'#f8fafc'; ?>; color: <?php echo $type=='all'?'#fff':'#334155'; ?>; border: 1px solid <?php echo $type=='all'?'#004f42':'#cbd5e1'; ?>; border-radius: 8px; font-size: 11px; font-weight: 700; width: 100%;">BOTH (SEQUENTIAL)</button>
             
-            <button onclick="window.close()" style="margin-top: 10px; padding: 12px; cursor: pointer; background: transparent; border: 1px solid #eee; border-radius: 12px; font-size: 11px; font-weight: 700; width: 100%; color: #94a3b8;">Close Window</button>
+            <button onclick="window.close()" style="margin-top: 4px; padding: 10px; cursor: pointer; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 11px; font-weight: 600; width: 100%; color: #475569;">Close Window</button>
         </div>
     </div>
 

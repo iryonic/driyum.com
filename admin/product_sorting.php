@@ -98,7 +98,6 @@ if (isset($_GET['action'])) {
     if ($action === 'add_combo') {
         $id = intval($_POST['product_id'] ?? 0);
         if ($id > 0) {
-            // Find current min combo_sort_order to place at top or max to place at bottom
             $max = fetch_one("SELECT MAX(combo_sort_order) as m FROM products WHERE is_combo = 1")['m'] ?? 0;
             $next = $max + 1;
             $conn->query("UPDATE products SET is_combo = 1, combo_sort_order = $next WHERE id = $id");
@@ -161,9 +160,6 @@ require_once 'includes/header.php';
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <style>
-/* Custom Responsive & Touch Styles */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .drag-handle {
     touch-action: none;
     -webkit-user-select: none;
@@ -171,146 +167,130 @@ require_once 'includes/header.php';
 }
 </style>
 
-<div class="max-w-100 mx-auto space-y-4 sm:space-y-6">
+<div class="space-y-6">
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 z-[9999] hidden flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl text-white font-bold text-xs shadow-2xl transition-all duration-300"></div>
+    <div id="toast" class="fixed top-20 right-6 z-[9999] hidden items-center gap-2.5 px-4 py-3 rounded-xl text-white font-medium text-xs shadow-xl transition-all duration-200 anim-fade-in"></div>
 
     <?php if(!empty($_SESSION['msg'])): ?>
-        <div class="p-3.5 sm:p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between anim-up">
+        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-center justify-between anim-fade-in">
             <div class="flex items-center gap-2">
-                <i class="fas fa-check-circle text-emerald-600 text-base shrink-0"></i>
+                <i class="fas fa-check-circle text-emerald-600 text-sm"></i>
                 <span><?php echo htmlspecialchars($_SESSION['msg']); unset($_SESSION['msg']); ?></span>
             </div>
-            <button onclick="this.parentElement.remove()" class="text-emerald-400 hover:text-emerald-800 p-1"><i class="fas fa-times"></i></button>
+            <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800 p-1"><i class="fas fa-times"></i></button>
         </div>
     <?php endif; ?>
 
     <!-- HEADER TITLE -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          
-            <h1 class="text-xl sm:text-2xl font-black text-gray-900 font-heading tracking-tight">Product Sorting</h1>
-            <p class="text-xs font-medium text-gray-500 mt-0.5 sm:mt-1">Drag and drop products to customize their exact appearance order on the Homepage & Shop</p>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Product Sorting</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Drag and drop products to customize their exact appearance order on the Homepage & Storefront</p>
         </div>
-
     </div>
 
- 
-    <!-- NAVIGATION TABS (Mobile horizontally scrollable pills) -->
-    <div class="bg-white p-1.5 sm:p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center overflow-x-auto no-scrollbar sm:flex-wrap gap-1.5 sm:gap-2">
-        <button type="button" onclick="switchTab('combos')" id="tab-btn-combos" class="tab-btn shrink-0 whitespace-nowrap px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 <?php echo $active_tab === 'combos' ? 'bg-[#24B25D] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'; ?>">
-            <i class="fas fa-cubes text-sm"></i>
+    <!-- NAVIGATION TABS -->
+    <div class="bg-white p-1.5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-1.5 overflow-x-auto">
+        <a href="product_sorting.php?tab=combos" id="tab-btn-combos" class="tab-btn px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-2 shrink-0 <?php echo $active_tab === 'combos' ? 'bg-[#004f42] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'; ?>">
+            <i class="fas fa-cubes text-xs"></i>
             <span>1. Combos (<span id="tab-count-combos"><?php echo $count_combos; ?></span>)</span>
-        </button>
+        </a>
 
-        <button type="button" onclick="switchTab('featured')" id="tab-btn-featured" class="tab-btn shrink-0 whitespace-nowrap px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 <?php echo $active_tab === 'featured' ? 'bg-[#24B25D] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'; ?>">
-            <i class="fas fa-star text-sm"></i>
+        <a href="product_sorting.php?tab=featured" id="tab-btn-featured" class="tab-btn px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-2 shrink-0 <?php echo $active_tab === 'featured' ? 'bg-[#004f42] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'; ?>">
+            <i class="fas fa-star text-xs"></i>
             <span>2. Our Products (<span id="tab-count-featured"><?php echo $count_featured; ?></span>)</span>
-        </button>
+        </a>
 
-        <button type="button" onclick="switchTab('shop')" id="tab-btn-shop" class="tab-btn shrink-0 whitespace-nowrap px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 <?php echo $active_tab === 'shop' ? 'bg-[#24B25D] text-white shadow-md' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'; ?>">
-            <i class="fas fa-shopping-bag text-sm"></i>
+        <a href="product_sorting.php?tab=shop" id="tab-btn-shop" class="tab-btn px-4 py-2 rounded-lg font-semibold text-xs transition-colors flex items-center gap-2 shrink-0 <?php echo $active_tab === 'shop' ? 'bg-[#004f42] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'; ?>">
+            <i class="fas fa-store text-xs"></i>
             <span>3. Shop Catalog (<span id="tab-count-shop"><?php echo $count_shop; ?></span>)</span>
-        </button>
+        </a>
     </div>
 
-    <!-- ========================================== -->
     <!-- TAB 1: HOMEPAGE COMBOS SORTING -->
-    <!-- ========================================== -->
     <div id="tab-content-combos" class="tab-pane <?php echo $active_tab === 'combos' ? '' : 'hidden'; ?> space-y-4">
-        <div class="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <!-- Header Bar -->
-            <div class="px-4 py-4 sm:px-6 sm:py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-gray-50/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-sm shrink-0">
-                        <i class="fas fa-boxes"></i>
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/60">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs shrink-0">
+                        <i class="fas fa-boxes-stacked"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-gray-900 font-heading">Our Combos</h3>
-                        </div>
+                        <h3 class="text-sm font-bold text-slate-900">Homepage Combos Section</h3>
+                        <p class="text-[11px] text-slate-400">Order of combo packages shown in the homepage banner</p>
+                    </div>
                 </div>
-                <button type="button" onclick="openAddModal('combo')" class="inline-flex items-center justify-center gap-2 bg-[#24B25D] hover:bg-[#004F42] text-white px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-sm active:scale-95 w-full sm:w-auto">
-                    <i class="fas fa-plus text-xs"></i>
-                    <span>Add Product to Combos</span>
+                <button type="button" onclick="openAddModal('combo')" class="btn-admin btn-admin-primary btn-admin-sm">
+                    <i class="fas fa-plus text-xs"></i> Add to Combos
                 </button>
             </div>
 
-            <!-- Table -->
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="admin-table">
                     <thead>
-                        <tr class="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider bg-gray-50/20">
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 w-12 sm:w-16 text-center">Sort</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 w-14 sm:w-20 text-center">Image</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 min-w-[160px] sm:min-w-[240px]">Product Title</th>
-                            <th class="hidden md:table-cell py-3 px-4 sm:py-4 sm:px-4 min-w-[130px]">Category</th>
-                            <th class="hidden sm:table-cell py-3 px-4 sm:py-4 sm:px-4 min-w-[90px]">Price</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 text-center w-24 sm:w-32">Stock</th>
-                            <th class="py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right w-20 sm:w-28">Action</th>
+                        <tr>
+                            <th class="w-16 text-center">Rank</th>
+                            <th class="w-16 text-center">Image</th>
+                            <th>Product Title</th>
+                            <th class="hidden md:table-cell">Category</th>
+                            <th class="hidden sm:table-cell">Price</th>
+                            <th class="text-center w-28">Stock</th>
+                            <th class="text-right w-24">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="sortable-combos" class="divide-y divide-gray-50 text-xs">
+                    <tbody id="sortable-combos">
                         <?php if(empty($combo_products)): ?>
                             <tr>
-                                <td colspan="7" class="py-12 text-center text-gray-400 px-4">
-                                    <i class="fas fa-boxes text-3xl mb-2 text-gray-300 block"></i>
-                                    No combo products found. Click "+ Add Product to Combos" to feature your first pack.
+                                <td colspan="7" class="py-12 text-center text-slate-400 text-xs">
+                                    <i class="fas fa-boxes text-2xl mb-2 text-slate-300 block"></i>
+                                    No combo products found. Click "+ Add to Combos" to feature your first pack.
                                 </td>
                             </tr>
                         <?php else: ?>
                             <?php foreach($combo_products as $idx => $p): 
                                 $img = !empty($p['image']) ? get_url(ltrim($p['image'], './')) : '';
                             ?>
-                            <tr class="hover:bg-gray-50/70 transition-colors group cursor-default <?php echo $p['stock'] <= 0 ? 'bg-rose-50/25' : ''; ?>" data-id="<?php echo $p['id']; ?>" data-stock="<?php echo (int)$p['stock']; ?>">
-                                <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
-                                    <div class="drag-handle inline-flex items-center justify-center gap-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-800 transition p-2 sm:py-1 sm:px-2 rounded-xl sm:rounded-lg hover:bg-gray-100 active:bg-emerald-50 active:text-emerald-700 min-w-[36px] min-h-[36px]">
+                            <tr class="hover:bg-slate-50 transition-colors group <?php echo $p['stock'] <= 0 ? 'bg-rose-50/20' : ''; ?>" data-id="<?php echo $p['id']; ?>" data-stock="<?php echo (int)$p['stock']; ?>">
+                                <td class="text-center">
+                                    <div class="drag-handle inline-flex items-center justify-center gap-1.5 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-800 transition py-1 px-2 rounded-lg hover:bg-slate-100">
                                         <i class="fas fa-grip-vertical text-xs"></i>
-                                        <span class="sort-rank font-black text-gray-700 text-xs"><?php echo $idx + 1; ?></span>
+                                        <span class="sort-rank font-bold text-slate-700 text-xs"><?php echo $idx + 1; ?></span>
                                     </div>
                                 </td>
-                                <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
-                                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden mx-auto shadow-sm shrink-0">
+                                <td class="text-center">
+                                    <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200 overflow-hidden mx-auto shrink-0 p-0.5">
                                         <?php if($img): ?>
-                                            <img src="<?php echo $img; ?>" class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($p['name']); ?>">
+                                            <img src="<?php echo $img; ?>" class="w-full h-full object-cover rounded-md" alt="<?php echo htmlspecialchars($p['name']); ?>">
                                         <?php else: ?>
-                                            <div class="w-full h-full flex items-center justify-center text-[8px] text-gray-300">No Img</div>
+                                            <div class="w-full h-full flex items-center justify-center text-[9px] text-slate-300">No Img</div>
                                         <?php endif; ?>
                                     </div>
                                 </td>
-                                <td class="py-3 px-2 sm:py-4 sm:px-4">
-                                    <div class="font-bold text-gray-900 text-xs sm:text-sm line-clamp-2 hover:text-[#24B25D] transition"><?php echo htmlspecialchars($p['name']); ?></div>
-                                    <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                                        <span class="text-[10px] text-gray-400">SKU: <?php echo htmlspecialchars($p['sku'] ?: '—'); ?></span>
-                                        <span class="md:hidden inline-flex text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">
-                                            <?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>
-                                        </span>
-                                        <span class="sm:hidden font-mono font-bold text-[11px] text-[#004F42]">
-                                            ₹<?php echo number_format($p['price'], 2); ?>
-                                        </span>
-                                    </div>
+                                <td>
+                                    <span class="font-bold text-slate-900 text-xs block line-clamp-1"><?php echo htmlspecialchars($p['name']); ?></span>
+                                    <span class="text-[11px] text-slate-400">SKU: <?php echo htmlspecialchars($p['sku'] ?: '—'); ?></span>
                                 </td>
-                                <td class="hidden md:table-cell py-3 px-4 sm:py-4 sm:px-4 font-medium text-gray-600">
+                                <td class="hidden md:table-cell text-xs text-slate-600 font-medium">
                                     <?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>
                                 </td>
-                                <td class="hidden sm:table-cell py-3 px-4 sm:py-4 sm:px-4 font-black text-gray-900 font-mono">
+                                <td class="hidden sm:table-cell font-bold text-xs text-slate-900">
                                     ₹<?php echo number_format($p['price'], 2); ?>
                                 </td>
-                                <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
+                                <td class="text-center">
                                     <?php if($p['stock'] > 0): ?>
-                                        <span class="inline-flex px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-100 whitespace-nowrap">
-                                            In Stock <span class="hidden sm:inline">(<?php echo $p['stock']; ?>)</span>
+                                        <span class="admin-badge admin-badge-success text-[10px]">
+                                            In Stock (<?php echo $p['stock']; ?>)
                                         </span>
                                     <?php else: ?>
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black bg-rose-50 text-rose-700 border border-rose-100 whitespace-nowrap" title="Out-of-stock items are automatically positioned at the end">
-                                            <i class="fas fa-arrow-down text-[8px]"></i> Out of Stock (Last)
+                                        <span class="admin-badge admin-badge-danger text-[10px]">
+                                            Out of Stock
                                         </span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right">
-                                    <button type="button" onclick="toggleCombo(<?php echo $p['id']; ?>, this)" title="Remove from Combos" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 text-xs font-bold transition">
-                                        <i class="fas fa-trash-alt text-[11px]"></i>
-                                        <span class="hidden sm:inline">Remove</span>
+                                <td class="text-right">
+                                    <button type="button" onclick="toggleCombo(<?php echo $p['id']; ?>, this)" class="btn-admin btn-admin-danger btn-admin-sm" title="Remove from Combos">
+                                        <i class="fas fa-trash-alt text-[10px]"></i> Remove
                                     </button>
                                 </td>
                             </tr>
@@ -322,104 +302,89 @@ require_once 'includes/header.php';
         </div>
     </div>
 
-    <!-- ========================================== -->
     <!-- TAB 2: HOMEPAGE "OUR PRODUCTS" SORTING -->
-    <!-- ========================================== -->
     <div id="tab-content-featured" class="tab-pane <?php echo $active_tab === 'featured' ? '' : 'hidden'; ?> space-y-4">
-        <div class="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <!-- Header Bar -->
-            <div class="px-4 py-4 sm:px-6 sm:py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-gray-50/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center text-sm shrink-0">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/60">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs shrink-0">
                         <i class="fas fa-star"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-gray-900 font-heading">Our Products</h3>
+                        <h3 class="text-sm font-bold text-slate-900">Featured "Our Products" Section</h3>
+                        <p class="text-[11px] text-slate-400">Order of items featured on the homepage showcase</p>
                     </div>
                 </div>
-                <button type="button" onclick="openAddModal('featured')" class="inline-flex items-center justify-center gap-2 bg-[#24B25D] hover:bg-[#004F42] text-white px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-sm active:scale-95 w-full sm:w-auto">
-                    <i class="fas fa-plus text-xs"></i>
-                    <span>Add Product to Featured</span>
+                <button type="button" onclick="openAddModal('featured')" class="btn-admin btn-admin-primary btn-admin-sm">
+                    <i class="fas fa-plus text-xs"></i> Add to Featured
                 </button>
             </div>
 
-            
-
-            <!-- Table -->
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="admin-table">
                     <thead>
-                        <tr class="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider bg-gray-50/20">
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 w-12 sm:w-16 text-center">Sort</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 w-14 sm:w-20 text-center">Image</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 min-w-[160px] sm:min-w-[240px]">Product Title</th>
-                            <th class="hidden md:table-cell py-3 px-4 sm:py-4 sm:px-4 min-w-[130px]">Category</th>
-                            <th class="hidden sm:table-cell py-3 px-4 sm:py-4 sm:px-4 min-w-[90px]">Price</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 text-center w-24 sm:w-32">Stock</th>
-                            <th class="py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right w-20 sm:w-28">Action</th>
+                        <tr>
+                            <th class="w-16 text-center">Rank</th>
+                            <th class="w-16 text-center">Image</th>
+                            <th>Product Title</th>
+                            <th class="hidden md:table-cell">Category</th>
+                            <th class="hidden sm:table-cell">Price</th>
+                            <th class="text-center w-28">Stock</th>
+                            <th class="text-right w-24">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="sortable-featured" class="divide-y divide-gray-50 text-xs">
+                    <tbody id="sortable-featured">
                         <?php if(empty($featured_products)): ?>
                             <tr>
-                                <td colspan="7" class="py-12 text-center text-gray-400 px-4">
-                                    <i class="fas fa-star text-3xl mb-2 text-gray-300 block"></i>
-                                    No featured products selected. Click "+ Add Product to Featured" to showcase products here.
+                                <td colspan="7" class="py-12 text-center text-slate-400 text-xs">
+                                    <i class="fas fa-star text-2xl mb-2 text-slate-300 block"></i>
+                                    No featured products selected. Click "+ Add to Featured" to showcase products here.
                                 </td>
                             </tr>
                         <?php else: ?>
                             <?php foreach($featured_products as $idx => $p): 
                                 $img = !empty($p['image']) ? get_url(ltrim($p['image'], './')) : '';
                             ?>
-                            <tr class="hover:bg-gray-50/70 transition-colors group cursor-default <?php echo $p['stock'] <= 0 ? 'bg-rose-50/25' : ''; ?>" data-id="<?php echo $p['id']; ?>" data-stock="<?php echo (int)$p['stock']; ?>">
-                                <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
-                                    <div class="drag-handle inline-flex items-center justify-center gap-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-800 transition p-2 sm:py-1 sm:px-2 rounded-xl sm:rounded-lg hover:bg-gray-100 active:bg-emerald-50 active:text-emerald-700 min-w-[36px] min-h-[36px]">
+                            <tr class="hover:bg-slate-50 transition-colors group <?php echo $p['stock'] <= 0 ? 'bg-rose-50/20' : ''; ?>" data-id="<?php echo $p['id']; ?>" data-stock="<?php echo (int)$p['stock']; ?>">
+                                <td class="text-center">
+                                    <div class="drag-handle inline-flex items-center justify-center gap-1.5 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-800 transition py-1 px-2 rounded-lg hover:bg-slate-100">
                                         <i class="fas fa-grip-vertical text-xs"></i>
-                                        <span class="sort-rank font-black text-gray-700 text-xs"><?php echo $idx + 1; ?></span>
+                                        <span class="sort-rank font-bold text-slate-700 text-xs"><?php echo $idx + 1; ?></span>
                                     </div>
                                 </td>
-                                <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
-                                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden mx-auto shadow-sm shrink-0">
+                                <td class="text-center">
+                                    <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200 overflow-hidden mx-auto shrink-0 p-0.5">
                                         <?php if($img): ?>
-                                            <img src="<?php echo $img; ?>" class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($p['name']); ?>">
+                                            <img src="<?php echo $img; ?>" class="w-full h-full object-cover rounded-md" alt="<?php echo htmlspecialchars($p['name']); ?>">
                                         <?php else: ?>
-                                            <div class="w-full h-full flex items-center justify-center text-[8px] text-gray-300">No Img</div>
+                                            <div class="w-full h-full flex items-center justify-center text-[9px] text-slate-300">No Img</div>
                                         <?php endif; ?>
                                     </div>
                                 </td>
-                                <td class="py-3 px-2 sm:py-4 sm:px-4">
-                                    <div class="font-bold text-gray-900 text-xs sm:text-sm line-clamp-2 hover:text-[#24B25D] transition"><?php echo htmlspecialchars($p['name']); ?></div>
-                                    <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                                        <span class="text-[10px] text-gray-400">SKU: <?php echo htmlspecialchars($p['sku'] ?: '—'); ?></span>
-                                        <span class="md:hidden inline-flex text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">
-                                            <?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>
-                                        </span>
-                                        <span class="sm:hidden font-mono font-bold text-[11px] text-[#004F42]">
-                                            ₹<?php echo number_format($p['price'], 2); ?>
-                                        </span>
-                                    </div>
+                                <td>
+                                    <span class="font-bold text-slate-900 text-xs block line-clamp-1"><?php echo htmlspecialchars($p['name']); ?></span>
+                                    <span class="text-[11px] text-slate-400">SKU: <?php echo htmlspecialchars($p['sku'] ?: '—'); ?></span>
                                 </td>
-                                <td class="hidden md:table-cell py-3 px-4 sm:py-4 sm:px-4 font-medium text-gray-600">
+                                <td class="hidden md:table-cell text-xs text-slate-600 font-medium">
                                     <?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>
                                 </td>
-                                <td class="hidden sm:table-cell py-3 px-4 sm:py-4 sm:px-4 font-black text-gray-900 font-mono">
+                                <td class="hidden sm:table-cell font-bold text-xs text-slate-900">
                                     ₹<?php echo number_format($p['price'], 2); ?>
                                 </td>
-                                <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
+                                <td class="text-center">
                                     <?php if($p['stock'] > 0): ?>
-                                        <span class="inline-flex px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-100 whitespace-nowrap">
-                                            In Stock <span class="hidden sm:inline">(<?php echo $p['stock']; ?>)</span>
+                                        <span class="admin-badge admin-badge-success text-[10px]">
+                                            In Stock (<?php echo $p['stock']; ?>)
                                         </span>
                                     <?php else: ?>
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black bg-rose-50 text-rose-700 border border-rose-100 whitespace-nowrap" title="Out-of-stock items are automatically positioned at the end">
-                                            <i class="fas fa-arrow-down text-[8px]"></i> Out of Stock (Last)
+                                        <span class="admin-badge admin-badge-danger text-[10px]">
+                                            Out of Stock
                                         </span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right">
-                                    <button type="button" onclick="toggleFeatured(<?php echo $p['id']; ?>, this)" title="Remove from Featured" class="inline-flex items-center gap-1 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 text-xs font-bold transition">
-                                        <i class="fas fa-trash-alt text-[11px]"></i>
-                                        <span class="hidden sm:inline">Remove</span>
+                                <td class="text-right">
+                                    <button type="button" onclick="toggleFeatured(<?php echo $p['id']; ?>, this)" class="btn-admin btn-admin-danger btn-admin-sm" title="Remove from Featured">
+                                        <i class="fas fa-trash-alt text-[10px]"></i> Remove
                                     </button>
                                 </td>
                             </tr>
@@ -431,31 +396,29 @@ require_once 'includes/header.php';
         </div>
     </div>
 
-    <!-- ========================================== -->
     <!-- TAB 3: SHOP PAGE CATALOG DEFAULT SORTING -->
-    <!-- ========================================== -->
     <div id="tab-content-shop" class="tab-pane <?php echo $active_tab === 'shop' ? '' : 'hidden'; ?> space-y-4">
-        <div class="bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-            <!-- Header Bar with Filter & Search -->
-            <div class="px-4 py-4 sm:px-6 sm:py-5 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-gray-50/50">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center text-sm shrink-0">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/60">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center text-xs shrink-0">
                         <i class="fas fa-store"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-gray-900 font-heading">Shop Page Order</h3>
+                        <h3 class="text-sm font-bold text-slate-900">Shop Catalog Default Sequence</h3>
+                        <p class="text-[11px] text-slate-400">Default presentation sequence on the shop collection page</p>
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full md:w-auto">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
                     <!-- Live Search Input -->
-                    <div class="relative w-full sm:w-60 md:w-64">
-                        <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                        <input type="text" id="shop-search" oninput="filterShopTable()" placeholder="Filter by product..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-xs font-medium text-gray-800 focus:outline-none focus:border-[#24B25D] bg-white transition">
+                    <div class="relative w-full sm:w-56">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="shop-search" oninput="filterShopTable()" placeholder="Filter items..." class="admin-input pl-8 py-1.5 text-xs">
                     </div>
 
                     <!-- Category Selector -->
-                    <select id="shop-category-filter" onchange="filterShopTable()" class="w-full sm:w-auto px-3 py-2 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 bg-white focus:outline-none focus:border-[#24B25D] transition">
+                    <select id="shop-category-filter" onchange="filterShopTable()" class="admin-select py-1.5 text-xs font-semibold">
                         <option value="">All Categories</option>
                         <?php foreach($categories as $cat): ?>
                             <option value="<?php echo htmlspecialchars($cat['name']); ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
@@ -464,72 +427,61 @@ require_once 'includes/header.php';
                 </div>
             </div>
 
-         
-
-            <!-- Table -->
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="admin-table">
                     <thead>
-                        <tr class="border-b border-gray-100 text-[10px] font-black text-gray-400 uppercase tracking-wider bg-gray-50/20">
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 w-12 sm:w-16 text-center">Sort</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 w-14 sm:w-20 text-center">Image</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 min-w-[160px] sm:min-w-[240px]">Product Title</th>
-                            <th class="hidden md:table-cell py-3 px-4 sm:py-4 sm:px-4 min-w-[130px]">Category</th>
-                            <th class="hidden sm:table-cell py-3 px-4 sm:py-4 sm:px-4 min-w-[90px]">Price</th>
-                            <th class="py-3 px-2 sm:py-4 sm:px-4 text-center w-24 sm:w-32">Stock</th>
-                            <th class="hidden sm:table-cell py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right w-20 sm:w-24">Order ID</th>
+                        <tr>
+                            <th class="w-16 text-center">Rank</th>
+                            <th class="w-16 text-center">Image</th>
+                            <th>Product Title</th>
+                            <th class="hidden md:table-cell">Category</th>
+                            <th class="hidden sm:table-cell">Price</th>
+                            <th class="text-center w-28">Stock</th>
+                            <th class="hidden sm:table-cell text-right w-24">Item ID</th>
                         </tr>
                     </thead>
-                    <tbody id="sortable-shop" class="divide-y divide-gray-50 text-xs">
+                    <tbody id="sortable-shop">
                         <?php foreach($shop_products as $idx => $p): 
                             $img = !empty($p['image']) ? get_url(ltrim($p['image'], './')) : '';
                         ?>
-                        <tr class="hover:bg-gray-50/70 transition-colors group cursor-default shop-row <?php echo $p['stock'] <= 0 ? 'bg-rose-50/25' : ''; ?>" data-id="<?php echo $p['id']; ?>" data-stock="<?php echo (int)$p['stock']; ?>" data-category="<?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>" data-name="<?php echo htmlspecialchars(strtolower($p['name'])); ?>">
-                            <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
-                                <div class="drag-handle inline-flex items-center justify-center gap-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-800 transition p-2 sm:py-1 sm:px-2 rounded-xl sm:rounded-lg hover:bg-gray-100 active:bg-emerald-50 active:text-emerald-700 min-w-[36px] min-h-[36px]">
+                        <tr class="hover:bg-slate-50 transition-colors group shop-row <?php echo $p['stock'] <= 0 ? 'bg-rose-50/20' : ''; ?>" data-id="<?php echo $p['id']; ?>" data-stock="<?php echo (int)$p['stock']; ?>" data-category="<?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>" data-name="<?php echo htmlspecialchars(strtolower($p['name'])); ?>">
+                            <td class="text-center">
+                                <div class="drag-handle inline-flex items-center justify-center gap-1.5 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-800 transition py-1 px-2 rounded-lg hover:bg-slate-100">
                                     <i class="fas fa-grip-vertical text-xs"></i>
-                                    <span class="sort-rank font-black text-gray-700 text-xs"><?php echo $idx + 1; ?></span>
+                                    <span class="sort-rank font-bold text-slate-700 text-xs"><?php echo $idx + 1; ?></span>
                                 </div>
                             </td>
-                            <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
-                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden mx-auto shadow-sm shrink-0">
+                            <td class="text-center">
+                                <div class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200 overflow-hidden mx-auto shrink-0 p-0.5">
                                     <?php if($img): ?>
-                                        <img src="<?php echo $img; ?>" class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($p['name']); ?>">
+                                        <img src="<?php echo $img; ?>" class="w-full h-full object-cover rounded-md" alt="<?php echo htmlspecialchars($p['name']); ?>">
                                     <?php else: ?>
-                                        <div class="w-full h-full flex items-center justify-center text-[8px] text-gray-300">No Img</div>
+                                        <div class="w-full h-full flex items-center justify-center text-[9px] text-slate-300">No Img</div>
                                     <?php endif; ?>
                                 </div>
                             </td>
-                            <td class="py-3 px-2 sm:py-4 sm:px-4">
-                                <div class="font-bold text-gray-900 text-xs sm:text-sm line-clamp-2 hover:text-[#24B25D] transition"><?php echo htmlspecialchars($p['name']); ?></div>
-                                <div class="flex flex-wrap items-center gap-1.5 mt-0.5">
-                                    <span class="text-[10px] text-gray-400">SKU: <?php echo htmlspecialchars($p['sku'] ?: '—'); ?></span>
-                                    <span class="md:hidden inline-flex text-[9px] font-bold px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">
-                                        <?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>
-                                    </span>
-                                    <span class="sm:hidden font-mono font-bold text-[11px] text-[#004F42]">
-                                        ₹<?php echo number_format($p['price'], 2); ?>
-                                    </span>
-                                </div>
+                            <td>
+                                <span class="font-bold text-slate-900 text-xs block line-clamp-1"><?php echo htmlspecialchars($p['name']); ?></span>
+                                <span class="text-[11px] text-slate-400">SKU: <?php echo htmlspecialchars($p['sku'] ?: '—'); ?></span>
                             </td>
-                            <td class="hidden md:table-cell py-3 px-4 sm:py-4 sm:px-4 font-medium text-gray-600">
+                            <td class="hidden md:table-cell text-xs text-slate-600 font-medium">
                                 <?php echo htmlspecialchars($p['category_name'] ?: 'Uncategorized'); ?>
                             </td>
-                            <td class="hidden sm:table-cell py-3 px-4 sm:py-4 sm:px-4 font-black text-gray-900 font-mono">
+                            <td class="hidden sm:table-cell font-bold text-xs text-slate-900">
                                 ₹<?php echo number_format($p['price'], 2); ?>
                             </td>
-                            <td class="py-3 px-2 sm:py-4 sm:px-4 text-center">
+                            <td class="text-center">
                                 <?php if($p['stock'] > 0): ?>
-                                    <span class="inline-flex px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-100 whitespace-nowrap">
-                                        In Stock <span class="hidden sm:inline">(<?php echo $p['stock']; ?>)</span>
+                                    <span class="admin-badge admin-badge-success text-[10px]">
+                                        In Stock (<?php echo $p['stock']; ?>)
                                     </span>
                                 <?php else: ?>
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black bg-rose-50 text-rose-700 border border-rose-100 whitespace-nowrap" title="Out-of-stock items are automatically positioned at the end">
-                                        <i class="fas fa-arrow-down text-[8px]"></i> Out of Stock (Last)
+                                    <span class="admin-badge admin-badge-danger text-[10px]">
+                                        Out of Stock
                                     </span>
                                 <?php endif; ?>
                             </td>
-                            <td class="hidden sm:table-cell py-3 pr-4 pl-2 sm:py-4 sm:pr-6 sm:pl-4 text-right text-gray-400 font-mono font-bold text-[11px]">
+                            <td class="hidden sm:table-cell text-right text-slate-400 font-mono text-xs">
                                 #<?php echo $p['id']; ?>
                             </td>
                         </tr>
@@ -543,20 +495,20 @@ require_once 'includes/header.php';
 </div>
 
 <!-- ADD PRODUCT MODAL (For Combos / Featured) -->
-<div id="add-modal" class="fixed inset-0 z-[999] hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAddModal()"></div>
-    <div class="bg-white w-full max-w-md rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden border border-gray-100 relative z-10 anim-up my-auto">
-        <div class="bg-[#004F42] px-5 py-4 sm:px-6 sm:py-4.5 flex items-center justify-between text-white">
-            <h3 id="modal-heading" class="text-sm sm:text-base font-black font-heading tracking-tight">Add Product</h3>
-            <button type="button" onclick="closeAddModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
+<div id="add-modal" class="fixed inset-0 z-[999] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-xs" onclick="closeAddModal()"></div>
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 relative z-10 anim-fade-in overflow-hidden">
+        <div class="bg-[#004f42] px-5 py-4 flex items-center justify-between text-white">
+            <h3 id="modal-heading" class="text-sm font-bold tracking-tight">Add Product</h3>
+            <button type="button" onclick="closeAddModal()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form id="add-form" method="POST" class="p-4 sm:p-6 space-y-4">
+        <form id="add-form" method="POST" class="p-5 space-y-4">
             <input type="hidden" name="action" id="modal-action" value="">
             <div>
-                <label class="block text-xs font-black text-gray-800 mb-1.5">Select Store Product</label>
-                <select name="product_id" id="modal-product-select" required class="w-full rounded-xl border border-gray-200 px-3.5 py-3 text-xs font-bold text-gray-800 focus:outline-none focus:border-[#24B25D] bg-white transition">
+                <label class="admin-label">Select Store Product</label>
+                <select name="product_id" id="modal-product-select" required class="admin-select">
                     <option value="">-- Choose a Product --</option>
                     <?php foreach($all_active_products as $prod): ?>
                         <option value="<?php echo $prod['id']; ?>">
@@ -565,9 +517,10 @@ require_once 'includes/header.php';
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="pt-2">
-                <button type="submit" class="w-full py-3 sm:py-3.5 rounded-xl bg-[#24B25D] hover:bg-[#004F42] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#24B25D]/20 active:scale-95 transition">
-                    Confirm & Add to Section
+            <div class="pt-2 flex gap-2">
+                <button type="button" onclick="closeAddModal()" class="flex-1 btn-admin btn-admin-secondary text-xs">Cancel</button>
+                <button type="submit" class="flex-1 btn-admin btn-admin-primary text-xs">
+                    Confirm & Add
                 </button>
             </div>
         </form>
@@ -575,65 +528,33 @@ require_once 'includes/header.php';
 </div>
 
 <script>
-// --- TAB SWITCHER ---
 function switchTab(tab) {
-    document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-[#24B25D]', 'text-white', 'shadow-md');
-        btn.classList.add('text-gray-500', 'hover:text-gray-900', 'hover:bg-gray-50');
-    });
-
-    const activePane = document.getElementById('tab-content-' + tab);
-    const activeBtn = document.getElementById('tab-btn-' + tab);
-    if(activePane) activePane.classList.remove('hidden');
-    if(activeBtn) {
-        activeBtn.classList.remove('text-gray-500', 'hover:text-gray-900', 'hover:bg-gray-50');
-        activeBtn.classList.add('bg-[#24B25D]', 'text-white', 'shadow-md');
-    }
-
-    // Sync metric card highlights
-    document.querySelectorAll('[data-metric-tab]').forEach(card => {
-        if(card.getAttribute('data-metric-tab') === tab) {
-            card.classList.add('border-[#24B25D]', 'ring-2', 'ring-[#24B25D]/20');
-            card.classList.remove('border-gray-100');
-        } else {
-            card.classList.remove('border-[#24B25D]', 'ring-2', 'ring-[#24B25D]/20');
-            card.classList.add('border-gray-100');
-        }
-    });
-
-    // Update URL query without reload
-    const url = new URL(window.location);
-    url.searchParams.set('tab', tab);
-    window.history.replaceState({}, '', url);
+    window.location.href = 'product_sorting.php?tab=' + encodeURIComponent(tab);
 }
 
-// --- TOAST NOTIFICATION ---
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
-    toast.className = `fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 z-[9999] flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl text-white font-bold text-xs shadow-2xl transition-all duration-300 ${
-        type === 'success' ? 'bg-[#004F42] border border-emerald-400/30' : 'bg-red-600'
+    toast.className = `fixed top-20 right-6 z-[9999] flex items-center gap-2 px-4 py-3 rounded-xl text-white font-medium text-xs shadow-xl transition-all duration-200 anim-fade-in ${
+        type === 'success' ? 'bg-[#004f42] border border-emerald-400/30' : 'bg-rose-600'
     }`;
-    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle text-emerald-400' : 'fa-exclamation-circle'} text-base shrink-0"></i><span>${message}</span>`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle text-emerald-400' : 'fa-exclamation-circle'} text-sm shrink-0"></i><span>${message}</span>`;
     toast.classList.remove('hidden');
     setTimeout(() => {
         toast.classList.add('hidden');
-    }, 2800);
+    }, 2500);
 }
 
-// --- SORTABLE INITIALIZATION WITH TOUCH & MOBILE SUPPORT ---
 document.addEventListener('DOMContentLoaded', () => {
     const sortableOptions = {
         handle: '.drag-handle',
-        animation: 200,
-        ghostClass: 'bg-emerald-50/80',
-        delay: 120, // allows natural scroll on touchscreens unless user holds the handle
+        animation: 180,
+        ghostClass: 'bg-emerald-50/70',
+        delay: 100,
         delayOnTouchOnly: true,
         touchStartThreshold: 5,
         direction: 'vertical'
     };
 
-    // 1. Sortable Combos
     const comboEl = document.getElementById('sortable-combos');
     if(comboEl) {
         new Sortable(comboEl, {
@@ -644,7 +565,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Sortable Featured
     const featuredEl = document.getElementById('sortable-featured');
     if(featuredEl) {
         new Sortable(featuredEl, {
@@ -655,7 +575,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Sortable Shop
     const shopEl = document.getElementById('sortable-shop');
     if(shopEl) {
         new Sortable(shopEl, {
@@ -667,7 +586,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Partition out-of-stock items so they are always at the bottom
 function partitionOutOfStock(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -678,20 +596,16 @@ function partitionOutOfStock(containerId) {
     
     rows.forEach(row => {
         const stock = parseInt(row.getAttribute('data-stock') || '0', 10);
-        if (stock > 0) {
-            inStock.push(row);
-        } else {
-            outOfStock.push(row);
-        }
+        if (stock > 0) inStock.push(row);
+        else outOfStock.push(row);
     });
 
     let misplaced = false;
     let seenOutOfStock = false;
     for (const row of rows) {
         const stock = parseInt(row.getAttribute('data-stock') || '0', 10);
-        if (stock <= 0) {
-            seenOutOfStock = true;
-        } else if (seenOutOfStock) {
+        if (stock <= 0) seenOutOfStock = true;
+        else if (seenOutOfStock) {
             misplaced = true;
             break;
         }
@@ -703,7 +617,6 @@ function partitionOutOfStock(containerId) {
         showToast('Out-of-stock items automatically placed at the end.', 'info');
     }
 
-    // Update ranks
     const allRows = container.querySelectorAll('tr[data-id]');
     allRows.forEach((row, index) => {
         const rankSpan = row.querySelector('.sort-rank');
@@ -711,7 +624,6 @@ function partitionOutOfStock(containerId) {
     });
 }
 
-// Generic Save Order Function
 function saveOrder(containerId, actionName) {
     partitionOutOfStock(containerId);
 
@@ -735,7 +647,7 @@ function saveOrder(containerId, actionName) {
     .then(r => r.json())
     .then(data => {
         if(data.success) {
-            showToast('Sequence updated & synced in real time!');
+            showToast('Sequence updated and saved in real-time!');
         } else {
             showToast(data.message || 'Error updating sequence', 'error');
         }
@@ -745,19 +657,18 @@ function saveOrder(containerId, actionName) {
     });
 }
 
-// --- TOGGLE / REMOVE ACTIONS ---
 async function toggleCombo(id, btn) {
     const confirmed = typeof window.showConfirm === 'function'
-        ? await window.showConfirm('Remove this product from the Homepage Combos section?', {
+        ? await window.showConfirm('Remove this product from Homepage Combos?', {
             title: 'Remove from Combos',
             type: 'danger',
             confirmText: 'Remove'
         })
-        : confirm('Remove this product from the Homepage Combos section?');
+        : confirm('Remove this product from Homepage Combos?');
     if(!confirmed) return;
     if(btn) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[11px]"></i>';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[10px]"></i>';
     }
     fetch(`product_sorting.php?action=remove_combo&id=${id}`)
     .then(r => r.json())
@@ -765,58 +676,42 @@ async function toggleCombo(id, btn) {
         if(data && data.success) {
             const row = document.querySelector(`#sortable-combos tr[data-id="${id}"]`);
             if(row) {
-                row.style.transition = 'all 0.3s ease';
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(20px)';
-                setTimeout(() => {
-                    row.remove();
-                    const tbody = document.getElementById('sortable-combos');
-                    if(tbody) {
-                        tbody.querySelectorAll('tr[data-id]').forEach((r, idx) => {
-                            const badge = r.querySelector('.sort-rank');
-                            if(badge) badge.textContent = idx + 1;
-                        });
-                        const remaining = tbody.querySelectorAll('tr[data-id]').length;
-                        const countEl = document.getElementById('tab-count-combos');
-                        if(countEl) countEl.textContent = remaining;
-                        if(remaining === 0) {
-                            window.location.reload();
-                        }
-                    }
-                }, 300);
-            } else {
-                window.location.href = 'product_sorting.php?tab=combos';
+                row.remove();
+                const tbody = document.getElementById('sortable-combos');
+                if(tbody) {
+                    tbody.querySelectorAll('tr[data-id]').forEach((r, idx) => {
+                        const badge = r.querySelector('.sort-rank');
+                        if(badge) badge.textContent = idx + 1;
+                    });
+                    const remaining = tbody.querySelectorAll('tr[data-id]').length;
+                    const countEl = document.getElementById('tab-count-combos');
+                    if(countEl) countEl.textContent = remaining;
+                }
             }
-            showToast('Product successfully removed from Combos!', 'success');
+            showToast('Product removed from Combos!', 'success');
         } else {
             showToast(data.message || 'Error removing product', 'error');
-            if(btn) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
-            }
+            if(btn) btn.disabled = false;
         }
     })
     .catch(() => {
         showToast('Network error while removing product', 'error');
-        if(btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
-        }
+        if(btn) btn.disabled = false;
     });
 }
 
 async function toggleFeatured(id, btn) {
     const confirmed = typeof window.showConfirm === 'function'
-        ? await window.showConfirm('Remove this product from Our Products?', {
+        ? await window.showConfirm('Remove this product from Featured section?', {
             title: 'Remove from Featured',
             type: 'danger',
             confirmText: 'Remove'
         })
-        : confirm('Remove this product from Our Products?');
+        : confirm('Remove this product from Featured section?');
     if(!confirmed) return;
     if(btn) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[11px]"></i>';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-[10px]"></i>';
     }
     fetch(`product_sorting.php?action=remove_featured&id=${id}`)
     .then(r => r.json())
@@ -824,47 +719,30 @@ async function toggleFeatured(id, btn) {
         if(data && data.success) {
             const row = document.querySelector(`#sortable-featured tr[data-id="${id}"]`);
             if(row) {
-                row.style.transition = 'all 0.3s ease';
-                row.style.opacity = '0';
-                row.style.transform = 'translateX(20px)';
-                setTimeout(() => {
-                    row.remove();
-                    const tbody = document.getElementById('sortable-featured');
-                    if(tbody) {
-                        tbody.querySelectorAll('tr[data-id]').forEach((r, idx) => {
-                            const badge = r.querySelector('.sort-rank');
-                            if(badge) badge.textContent = idx + 1;
-                        });
-                        const remaining = tbody.querySelectorAll('tr[data-id]').length;
-                        const countEl = document.getElementById('tab-count-featured');
-                        if(countEl) countEl.textContent = remaining;
-                        if(remaining === 0) {
-                            window.location.reload();
-                        }
-                    }
-                }, 300);
-            } else {
-                window.location.href = 'product_sorting.php?tab=featured';
+                row.remove();
+                const tbody = document.getElementById('sortable-featured');
+                if(tbody) {
+                    tbody.querySelectorAll('tr[data-id]').forEach((r, idx) => {
+                        const badge = r.querySelector('.sort-rank');
+                        if(badge) badge.textContent = idx + 1;
+                    });
+                    const remaining = tbody.querySelectorAll('tr[data-id]').length;
+                    const countEl = document.getElementById('tab-count-featured');
+                    if(countEl) countEl.textContent = remaining;
+                }
             }
-            showToast('Product successfully removed from Featured!', 'success');
+            showToast('Product removed from Featured!', 'success');
         } else {
             showToast(data.message || 'Error removing product', 'error');
-            if(btn) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
-            }
+            if(btn) btn.disabled = false;
         }
     })
     .catch(() => {
         showToast('Network error while removing product', 'error');
-        if(btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-trash-alt text-[11px]"></i> <span class="hidden sm:inline">Remove</span>';
-        }
+        if(btn) btn.disabled = false;
     });
 }
 
-// --- MODAL HELPERS ---
 function openAddModal(type) {
     const modal = document.getElementById('add-modal');
     const form = document.getElementById('add-form');
@@ -885,7 +763,6 @@ function closeAddModal() {
     document.getElementById('add-modal').classList.add('hidden');
 }
 
-// --- FILTER SHOP TABLE ---
 function filterShopTable() {
     const query = document.getElementById('shop-search').value.toLowerCase().trim();
     const category = document.getElementById('shop-category-filter').value.toLowerCase().trim();
@@ -908,4 +785,3 @@ function filterShopTable() {
 </script>
 
 <?php include 'includes/footer.php'; ?>
-

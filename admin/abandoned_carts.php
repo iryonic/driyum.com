@@ -46,10 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_ids']) && is_arr
         if (!empty($processed_ids)) {
             $id_list = implode(',', $processed_ids);
             execute_query("UPDATE abandoned_carts SET is_reminded = 1 WHERE id IN ($id_list)");
-            
-            // Trigger immediate processing of the first few in this request
             process_email_queue(5);
-            
             $_SESSION['success'] = "Queued $success_count reminders. Sending started in background!";
         }
     }
@@ -78,165 +75,150 @@ $carts = $pagination['records'];
 include 'includes/header.php';
 ?>
 
-<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
-    <div>
-        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Abandoned Carts</h1>
-        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> carts needing recovery</p>
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Abandoned Carts</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Track drop-offs, recover lost revenue, and dispatch automated or manual cart reminders.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-semibold border border-amber-200">
+                <i class="fas fa-shopping-cart text-[11px]"></i>
+                <span><?php echo (int)$pagination['total_records']; ?> Unfinished Carts</span>
+            </span>
+        </div>
     </div>
+
+    <form id="bulkActionForm" method="POST">
+        <!-- Main Table Card -->
+        <div class="admin-card p-0 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="w-10 text-center">
+                                <input type="checkbox" id="selectAll" class="rounded border-slate-300 text-primary focus:ring-primary cursor-pointer">
+                            </th>
+                            <th>Customer</th>
+                            <th class="text-right">Value</th>
+                            <th>Items</th>
+                            <th>Last Active</th>
+                            <th>Recovery Status</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($carts)): ?>
+                            <tr>
+                                <td colspan="7" class="p-12 text-center text-slate-400">
+                                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
+                                        <i class="fas fa-ghost text-lg"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-slate-700">No abandoned carts</p>
+                                    <p class="text-xs text-slate-400 mt-0.5">All customer carts have been converted or cleared.</p>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($carts as $c): 
+                                $items = json_decode($c['cart_data'] ?? '', true);
+                                if (!is_array($items)) $items = [];
+                                $total_val = 0;
+                                $item_count = 0;
+                                $parts = [];
+                                foreach($items as $pid => $qty) {
+                                    $p = get_product_by_id($pid);
+                                    if($p) {
+                                        $total_val += $p['price'] * $qty;
+                                        $item_count += $qty;
+                                        $parts[] = $p['name'] . " (" . $qty . ")";
+                                    }
+                                }
+                            ?>
+                                <tr class="hover:bg-slate-50/70 transition-colors cart-row group">
+                                    <td class="text-center">
+                                        <input type="checkbox" name="cart_ids[]" value="<?php echo $c['id']; ?>" class="cart-checkbox rounded border-slate-300 text-primary focus:ring-primary cursor-pointer">
+                                    </td>
+                                    <td>
+                                        <div class="text-xs font-semibold text-slate-900">
+                                            <?php echo htmlspecialchars($c['user_name'] ?? 'Guest Customer'); ?>
+                                        </div>
+                                        <div class="text-[11px] text-slate-400 font-mono mt-0.5">
+                                            <?php echo htmlspecialchars($c['user_email'] ?? 'No email registered'); ?>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="font-semibold text-slate-900 text-xs">₹<?php echo number_format($total_val, 2); ?></div>
+                                        <span class="text-[10px] text-slate-400"><?php echo $item_count; ?> item(s)</span>
+                                    </td>
+                                    <td class="max-w-[240px]">
+                                        <p class="text-xs text-slate-600 truncate" title="<?php echo htmlspecialchars(implode(', ', $parts)); ?>">
+                                            <?php echo !empty($parts) ? htmlspecialchars(implode(', ', $parts)) : '<span class="text-slate-400 italic">Empty</span>'; ?>
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <div class="text-xs font-medium text-slate-800"><?php echo get_time_ago($c['last_updated']); ?></div>
+                                        <div class="text-[10px] text-slate-400"><?php echo date('M d, Y · h:i A', strtotime($c['last_updated'])); ?></div>
+                                    </td>
+                                    <td>
+                                        <?php if ($c['is_reminded']): ?>
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200">
+                                                <i class="fas fa-check text-[9px]"></i> Reminded
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                                <i class="fas fa-clock text-[9px]"></i> Waiting
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="flex items-center justify-end gap-1">
+                                            <?php if (!$c['is_reminded']): ?>
+                                                <a href="?mark_reminded=<?php echo $c['id']; ?>" class="p-1.5 text-slate-400 hover:text-emerald-600 rounded hover:bg-emerald-50 transition-colors" title="Send Email Reminder">
+                                                    <i class="fas fa-bell text-xs"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                            <?php if (!empty($c['user_email'])): ?>
+                                                <a href="mailto:<?php echo htmlspecialchars($c['user_email']); ?>?subject=<?php echo rawurlencode('Your DRIYUM cart is waiting for you!'); ?>&body=<?php echo rawurlencode('Hello! We noticed you left some delicious natural treats in your DRIYUM cart. Complete your order today: https://driyum.com/cart'); ?>" class="p-1.5 text-slate-400 hover:text-sky-600 rounded hover:bg-sky-50 transition-colors" title="Email Direct">
+                                                    <i class="fas fa-paper-plane text-xs"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                            <a href="?delete=<?php echo $c['id']; ?>" onclick="return confirm('Remove this abandoned cart?')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors" title="Delete Cart">
+                                                <i class="fas fa-trash-alt text-xs"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Floating Bulk Action Dock -->
+        <div id="bulkActionBar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-700 items-center gap-4 transition-all">
+            <div class="flex items-center gap-2.5 pr-4 border-r border-slate-700">
+                <span id="selectedCount" class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center">0</span>
+                <span class="text-xs font-medium text-slate-200">Selected</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="submit" name="bulk_remind" onclick="this.innerHTML='<i class=\'fas fa-spinner fa-spin mr-1\'></i> Queueing...'; this.classList.add('opacity-70', 'pointer-events-none');" class="btn-admin btn-admin-primary text-xs py-1.5 px-3">
+                    <i class="fas fa-envelope mr-1"></i> Send Reminders
+                </button>
+                <button type="submit" name="bulk_delete" onclick="return confirm('Permanently delete selected carts?')" class="btn-admin btn-admin-danger text-xs py-1.5 px-3">
+                    <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+                </button>
+            </div>
+            <button type="button" onclick="unselectAll()" class="text-slate-400 hover:text-white p-1 text-xs ml-2" title="Clear Selection">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </form>
+
+    <!-- Pagination -->
+    <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 </div>
-
-
-<form id="bulkActionForm" method="POST">
-    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="text-gray-400 text-[8px] uppercase bg-gray-50/50 border-b border-gray-100 font-black tracking-widest">
-                        <th class="p-5 w-16 text-center">
-                            <input type="checkbox" id="selectAll" class="w-4 h-4 rounded border-gray-200 text-black focus:ring-black cursor-pointer">
-                        </th>
-                        <th class="p-5 pl-0">Customer</th>
-                        <th class="p-5">Total</th>
-                        <th class="p-5">Items</th>
-                        <th class="p-5">Last Seen</th>
-                        <th class="p-5">Status</th>
-                        <th class="p-5 text-right">Manage</th>
-                    </tr>
-                </thead>
-                <tbody class="text-xs text-gray-600">
-                    <?php if (empty($carts)): ?>
-                    <tr>
-                        <td colspan="7" class="p-20 text-center text-gray-400">
-                            <i class="fas fa-ghost text-4xl mb-4 block opacity-10"></i>
-                            <p class="font-bold">No abandoned carts found.</p>
-                        </td>
-                    </tr>
-                    <?php endif; ?>
-                    <?php foreach ($carts as $c): 
-                        $items = json_decode($c['cart_data'] ?? '', true);
-                        if (!is_array($items)) $items = [];
-                        $total_val = 0;
-                        $item_count = 0;
-                        $parts = [];
-                        foreach($items as $pid => $qty) {
-                            $p = get_product_by_id($pid);
-                            if($p) {
-                                $total_val += $p['price'] * $qty;
-                                $item_count += $qty;
-                                $parts[] = $p['name'] . " ($qty)";
-                            }
-                        }
-                    ?>
-                    <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group cart-row">
-                        <td class="p-4 text-center">
-                            <input type="checkbox" name="cart_ids[]" value="<?php echo $c['id']; ?>" class="cart-checkbox w-4 h-4 rounded border-gray-200 text-black focus:ring-black cursor-pointer">
-                        </td>
-                        <td class="p-4 pl-0">
-                            <div class="font-bold text-gray-900"><?php echo htmlspecialchars($c['user_name'] ?? 'Deleted User'); ?></div>
-                            <div class="text-[9px] font-bold text-gray-400"><?php echo htmlspecialchars($c['user_email'] ?? 'N/A'); ?></div>
-                        </td>
-                        <td class="p-4">
-                            <div class="font-black text-gray-900">₹<?php echo number_format($total_val); ?></div>
-                            <div class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5"><?php echo $item_count; ?> Items</div>
-                        </td>
-                        <td class="p-4 max-w-[200px]">
-                            <p class="text-[10px] text-gray-500 truncate" title="<?php echo implode(', ', $parts); ?>">
-                                <?php echo implode(', ', $parts); ?>
-                            </p>
-                        </td>
-                        <td class="p-4">
-                            <div class="font-bold text-gray-900"><?php echo get_time_ago($c['last_updated']); ?></div>
-                            <div class="text-[8px] font-bold text-gray-300 uppercase tracking-widest"><?php echo date('M d', strtotime($c['last_updated'])); ?></div>
-                        </td>
-                        <td class="p-4">
-                            <?php if($c['is_reminded']): ?>
-                                <span class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-blue-100 bg-blue-50 text-blue-500">Sent</span>
-                            <?php else: ?>
-                                <span class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-amber-100 bg-amber-50 text-amber-500">Waiting</span>
-                            <?php endif; ?>
-                        </td>
-                        <td class="p-4 text-right">
-                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                <?php if(!$c['is_reminded']): ?>
-                                    <a href="?mark_reminded=<?php echo $c['id']; ?>" class="w-8 h-8 bg-black text-[#24B25D] flex items-center justify-center rounded-lg hover:scale-105 transition-all" title="Send Reminder">
-                                        <i class="fas fa-bell text-[10px]"></i>
-                                    </a>
-                                <?php endif; ?>
-                                 <a href="mailto:<?php echo $c['user_email']; ?>?subject=<?php echo rawurlencode('We fixed your cart!'); ?>&body=<?php echo rawurlencode('Your snacks are still waiting for you... Come back and complete your order!'); ?>" class="w-8 h-8 bg-[#24B25D] text-black flex items-center justify-center rounded-lg hover:scale-105 transition-all" title="Send Email">
-                                    <i class="fas fa-paper-plane text-[10px]"></i>
-                                </a>
-                                <a href="?delete=<?php echo $c['id']; ?>" onclick="return confirm('Delete this cart?')" class="w-8 h-8 bg-red-50 text-red-400 flex items-center justify-center rounded-lg hover:bg-red-500 hover:text-white transition-all">
-                                    <i class="fas fa-trash-alt text-[10px]"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Floating Bulk Actions -->
-    <style>
-        @media (max-width: 768px) {
-            #bulkActionBar {
-                bottom: 1.5rem !important;
-                left: 1rem !important;
-                right: 1rem !important;
-                width: auto !important;
-                transform: none !important;
-                flex-direction: column !important;
-                align-items: stretch !important;
-                padding: 1.25rem !important;
-                gap: 1rem !important;
-                border-radius: 24px !important;
-                background: rgba(0, 0, 0, 0.95);
-            }
-            #bulkActionBar > div:first-child {
-                width: 100%;
-                justify-content: space-between;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                padding-bottom: 1rem;
-            }
-            #bulkActionBar .h-6.w-px { display: none !important; }
-            #bulkActionBar > div:nth-child(3) {
-                flex-direction: column;
-                width: 100%;
-                gap: 0.75rem;
-            }
-            #bulkActionBar button {
-                width: 100%;
-                justify-content: center;
-            }
-            #bulkActionBar > button:last-child {
-                position: absolute;
-                top: 1.25rem;
-                right: 1.25rem;
-                width: auto;
-                margin: 0;
-            }
-        }
-    </style>
-    <div id="bulkActionBar" class="hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-black text-white px-8 py-5 rounded-[32px] shadow-2xl items-center gap-8 anim-up border border-white/10">
-        <div class="flex items-center gap-3">
-            <span id="selectedCount" class="w-8 h-8 bg-[#24B25D] text-black rounded-xl flex items-center justify-center font-black text-xs">0</span>
-            <span class="text-[10px] font-black uppercase tracking-widest text-white/60">Carts Selected</span>
-        </div>
-        <div class="h-6 w-px bg-white/10"></div>
-        <div class="flex gap-4">
-            <button type="submit" name="bulk_remind" onclick="this.innerHTML='<i class=\'fas fa-circle-notch fa-spin mr-2\'></i>Processing...'; this.classList.add('opacity-50', 'pointer-events-none');" class="bg-[#24B25D] text-black px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all flex items-center justify-center min-w-[140px]">
-                Send Reminders
-            </button>
-            <button type="submit" name="bulk_delete" onclick="return confirm('Delete selected?')" class="text-red-400 hover:text-red-500 transition-colors uppercase font-black text-[10px] tracking-widest px-2 flex items-center justify-center">
-                Delete All
-            </button>
-        </div>
-        <button type="button" onclick="unselectAll()" class="text-white/20 hover:text-white transition-colors ml-4">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-</form>
 
 <script>
 const selectAll = document.getElementById('selectAll');
@@ -257,14 +239,17 @@ function updateBulkUI() {
     }
 
     checkboxes.forEach(cb => {
-        if (cb.checked) cb.closest('.cart-row').style.background = 'rgba(25, 220, 126, 0.02)';
-        else cb.closest('.cart-row').style.background = '';
+        const row = cb.closest('.cart-row');
+        if (cb.checked) row.classList.add('bg-emerald-50/40');
+        else row.classList.remove('bg-emerald-50/40');
     });
 
-    selectAll.checked = selected.length === checkboxes.length && checkboxes.length > 0;
+    if (selectAll) {
+        selectAll.checked = selected.length === checkboxes.length && checkboxes.length > 0;
+    }
 }
 
-if(selectAll) {
+if (selectAll) {
     selectAll.addEventListener('change', () => {
         checkboxes.forEach(cb => cb.checked = selectAll.checked);
         updateBulkUI();
@@ -282,7 +267,4 @@ function unselectAll() {
 }
 </script>
 
-<?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 <?php include 'includes/footer.php'; ?>
-
-

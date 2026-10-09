@@ -47,8 +47,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .barcode-area { text-align: center; padding: 10px 0; border-top: 2px solid #000; }
         .barcode-area svg { max-width: 100%; height: auto; }
         .order-num { font-size: 14px; font-weight: bold; margin-top: -5px; }
+        @media screen {
+            body { background: #f8fafc; padding: 20px 0; }
+            .label-container { background: #fff; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); margin: 0 auto; }
+            .no-print-bar {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                background: #ffffff;
+                padding: 16px 20px;
+                border-radius: 16px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+                border: 1px solid #e2e8f0;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+            .no-print-btn {
+                background: #004f42;
+                color: #ffffff;
+                border: none;
+                border-radius: 10px;
+                padding: 10px 18px;
+                font-size: 13px;
+                font-weight: 700;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: background 0.2s;
+            }
+            .no-print-btn:hover { background: #00382f; }
+            .no-print-btn-secondary {
+                background: #f1f5f9;
+                color: #475569;
+                border: 1px solid #cbd5e1;
+                border-radius: 10px;
+                padding: 10px 14px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+            }
+            .no-print-btn-secondary:hover { background: #e2e8f0; }
+        }
         @media print { .no-print { display: none; } }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
@@ -57,9 +104,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
-
-    <div class="no-print" style="position: fixed; top: 10px; right: 10px;">
-        <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer;">Print Label</button>
+    <div class="no-print no-print-bar">
+        <div>
+            <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Thermal 4x6 Label</div>
+            <div style="font-size: 14px; font-weight: 800; color: #0f172a;">#<?php echo htmlspecialchars($order['order_number']); ?></div>
+        </div>
+        <button onclick="window.print()" class="no-print-btn">
+            <i class="fas fa-print"></i> Print Label
+        </button>
+        <button onclick="window.close()" class="no-print-btn-secondary">
+            Close
+        </button>
     </div>
 
     <div class="label-container">

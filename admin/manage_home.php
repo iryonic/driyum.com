@@ -2,20 +2,15 @@
 require_once '../config/database.php';
 require_once '../includes/functions.php';
 
-/**
- * Automagically shifts existing items to prevent sort order conflicts
- */
 function resolve_sort_conflict($table, $new_sort, $exclude_id = 0) {
     global $conn;
     $new_sort = intval($new_sort);
     $exclude_id = intval($exclude_id);
     
-    // Check if any other item already uses this sort order
     $sql_check = "SELECT id FROM $table WHERE sort_order = $new_sort AND id != $exclude_id LIMIT 1";
     $exists = $conn->query($sql_check)->fetch_assoc();
     
     if ($exists) {
-        // Shift all matching or higher items up by 1
         $conn->query("UPDATE $table SET sort_order = sort_order + 1 WHERE sort_order >= $new_sort AND id != $exclude_id");
     }
 }
@@ -28,16 +23,14 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     exit;
 }
 
-// Database Connection
 $conn = get_db_connection();
 $msg = "";
 $error = "";
 
 // Handle Form Submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Detect if post_max_size was exceeded
     if (empty($_POST) && $_SERVER['CONTENT_LENGTH'] > 0) {
-        $_SESSION['error'] = "The file you're trying to upload is too large.";
+        $_SESSION['error'] = "The file you are trying to upload exceeds server limits.";
         header("Location: manage_home.php");
         exit;
     }
@@ -54,20 +47,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // --- SALE COUNTDOWN UPDATE ---
     if (isset($_POST['update_sale'])) {
-        $title = $_POST['sale_title'];
-        $end_date = $_POST['sale_end'];
+        $title = sanitize_input($_POST['sale_title']);
+        $end_date = sanitize_input($_POST['sale_end']);
         $is_active = isset($_POST['sale_active']) ? 1 : 0;
 
-        if(empty($end_date)) $end_date = date('Y-m-d H:i:s', strtotime('+7 days'));
+        if (empty($end_date)) $end_date = date('Y-m-d H:i:s', strtotime('+7 days'));
 
         $check = $conn->query("SELECT id FROM sale_countdowns LIMIT 1");
-        if($check->num_rows > 0) {
+        if ($check->num_rows > 0) {
             $stmt = $conn->prepare("UPDATE sale_countdowns SET title=?, end_date=?, is_active=? LIMIT 1");
         } else {
             $stmt = $conn->prepare("INSERT INTO sale_countdowns (title, end_date, is_active) VALUES (?, ?, ?)");
         }
         $stmt->bind_param("ssi", $title, $end_date, $is_active);
-        if($stmt->execute()) {
+        if ($stmt->execute()) {
             $_SESSION['msg'] = "Sale countdown updated!";
             $redirect = true;
         } else {
@@ -98,14 +91,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             resolve_sort_conflict('trust_badges', $sort_order);
             $stmt = $conn->prepare("INSERT INTO trust_badges (title, subtitle, icon, sort_order, is_active, bg_color, icon_color) VALUES (?, ?, ?, ?, 1, ?, ?)");
             $stmt->bind_param("sssiss", $title, $subtitle, $icon, $sort_order, $bg_color, $icon_color);
-            if ($stmt->execute()) $_SESSION['msg'] = "Badge added!";
+            if ($stmt->execute()) $_SESSION['msg'] = "Trust badge added!";
             else $_SESSION['error'] = "Failed to add badge: " . $conn->error;
         } else {
             $id = intval($_POST['badge_id']);
             resolve_sort_conflict('trust_badges', $sort_order, $id);
             $stmt = $conn->prepare("UPDATE trust_badges SET title=?, subtitle=?, icon=?, sort_order=?, bg_color=?, icon_color=? WHERE id=?");
             $stmt->bind_param("sssisss", $title, $subtitle, $icon, $sort_order, $bg_color, $icon_color, $id);
-            if ($stmt->execute()) $_SESSION['msg'] = "Badge updated!";
+            if ($stmt->execute()) $_SESSION['msg'] = "Trust badge updated!";
             else $_SESSION['error'] = "Failed to update badge: " . $conn->error;
         }
         $redirect = true;
@@ -132,10 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $video_url = $_POST['video_url'] ?? '';
         $media_url = $_POST['current_media'] ?? '';
 
-        // Fetch old data for cleanup
         $old_data = fetch_one("SELECT media_url, video_url FROM homepage_sections WHERE section_name = 'video_brand_story'");
 
-        // Image (Thumbnail)
         $allowed_img_exts = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'];
         if (isset($_FILES['media']) && $_FILES['media']['error'] == 0) {
             $ext = strtolower(pathinfo($_FILES['media']['name'], PATHINFO_EXTENSION));
@@ -145,8 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $filename = "vid_thumb_" . uniqid() . "." . $ext;
                 if (move_uploaded_file($_FILES["media"]["tmp_name"], $target_dir . $filename)) {
                     $media_url = "assets/images/uploads/" . $filename;
-                    
-                    // Cleanup old thumbnail
                     if ($old_data && !empty($old_data['media_url']) && strpos($old_data['media_url'], 'assets/images/uploads/') === 0) {
                         $old_path = "../" . $old_data['media_url'];
                         if (file_exists($old_path)) @unlink($old_path);
@@ -155,7 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Video File
         $allowed_vid_exts = ['mp4', 'webm', 'ogg', 'mov'];
         $video_uploaded = false;
         if (isset($_FILES['video_file']) && $_FILES['video_file']['error'] == 0) {
@@ -171,9 +159,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Deletion logic for video: 
-        // 1. If a new file was uploaded, delete the old file.
-        // 2. If the user manualy changed the video text input (e.g. to a YouTube link), and it's different from the old local path, delete the old local path.
         if ($old_data && !empty($old_data['video_url']) && strpos($old_data['video_url'], 'assets/videos/') === 0) {
             if ($video_uploaded || (isset($_POST['video_url']) && $_POST['video_url'] !== $old_data['video_url'])) {
                 $old_v_path = "../" . $old_data['video_url'];
@@ -185,86 +170,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare("UPDATE homepage_sections SET heading = ?, subheading = ?, media_url = ?, video_url = ? WHERE section_name = 'video_brand_story'");
             $stmt->bind_param("ssss", $heading, $subheading, $media_url, $video_url);
             if ($stmt->execute()) {
-                $_SESSION['msg'] = "Video section updated!";
+                $_SESSION['msg'] = "Video brand story section updated!";
                 $redirect = true;
             }
         }
     }
 
-    // --- PARTNERS MANAGEMENT ---
-    if (isset($_POST['add_partner']) || isset($_POST['edit_partner'])) {
-        $name = sanitize_input($_POST['partner_name']);
-        $location = sanitize_input($_POST['partner_location']);
-        $link = sanitize_input($_POST['partner_link']);
-        $sort_order = intval($_POST['sort_order']);
-        $is_active = isset($_POST['partner_active']) ? 1 : 0;
-        
-        $logo_url = $_POST['current_logo'] ?? '';
-        if (isset($_FILES['partner_logo']) && $_FILES['partner_logo']['error'] == 0) {
-            $ext = strtolower(pathinfo($_FILES['partner_logo']['name'], PATHINFO_EXTENSION));
-            if (in_array($ext, $allowed_img_exts)) {
-                $target_dir = "../assets/images/partners/";
-                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-                $filename = "partner_" . uniqid() . "." . $ext;
-                if (move_uploaded_file($_FILES["partner_logo"]["tmp_name"], $target_dir . $filename)) {
-                    $logo_url = "assets/images/partners/" . $filename;
-                    // Cleanup old logo
-                    if(!empty($_POST['current_logo']) && strpos($_POST['current_logo'], 'assets/images/partners/') === 0) {
-                        @unlink("../" . $_POST['current_logo']);
-                    }
-                }
-            }
-        }
-
-        if (isset($_POST['add_partner'])) {
-            resolve_sort_conflict('partners', $sort_order);
-            $stmt = $conn->prepare("INSERT INTO partners (name, logo, location, website_url, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssii", $name, $logo_url, $location, $link, $sort_order, $is_active);
-            if ($stmt->execute()) $_SESSION['msg'] = "Partner added!";
-            else $_SESSION['error'] = "Failed to add partner: " . $conn->error;
-        } else {
-            $id = intval($_POST['partner_id']);
-            resolve_sort_conflict('partners', $sort_order, $id);
-            $stmt = $conn->prepare("UPDATE partners SET name=?, logo=?, location=?, website_url=?, sort_order=?, is_active=? WHERE id=?");
-            $stmt->bind_param("ssssiii", $name, $logo_url, $location, $link, $sort_order, $is_active, $id);
-            if ($stmt->execute()) $_SESSION['msg'] = "Partner updated!";
-            else $_SESSION['error'] = "Failed to update partner: " . $conn->error;
-        }
-        $redirect = true;
-    }
-
-    if (isset($_POST['delete_partner'])) {
-        $id = intval($_POST['partner_id']);
-        $old = fetch_one("SELECT logo FROM partners WHERE id = $id");
-        if($old && strpos($old['logo'], 'assets/images/partners/') === 0) {
-            @unlink("../" . $old['logo']);
-        }
-        $conn->query("DELETE FROM partners WHERE id = $id");
-        $_SESSION['msg'] = "Partner removed!";
-        $redirect = true;
-    }
-
-    if (isset($_POST['toggle_partner'])) {
-        $id = intval($_POST['partner_id']);
-        $conn->query("UPDATE partners SET is_active = 1 - is_active WHERE id = $id");
-        $_SESSION['msg'] = "Partner status toggled!";
-        $redirect = true;
-    }
-    
-
     if ($redirect) {
         header("Location: manage_home.php");
         exit;
     }
-}
-
-// Handle Delete Announcement
-if(isset($_GET['del_anno'])) {
-    $id = intval($_GET['del_anno']);
-    $conn->query("DELETE FROM announcements WHERE id = $id");
-    $_SESSION['msg'] = "Announcement deleted!";
-    header("Location: manage_home.php");
-    exit;
 }
 
 include 'includes/header.php';
@@ -273,555 +188,377 @@ $msg = $_SESSION['msg'] ?? "";
 $error = $_SESSION['error'] ?? "";
 unset($_SESSION['msg'], $_SESSION['error']);
 
-$all_products = fetch_all("SELECT id, name, price FROM products WHERE is_active = 1 ORDER BY name ASC");
 $vid_sec = fetch_one("SELECT * FROM homepage_sections WHERE section_name = 'video_brand_story'");
 $sale = fetch_one("SELECT * FROM sale_countdowns LIMIT 1");
 $announcement_text = get_setting('announcement_text', '🚀 Free Shipping on All Orders Over ₹499 • 🌿 100% Organic & Natural');
 $announcement_bg = get_setting('announcement_bg_color', '#004f42');
-$hero_slides = get_hero_slides(true);
 $trust_badges = fetch_all("SELECT * FROM trust_badges ORDER BY sort_order ASC");
-$show_stats = get_setting('show_hero_stats', 'on');
-$partners = fetch_all("SELECT * FROM partners ORDER BY sort_order ASC");
 ?>
 
-<!-- VIEW START -->
-<div class="pb-20 anim-up">
-    
-    <!-- Top Action Bar -->
-    <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 mb-8 -mx-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
-            <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Homepage Architect</h1>
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Design your storefront experience</p>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Homepage Management</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Customize announcements, promotional sale banners, trust badges, and brand media.</p>
         </div>
-
-        <div class="flex items-center gap-4">
-            <a href="../index.php" target="_blank" class="bg-white text-gray-900 border border-gray-200 px-6 py-2.5 rounded-xl font-bold uppercase text-[10px] tracking-widest hover:bg-gray-50 hover:text-black transition-all shadow-sm flex items-center gap-2">
-                View Live <i class="fas fa-external-link-alt text-[9px]"></i>
+        <div class="flex items-center gap-2">
+            <a href="../index.php" target="_blank" class="btn-admin btn-admin-secondary text-xs">
+                <i class="fas fa-external-link-alt text-slate-500"></i> View Storefront
+            </a>
+            <a href="hero_slides.php" class="btn-admin btn-admin-primary text-xs">
+                <i class="fas fa-images"></i> Hero Slides
             </a>
         </div>
     </div>
 
-    <!-- Stats Summary -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div class="bg-gradient-to-br from-[#24B25D] to-[#10b981] p-6 rounded-3xl text-white shadow-xl shadow-green-100 relative overflow-hidden group">
-            <div class="absolute -right-4 -bottom-4 text-7xl opacity-20 transform -rotate-12 group-hover:rotate-0 transition-transform duration-500">
-                <i class="fas fa-rocket"></i>
+    <!-- Feedback Alerts -->
+    <?php if ($msg): ?>
+        <div class="p-3.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-xs font-medium flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-check-circle text-emerald-600"></i>
+                <span><?php echo htmlspecialchars($msg); ?></span>
             </div>
-            <p class="text-white/80 font-bold uppercase text-[10px] tracking-widest mb-1">Current Active Sale</p>
-            <h3 class="text-2xl font-black font-heading"><?php echo ($sale['is_active'] ?? 0) ? htmlspecialchars($sale['title']) : 'No Active Sale'; ?></h3>
+            <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700"><i class="fas fa-times text-xs"></i></button>
         </div>
-        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-5 group hover:shadow-md transition-shadow">
-            <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fas fa-bullhorn"></i>
+    <?php endif; ?>
+
+    <?php if ($error): ?>
+        <div class="p-3.5 bg-rose-50 text-rose-800 rounded-xl border border-rose-200 text-xs font-medium flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-exclamation-circle text-rose-600"></i>
+                <span><?php echo htmlspecialchars($error); ?></span>
             </div>
-            <div>
-                <p class="text-gray-400 font-bold text-[10px] tracking-widest uppercase">Bar Status</p>
-                <h3 class="text-xl font-black font-heading text-gray-900"><?php echo !empty($announcement_text) ? 'Active' : 'Empty'; ?></h3>
+            <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700"><i class="fas fa-times text-xs"></i></button>
+        </div>
+    <?php endif; ?>
+
+    <!-- Summary Metrics -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="admin-card p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-medium text-slate-500">Active Flash Sale</span>
+                    <h3 class="text-lg font-bold text-slate-900 mt-1 truncate max-w-[200px]">
+                        <?php echo ($sale['is_active'] ?? 0) ? htmlspecialchars($sale['title']) : 'No Active Sale'; ?>
+                    </h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg">
+                    <i class="fas fa-bolt"></i>
+                </div>
             </div>
         </div>
-        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-5 group hover:shadow-md transition-shadow">
-            <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                <i class="fas fa-clock"></i>
+
+        <div class="admin-card p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-medium text-slate-500">Top Header Marquee</span>
+                    <h3 class="text-lg font-bold text-slate-900 mt-1">
+                        <?php echo !empty($announcement_text) ? 'Enabled' : 'Disabled'; ?>
+                    </h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-lg">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
             </div>
-            <div>
-                <p class="text-gray-400 font-bold text-[10px] tracking-widest uppercase">Last Update</p>
-                <h3 class="text-xl font-bold text-gray-900"><?php echo date('h:i A'); ?></h3>
+        </div>
+
+        <div class="admin-card p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-medium text-slate-500">Trust Badges Count</span>
+                    <h3 class="text-lg font-bold text-slate-900 mt-1">
+                        <?php echo count($trust_badges); ?> Badges
+                    </h3>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Alerts -->
-    <?php if($msg): ?>
-        <div class="mb-8 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-100 font-bold text-xs anim-up flex items-center gap-3">
-            <i class="fas fa-check-circle"></i> <?php echo $msg; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if($error): ?>
-        <div class="mb-8 p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 font-bold text-xs anim-up flex items-center gap-3">
-            <i class="fas fa-exclamation-triangle"></i> <?php echo $error; ?>
-        </div>
-    <?php endif; ?>
-
-    <div class="space-y-10">
-
-        <!-- TRUST BADGES MANAGER -->
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up mb-10">
-            <div class="px-8 py-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center text-sm">
-                        <i class="fas fa-shield-heart"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 font-heading leading-tight">Trust Marquee</h3>
-                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Manage infinite scrolling trust badges</p>
-                    </div>
-                </div>
-                <button onclick="showModal('badge-modal')" class="bg-indigo-600 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Add New Badge
-                </button>
+    <!-- Trust Badges Section -->
+    <div class="admin-card p-0 overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fas fa-shield-heart text-primary"></i> Trust Badges Marquee
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">Manage credibility guarantee badges displayed below the hero carousel.</p>
             </div>
+            <button onclick="showModal('badge-modal')" class="btn-admin btn-admin-primary text-xs">
+                <i class="fas fa-plus"></i> Add Badge
+            </button>
+        </div>
 
-            <div class="p-8">
-                <?php if(empty($trust_badges)): ?>
-                    <div class="bg-indigo-50 rounded-2xl p-10 text-center border border-indigo-100/50">
-                        <i class="fas fa-certificate text-4xl text-indigo-200 mb-4 block"></i>
-                        <p class="text-xs font-bold text-indigo-800 uppercase tracking-widest">No Badges Defined</p>
-                    </div>
-                <?php else: ?>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="text-left border-b border-gray-100">
-                                    <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4">Icon & Title</th>
-                                    <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Style</th>
-                                    <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Order</th>
-                                    <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-center">Status</th>
-                                    <th class="pb-4 text-[9px] font-black text-gray-400 uppercase tracking-widest px-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-50">
-                                <?php foreach($trust_badges as $badge): 
-                                    $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
-                                    $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
-                                ?>
-                                <tr class="group hover:bg-gray-50/50 transition-colors">
-                                    <td class="py-5 px-4">
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm" style="background-color: <?php echo $bg; ?>; color: <?php echo $ic; ?>;">
-                                                <i class="<?php echo $badge['icon']; ?> text-xl"></i>
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-black text-gray-900 tracking-tight uppercase"><?php echo htmlspecialchars($badge['title']); ?></p>
-                                                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest"><?php echo htmlspecialchars($badge['subtitle']); ?></p>
-                                            </div>
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Badge & Text</th>
+                        <th class="text-center">Colors</th>
+                        <th class="text-center">Order</th>
+                        <th>Status</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($trust_badges)): ?>
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-400 text-xs">No trust badges configured yet.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($trust_badges as $badge): 
+                            $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
+                            $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
+                        ?>
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg border border-slate-200" style="background-color: <?php echo htmlspecialchars($bg); ?>; color: <?php echo htmlspecialchars($ic); ?>;">
+                                            <i class="<?php echo htmlspecialchars($badge['icon']); ?>"></i>
                                         </div>
-                                    </td>
-                                    <td class="py-5 px-4 text-center">
-                                        <div class="flex flex-col items-center gap-1">
-                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">BG: <?php echo $bg; ?></span>
-                                            <span class="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">Icon: <?php echo $ic; ?></span>
+                                        <div>
+                                            <div class="font-semibold text-slate-900 text-xs uppercase tracking-tight"><?php echo htmlspecialchars($badge['title']); ?></div>
+                                            <div class="text-[11px] text-slate-400 mt-0.5"><?php echo htmlspecialchars($badge['subtitle']); ?></div>
                                         </div>
-                                    </td>
-                                    <td class="py-5 px-4 text-center font-black text-xs text-gray-900"><?php echo $badge['sort_order']; ?></td>
-                                    <td class="py-5 px-4 text-center">
-                                        <form method="POST">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-100 text-[10px] font-mono text-slate-600 border border-slate-200">
+                                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: <?php echo htmlspecialchars($bg); ?>;"></span>
+                                        <span><?php echo htmlspecialchars($bg); ?></span>
+                                    </div>
+                                </td>
+                                <td class="text-center font-mono text-xs font-semibold text-slate-700">
+                                    <?php echo (int)$badge['sort_order']; ?>
+                                </td>
+                                <td>
+                                    <form method="POST" class="inline-block">
+                                        <input type="hidden" name="badge_id" value="<?php echo $badge['id']; ?>">
+                                        <button type="submit" name="toggle_badge" class="cursor-pointer">
+                                            <?php if ($badge['is_active']): ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                                    Disabled
+                                                </span>
+                                            <?php endif; ?>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td class="text-right">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <button onclick='openEditBadge(<?php echo htmlspecialchars(json_encode($badge)); ?>)' class="p-1.5 text-slate-400 hover:text-slate-800 rounded hover:bg-slate-100 transition-colors" title="Edit Badge">
+                                            <i class="fas fa-pen text-xs"></i>
+                                        </button>
+                                        <form method="POST" onsubmit="return confirm('Delete this trust badge?')" class="inline-block">
                                             <input type="hidden" name="badge_id" value="<?php echo $badge['id']; ?>">
-                                            <button type="submit" name="toggle_badge" class="px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-tighter transition-all <?php echo $badge['is_active'] ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'; ?>">
-                                                <?php echo $badge['is_active'] ? 'Active' : 'Disabled'; ?>
+                                            <button type="submit" name="delete_badge" class="p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors" title="Delete Badge">
+                                                <i class="fas fa-trash-alt text-xs"></i>
                                             </button>
                                         </form>
-                                    </td>
-                                    <td class="py-5 px-4 text-right">
-                                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button onclick='openEditBadge(<?php echo json_encode($badge); ?>)' class="w-8 h-8 rounded-lg bg-gray-100 text-gray-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center text-xs shadow-sm">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <form method="POST" class="contents" onsubmit="return confirm('Delete this trust badge?')">
-                                                <input type="hidden" name="badge_id" value="<?php echo $badge['id']; ?>">
-                                                <button type="submit" name="delete_badge" class="w-8 h-8 rounded-lg bg-gray-100 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center text-xs shadow-sm">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
-            </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <!-- HERO BANNER SLIDES REDIRECT CARD -->
-        <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 md:p-8 border border-emerald-100 flex flex-col md:flex-row items-center justify-between gap-6 mb-10 anim-up shadow-sm">
-            <div class="flex items-center gap-5">
-                <div class="w-14 h-14 rounded-2xl bg-[#24B25D] text-white flex items-center justify-center text-2xl shadow-lg shadow-[#24B25D]/20 shrink-0">
-                    <i class="fas fa-images"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-black text-gray-900 font-heading">Hero Slides Management</h3>
-                    <p class="text-xs text-gray-600 mt-1">Homepage hero banners are now managed in the dedicated Hero Slides page with drag-and-drop sorting and responsive Desktop (1350×620), Tablet (1024×640), and Mobile (768×768) image controls.</p>
-                </div>
-            </div>
-            <a href="hero_slides.php" class="inline-flex items-center gap-2 bg-[#24B25D] hover:bg-[#004F42] text-white px-7 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-md shrink-0">
-                <span>Manage Hero Slides</span>
-                <i class="fas fa-arrow-right text-xs"></i>
-            </a>
-        </div>
-
-
-
-        <!-- TWO COLUMN GRID FOR SMALLER SECTIONS -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            <!-- SALE COUNTDOWN -->
-            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up flex flex-col group hover:shadow-md transition-shadow">
-                <div class="px-8 py-5 border-b border-gray-50 flex items-center gap-4">
-                    <div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-sm">
-                        <i class="fas fa-bolt"></i>
+    <!-- 2-Column: Flash Sale & Announcement Marquee -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Flash Sale Card -->
+        <div class="admin-card p-5 flex flex-col justify-between">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <i class="fas fa-bolt text-amber-500"></i> Promotional Flash Sale
+                </h3>
+                <form method="POST" class="space-y-4">
+                    <input type="hidden" name="update_sale" value="1">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Sale Headline Banner</label>
+                        <input type="text" name="sale_title" value="<?php echo htmlspecialchars($sale['title'] ?? ''); ?>" placeholder="e.g. HARVEST SALE - 20% OFF ALL DRIED FRUITS" class="admin-input text-xs">
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 font-heading leading-tight">Flash Sale</h3>
-                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Countdown timer</p>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Countdown End Date & Time</label>
+                        <input type="datetime-local" name="sale_end" value="<?php echo isset($sale['end_date']) ? date('Y-m-d\TH:i', strtotime($sale['end_date'])) : ''; ?>" class="admin-input text-xs">
+                    </div>
+                    <div class="pt-1">
+                        <label class="relative flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="sale_active" value="1" <?php echo ($sale['is_active'] ?? 0) ? 'checked' : ''; ?> class="rounded border-slate-300 text-primary focus:ring-primary">
+                            <span class="text-xs font-semibold text-slate-700">Display Sale Banner on Homepage</span>
+                        </label>
+                    </div>
+                    <div class="pt-2">
+                        <button type="submit" class="w-full btn-admin btn-admin-primary text-xs py-2.5">
+                            <i class="fas fa-save"></i> Save Sale Timer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Announcement Marquee Card -->
+        <div class="admin-card p-5 flex flex-col justify-between">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <i class="fas fa-bullhorn text-sky-500"></i> Top Header Announcement Marquee
+                </h3>
+                <form method="POST" class="space-y-4">
+                    <input type="hidden" name="update_announcement" value="1">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Marquee Announcement Text</label>
+                        <textarea name="announcement_text" rows="3" class="admin-input text-xs resize-none" placeholder="Enter scrolling announcement text..."><?php echo htmlspecialchars($announcement_text); ?></textarea>
+                        <p class="text-[10px] text-slate-400 mt-1">Separate multiple announcements with <span class="font-bold text-slate-700">" • "</span> bullet symbols.</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Bar Background Color</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" name="announcement_bg_color" id="ann_bg_input" value="<?php echo $announcement_bg; ?>" class="w-9 h-9 rounded-lg border border-slate-300 cursor-pointer p-0.5" oninput="document.getElementById('ann_bg_hex').innerText = this.value.toUpperCase()">
+                            <code id="ann_bg_hex" class="text-xs font-mono font-semibold text-slate-700"><?php echo strtoupper($announcement_bg); ?></code>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <button type="submit" class="w-full btn-admin btn-admin-primary text-xs py-2.5">
+                            <i class="fas fa-save"></i> Update Marquee
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Brand Story Section -->
+    <div class="admin-card p-6">
+        <h3 class="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+            <i class="fas fa-video text-indigo-500"></i> Video Brand Story Section
+        </h3>
+        
+        <form method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="update_video_section" value="1">
+            <input type="hidden" name="current_media" value="<?php echo htmlspecialchars($vid_sec['media_url'] ?? ''); ?>">
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Section Title</label>
+                        <input type="text" name="heading" value="<?php echo htmlspecialchars($vid_sec['heading'] ?? ''); ?>" class="admin-input text-xs" placeholder="e.g. Pure Craft, Valley Freshness">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Subheading Description</label>
+                        <textarea name="subheading" rows="3" class="admin-input text-xs resize-none" placeholder="Provide a compelling story behind DRIYUM's craft..."><?php echo htmlspecialchars($vid_sec['subheading'] ?? ''); ?></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">External Video URL (YouTube / Vimeo)</label>
+                        <input type="text" name="video_url" value="<?php echo htmlspecialchars($vid_sec['video_url'] ?? ''); ?>" class="admin-input text-xs" placeholder="https://youtube.com/watch?v=...">
                     </div>
                 </div>
-                <form method="POST" class="p-6 flex-1 flex flex-col justify-between">
-                    <input type="hidden" name="update_sale" value="1">
-                    <div class="space-y-5">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Sale Tagline</label>
-                            <input type="text" name="sale_title" value="<?php echo htmlspecialchars($sale['title'] ?? ''); ?>" class="w-full bg-gray-50/50 border border-gray-100 focus:border-amber-400 rounded-xl px-4 py-3 outline-none font-bold placeholder-gray-300" placeholder="e.g. MEGA HOLIDAY SALE!">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">End Date & Time</label>
-                            <input type="datetime-local" name="sale_end" value="<?php echo isset($sale['end_date']) ? date('Y-m-d\TH:i', strtotime($sale['end_date'])) : ''; ?>" class="w-full bg-gray-50/50 border border-gray-100 focus:border-amber-400 rounded-xl px-4 py-3 outline-none font-bold text-gray-600">
-                        </div>
-                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                            <label class="flex items-center gap-3 cursor-pointer group">
-                                <div class="relative">
-                                    <input type="checkbox" name="sale_active" value="1" class="sr-only peer" <?php echo ($sale['is_active'] ?? 0) ? 'checked' : ''; ?>>
-                                    <div class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-amber-500 transition-colors"></div>
-                                    <div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
-                                </div>
-                                <span class="text-xs font-black text-amber-900 group-hover:text-black uppercase">Active on Frontend</span>
+
+                <div class="space-y-3">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Thumbnail Cover & Video File</label>
+                    <div class="aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-900 relative group flex items-center justify-center">
+                        <img id="vid-cover-preview" src="../<?php echo !empty($vid_sec['media_url']) ? $vid_sec['media_url'] : 'assets/images/hero.jpg'; ?>" class="w-full h-full object-cover">
+                        <video id="vid-file-preview" class="absolute inset-0 w-full h-full object-cover hidden" autoplay muted loop></video>
+                        
+                        <div class="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <label class="btn-admin btn-admin-secondary text-xs cursor-pointer py-1.5 px-3">
+                                <i class="fas fa-image mr-1"></i> Cover Photo
+                                <input type="file" name="media" id="vid-cover-input" class="hidden" accept="image/*" onchange="previewMedia(this, 'vid-cover-preview')">
+                            </label>
+                            <label class="btn-admin btn-admin-secondary text-xs cursor-pointer py-1.5 px-3">
+                                <i class="fas fa-film mr-1"></i> MP4 Video
+                                <input type="file" name="video_file" id="vid-file-input" class="hidden" accept="video/*" onchange="previewMedia(this, 'vid-file-preview')">
                             </label>
                         </div>
                     </div>
-                    <button type="submit" class="mt-6 bg-black text-white w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-400 hover:text-black transition-all">Update Timer</button>
-                </form>
-            </div>
-
-            <!-- ANNOUNCEMENT BAR SETTING -->
-            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up flex flex-col group hover:shadow-md transition-shadow">
-                <div class="px-8 py-5 border-b border-gray-50 flex items-center gap-4">
-                    <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-sm">
-                        <i class="fas fa-bullhorn"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 font-heading leading-tight">Marquee</h3>
-                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Header notification bar</p>
-                    </div>
-                </div>
-                <form method="POST" class="p-6 flex-1 flex flex-col">
-                    <input type="hidden" name="update_announcement" value="1">
-                    <div class="space-y-4 flex-1">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Marquee Text</label>
-                                <textarea name="announcement_text" rows="3" class="w-full bg-gray-50/50 border border-gray-100 focus:border-blue-500 focus:bg-white rounded-2xl px-5 py-3 outline-none transition-all font-bold shadow-inner resize-none text-sm" placeholder="Enter marquee text..."><?php echo htmlspecialchars($announcement_text); ?></textarea>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Bar Color</label>
-                                <div class="bg-gray-50/50 border border-gray-100 rounded-2xl p-3 flex flex-col justify-center h-[calc(100%-1.5rem)]">
-                                    <div class="flex items-center gap-4">
-                                        <div class="relative w-12 h-12 rounded-xl overflow-hidden border-2 border-white shadow-sm">
-                                            <input type="color" name="announcement_bg_color" id="ann_bg_input" value="<?php echo $announcement_bg; ?>" class="absolute inset-[-10px] w-[200%] h-[200%] cursor-pointer" oninput="document.getElementById('ann_bg_hex').innerText = this.value.toUpperCase()">
-                                        </div>
-                                        <div>
-                                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Background Hex</p>
-                                            <code id="ann_bg_hex" class="text-sm font-bold text-gray-700"><?php echo strtoupper($announcement_bg); ?></code>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 bg-blue-50 p-3 rounded-xl border border-blue-100">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                            <p class="text-[9px] text-blue-700 font-bold uppercase tracking-widest">Use <span class="text-black font-black">" • "</span> to chain multiple messages.</p>
-                        </div>
-                    </div>
-                    <button type="submit" class="mt-6 bg-black text-white w-full py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all">Update Marquee</button>
-                </form>
-            </div>
-
-        </div>
-
-        <!-- VIDEO BRAND STORY SECTION -->
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up group hover:shadow-md transition-shadow">
-            <div class="px-8 py-6 border-b border-gray-50 flex items-center gap-4">
-                <div class="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center text-sm">
-                    <i class="fas fa-play"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900 font-heading leading-tight">Brand Story</h3>
-                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Cinematic video section</p>
+                    <p class="text-[10px] text-slate-400">Hover over the preview above to change cover photo or upload a direct video file.</p>
                 </div>
             </div>
-            
-            <form method="POST" enctype="multipart/form-data" class="p-6 md:p-10">
-                <input type="hidden" name="update_video_section" value="1">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <div class="space-y-6">
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Section Heading</label>
-                            <textarea name="heading" rows="2" class="w-full bg-gray-50/50 border border-gray-100 focus:border-indigo-500 rounded-xl px-4 py-3 outline-none font-bold text-xl"><?php echo htmlspecialchars($vid_sec['heading']); ?></textarea>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Subheading / Description</label>
-                            <textarea name="subheading" rows="3" class="w-full bg-gray-50/50 border border-gray-100 focus:border-indigo-500 rounded-xl px-4 py-3 outline-none font-medium text-gray-500"><?php echo htmlspecialchars($vid_sec['subheading']); ?></textarea>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="block text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">YouTube Video URL (Alternative)</label>
-                            <input type="text" name="video_url" value="<?php echo htmlspecialchars($vid_sec['video_url']); ?>" class="w-full bg-gray-50/50 border border-gray-100 focus:border-indigo-500 rounded-xl px-4 py-3 outline-none font-bold text-sm" placeholder="https://youtube.com/watch?v=...">
-                        </div>
-                    </div>
 
-                    <div class="space-y-6">
-                        <div class="space-y-1">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="text-[10px] font-black uppercase text-gray-400 ml-3 tracking-widest">Live Video Preview</label>
-                                 <label class="cursor-pointer bg-gray-100 hover:bg-black hover:text-white px-4 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest transition-all">
-                                    Upload Video File
-                                    <input type="file" name="video_file" id="vid-file-input" accept="video/*" class="hidden" onchange="previewMedia(this, 'vid-file-preview')">
-                                </label>
-                            </div>
-                            
-                            <div class="relative group aspect-video rounded-2xl overflow-hidden border-2 border-gray-100 bg-gray-50 shadow-sm">
-                                <img id="vid-cover-preview" src="../<?php echo !empty($vid_sec['media_url']) ? $vid_sec['media_url'] : 'assets/images/hero.jpg'; ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
-                                <video id="vid-file-preview" class="absolute inset-0 w-full h-full object-cover hidden z-10" autoplay muted loop></video>
-                                
-                                <div class="absolute inset-0 flex flex-col justify-end p-6 z-20 pointer-events-none bg-gradient-to-t from-black/60 to-transparent">
-                                    <h2 id="vid-head-preview" class="text-white font-black font-heading text-lg drop-shadow-lg leading-tight"><?php echo nl2br(htmlspecialchars($vid_sec['heading'])); ?></h2>
-                                </div>
-
-                                <div class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                                    <label class="cursor-pointer bg-white text-black px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-[#24B25D]">
-                                        <i class="fas fa-image"></i> Change Cover
-                                        <input type="file" name="media" id="vid-cover-input" class="hidden" onchange="previewMedia(this, 'vid-cover-preview')">
-                                    </label>
-                                </div>
-                                <input type="hidden" name="current_media" value="<?php echo htmlspecialchars($vid_sec['media_url']); ?>">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-8 pt-8 border-t border-gray-50 flex justify-end">
-                    <button type="submit" name="update_video_section" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-indigo-500 hover:text-white transition-all shadow-md">Update Brand Story</button>
-                </div>
-            </form>
-        </div>
-
+            <div class="flex items-center justify-end pt-4 border-t border-slate-100">
+                <button type="submit" name="update_video_section" class="btn-admin btn-admin-primary text-xs">
+                    <i class="fas fa-save"></i> Save Brand Story
+                </button>
+            </div>
+        </form>
     </div>
-
-   
 </div>
 
-
-<!-- MODALS SECTION -->
-
-<div id="badge-modal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeBadgeModal()"></div>
-    <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.25)] overflow-hidden anim-up border border-gray-100 relative z-10">
-        <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-            <div>
-                <h3 class="text-xl font-black text-gray-900 font-heading" id="badge-modal-title">Add Trust Badge</h3>
-                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Enhance site credibility</p>
-            </div>
-            <button onclick="closeBadgeModal()" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all shadow-sm">
-                <i class="fas fa-times"></i>
+<!-- TRUST BADGE MODAL -->
+<div id="badge-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm hidden">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="text-base font-bold text-slate-900" id="badge-modal-title">Add Trust Badge</h3>
+            <button onclick="closeBadgeModal()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
             </button>
         </div>
-        <form method="POST" class="p-10 space-y-6">
+        <form method="POST" class="p-5 space-y-4">
             <input type="hidden" name="badge_id" id="modal-badge-id">
             <input type="hidden" name="add_badge" id="modal-badge-action-add" value="1">
             <input type="hidden" name="edit_badge" id="modal-badge-action-edit" value="1" disabled>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="col-span-2">
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Badge Title</label>
-                    <input type="text" name="badge_title" id="modal-badge-title" placeholder="Main Highlight" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm" required>
-                </div>
-                <div class="col-span-2">
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Subtitle</label>
-                    <input type="text" name="badge_subtitle" id="modal-badge-subtitle" placeholder="Secondary Info" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Icon Class (FA)</label>
-                    <input type="text" name="badge_icon" id="modal-badge-icon" placeholder="fas fa-leaf" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm" required>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Order</label>
-                    <input type="number" name="sort_order" id="modal-badge-sort" value="0" class="w-full border border-gray-200 rounded-lg px-4 py-2.5 outline-none focus:border-indigo-500 font-bold text-sm text-center">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Card Color</label>
-                    <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                        <input type="color" name="badge_bg_color" id="modal-badge-bg" value="#FFFEDC" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                        <span class="text-[10px] font-black text-gray-400 uppercase" id="badge-bg-hex">#FFFEDC</span>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Icon Color</label>
-                    <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-1 bg-white">
-                        <input type="color" name="badge_icon_color" id="modal-badge-icon-color" value="#19DC7E" class="w-8 h-8 cursor-pointer rounded-md border-0 bg-transparent">
-                        <span class="text-[10px] font-black text-gray-400 uppercase" id="badge-icon-hex">#19DC7E</span>
-                    </div>
-                </div>
-            </div>
-            <div class="pt-6 flex gap-4">
-                <button type="button" onclick="closeBadgeModal()" class="flex-1 px-6 py-4 rounded-2xl border border-gray-100 font-black text-[10px] uppercase tracking-widest text-gray-400 hover:bg-gray-50 transition-all shadow-sm">Cancel</button>
-                <button type="submit" id="badge-modal-submit" class="flex-1 px-6 py-4 rounded-2xl bg-black text-white font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 shadow-xl transition-all active:scale-95">Save Badge</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Partner Modal -->
-<div id="partner-modal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closePartnerModal()"></div>
-    <div class="bg-white w-full max-w-lg rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.25)] overflow-hidden anim-up border border-gray-100 relative z-10">
-        <div class="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+            
             <div>
-                <h3 class="text-xl font-black text-gray-900 font-heading" id="partner-modal-title">Add Partner</h3>
-                <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">Expanding the Horizon</p>
-            </div>
-            <button onclick="closePartnerModal()" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-400 hover:bg-black hover:text-white transition-all shadow-sm">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <form method="POST" enctype="multipart/form-data" class="p-8 md:p-10 space-y-6">
-            <input type="hidden" name="partner_id" id="modal-partner-id">
-            <input type="hidden" name="current_logo" id="modal-partner-current-logo">
-            <input type="hidden" name="add_partner" id="modal-partner-action-add" value="1">
-            <input type="hidden" name="edit_partner" id="modal-partner-action-edit" value="1" disabled>
-            
-            <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Stockist Name</label>
-                <input type="text" name="partner_name" id="modal-partner-name" placeholder="e.g. Eco Grocery" class="w-full border border-gray-200 rounded-xl px-5 py-3 outline-none focus:border-emerald-500 font-bold text-lg" required>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Badge Title *</label>
+                <input type="text" name="badge_title" id="modal-badge-title" placeholder="e.g. 100% Organic" class="admin-input text-xs" required>
             </div>
             
-            <div class="grid grid-cols-2 gap-4">
-                <div class="col-span-1">
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Location Area</label>
-                    <input type="text" name="partner_location" id="modal-partner-location" placeholder="e.g. RAJBAGH" class="w-full border border-gray-200 rounded-xl px-5 py-3 outline-none focus:border-emerald-500 font-bold text-sm">
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Subtitle / Detail</label>
+                <input type="text" name="badge_subtitle" id="modal-badge-subtitle" placeholder="e.g. Direct Valley Harvest" class="admin-input text-xs">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">FontAwesome Icon *</label>
+                    <input type="text" name="badge_icon" id="modal-badge-icon" placeholder="fas fa-leaf" class="admin-input text-xs font-mono" required>
                 </div>
-                <div class="col-span-1">
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Sort Order</label>
-                    <input type="number" name="sort_order" id="modal-partner-sort" value="0" class="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 font-bold text-sm text-center">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Sort Order</label>
+                    <input type="number" name="sort_order" id="modal-badge-sort" value="0" class="admin-input text-xs">
                 </div>
             </div>
 
-            <div class="space-y-1">
-                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1 ml-1">Logo (Optional / Legacy)</label>
-                <p class="text-[8px] text-gray-400 font-bold uppercase mb-2">Note: Logos are currently hidden in the text-only layout.</p>
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 rounded-2xl bg-gray-50 border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden">
-                        <img id="modal-partner-logo-preview" src="" class="max-w-full max-h-full object-contain hidden">
-                        <i id="modal-partner-logo-icon" class="fas fa-store text-gray-200 text-xl"></i>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Card Background</label>
+                    <div class="flex items-center gap-2">
+                        <input type="color" name="badge_bg_color" id="modal-badge-bg" value="#FFFEDC" class="w-8 h-8 rounded border border-slate-300 cursor-pointer">
+                        <span class="text-xs font-mono text-slate-600" id="badge-bg-hex">#FFFEDC</span>
                     </div>
-                    <div class="flex-grow">
-                        <input type="file" name="partner_logo" id="partner-logo-input" onchange="previewPartnerLogo(this)" class="hidden">
-                        <label for="partner-logo-input" class="inline-block bg-gray-100 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black hover:text-white cursor-pointer transition-all">Upload Logo</label>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Icon Color</label>
+                    <div class="flex items-center gap-2">
+                        <input type="color" name="badge_icon_color" id="modal-badge-icon-color" value="#19DC7E" class="w-8 h-8 rounded border border-slate-300 cursor-pointer">
+                        <span class="text-xs font-mono text-slate-600" id="badge-icon-hex">#19DC7E</span>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-6">
-                <button type="submit" class="w-full px-6 py-4 rounded-2xl bg-emerald-600 text-white font-black text-[10px] uppercase tracking-widest hover:bg-emerald-700 shadow-xl transition-all active:scale-95">Save Changes</button>
+            <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeBadgeModal()" class="btn-admin btn-admin-secondary text-xs">Cancel</button>
+                <button type="submit" class="btn-admin btn-admin-primary text-xs">Save Badge</button>
             </div>
         </form>
     </div>
 </div>
-
-<style>
-    @keyframes slideIn {
-        from { transform: translateY(-20px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-    .anim-up { animation: slideIn 0.4s ease-out forwards; }
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
-    .loader {
-        border: 2px solid #f3f3f3;
-        border-top: 2px solid #3498db;
-        border-radius: 50%;
-        width: 14px;
-        height: 14px;
-        animation: spin 1s linear infinite;
-        display: inline-block;
-        margin-right: 8px;
-        vertical-align: middle;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .btn-loading {
-        opacity: 0.7;
-        pointer-events: none;
-        cursor: not-allowed;
-    }
-</style>
 
 <script>
-// --- MODAL CORE ---
 function showModal(id) {
     document.getElementById(id).classList.remove('hidden');
-    document.body.classList.add('overflow-hidden');
 }
 
 function hideModal(id) {
     document.getElementById(id).classList.add('hidden');
-    if(!document.querySelector('.fixed:not(.hidden)')) {
-        document.body.classList.remove('overflow-hidden');
-    }
 }
 
-// --- PARTNER LOGIC ---
-function openEditPartner(partner) {
-    document.getElementById('partner-modal-title').innerText = 'Edit Partner';
-    document.getElementById('modal-partner-id').value = partner.id;
-    document.getElementById('modal-partner-name').value = partner.name;
-    document.getElementById('modal-partner-location').value = partner.location;
-    document.getElementById('modal-partner-sort').value = partner.sort_order;
-    document.getElementById('modal-partner-current-logo').value = partner.logo;
-    
-    if(partner.logo) {
-        document.getElementById('modal-partner-logo-preview').src = '../' + partner.logo;
-        document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
-        document.getElementById('modal-partner-logo-icon').classList.add('hidden');
-    }
-    
-    document.getElementById('modal-partner-action-add').disabled = true;
-    document.getElementById('modal-partner-action-edit').disabled = false;
-    showModal('partner-modal');
-}
-
-function closePartnerModal() {
-    hideModal('partner-modal');
-    setTimeout(() => {
-        document.getElementById('partner-modal-title').innerText = 'Add Partner';
-        document.getElementById('modal-partner-action-add').disabled = false;
-        document.getElementById('modal-partner-action-edit').disabled = true;
-        document.getElementById('modal-partner-id').value = '';
-        document.getElementById('modal-partner-logo-preview').src = '';
-        document.getElementById('modal-partner-logo-preview').classList.add('hidden');
-        document.getElementById('modal-partner-logo-icon').classList.remove('hidden');
-    }, 300);
-}
-
-function previewPartnerLogo(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('modal-partner-logo-preview').src = e.target.result;
-            document.getElementById('modal-partner-logo-preview').classList.remove('hidden');
-            document.getElementById('modal-partner-logo-icon').classList.add('hidden');
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-// --- TRUST BADGE LOGIC ---
 function openEditBadge(badge) {
     document.getElementById('badge-modal-title').innerText = 'Edit Trust Badge';
     document.getElementById('modal-badge-id').value = badge.id;
@@ -847,10 +584,9 @@ function closeBadgeModal() {
         document.getElementById('modal-badge-action-add').disabled = false;
         document.getElementById('modal-badge-action-edit').disabled = true;
         document.getElementById('modal-badge-id').value = '';
-    }, 300);
+    }, 200);
 }
 
-// Sync Hex labels
 if(document.getElementById('modal-badge-bg')) {
     document.getElementById('modal-badge-bg').oninput = function() { document.getElementById('badge-bg-hex').innerText = this.value.toUpperCase(); };
 }
@@ -858,8 +594,6 @@ if(document.getElementById('modal-badge-icon-color')) {
     document.getElementById('modal-badge-icon-color').oninput = function() { document.getElementById('badge-icon-hex').innerText = this.value.toUpperCase(); };
 }
 
-
-// --- MEDIA PREVIEW (Video Section) ---
 function previewMedia(input, previewId) {
     if (input.files && input.files[0]) {
         const file = input.files[0];
@@ -883,45 +617,6 @@ function previewMedia(input, previewId) {
         }
     }
 }
-
-// --- LIVE TEXT PREVIEW ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Standardize modal triggers
-    const triggers = [
-        { sel: '[onclick*="add-badge-modal"]', id: 'badge-modal' }
-    ];
-    triggers.forEach(t => {
-        const el = document.querySelector(t.sel);
-        if(el) el.setAttribute('onclick', `showModal('${t.id}')`);
-    });
-
-    const heroHeadIn = document.getElementById('hero-head-input');
-    const heroHeadPre = document.getElementById('hero-head-preview');
-    if(heroHeadIn) heroHeadIn.oninput = (e) => heroHeadPre.innerHTML = e.target.value.replace(/\n/g, '<br>');
-    const vidHeadIn = document.querySelector('textarea[name="heading"]');
-    const vidHeadPre = document.getElementById('vid-head-preview');
-    if(vidHeadIn) vidHeadIn.oninput = (e) => vidHeadPre.innerHTML = e.target.value.replace(/\n/g, '<br>');
-});
 </script>
 
-<script>
-// Global Form Submission Loading State
-document.addEventListener('submit', function(e) {
-    const form = e.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    
-    if (submitBtn) {
-        // Prevent double submission
-        submitBtn.classList.add('btn-loading');
-        const originalText = submitBtn.innerText;
-        submitBtn.disabled = true;
-        
-        // Add spinner
-        submitBtn.innerHTML = '<span class="loader"></span> PROCESSING...';
-    }
-});
-</script>
-</body>
-</html>
-
-
+<?php include 'includes/footer.php'; ?>

@@ -2,7 +2,7 @@
 session_start();
 require_once 'config/database.php';
 require_once 'includes/functions.php';
-$featured = get_featured_products(10);
+$featured = get_featured_products();
 
 // Fetch Wishlist IDs for active states
 $wishlist_ids = [];
@@ -547,6 +547,22 @@ $wishlist_json = json_encode($wishlist_ids);
 
 
 
+    <?php 
+    // Fetch ONLY Combo products added from admin/product_sorting.php (is_combo = 1)
+    $combos = fetch_all("SELECT * FROM products WHERE is_combo = 1 AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, combo_sort_order ASC, id DESC");
+
+    // Ensure in-stock items always appear before out-of-stock items, respecting custom combo sort order
+    usort($combos, function($a, $b) {
+        $a_in = ($a['stock'] > 0) ? 0 : 1;
+        $b_in = ($b['stock'] > 0) ? 0 : 1;
+        if ($a_in !== $b_in) return $a_in - $b_in;
+        $a_sort = isset($a['combo_sort_order']) ? (int)$a['combo_sort_order'] : (int)$a['id'];
+        $b_sort = isset($b['combo_sort_order']) ? (int)$b['combo_sort_order'] : (int)$b['id'];
+        if ($a_sort !== $b_sort) return $a_sort - $b_sort;
+        return $b['id'] - $a['id'];
+    });
+    ?>
+    <?php if(!empty($combos)): ?>
     <!-- COMBO BUNDLES SECTION -->
     <section class="py-4 md:py-8 bg-white relative overflow-hidden anim-up">
         <div class="container mx-auto px-6  mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
@@ -570,29 +586,6 @@ $wishlist_json = json_encode($wishlist_ids);
         <div class="w-full relative overflow-hidden">
             <div id="combo-slider-container" class="flex w-full overflow-x-auto gap-4 px-8  pb-12 hide-scrollbar scroll-smooth">
                 <?php 
-                // 1. First, fetch real Combo/Bundle/Pack products (Now using the explicit is_combo flag)
-                $combos = fetch_all("SELECT * FROM products WHERE is_combo = 1 AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, combo_sort_order ASC, id DESC");
-                
-                // Gap Filling: If less than 4 combos exist, fill with featured gems to ensure a crisp UI
-                $combo_count = count($combos);
-                if($combo_count < 4) {
-                    $needed = 4 - $combo_count;
-                    $ids = !empty($combos) ? implode(',', array_column($combos, 'id')) : '0';
-                    $fillers = fetch_all("SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 AND id NOT IN ($ids) ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, combo_sort_order ASC, id DESC LIMIT $needed");
-                    $combos = array_merge($combos, $fillers);
-                }
-
-                // Ensure in-stock items always appear before out-of-stock items, respecting custom combo sort order
-                usort($combos, function($a, $b) {
-                    $a_in = ($a['stock'] > 0) ? 0 : 1;
-                    $b_in = ($b['stock'] > 0) ? 0 : 1;
-                    if ($a_in !== $b_in) return $a_in - $b_in;
-                    $a_sort = isset($a['combo_sort_order']) ? (int)$a['combo_sort_order'] : (int)$a['id'];
-                    $b_sort = isset($b['combo_sort_order']) ? (int)$b['combo_sort_order'] : (int)$b['id'];
-                    if ($a_sort !== $b_sort) return $a_sort - $b_sort;
-                    return $b['id'] - $a['id'];
-                });
-
                 $i = 0;
                 $delay = 0;
                 $default_colors = ['#E0F2FE', '#DCFCE7', '#FEF3C7', '#FEE2E2', '#F3E8FF', '#FFEDD5'];
@@ -703,6 +696,7 @@ $wishlist_json = json_encode($wishlist_ids);
             </div>
         </div>
     </section>
+    <?php endif; ?>
 
     <!-- THE DRIYUM DIFFERENCE (Full Width Direct Comparison) -->
     <section class="h-auto md:h-[50vh] lg:h-screen bg-white w-full relative overflow-hidden flex flex-col justify-center p-0 m-0">
@@ -851,6 +845,7 @@ $wishlist_json = json_encode($wishlist_ids);
         });
     </script>
 
+    <?php if (!empty($featured)): ?>
     <!-- UNIFIED PRODUCT GRID (Exactly Like Combo Section) -->
     <section class="py-16 md:py-24 bg-[#f8f9fa] relative overflow-hidden border-t border-gray-100/50">
         <div class="container mx-auto px-6  mb-10 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
@@ -982,6 +977,7 @@ $wishlist_json = json_encode($wishlist_ids);
             </div>
         </div>
     </section>
+    <?php endif; ?>
     <!-- THE CRAFT JOURNEY (Immersive Discovery Boards) -->
     <section class="bg-black relative overflow-hidden" id="craft-journey-trigger">
         

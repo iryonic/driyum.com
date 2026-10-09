@@ -372,16 +372,16 @@ function get_all_categories() {
     return fetch_all($sql);
 }
 
-function get_featured_products($limit = 8) {
-    $sql = "SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, featured_sort_order ASC, id DESC LIMIT ?";
-    $products = fetch_all($sql, [$limit]);
-    if (count($products) < $limit) {
-        $needed = $limit - count($products);
-        $ids = !empty($products) ? implode(',', array_column($products, 'id')) : '0';
-        $fillers = fetch_all("SELECT * FROM products WHERE is_active = 1 AND id NOT IN ($ids) ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, featured_sort_order ASC, id DESC LIMIT ?", [$needed]);
-        $products = array_merge($products, $fillers);
+function get_featured_products($limit = null) {
+    if ($limit !== null && (int)$limit > 0) {
+        $sql = "SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, featured_sort_order ASC, id DESC LIMIT ?";
+        $products = fetch_all($sql, [(int)$limit]);
+    } else {
+        $sql = "SELECT * FROM products WHERE is_active = 1 AND is_featured = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, featured_sort_order ASC, id DESC";
+        $products = fetch_all($sql);
     }
-    // Always ensure in-stock items appear before out-of-stock items, while respecting custom order
+
+    // Always ensure in-stock items appear before out-of-stock items, while respecting custom order from admin/product_sorting.php
     usort($products, function($a, $b) {
         $a_stock = ($a['stock'] > 0) ? 0 : 1;
         $b_stock = ($b['stock'] > 0) ? 0 : 1;
@@ -437,9 +437,23 @@ function get_product_images($product_id) {
     return fetch_all($sql, [$product_id]);
 }
 
-function get_related_products($product_id, $category_id, $limit = 4) {
-    $sql = "SELECT * FROM products WHERE category_id = ? AND id != ? AND is_active = 1 ORDER BY CASE WHEN stock > 0 THEN 0 ELSE 1 END ASC, RAND() LIMIT ?";
-    return fetch_all($sql, [$category_id, $product_id, $limit]);
+function get_related_products($product_id, $category_id, $limit = 6) {
+    // 1. Fetch products from the same category that are strictly in stock
+    $sql = "SELECT * FROM products WHERE category_id = ? AND id != ? AND is_active = 1 AND stock > 0 ORDER BY sort_order ASC, id DESC LIMIT ?";
+    $products = fetch_all($sql, [$category_id, $product_id, $limit]);
+
+    // 2. If fewer than desired limit, fill up with other active in-stock products
+    if (count($products) < $limit) {
+        $needed = $limit - count($products);
+        $exclude_ids = array_merge([$product_id], array_column($products, 'id'));
+        $placeholders = implode(',', array_fill(0, count($exclude_ids), '?'));
+        $fallback_sql = "SELECT * FROM products WHERE id NOT IN ($placeholders) AND is_active = 1 AND stock > 0 ORDER BY is_featured DESC, sort_order ASC, id DESC LIMIT ?";
+        $params = array_merge($exclude_ids, [$needed]);
+        $fallback = fetch_all($fallback_sql, $params);
+        $products = array_merge($products, $fallback);
+    }
+
+    return $products;
 }
 
 function get_products_by_filter($filters = [], $page = 1, $per_page = 12) {
@@ -1690,28 +1704,16 @@ function render_pagination($total_pages, $current_page = 1, $per_page = null, $t
     $is_first = ($current_page <= 1);
     $is_last = ($current_page >= $total_pages);
 
-    // Reusable per-page dropdown markup
-    $render_per_page_select = function() use ($options, $per_page) {
-        $out = '<div class="flex items-center gap-2 text-xs font-semibold text-gray-500 bg-white border border-gray-200/80 px-3 py-2 rounded-xl shadow-xs">';
-        $out .= '<span class="text-gray-400 font-medium">Show</span>';
-        $out .= '<div class="relative inline-flex items-center">';
-        $out .= '<select onchange="window.handlePaginationPerPage(this.value)" aria-label="Items per page" class="appearance-none bg-gray-50 hover:bg-gray-100 text-black font-black text-xs pl-2.5 pr-6 py-1 rounded-lg border border-gray-200 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] cursor-pointer transition-all">';
-        foreach ($options as $opt) {
-            $sel = ($opt == $per_page) ? ' selected' : '';
-            $out .= "<option value=\"$opt\"$sel>$opt</option>";
-        }
-        $out .= '</select>';
-        $out .= '<i class="fas fa-chevron-down text-[9px] text-gray-400 pointer-events-none absolute right-2"></i>';
-        $out .= '</div>';
-        $out .= '<span class="text-gray-400 font-medium">per page</span>';
-        $out .= '</div>';
-        return $out;
-    };
+    // Calculate record ranges
+    $start_rec = ($current_page - 1) * $per_page + 1;
+    $end_rec = min($total_records ?? ($current_page * $per_page), $current_page * $per_page);
+    if ($total_records !== null && $total_records == 0) {
+        $start_rec = 0;
+        $end_rec = 0;
+    }
 
-    $html = '<nav aria-label="Pagination Navigation" class="w-full flex flex-col items-center justify-center mt-10 mb-8 sm:mt-12 sm:pb-12 anim-up select-none">';
-
-    // Global helper script to update per_page and reset to page 1
-    $html .= '<script>
+    // Helper script for dynamic per-page selection
+    $script = '<script>
     if (!window.handlePaginationPerPage) {
         window.handlePaginationPerPage = function(perPage) {
             try {
@@ -1727,114 +1729,198 @@ function render_pagination($total_pages, $current_page = 1, $per_page = null, $t
     }
     </script>';
 
-    // ================= MOBILE VIEW (< 640px) =================
-    // Compact, touch-friendly, fits comfortably on 320px+ viewports with zero horizontal overflow
+    // =========================================================
+    // 1. DEDICATED ADMIN PANEL PAGINATION (Clean, Executive, Light, Highly Responsive)
+    // =========================================================
+    if ($is_admin) {
+        $html = '<nav aria-label="Pagination Navigation" class="w-full flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-slate-200 text-xs text-slate-500 select-none">';
+        $html .= $script;
+
+        // Top/Left: Results Count & Per-Page Selector (Neatly wrapped on small screens)
+        $html .= '<div class="flex items-center gap-2.5 flex-wrap justify-center sm:justify-start w-full sm:w-auto">';
+        if ($total_records !== null) {
+            $html .= '<span class="text-slate-600">Showing <strong class="text-slate-900 font-bold">' . number_format($start_rec) . '</strong>–<strong class="text-slate-900 font-bold">' . number_format($end_rec) . '</strong> of <strong class="text-slate-900 font-bold">' . number_format($total_records) . '</strong> items</span>';
+        } else {
+            $html .= '<span class="text-slate-600">Page <strong class="text-slate-900 font-bold">' . $current_page . '</strong> of <strong class="text-slate-900 font-bold">' . $total_pages . '</strong></span>';
+        }
+
+        $html .= '<div class="inline-flex items-center gap-1.5 text-slate-400 pl-2 border-l border-slate-200 shrink-0">';
+        $html .= '<span class="text-[11px]">Per page:</span>';
+        $html .= '<select onchange="window.handlePaginationPerPage(this.value)" aria-label="Items per page" class="bg-white border border-slate-200 hover:border-slate-300 text-slate-800 rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-600 cursor-pointer">';
+        foreach ($options as $opt) {
+            $sel = ($opt == $per_page) ? ' selected' : '';
+            $html .= "<option value=\"$opt\"$sel>$opt</option>";
+        }
+        $html .= '</select>';
+        $html .= '</div>';
+        $html .= '</div>';
+
+        // Bottom/Right: Navigation Controls
+        // MOBILE & SMALL TABLET (< 768px): Compact, thumb-friendly Prev / "Page X of Y" / Next that NEVER overflows
+        $html .= '<div class="flex md:hidden items-center justify-between w-full max-w-sm gap-1.5 pt-1">';
+        
+        // Mobile First & Prev
+        if ($is_first) {
+            $html .= '<span class="w-8 h-8 rounded-lg border border-slate-200/60 bg-slate-50 text-slate-300 text-xs font-semibold flex items-center justify-center cursor-not-allowed opacity-60 shrink-0"><i class="fas fa-angle-double-left text-[11px]"></i></span>';
+            $html .= '<span class="flex-1 py-1.5 px-2.5 rounded-lg border border-slate-200/60 bg-slate-50 text-slate-300 text-xs font-semibold cursor-not-allowed opacity-60 text-center shrink-0"><i class="fas fa-chevron-left text-[10px] mr-1"></i> Prev</span>';
+        } else {
+            $html .= '<a href="' . $first_url . '" class="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-xs font-semibold flex items-center justify-center shadow-xs transition-colors shrink-0" title="First Page"><i class="fas fa-angle-double-left text-[11px]"></i></a>';
+            $html .= '<a href="' . $prev_url . '" class="flex-1 py-1.5 px-2.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 text-xs font-semibold text-center shadow-xs transition-colors shrink-0"><i class="fas fa-chevron-left text-[10px] mr-1"></i> Prev</a>';
+        }
+
+        // Current / Total Page Indicator
+        $html .= '<span class="px-2.5 py-1.5 rounded-lg bg-slate-100 border border-slate-200/60 text-slate-800 font-bold text-xs shrink-0 whitespace-nowrap">' . $current_page . ' / ' . $total_pages . '</span>';
+
+        // Mobile Next & Last
+        if ($is_last) {
+            $html .= '<span class="flex-1 py-1.5 px-2.5 rounded-lg border border-slate-200/60 bg-slate-50 text-slate-300 text-xs font-semibold cursor-not-allowed opacity-60 text-center shrink-0">Next <i class="fas fa-chevron-right text-[10px] ml-1"></i></span>';
+            $html .= '<span class="w-8 h-8 rounded-lg border border-slate-200/60 bg-slate-50 text-slate-300 text-xs font-semibold flex items-center justify-center cursor-not-allowed opacity-60 shrink-0"><i class="fas fa-angle-double-right text-[11px]"></i></span>';
+        } else {
+            $html .= '<a href="' . $next_url . '" class="flex-1 py-1.5 px-2.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900 text-xs font-semibold text-center shadow-xs transition-colors shrink-0">Next <i class="fas fa-chevron-right text-[10px] ml-1"></i></a>';
+            $html .= '<a href="' . $last_url . '" class="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 text-xs font-semibold flex items-center justify-center shadow-xs transition-colors shrink-0" title="Last Page"><i class="fas fa-angle-double-right text-[11px]"></i></a>';
+        }
+        $html .= '</div>';
+
+        // DESKTOP & WIDE TABLET (>= 768px): Full Number Strip with non-wrapping flex
+        $html .= '<div class="hidden md:flex items-center gap-1.5 justify-center flex-nowrap overflow-x-auto max-w-full py-0.5">';
+
+        // Prev Button
+        if ($is_first) {
+            $html .= '<span class="px-2.5 py-1.5 rounded-lg border border-slate-200/60 bg-slate-50 text-slate-300 text-xs font-semibold cursor-not-allowed opacity-60 inline-flex items-center gap-1 shrink-0"><i class="fas fa-chevron-left text-[10px]"></i> Prev</span>';
+        } else {
+            $html .= '<a href="' . $prev_url . '" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-colors text-xs font-semibold shadow-xs inline-flex items-center gap-1 shrink-0" aria-label="Previous Page"><i class="fas fa-chevron-left text-[10px]"></i> Prev</a>';
+        }
+
+        // Page Numbers
+        foreach ($pages as $item) {
+            if ($item === '...') {
+                $html .= '<span class="w-8 h-8 flex items-center justify-center text-slate-400 font-bold text-xs select-none shrink-0">...</span>';
+            } else {
+                $page_num = (int)$item;
+                $page_url = $get_page_url($page_num);
+                if ($page_num === $current_page) {
+                    $html .= '<span class="min-w-8 h-8 px-2.5 rounded-lg bg-[#004f42] text-white font-bold flex items-center justify-center text-xs shadow-xs shrink-0" aria-current="page">' . $page_num . '</span>';
+                } else {
+                    $html .= '<a href="' . $page_url . '" class="min-w-8 h-8 px-2.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-colors flex items-center justify-center text-xs font-semibold shadow-xs shrink-0">' . $page_num . '</a>';
+                }
+            }
+        }
+
+        // Next Button
+        if ($is_last) {
+            $html .= '<span class="px-2.5 py-1.5 rounded-lg border border-slate-200/60 bg-slate-50 text-slate-300 text-xs font-semibold cursor-not-allowed opacity-60 inline-flex items-center gap-1 shrink-0">Next <i class="fas fa-chevron-right text-[10px]"></i></span>';
+        } else {
+            $html .= '<a href="' . $next_url . '" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-colors text-xs font-semibold shadow-xs inline-flex items-center gap-1 shrink-0" aria-label="Next Page">Next <i class="fas fa-chevron-right text-[10px]"></i></a>';
+        }
+
+        $html .= '</div>';
+        $html .= '</nav>';
+        return $html;
+    }
+
+    // =========================================================
+    // 2. STOREFRONT PAGINATION
+    // =========================================================
+    $render_per_page_select = function() use ($options, $per_page) {
+        $out = '<div class="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-xs">';
+        $out .= '<span class="text-slate-400 font-medium">Show</span>';
+        $out .= '<div class="relative inline-flex items-center">';
+        $out .= '<select onchange="window.handlePaginationPerPage(this.value)" aria-label="Items per page" class="appearance-none bg-slate-50 hover:bg-slate-100 text-slate-900 font-bold text-xs pl-2.5 pr-6 py-1 rounded-lg border border-slate-200 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] cursor-pointer transition-all">';
+        foreach ($options as $opt) {
+            $sel = ($opt == $per_page) ? ' selected' : '';
+            $out .= "<option value=\"$opt\"$sel>$opt</option>";
+        }
+        $out .= '</select>';
+        $out .= '<i class="fas fa-chevron-down text-[9px] text-slate-400 pointer-events-none absolute right-2"></i>';
+        $out .= '</div>';
+        $out .= '<span class="text-slate-400 font-medium">per page</span>';
+        $out .= '</div>';
+        return $out;
+    };
+
+    $html = '<nav aria-label="Pagination Navigation" class="w-full flex flex-col items-center justify-center my-8 anim-up select-none">';
+    $html .= $script;
+
+    // Mobile View (< 640px)
     $html .= '<div class="flex sm:hidden flex-col items-center w-full max-w-sm px-3 gap-3">';
-    
-    // Top row: mobile pagination controls
     $html .= '<div class="flex items-center justify-between w-full gap-1.5">';
     
-    // Mobile: First Page jump
     if ($is_first) {
-        $html .= '<span class="w-9 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center justify-center text-xs opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-angles-left text-[11px]"></i></span>';
+        $html .= '<span class="w-9 h-9 rounded-xl border border-slate-100 bg-slate-50 text-slate-300 flex items-center justify-center text-xs opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-angles-left text-[11px]"></i></span>';
+        $html .= '<span class="px-3 h-9 rounded-xl border border-slate-100 bg-slate-50 text-slate-300 flex items-center gap-1.5 text-xs font-bold opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-chevron-left text-[10px]"></i> Prev</span>';
     } else {
-        $html .= '<a href="' . $first_url . '" class="w-9 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" title="First Page" aria-label="First Page"><i class="fas fa-angles-left text-[11px]"></i></a>';
+        $html .= '<a href="' . $first_url . '" class="w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-black flex items-center justify-center text-xs shadow-xs" title="First Page"><i class="fas fa-angles-left text-[11px]"></i></a>';
+        $html .= '<a href="' . $prev_url . '" class="px-3 h-9 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-black flex items-center gap-1.5 text-xs font-bold shadow-xs"><i class="fas fa-chevron-left text-[10px]"></i> Prev</a>';
     }
 
-    // Mobile: Previous button
-    if ($is_first) {
-        $html .= '<span class="px-3 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center gap-1.5 text-xs font-bold opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-chevron-left text-[10px]"></i> Prev</span>';
-    } else {
-        $html .= '<a href="' . $prev_url . '" class="px-3 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center gap-1.5 text-xs font-bold shadow-xs active:scale-95 transition-all" aria-label="Previous Page"><i class="fas fa-chevron-left text-[10px]"></i> Prev</a>';
-    }
-
-    // Mobile: Current Page Badge
-    $html .= '<div class="h-9 px-3 bg-white border border-gray-200/80 rounded-xl shadow-xs text-xs font-semibold text-gray-500 flex items-center justify-center gap-1">';
+    $html .= '<div class="h-9 px-3 bg-white border border-slate-200 rounded-xl shadow-xs text-xs font-semibold text-slate-500 flex items-center justify-center gap-1">';
     $html .= '<span class="text-black font-black text-sm">' . $current_page . '</span>';
-    $html .= '<span class="text-gray-300 font-normal">/</span>';
-    $html .= '<span class="text-gray-600 font-bold">' . $total_pages . '</span>';
+    $html .= '<span class="text-slate-300">/</span>';
+    $html .= '<span class="text-slate-600 font-bold">' . $total_pages . '</span>';
     $html .= '</div>';
 
-    // Mobile: Next button
     if ($is_last) {
-        $html .= '<span class="px-3 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center gap-1.5 text-xs font-bold opacity-50 cursor-not-allowed" aria-disabled="true">Next <i class="fas fa-chevron-right text-[10px]"></i></span>';
+        $html .= '<span class="px-3 h-9 rounded-xl border border-slate-100 bg-slate-50 text-slate-300 flex items-center gap-1.5 text-xs font-bold opacity-50 cursor-not-allowed" aria-disabled="true">Next <i class="fas fa-chevron-right text-[10px]"></i></span>';
+        $html .= '<span class="w-9 h-9 rounded-xl border border-slate-100 bg-slate-50 text-slate-300 flex items-center justify-center text-xs opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-angles-right text-[11px]"></i></span>';
     } else {
-        $html .= '<a href="' . $next_url . '" class="px-3 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center gap-1.5 text-xs font-bold shadow-xs active:scale-95 transition-all" aria-label="Next Page">Next <i class="fas fa-chevron-right text-[10px]"></i></a>';
+        $html .= '<a href="' . $next_url . '" class="px-3 h-9 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-black flex items-center gap-1.5 text-xs font-bold shadow-xs">Next <i class="fas fa-chevron-right text-[10px]"></i></a>';
+        $html .= '<a href="' . $last_url . '" class="w-9 h-9 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-black flex items-center justify-center text-xs shadow-xs" title="Last Page"><i class="fas fa-angles-right text-[11px]"></i></a>';
     }
-
-    // Mobile: Last Page jump
-    if ($is_last) {
-        $html .= '<span class="w-9 h-9 rounded-xl border border-gray-100 bg-gray-50 text-gray-300 flex items-center justify-center text-xs opacity-50 cursor-not-allowed" aria-disabled="true"><i class="fas fa-angles-right text-[11px]"></i></span>';
-    } else {
-        $html .= '<a href="' . $last_url . '" class="w-9 h-9 rounded-xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:border-gray-300 flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" title="Last Page" aria-label="Last Page"><i class="fas fa-angles-right text-[11px]"></i></a>';
-    }
-
     $html .= '</div>';
 
-    // Bottom row: Mobile Per-page selector & item count
     $html .= '<div class="flex items-center justify-center w-full gap-2">';
     $html .= $render_per_page_select();
     if ($total_records !== null) {
-        $html .= '<span class="text-gray-400 font-bold text-xs bg-white border border-gray-200/80 px-2.5 py-2 rounded-xl shadow-xs">' . number_format($total_records) . ' items</span>';
+        $html .= '<span class="text-slate-500 font-bold text-xs bg-white border border-slate-200 px-2.5 py-1.5 rounded-xl shadow-xs">' . number_format($total_records) . ' items</span>';
     }
     $html .= '</div>';
-
     $html .= '</div>';
 
-    // ================= DESKTOP / TABLET VIEW (>= 640px) =================
-    // Smart 3-zone layout: [Show X per page] ... [Sliding Window] ... [Page info / count]
+    // Desktop View (>= 640px)
     $html .= '<div class="hidden sm:flex flex-wrap items-center justify-between w-full max-w-5xl px-4 gap-3">';
-
-    // Left: Per-page selector
     $html .= '<div class="flex items-center">';
     $html .= $render_per_page_select();
     $html .= '</div>';
 
-    // Center: Sliding window pagination bar (7 fixed slots maximum)
     $html .= '<div class="flex items-center justify-center gap-1.5 md:gap-2">';
-
-    // Desktop: Previous Button
     if ($is_first) {
-        $html .= '<span class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-100 bg-gray-50/70 text-gray-300 flex items-center justify-center text-xs cursor-not-allowed opacity-50" aria-disabled="true"><i class="fas fa-chevron-left text-xs"></i></span>';
+        $html .= '<span class="w-10 h-10 rounded-xl border border-slate-100 bg-slate-50 text-slate-300 flex items-center justify-center text-xs cursor-not-allowed opacity-50"><i class="fas fa-chevron-left text-xs"></i></span>';
     } else {
-        $html .= '<a href="' . $prev_url . '" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-200/80 bg-white text-gray-600 hover:bg-black hover:text-[#24B25D] hover:border-black flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" aria-label="Previous Page"><i class="fas fa-chevron-left text-xs"></i></a>';
+        $html .= '<a href="' . $prev_url . '" class="w-10 h-10 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-[#004f42] hover:text-white hover:border-[#004f42] flex items-center justify-center text-xs shadow-xs transition-colors" aria-label="Previous Page"><i class="fas fa-chevron-left text-xs"></i></a>';
     }
 
-    // Desktop: Number Buttons & Ellipsis
     foreach ($pages as $item) {
         if ($item === '...') {
-            $html .= '<span class="w-8 h-10 sm:w-10 sm:h-11 flex items-center justify-center text-gray-400 font-bold tracking-widest text-xs select-none">...</span>';
+            $html .= '<span class="w-8 h-10 flex items-center justify-center text-slate-400 font-bold text-xs select-none">...</span>';
         } else {
             $page_num = (int)$item;
             $page_url = $get_page_url($page_num);
             if ($page_num === $current_page) {
-                $html .= '<span class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-[#24B25D] bg-[#24B25D] text-black font-black flex items-center justify-center text-xs sm:text-sm shadow-md shadow-green-500/25 scale-105" aria-current="page">' . $page_num . '</span>';
+                $html .= '<span class="w-10 h-10 rounded-xl bg-[#004f42] text-white font-bold flex items-center justify-center text-xs shadow-sm" aria-current="page">' . $page_num . '</span>';
             } else {
-                $html .= '<a href="' . $page_url . '" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-200/80 bg-white text-gray-600 hover:text-black hover:bg-gray-50 hover:border-gray-300 flex items-center justify-center text-xs sm:text-sm font-bold shadow-xs active:scale-95 transition-all">' . $page_num . '</a>';
+                $html .= '<a href="' . $page_url . '" class="w-10 h-10 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 flex items-center justify-center text-xs font-semibold shadow-xs transition-colors">' . $page_num . '</a>';
             }
         }
     }
 
-    // Desktop: Next Button
     if ($is_last) {
-        $html .= '<span class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-100 bg-gray-50/70 text-gray-300 flex items-center justify-center text-xs cursor-not-allowed opacity-50" aria-disabled="true"><i class="fas fa-chevron-right text-xs"></i></span>';
+        $html .= '<span class="w-10 h-10 rounded-xl border border-slate-100 bg-slate-50 text-slate-300 flex items-center justify-center text-xs cursor-not-allowed opacity-50"><i class="fas fa-chevron-right text-xs"></i></span>';
     } else {
-        $html .= '<a href="' . $next_url . '" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border border-gray-200/80 bg-white text-gray-600 hover:bg-black hover:text-[#24B25D] hover:border-black flex items-center justify-center text-xs shadow-xs active:scale-95 transition-all" aria-label="Next Page"><i class="fas fa-chevron-right text-xs"></i></a>';
+        $html .= '<a href="' . $next_url . '" class="w-10 h-10 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-[#004f42] hover:text-white hover:border-[#004f42] flex items-center justify-center text-xs shadow-xs transition-colors" aria-label="Next Page"><i class="fas fa-chevron-right text-xs"></i></a>';
     }
-
     $html .= '</div>';
 
-    // Right: Status Badge & Total Count
-    $html .= '<div class="flex items-center text-[11px] font-bold text-gray-400 uppercase tracking-wider bg-white border border-gray-200/80 px-3.5 py-2 rounded-xl shadow-xs">';
-    $html .= 'Page <span class="text-black font-black mx-1">' . $current_page . '</span> of <span class="text-gray-700 font-bold ml-1">' . $total_pages . '</span>';
+    $html .= '<div class="flex items-center text-xs font-semibold text-slate-500 bg-white border border-slate-200 px-3.5 py-1.5 rounded-xl shadow-xs">';
+    $html .= 'Page <strong class="text-slate-900 mx-1">' . $current_page . '</strong> of <strong class="text-slate-900 ml-1">' . $total_pages . '</strong>';
     if ($total_records !== null) {
-        $html .= '<span class="text-gray-300 mx-1.5">•</span>';
-        $html .= '<span class="text-gray-600 font-semibold">' . number_format($total_records) . ' items</span>';
+        $html .= '<span class="text-slate-300 mx-1.5">•</span>';
+        $html .= '<span class="text-slate-700">' . number_format($total_records) . ' items</span>';
     }
     $html .= '</div>';
-
     $html .= '</div>';
     $html .= '</nav>';
+
+    return $html;
 
     return $html;
 }

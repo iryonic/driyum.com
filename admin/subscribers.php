@@ -21,7 +21,7 @@ if (isset($_GET['delete'])) {
         $_SESSION['success'] = "Subscriber removed successfully.";
     }
     $conn->close();
-    header("Location: subscribers.php");
+    header("Location: subscribers.php" . ($search ? "?q=" . urlencode($search) : ""));
     exit;
 }
 
@@ -30,14 +30,14 @@ if (isset($_GET['toggle'])) {
     $id = (int)$_GET['toggle'];
     $conn = get_db_connection();
     $conn->query("UPDATE newsletter_subscribers SET is_active = NOT is_active WHERE id = $id");
-    header("Location: subscribers.php" . ($search ? "?q=$search" : ""));
+    header("Location: subscribers.php" . ($search ? "?q=" . urlencode($search) : ""));
     exit;
 }
 
 // Bulk Broadcaster Logic (Background Queued)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'bulk_email') {
     $subject = sanitize_input($_POST['subject']);
-    $body = $_POST['body']; // HTML content
+    $body = $_POST['body'];
     $select_all_matches = ($_POST['all_selected'] ?? 'false') === 'true';
     $selected_ids = $_POST['selected_ids'] ?? [];
 
@@ -63,11 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         foreach ($emails as $email) {
             queue_email($email, $subject, $body);
         }
-        $_SESSION['success'] = "Broadcast of " . count($emails) . " emails has been queued!";
-        // Start processing the first batch immediately
+        $_SESSION['success'] = "Broadcast campaign of " . count($emails) . " email(s) queued for background delivery!";
         process_email_queue(5);
     } else {
-        $_SESSION['error'] = "No subscribers selected.";
+        $_SESSION['error'] = "No subscribers selected for broadcast.";
     }
     header("Location: subscribers.php");
     exit;
@@ -87,140 +86,170 @@ $pagination = get_pagination_data($query, $params, 15);
 $subscribers = $pagination['records'];
 ?>
 
-<div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 anim-up">
-    <div>
-        <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Subscribers</h1>
-        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Found <span class="text-black"><?php echo $pagination['total_records']; ?></span> subscribers</p>
-    </div>
-    
-    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-        <form class="relative group flex-1 sm:flex-none">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-black transition-colors text-[10px]"></i>
-            <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search email..." class="w-full bg-white border border-gray-100 rounded-2xl pl-10 pr-4 py-2 text-xs font-bold outline-none focus:border-black shadow-sm transition-all sm:min-w-[200px]">
-        </form>
-        <div class="flex gap-2">
-            <button onclick="openEmailModal()" id="bulkEmailBtn" class="flex-1 sm:flex-none bg-[#24B25D] text-black px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-50 hidden items-center justify-center gap-2">
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Newsletter Subscribers</h1>
+            <p class="text-sm text-slate-500 mt-0.5">Manage audience reach, active subscriptions, and dispatch email marketing campaigns.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openEmailModal()" id="bulkEmailBtn" class="btn-admin btn-admin-primary text-xs hidden items-center gap-1.5">
                 <i class="fas fa-paper-plane"></i> Send Email (<span id="selectedCountDisplay">0</span>)
             </button>
-            <button onclick="exportSubscribers()" class="flex-1 sm:flex-none bg-black text-[#24B25D] px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-black/5 flex items-center justify-center gap-2">
-                <i class="fas fa-file-export"></i> Export
+            <button onclick="exportSubscribers()" class="btn-admin btn-admin-secondary text-xs">
+                <i class="fas fa-file-export text-slate-500"></i> Export CSV
             </button>
         </div>
     </div>
-</div>
 
-<div id="selectionBanner" class="hidden bg-black text-white px-6 py-4 rounded-3xl mb-6 anim-up border border-white/5 flex items-center justify-between">
-    <div class="flex items-center gap-4">
-        <div class="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-[#24B25D]">
-            <i class="fas fa-check-double text-xs"></i>
+    <!-- Selection Notice Banner (Light Themed & Responsive) -->
+    <div id="selectionBanner" class="hidden bg-emerald-50/90 text-emerald-950 px-4 py-3 rounded-xl border border-emerald-200 items-center justify-between gap-3 flex-wrap shadow-xs">
+        <div class="flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
+                <i class="fas fa-check text-[10px]"></i>
+            </span>
+            <span class="text-xs font-semibold text-emerald-900" id="selectionText">Items selected.</span>
         </div>
-        <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-[#24B25D]">Selection Mode</p>
-            <p class="text-xs font-bold" id="selectionText">Items selected.</p>
+        <div class="flex items-center gap-2">
+            <button onclick="selectAllMatches()" class="btn-admin btn-admin-secondary text-xs py-1 px-2.5 bg-white text-emerald-900 border-emerald-300 hover:bg-emerald-100" id="selectAllBtn">
+                Select all <?php echo $pagination['total_records']; ?> matches
+            </button>
+            <button onclick="resetSelection()" class="text-xs font-semibold text-rose-600 hover:text-rose-800 px-2">Clear</button>
         </div>
     </div>
-    <div class="flex items-center gap-3">
-        <button onclick="selectAllMatches()" class="text-[9px] font-black text-white hover:text-[#24B25D] bg-white/5 px-4 py-2 rounded-xl transition-all uppercase tracking-widest" id="selectAllBtn">Select all <?php echo $pagination['total_records']; ?> matches</button>
-        <button onclick="resetSelection()" class="text-[9px] font-black text-red-500 uppercase tracking-widest hover:underline">Clear</button>
-    </div>
-</div>
 
-<div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden anim-up">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse" id="subscribersTable">
-            <thead>
-                <tr class="text-gray-400 text-[8px] uppercase bg-gray-50/50 border-b border-gray-100 font-black tracking-widest">
-                    <th class="p-5 w-16 text-center">
-                        <input type="checkbox" id="selectAllHeader" class="w-4 h-4 rounded border-gray-200 text-black focus:ring-black cursor-pointer">
-                    </th>
-                    <th class="p-5 pl-0">Email</th>
-                    <th class="p-5">Status</th>
-                    <th class="p-5 hidden sm:table-cell">Date</th>
-                    <th class="p-5 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="text-xs text-gray-600">
-                <?php if (empty($subscribers)): ?>
-                <tr>
-                    <td colspan="5" class="p-20 text-center">
-                        <i class="fas fa-envelope-open-text text-3xl text-gray-100 mb-4 block"></i>
-                        <h3 class="text-xl font-black text-gray-900">Empty List</h3>
-                        <p class="text-[10px] text-gray-400 mt-1">No subscribers found here.</p>
-                    </td>
-                </tr>
-                <?php endif; ?>
-                <?php foreach ($subscribers as $s): ?>
-                <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-all group">
-                    <td class="p-4 text-center">
-                        <input type="checkbox" value="<?php echo $s['id']; ?>" class="subscriber-checkbox w-4 h-4 rounded border-gray-200 text-[#24B25D] focus:ring-[#24B25D] cursor-pointer">
-                    </td>
-                    <td class="p-4 pl-0">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 font-black text-[10px] border border-gray-50 group-hover:bg-black group-hover:text-[#24B25D] transition-all">
-                                #<?php echo $s['id']; ?>
-                            </div>
-                            <div class="font-bold text-gray-900"><?php echo $s['email']; ?></div>
-                        </div>
-                    </td>
-                    <td class="p-4">
-                        <a href="?toggle=<?php echo $s['id']; ?><?php echo $search ? '&q='.$search : ''; ?>" class="inline-block">
-                            <?php if($s['is_active']): ?>
-                                <span class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-green-100 bg-green-50 text-green-600 flex items-center gap-1.5">
-                                    <span class="w-1 h-1 rounded-full bg-green-500"></span> Active
-                                </span>
-                            <?php else: ?>
-                                <span class="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border border-gray-100 bg-gray-50 text-gray-400">Inactive</span>
-                            <?php endif; ?>
-                        </a>
-                    </td>
-                    <td class="p-4 hidden sm:table-cell">
-                        <div class="font-bold text-gray-900"><?php echo date('M d, Y', strtotime($s['subscribed_at'])); ?></div>
-                        <div class="text-[9px] text-gray-400 font-medium"><?php echo date('g:i A', strtotime($s['subscribed_at'])); ?></div>
-                    </td>
-                    <td class="p-4 text-right">
-                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                            <a href="?delete=<?php echo $s['id']; ?>" onclick="return confirm('Delete subscriber?')" class="w-8 h-8 bg-black text-white hover:bg-red-500 rounded-lg flex items-center justify-center transition-all">
-                                <i class="fas fa-trash-alt text-[10px]"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div id="emailModal" class="fixed inset-0 bg-black/60 hidden z-[200] items-center justify-center p-6 backdrop-blur-sm anim-up">
-    <div class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl p-10 relative">
-        <div class="flex justify-between items-center mb-10">
-            <div>
-                <h3 class="text-2xl font-black text-gray-900 crimson-pro">Email</h3>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-emerald-500">Sending to <span id="modalTargetCount">0</span> people</p>
+    <!-- Search Bar -->
+    <div class="admin-card p-4">
+        <form method="GET" action="subscribers.php" class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div class="relative flex-1 max-w-md">
+                <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" name="q" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search by email address..." class="admin-input pl-9 text-xs">
             </div>
-            <button onclick="closeEmailModal()" class="w-10 h-10 rounded-2xl bg-gray-50 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all">
+
+            <div class="flex items-center gap-2">
+                <button type="submit" class="btn-admin btn-admin-primary text-xs">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <?php if ($search): ?>
+                    <a href="subscribers.php" class="btn-admin btn-admin-secondary text-xs" title="Reset Search">
+                        <i class="fas fa-undo"></i>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+
+    <!-- Subscribers Table -->
+    <div class="admin-card p-0 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th class="w-10 text-center">
+                            <input type="checkbox" id="selectAllHeader" class="rounded border-slate-300 text-primary focus:ring-primary cursor-pointer">
+                        </th>
+                        <th>Subscriber Email</th>
+                        <th>Subscription Status</th>
+                        <th>Joined Date</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($subscribers)): ?>
+                        <tr>
+                            <td colspan="5" class="p-12 text-center text-slate-400">
+                                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
+                                    <i class="fas fa-envelope-open-text text-lg"></i>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-700">No subscribers found</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Try searching with different terms or check back after promotions.</p>
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($subscribers as $s): ?>
+                            <tr class="hover:bg-slate-50/70 transition-colors group">
+                                <td class="text-center">
+                                    <input type="checkbox" value="<?php echo $s['id']; ?>" class="subscriber-checkbox rounded border-slate-300 text-primary focus:ring-primary cursor-pointer">
+                                </td>
+                                <td>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center text-xs font-mono">
+                                            #<?php echo $s['id']; ?>
+                                        </div>
+                                        <div class="text-xs font-semibold text-slate-900 font-mono">
+                                            <?php echo htmlspecialchars($s['email']); ?>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="?toggle=<?php echo $s['id']; ?><?php echo $search ? '&q=' . urlencode($search) : ''; ?>" title="Click to toggle subscription">
+                                        <?php if ($s['is_active']): ?>
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Active
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 transition-colors">
+                                                Unsubscribed
+                                            </span>
+                                        <?php endif; ?>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="text-xs text-slate-800"><?php echo date('M d, Y', strtotime($s['subscribed_at'])); ?></div>
+                                    <div class="text-[10px] text-slate-400"><?php echo date('h:i A', strtotime($s['subscribed_at'])); ?></div>
+                                </td>
+                                <td class="text-right">
+                                    <a href="?delete=<?php echo $s['id']; ?>" onclick="return confirm('Remove subscriber <?php echo htmlspecialchars($s['email']); ?>?')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors inline-block" title="Delete Subscriber">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
+</div>
+
+<!-- Broadcast Email Modal -->
+<div id="emailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-[200] items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 p-6 relative">
+        <div class="flex justify-between items-center pb-4 border-b border-slate-100 mb-5">
+            <div>
+                <h3 class="text-base font-bold text-slate-900">Broadcast Campaign</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Sending message to <span id="modalTargetCount" class="font-semibold text-emerald-600">0</span> recipient(s)</p>
+            </div>
+            <button onclick="closeEmailModal()" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center">
                 <i class="fas fa-times text-xs"></i>
             </button>
         </div>
         
-        <form method="POST" id="bulkEmailForm" class="space-y-6">
+        <form method="POST" id="bulkEmailForm" class="space-y-4">
             <input type="hidden" name="action" value="bulk_email">
             <input type="hidden" name="all_selected" id="inputAllSelected" value="false">
             <div id="selectedIdsContainer"></div>
             
-            <div class="space-y-1.5">
-                <label class="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-4">Subject</label>
-                <input type="text" name="subject" required class="w-full bg-gray-50 border-2 border-transparent rounded-[24px] px-6 py-4 text-sm font-bold outline-none focus:border-black focus:bg-white transition-all shadow-sm" placeholder="Exciting news from Driyum!">
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Email Subject *</label>
+                <input type="text" name="subject" required class="admin-input text-xs" placeholder="e.g. Exclusive Harvest Special: 15% Off Valley Walnuts!">
             </div>
             
-            <div class="space-y-1.5">
-                <label class="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-4">Message (HTML content supported)</label>
-                <textarea name="body" required class="w-full bg-gray-50 border-2 border-transparent rounded-[24px] px-6 py-6 text-sm font-medium h-48 resize-none shadow-sm focus:border-black focus:bg-white transition-all" placeholder="Hi there! We have some cool snacks in store for you..."></textarea>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Message Body (HTML supported) *</label>
+                <textarea name="body" required rows="6" class="admin-input text-xs resize-none" placeholder="Hello! We are delighted to share our newest premium harvest with you..."></textarea>
             </div>
             
-            <button type="submit" class="w-full bg-[#24B25D] text-black py-5 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-emerald-100 hover:scale-[1.02] active:scale-95 transition-all">
-                Send Email
-            </button>
+            <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeEmailModal()" class="btn-admin btn-admin-secondary text-xs">Cancel</button>
+                <button type="submit" class="btn-admin btn-admin-primary text-xs">
+                    <i class="fas fa-paper-plane"></i> Queue & Dispatch
+                </button>
+            </div>
         </form>
     </div>
 </div>
@@ -233,7 +262,6 @@ const selectionBanner = document.getElementById('selectionBanner');
 const selectedCountDisplay = document.getElementById('selectedCountDisplay');
 const bulkEmailBtn = document.getElementById('bulkEmailBtn');
 const selectionText = document.getElementById('selectionText');
-const allPagesNotice = document.getElementById('all-pages-notice');
 const selectAllBtn = document.getElementById('selectAllBtn');
 
 let isAllSelectedAcrossPages = (sessionStorage.getItem('sub_all_pages') === 'true');
@@ -272,7 +300,7 @@ function updateUI() {
 
     if (tracked.size > 0 || isAllSelectedAcrossPages) {
         bulkEmailBtn.classList.remove('hidden');
-        bulkEmailBtn.classList.add('flex');
+        bulkEmailBtn.classList.add('inline-flex');
         selectionBanner.classList.remove('hidden');
         selectionBanner.classList.add('flex');
 
@@ -282,8 +310,7 @@ function updateUI() {
             selectAllBtn.classList.add('hidden');
         } else {
             selectedCountDisplay.textContent = tracked.size;
-            selectionText.textContent = `${tracked.size} selected on this view`;
-            
+            selectionText.textContent = `${tracked.size} subscriber(s) selected on this page`;
             if (checkedOnPage === onPage && TOTAL_RECORDS > onPage) {
                 selectAllBtn.classList.remove('hidden');
             } else {
@@ -292,17 +319,19 @@ function updateUI() {
         }
     } else {
         bulkEmailBtn.classList.add('hidden');
+        bulkEmailBtn.classList.remove('inline-flex');
         selectionBanner.classList.add('hidden');
+        selectionBanner.classList.remove('flex');
     }
 }
 
-function init() {
+(function init() {
     const tracked = getStored();
     subscriberCheckboxes.forEach(cb => {
         if (tracked.has(cb.value)) cb.checked = true;
     });
     updateUI();
-}
+})();
 
 if(selectAllHeader) {
     selectAllHeader.addEventListener('change', () => {
@@ -354,8 +383,8 @@ function openEmailModal() {
 }
 
 function closeEmailModal() {
-    document.getElementById('emailModal').classList.add('hidden');
     document.getElementById('emailModal').classList.remove('flex');
+    document.getElementById('emailModal').classList.add('hidden');
 }
 
 function exportSubscribers() {
@@ -370,7 +399,6 @@ function exportSubscribers() {
     } else if (tracked.length > 0) {
         params.append('ids', tracked.join(','));
     } else {
-        // If nothing selected, export all matches (or all if no search)
         params.append('all', '1');
         const q = new URLSearchParams(window.location.search).get('q');
         if (q) params.append('q', q);
@@ -378,11 +406,6 @@ function exportSubscribers() {
     
     window.location.href = url + '?' + params.toString();
 }
-
-init();
 </script>
 
-<?php echo render_pagination($pagination['total_pages'], $pagination['current_page']); ?>
 <?php include 'includes/footer.php'; ?>
-
-

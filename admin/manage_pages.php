@@ -7,13 +7,11 @@ $error = "";
 // Handle Page Content Updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pages'])) {
     $keys = [
-        // About Page
         'about_hero_title', 'about_hero_subtitle', 'about_hero_desc',
         'about_story_title', 'about_story_text', 'about_story_quote',
         'about_tradition_title', 'about_tradition_text', 'about_twist_title', 
         'about_twist_text', 'about_tip_title', 'about_tip_text',
         'about_mission', 'about_vision',
-        // Legal Page
         'legal_privacy_policy', 'legal_terms_conditions', 'legal_returns_refunds', 'legal_disclaimer'
     ];
 
@@ -22,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pages'])) {
             update_setting($key, $_POST[$key]);
         }
     }
+
     // Handle Image Uploads
     $image_fields = ['about_story_image', 'about_tradition_image'];
     $allowed_exts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
@@ -36,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pages'])) {
                 if (move_uploaded_file($_FILES[$field]["tmp_name"], $target_dir . $filename)) {
                     $path = "assets/images/uploads/" . $filename;
                     
-                    // Delete old file if it exists and is an upload
                     $old_path = get_setting($field, '');
                     if (!empty($old_path) && strpos($old_path, 'assets/images/uploads/') === 0) {
                         if (file_exists("../" . $old_path)) @unlink("../" . $old_path);
@@ -50,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_pages'])) {
         }
     }
 
-    $success = "Page contents and visuals updated successfully!";
+    $success = "Page contents and visual assets updated successfully!";
 }
 
 // Fetch Current Settings
@@ -80,240 +78,218 @@ $p = [
     'about_story_image' => get_setting('about_story_image', 'assets/images/about_story.jpg'),
     'about_tradition_image' => get_setting('about_tradition_image', 'assets/images/tradition.jpg')
 ];
+
+$active_tab = isset($_GET['tab']) ? sanitize_input($_GET['tab']) : 'about';
+if (!in_array($active_tab, ['about', 'legal'])) {
+    $active_tab = 'about';
+}
 ?>
 
-<form method="POST" enctype="multipart/form-data" class="pb-20 anim-up">
-    <input type="hidden" name="update_pages" value="1">
+<div class="space-y-6">
+    <form method="POST" action="manage_pages.php?tab=<?php echo urlencode($active_tab); ?>" enctype="multipart/form-data">
+        <input type="hidden" name="update_pages" value="1">
 
-    <!-- Top Action Bar -->
-    <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 py-4 mb-8 -mx-4 px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-            <h1 class="text-3xl font-black text-gray-900 crimson-pro tracking-tight">Page Content</h1>
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Manage About & Legal Pages</p>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-4">
-            <!-- TAB NAVIGATION (Inline) -->
-            <div class="flex bg-gray-100 p-1 rounded-xl">
-                <button type="button" onclick="switchTab('about')" id="btn-about" class="px-6 py-2 rounded-lg font-black uppercase text-[10px] tracking-widest transition-all shadow-sm bg-white text-black">About</button>
-                <button type="button" onclick="switchTab('legal')" id="btn-legal" class="px-6 py-2 rounded-lg font-black uppercase text-[10px] tracking-widest transition-all text-gray-400 hover:text-gray-600">Legal</button>
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Content Management (CMS)</h1>
+                <p class="text-sm text-slate-500 mt-0.5">Edit About page storytelling, cultural heritage narratives, and legal policy pages.</p>
             </div>
 
-            <button type="submit" name="update_pages" class="bg-black text-white px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-[#24B25D] hover:text-black transition-all shadow-lg flex items-center gap-2">
-                <i class="fas fa-save"></i> Save Changes
-            </button>
-        </div>
-    </div>
-
-    <?php if($success): ?>
-        <div class="mb-8 p-4 bg-green-50 text-green-700 rounded-2xl border border-green-100 font-bold text-xs anim-up flex items-center gap-3">
-            <i class="fas fa-check-circle"></i> <?php echo $success; ?>
-        </div>
-    <?php endif; ?>
-
-    <!-- ABOUT PAGE CONTENT -->
-    <div id="tab-about" class="tab-content space-y-8">
-        
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            
-            <!-- Hero Section -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                    <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900">Hero Section</h3>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Hero Title (HTML Allowed)</label>
-                        <textarea name="about_hero_title" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black transition-all h-24 resize-none"><?php echo htmlspecialchars($p['about_hero_title']); ?></textarea>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Subtitle</label>
-                        <input type="text" name="about_hero_subtitle" value="<?php echo htmlspecialchars($p['about_hero_subtitle']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Short Description</label>
-                        <textarea name="about_hero_desc" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-20 resize-none"><?php echo htmlspecialchars($p['about_hero_desc']); ?></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Brand Story -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-50">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center">
-                            <i class="fas fa-book-open"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-900">Brand Story</h3>
-                    </div>
-                    <label class="cursor-pointer bg-black text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase hover:bg-[#24B25D] hover:text-black transition-colors">
-                        Change Image
-                        <input type="file" name="about_story_image" class="hidden">
-                    </label>
+            <div class="flex items-center gap-3">
+                <div class="flex p-1 bg-slate-100 rounded-xl text-xs font-medium">
+                    <a href="manage_pages.php?tab=about" id="btn-about" class="px-4 py-1.5 rounded-lg transition-all <?php echo $active_tab === 'about' ? 'bg-white text-slate-900 font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900'; ?>">
+                        About Story
+                    </a>
+                    <a href="manage_pages.php?tab=legal" id="btn-legal" class="px-4 py-1.5 rounded-lg transition-all <?php echo $active_tab === 'legal' ? 'bg-white text-slate-900 font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900'; ?>">
+                        Legal & Policies
+                    </a>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-                    <div class="order-2 md:order-1 space-y-4">
-                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Story Title</label>
-                            <input type="text" name="about_story_title" value="<?php echo htmlspecialchars($p['about_story_title']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Main Text</label>
-                            <textarea name="about_story_text" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-40 resize-none"><?php echo htmlspecialchars($p['about_story_text']); ?></textarea>
-                        </div>
-                    </div>
-                    <div class="order-1 md:order-2">
-                        <div class="aspect-square rounded-2xl overflow-hidden relative group/img">
-                            <img src="../<?php echo $p['about_story_image']; ?>" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">Current Image</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-             <!-- Tradition -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow xl:col-span-2">
-                <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-50">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center">
-                            <i class="fas fa-landmark"></i>
-                        </div>
-                        <h3 class="font-bold text-gray-900">Tradition & Heritage</h3>
-                    </div>
-                    <label class="cursor-pointer bg-black text-white px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase hover:bg-[#24B25D] hover:text-black transition-colors">
-                        Change Image
-                        <input type="file" name="about_tradition_image" class="hidden">
-                    </label>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                     <div class="space-y-4">
-                         <div class="aspect-video rounded-2xl overflow-hidden relative shadow-sm">
-                            <img src="../<?php echo $p['about_tradition_image']; ?>" class="w-full h-full object-cover">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Section Title</label>
-                            <input type="text" name="about_tradition_title" value="<?php echo htmlspecialchars($p['about_tradition_title']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:bg-white focus:border-black">
-                        </div>
-                     </div>
-                     <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="space-y-1 sm:col-span-2">
-                            <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Main Text</label>
-                            <textarea name="about_tradition_text" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-32 resize-none"><?php echo htmlspecialchars($p['about_tradition_text']); ?></textarea>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Modern Twist Title</label>
-                            <input type="text" name="about_twist_title" value="<?php echo htmlspecialchars($p['about_twist_title']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:bg-white focus:border-black">
-                             <textarea name="about_twist_text" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-24 resize-none mt-2"><?php echo htmlspecialchars($p['about_twist_text']); ?></textarea>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-3">Tip Title</label>
-                            <input type="text" name="about_tip_title" value="<?php echo htmlspecialchars($p['about_tip_title']); ?>" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold outline-none focus:bg-white focus:border-black">
-                            <textarea name="about_tip_text" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-24 resize-none mt-2"><?php echo htmlspecialchars($p['about_tip_text']); ?></textarea>
-                        </div>
-                     </div>
-                </div>
-            </div>
-
-            <!-- Mission & Vision -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900">Mission</h3>
-                </div>
-                <textarea name="about_mission" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-32 resize-none"><?php echo htmlspecialchars($p['about_mission']); ?></textarea>
-            </div>
-             <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 group hover:shadow-md transition-shadow">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                    <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900">Vision</h3>
-                </div>
-                <textarea name="about_vision" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-32 resize-none"><?php echo htmlspecialchars($p['about_vision']); ?></textarea>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- LEGAL PAGE CONTENT -->
-    <div id="tab-legal" class="tab-content hidden space-y-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Privacy Policy -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900">Privacy Policy</h3>
-                </div>
-                <textarea name="legal_privacy_policy" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-80 resize-none leading-relaxed"><?php echo htmlspecialchars($p['legal_privacy_policy']); ?></textarea>
-            </div>
-
-            <!-- Terms -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900">Terms & Conditions</h3>
-                </div>
-                 <textarea name="legal_terms_conditions" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-80 resize-none leading-relaxed"><?php echo htmlspecialchars($p['legal_terms_conditions']); ?></textarea>
-            </div>
-
-             <!-- Returns -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                    <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
-                        <i class="fas fa-undo"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900">Returns & Refunds</h3>
-                </div>
-                 <textarea name="legal_returns_refunds" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-64 resize-none leading-relaxed"><?php echo htmlspecialchars($p['legal_returns_refunds']); ?></textarea>
-            </div>
-
-             <!-- Disclaimer -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
-                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900">Disclaimer</h3>
-                </div>
-                 <textarea name="legal_disclaimer" class="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-black transition-all h-64 resize-none leading-relaxed"><?php echo htmlspecialchars($p['legal_disclaimer']); ?></textarea>
+                <button type="submit" name="update_pages" class="btn-admin btn-admin-primary text-xs">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
             </div>
         </div>
-    </div>
 
-</form>
+        <?php if ($success): ?>
+            <div class="mt-4 p-3.5 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-200 text-xs font-medium flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-check-circle text-emerald-600"></i>
+                    <span><?php echo htmlspecialchars($success); ?></span>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700"><i class="fas fa-times text-xs"></i></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($error): ?>
+            <div class="mt-4 p-3.5 bg-rose-50 text-rose-800 rounded-xl border border-rose-200 text-xs font-medium flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle text-rose-600"></i>
+                    <span><?php echo htmlspecialchars($error); ?></span>
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700"><i class="fas fa-times text-xs"></i></button>
+            </div>
+        <?php endif; ?>
+
+        <!-- ABOUT TAB -->
+        <div id="tab-about" class="tab-content space-y-6 mt-6 <?php echo $active_tab === 'about' ? '' : 'hidden'; ?>">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Hero Section -->
+                <div class="admin-card p-5">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-heading text-amber-500"></i> Hero Section
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Subtitle Tagline</label>
+                            <input type="text" name="about_hero_subtitle" value="<?php echo htmlspecialchars($p['about_hero_subtitle']); ?>" class="admin-input text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Hero Headline (HTML Allowed)</label>
+                            <textarea name="about_hero_title" rows="2" class="admin-input text-xs resize-none font-bold"><?php echo htmlspecialchars($p['about_hero_title']); ?></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Short Intro Description</label>
+                            <textarea name="about_hero_desc" rows="3" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($p['about_hero_desc']); ?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Story -->
+                <div class="admin-card p-5">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-book-open text-primary"></i> Brand Story
+                        </h3>
+                        <label class="btn-admin btn-admin-secondary text-xs cursor-pointer py-1 px-2.5">
+                            <i class="fas fa-camera mr-1"></i> Change Photo
+                            <input type="file" name="about_story_image" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="sm:col-span-2 space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Story Headline</label>
+                                <input type="text" name="about_story_title" value="<?php echo htmlspecialchars($p['about_story_title']); ?>" class="admin-input text-xs font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Story Narrative</label>
+                                <textarea name="about_story_text" rows="5" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($p['about_story_text']); ?></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-semibold text-slate-700 mb-1.5">Current Visual</span>
+                            <div class="aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+                                <img src="../<?php echo htmlspecialchars($p['about_story_image']); ?>" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tradition & Heritage -->
+                <div class="admin-card p-5 lg:col-span-2">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-landmark text-indigo-500"></i> Tradition & Kashmiri Heritage
+                        </h3>
+                        <label class="btn-admin btn-admin-secondary text-xs cursor-pointer py-1 px-2.5">
+                            <i class="fas fa-camera mr-1"></i> Change Photo
+                            <input type="file" name="about_tradition_image" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div>
+                            <span class="block text-xs font-semibold text-slate-700 mb-1.5">Heritage Visual</span>
+                            <div class="aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-100 mb-3">
+                                <img src="../<?php echo htmlspecialchars($p['about_tradition_image']); ?>" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Section Title</label>
+                                <input type="text" name="about_tradition_title" value="<?php echo htmlspecialchars($p['about_tradition_title']); ?>" class="admin-input text-xs font-bold">
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2 space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Main Tradition Narrative</label>
+                                <textarea name="about_tradition_text" rows="4" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($p['about_tradition_text']); ?></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Modern Twist Heading</label>
+                                    <input type="text" name="about_twist_title" value="<?php echo htmlspecialchars($p['about_twist_title']); ?>" class="admin-input text-xs font-bold mb-2">
+                                    <textarea name="about_twist_text" rows="3" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($p['about_twist_text']); ?></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Culinary Tip Heading</label>
+                                    <input type="text" name="about_tip_title" value="<?php echo htmlspecialchars($p['about_tip_title']); ?>" class="admin-input text-xs font-bold mb-2">
+                                    <textarea name="about_tip_text" rows="3" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($p['about_tip_text']); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mission & Vision -->
+                <div class="admin-card p-5">
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-bullseye text-purple-500"></i> Brand Mission
+                    </h3>
+                    <textarea name="about_mission" rows="4" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($p['about_mission']); ?></textarea>
+                </div>
+
+                <div class="admin-card p-5">
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-eye text-rose-500"></i> Brand Vision
+                    </h3>
+                    <textarea name="about_vision" rows="4" class="admin-input text-xs resize-none"><?php echo htmlspecialchars($p['about_vision']); ?></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEGAL TAB -->
+        <div id="tab-legal" class="tab-content space-y-6 mt-6 <?php echo $active_tab === 'legal' ? '' : 'hidden'; ?>">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Privacy Policy -->
+                <div class="admin-card p-5">
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-user-shield text-blue-500"></i> Privacy Policy
+                    </h3>
+                    <textarea name="legal_privacy_policy" rows="12" class="admin-input text-xs resize-none leading-relaxed font-mono"><?php echo htmlspecialchars($p['legal_privacy_policy']); ?></textarea>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="admin-card p-5">
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-file-contract text-indigo-500"></i> Terms & Conditions
+                    </h3>
+                    <textarea name="legal_terms_conditions" rows="12" class="admin-input text-xs resize-none leading-relaxed font-mono"><?php echo htmlspecialchars($p['legal_terms_conditions']); ?></textarea>
+                </div>
+
+                <!-- Returns & Refunds -->
+                <div class="admin-card p-5">
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-undo text-amber-500"></i> Returns & Refund Policy
+                    </h3>
+                    <textarea name="legal_returns_refunds" rows="8" class="admin-input text-xs resize-none leading-relaxed font-mono"><?php echo htmlspecialchars($p['legal_returns_refunds']); ?></textarea>
+                </div>
+
+                <!-- Agricultural Disclaimer -->
+                <div class="admin-card p-5">
+                    <h3 class="text-sm font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-rose-500"></i> Product Disclaimer
+                    </h3>
+                    <textarea name="legal_disclaimer" rows="8" class="admin-input text-xs resize-none leading-relaxed font-mono"><?php echo htmlspecialchars($p['legal_disclaimer']); ?></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 <script>
 function switchTab(tab) {
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-    document.getElementById('tab-' + tab).classList.remove('hidden');
-    
-    // Reset buttons
-    const btns = ['about', 'legal'];
-    btns.forEach(t => {
-        const btn = document.getElementById('btn-' + t);
-        if(t === tab) {
-            btn.classList.remove('text-gray-400');
-            btn.classList.add('bg-white', 'text-black', 'shadow-sm');
-        } else {
-            btn.classList.add('text-gray-400');
-            btn.classList.remove('bg-white', 'text-black', 'shadow-sm');
-        }
-    });
+    window.location.href = 'manage_pages.php?tab=' + encodeURIComponent(tab);
 }
 </script>
 
 <?php include 'includes/footer.php'; ?>
-
-

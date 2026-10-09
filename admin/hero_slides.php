@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: hero_slides.php");
         exit;
     }
+
     // 1. Delete Slide
     if (isset($_POST['delete_slide'])) {
         $id = intval($_POST['slide_id']);
@@ -152,50 +153,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'file_mobile'  => ['var' => &$image_mobile,  'prefix' => 'slide_mob_']
         ];
 
-        $allowed_img_exts = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif'];
-        foreach ($upload_map as $file_key => &$cfg) {
-            if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
-                $ext = strtolower(pathinfo($_FILES[$file_key]['name'], PATHINFO_EXTENSION));
-                if (!in_array($ext, $allowed_img_exts)) {
-                    $err = "Invalid image file format ($ext). Only JPG, PNG, WEBP, SVG, and GIF are allowed.";
-                    break;
-                }
-                $clean_filename = $cfg['prefix'] . uniqid() . '.' . $ext;
-                $dest = $upload_dir . $clean_filename;
-                if (move_uploaded_file($_FILES[$file_key]['tmp_name'], $dest)) {
-                    $cfg['var'] = "assets/images/uploads/" . $clean_filename;
+        foreach ($upload_map as $input_name => $cfg) {
+            if (!empty($_FILES[$input_name]['name']) && $_FILES[$input_name]['error'] === UPLOAD_ERR_OK) {
+                $ext = strtolower(pathinfo($_FILES[$input_name]['name'], PATHINFO_EXTENSION));
+                if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'])) {
+                    $new_name = $cfg['prefix'] . time() . '_' . rand(1000, 9999) . '.' . $ext;
+                    $target = $upload_dir . $new_name;
+                    if (move_uploaded_file($_FILES[$input_name]['tmp_name'], $target)) {
+                        $cfg['var'] = 'assets/images/uploads/' . $new_name;
+                    }
                 }
             }
         }
 
         if (empty($image_desktop)) {
-            $err = "Desktop banner image is required.";
+            $err = "Desktop banner image is mandatory.";
         } else {
-            $title = $alt_text ?: "Hero Banner Slide";
-
-            if ($slide_id <= 0) {
-                // INSERT
-                $stmt = $conn->prepare("INSERT INTO hero_slides (title, alt_text, image, image_tablet, image_mobile, cta_link, product_id, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("ssssssiii", $title, $alt_text, $image_desktop, $image_tablet, $image_mobile, $cta_link, $product_id, $sort_order, $is_active);
-                if ($stmt->execute()) {
-                    $_SESSION['msg'] = "New hero banner slide created successfully!";
-                    header("Location: hero_slides.php");
-                    exit;
-                } else {
-                    $err = "Database error: " . $stmt->error;
-                }
+            if ($slide_id > 0) {
+                $stmt = $conn->prepare("UPDATE hero_slides SET image=?, image_tablet=?, image_mobile=?, cta_link=?, product_id=?, alt_text=?, sort_order=?, is_active=? WHERE id=?");
+                $stmt->bind_param("ssssisiii", $image_desktop, $image_tablet, $image_mobile, $cta_link, $product_id, $alt_text, $sort_order, $is_active, $slide_id);
+                $stmt->execute();
+                $_SESSION['msg'] = "Slide updated successfully!";
             } else {
-                // UPDATE
-                $stmt = $conn->prepare("UPDATE hero_slides SET title = ?, alt_text = ?, image = ?, image_tablet = ?, image_mobile = ?, cta_link = ?, product_id = ?, sort_order = ?, is_active = ? WHERE id = ?");
-                $stmt->bind_param("ssssssiiii", $title, $alt_text, $image_desktop, $image_tablet, $image_mobile, $cta_link, $product_id, $sort_order, $is_active, $slide_id);
-                if ($stmt->execute()) {
-                    $_SESSION['msg'] = "Hero banner slide updated successfully!";
-                    header("Location: hero_slides.php");
-                    exit;
-                } else {
-                    $err = "Database error: " . $stmt->error;
-                }
+                $stmt = $conn->prepare("INSERT INTO hero_slides (image, image_tablet, image_mobile, cta_link, product_id, alt_text, sort_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("ssssisii", $image_desktop, $image_tablet, $image_mobile, $cta_link, $product_id, $alt_text, $sort_order, $is_active);
+                $stmt->execute();
+                $_SESSION['msg'] = "New slide banner created successfully!";
             }
+            header("Location: hero_slides.php");
+            exit;
         }
     }
 }
@@ -230,440 +216,191 @@ require_once 'includes/header.php';
 <!-- Sortable.js for smooth Drag & Drop reordering -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
-<div class="max-w-100 mx-auto space-y-6">
+<div class="space-y-6">
 
-    <!-- Toast Notification Container -->
-    <div id="toast" class="fixed top-6 right-6 z-[9999] hidden flex items-center gap-3 px-5 py-3.5 rounded-2xl text-white font-bold text-xs shadow-2xl transition-all duration-300"></div>
+    <!-- PAGE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
+                <i class="fas fa-images text-emerald-700 text-xl"></i>
+                Hero Banner Carousel
+            </h1>
+            <p class="text-sm text-slate-500 mt-0.5">Manage responsive homepage banners, destination links, sequence ordering, and organic wave borders.</p>
+        </div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+            <button onclick="openAddSlideModal()" class="btn-admin btn-admin-primary text-xs inline-flex items-center gap-2">
+                <i class="fas fa-plus"></i> Add New Slide
+            </button>
+        </div>
+    </div>
 
+    <!-- FLASH MESSAGES -->
     <?php if(!empty($_SESSION['msg'])): ?>
-        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <i class="fas fa-check-circle text-emerald-600 text-base"></i>
+        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-semibold flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <i class="fas fa-check-circle text-emerald-600 text-sm"></i>
                 <span><?php echo htmlspecialchars($_SESSION['msg']); unset($_SESSION['msg']); ?></span>
             </div>
-            <button onclick="this.parentElement.remove()" class="text-emerald-400 hover:text-emerald-800"><i class="fas fa-times"></i></button>
+            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xs"></i></button>
         </div>
     <?php endif; ?>
 
     <?php if(!empty($err)): ?>
-        <div class="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-bold flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <i class="fas fa-exclamation-circle text-red-600 text-base"></i>
+        <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <i class="fas fa-exclamation-circle text-rose-600 text-sm"></i>
                 <span><?php echo htmlspecialchars($err); ?></span>
             </div>
-            <button onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-800"><i class="fas fa-times"></i></button>
+            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xs"></i></button>
         </div>
     <?php endif; ?>
 
-    <!-- HEADER TITLE & ADD BUTTON -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-black text-gray-900 font-heading tracking-tight">Hero Slides</h1>
-            <p class="text-xs font-medium text-gray-500 mt-1">Manage responsive carousel banners, target links, and display order</p>
-        </div>
-        <button onclick="openAddSlideModal()" class="inline-flex items-center gap-2 bg-[#24B25D] hover:bg-[#004F42] text-white px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-[#24B25D]/20 active:scale-95">
-            <i class="fas fa-plus text-sm"></i>
-            <span>Add New Slide</span>
-        </button>
-    </div>
-
-    <!-- METRICS CARDS (SCREENSHOT 1) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <!-- Total Hero Slides -->
-        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-2xl border border-sky-100/80">
+    <!-- METRICS OVERVIEW CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="admin-card p-4 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center text-lg border border-sky-100 shrink-0">
                 <i class="fas fa-images"></i>
             </div>
             <div>
-                <div class="text-3xl font-black text-gray-900 font-heading leading-none"><?php echo $total_slides; ?></div>
-                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1.5">Total Hero Slides</div>
+                <div class="text-2xl font-bold text-slate-900 leading-none"><?php echo $total_slides; ?></div>
+                <div class="text-xs text-slate-500 font-medium mt-1">Total Hero Slides</div>
             </div>
         </div>
 
-        <!-- Active / Live -->
-        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-[#24B25D] flex items-center justify-center text-2xl border border-emerald-100/80">
-                <i class="fas fa-check"></i>
+        <div class="admin-card p-4 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg border border-emerald-100 shrink-0">
+                <i class="fas fa-check-circle"></i>
             </div>
             <div>
-                <div class="text-3xl font-black text-gray-900 font-heading leading-none"><?php echo $active_slides; ?></div>
-                <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1.5">Active / Live</div>
+                <div class="text-2xl font-bold text-slate-900 leading-none"><?php echo $active_slides; ?></div>
+                <div class="text-xs text-slate-500 font-medium mt-1">Active on Frontpage</div>
+            </div>
+        </div>
+
+        <div class="admin-card p-4 flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center text-lg border border-teal-100 shrink-0">
+                <i class="fas fa-water"></i>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-slate-900 leading-none"><?php echo $current_wave_intensity; ?>%</div>
+                <div class="text-xs text-slate-500 font-medium mt-1">Wave Border Curvature</div>
             </div>
         </div>
     </div>
 
-    <!-- WAVY BORDER DIVIDER CUSTOMIZER (INDUSTRY LEVEL RANGE BAR) -->
+    <!-- WAVY BORDER DIVIDER CUSTOMIZER -->
     <style>
         #wave-slider {
             --fill-pct: <?php echo (int)$current_wave_intensity; ?>%;
             -webkit-appearance: none;
             appearance: none;
-            background: linear-gradient(to right, #24B25D 0%, #24B25D var(--fill-pct), #E2E8F0 var(--fill-pct), #E2E8F0 100%);
+            background: linear-gradient(to right, #004f42 0%, #24B25D var(--fill-pct), #E2E8F0 var(--fill-pct), #E2E8F0 100%);
+            border-radius: 9999px;
+            height: 8px;
         }
         #wave-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 26px;
-            height: 26px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: #ffffff;
-            border: 4px solid #24B25D;
+            border: 3px solid #004f42;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(36, 178, 93, 0.45), 0 0 0 4px rgba(36, 178, 93, 0.12);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 2px 8px rgba(0, 79, 66, 0.4);
+            transition: transform 0.15s ease;
         }
         #wave-slider::-webkit-slider-thumb:hover {
             transform: scale(1.15);
-            box-shadow: 0 6px 18px rgba(36, 178, 93, 0.55), 0 0 0 6px rgba(36, 178, 93, 0.18);
         }
-        #wave-slider::-webkit-slider-thumb:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 8px rgba(36, 178, 93, 0.6);
-        }
-        #wave-slider::-moz-range-thumb {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 4px solid #24B25D;
+        .preset-btn {
+            transition: all 0.18s ease;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(36, 178, 93, 0.45);
         }
-        .preview-viewport-trans {
-            transition: max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        .preset-btn:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+        .preset-btn.active {
+            border-color: #004f42;
+            background: #ecfdf5;
+            box-shadow: 0 1px 4px rgba(0, 79, 66, 0.12);
+        }
+        .preset-btn.active span:first-child {
+            color: #004f42;
         }
     </style>
-    <div class="bg-white rounded-3xl p-5 sm:p-7 md:p-8 border border-slate-200/90 shadow-sm relative overflow-hidden transition-all duration-300">
-        <!-- Ambient decorative corner glows -->
-        <div class="absolute -top-24 -right-24 w-72 h-72 bg-gradient-to-br from-[#24B25D]/15 via-emerald-100/30 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-gradient-to-tr from-amber-100/20 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+    
 
-        <form id="wave-settings-form" method="POST" onsubmit="event.preventDefault(); saveWaveIntensity();">
-            <input type="hidden" name="save_wave_settings" value="1">
-            <input type="hidden" id="wave_intensity_hidden" name="hero_wave_intensity" value="<?php echo $current_wave_intensity; ?>">
-            
-            <!-- Card Header: Fully Responsive Stacking -->
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-gray-100 relative z-10">
-                <div class="flex items-start sm:items-center gap-3.5">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/90 text-[#24B25D] flex items-center justify-center text-xl shrink-0 border border-emerald-200/70 shadow-xs">
-                        <i class="fas fa-water"></i>
-                    </div>
-                    <div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <h2 class="text-base sm:text-lg font-black text-gray-900 font-heading tracking-tight">Wavy Border   </h2>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-[#004F42] border border-emerald-200 shadow-2xs">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#24B25D] animate-ping"></span>
-                                Live Storefront Sync
-                            </span>
-                        </div>
-                        <p class="text-xs text-gray-500 font-medium mt-0.5 max-w-2xl">Tailor the curvature and depth of the organic wave dividing the hero banner from the storefront content below.</p>
-                    </div>
-                </div>
-
-                <!-- Action Controls: Responsive Stacking with tactile buttons -->
-                <div class="flex items-center gap-2.5 sm:self-auto shrink-0 w-full sm:w-auto justify-end">
-                    <button type="button" onclick="setWavePreset(75)" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 hover:text-black hover:bg-gray-50 transition active:scale-95 flex items-center justify-center gap-1.5 shadow-2xs">
-                        <i class="fas fa-undo-alt text-[10px] text-gray-400"></i>
-                        <span>Reset (75%)</span>
-                    </button>
-                    <button type="button" id="save-wave-btn" onclick="saveWaveIntensity()" class="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-[#24B25D] hover:bg-[#004F42] text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 active:scale-95">
-                        <i class="fas fa-check"></i>
-                        <span>Save Waviness</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Card Body: Responsive 2-Column Grid -->
-            <div class="pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start relative z-10">
-                <!-- Left Column (7 cols): Controls & Slider -->
-                <div class="lg:col-span-7 space-y-6">
-                    <div>
-                        <!-- Slider Metadata Header -->
-                        <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-2 mb-3">
-                            <div>
-                                <label for="wave-slider" class="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
-                                    <span>Wave Amplitude</span>
-                                    <span class="text-gray-400 font-medium text-[11px] hidden sm:inline">(0% Flat &rarr; 100% Deep)</span>
-                                </label>
-                            </div>
-                            <div class="flex items-center gap-2 self-start xs:self-auto">
-                                <span id="wave-desc-badge" class="text-xs font-black text-emerald-800 bg-emerald-50/90 border border-emerald-200/80 px-3 py-1 rounded-xl shadow-2xs">
-                                    Dynamic & Curvy
-                                </span>
-                                <span id="wave-val-pill" class="text-base sm:text-lg font-black text-black font-mono bg-gray-50 border border-gray-200 px-3.5 py-0.5 rounded-xl shadow-2xs min-w-[66px] text-center">
-                                    <?php echo $current_wave_intensity; ?>%
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Industry Level Range Bar with Steppers for Precision & Mobile Ergonomics -->
-                        <div class="bg-gray-50/80 rounded-2xl p-3 sm:p-4 border border-gray-200/70 shadow-2xs">
-                            <div class="flex items-center gap-2.5 sm:gap-3.5">
-                                <!-- Decrement Stepper Button -->
-                                <button type="button" 
-                                        onclick="stepWave(-5)" 
-                                        title="Decrease 5%"
-                                        aria-label="Decrease waviness by 5%"
-                                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-gray-200 text-gray-600 hover:text-black hover:border-gray-400 flex items-center justify-center text-xs font-bold shrink-0 transition active:scale-90 shadow-2xs">
-                                    <i class="fas fa-minus text-[10px]"></i>
-                                </button>
-
-                                <!-- Interactive Slider -->
-                                <div class="flex-1 relative py-1">
-                                    <input type="range" 
-                                           id="wave-slider" 
-                                           min="0" 
-                                           max="100" 
-                                           step="1" 
-                                           value="<?php echo $current_wave_intensity; ?>" 
-                                           oninput="onWaveSliderChange(this.value)"
-                                           onchange="saveWaveIntensity(true)"
-                                           class="w-full h-3.5 rounded-lg appearance-none cursor-pointer focus:outline-none transition-all">
-                                </div>
-
-                                <!-- Increment Stepper Button -->
-                                <button type="button" 
-                                        onclick="stepWave(5)" 
-                                        title="Increase 5%"
-                                        aria-label="Increase waviness by 5%"
-                                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white border border-gray-200 text-gray-600 hover:text-black hover:border-gray-400 flex items-center justify-center text-xs font-bold shrink-0 transition active:scale-90 shadow-2xs">
-                                    <i class="fas fa-plus text-[10px]"></i>
-                                </button>
-                            </div>
-
-                            <!-- Milestone Markers / Ticks with Clickable Anchors -->
-                            <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 mt-3 px-1 select-none">
-                                <button type="button" onclick="setWavePreset(0)" class="hover:text-black transition flex flex-col items-center gap-0.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                    <span>0% Flat</span>
-                                </button>
-                                <button type="button" onclick="setWavePreset(25)" class="hover:text-black transition hidden xs:flex flex-col items-center gap-0.5">
-                                    <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                    <span>25%</span>
-                                </button>
-                                <button type="button" onclick="setWavePreset(50)" class="hover:text-black transition flex flex-col items-center gap-0.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                    <span>50%</span>
-                                </button>
-                                <button type="button" onclick="setWavePreset(75)" class="text-[#24B25D] hover:text-[#004F42] transition flex flex-col items-center gap-0.5 font-black">
-                                    <span class="w-2 h-2 rounded-full bg-[#24B25D]"></span>
-                                    <span>75% ★ Ideal</span>
-                                </button>
-                                <button type="button" onclick="setWavePreset(100)" class="hover:text-black transition flex flex-col items-center gap-0.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                    <span>100% Max</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Instant Preset Cards (Responsive Grid) -->
-                    <div>
-                        <div class="flex items-center justify-between mb-2.5">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Curated Style Presets</span>
-                            <span class="text-[10px] text-gray-400 font-medium hidden sm:inline">Click any preset to apply instantly</span>
-                        </div>
-                        <div class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-2.5">
-                            <button type="button" data-val="0" onclick="setWavePreset(0)" class="preset-btn p-2.5 rounded-2xl border border-gray-200 text-left transition hover:border-gray-400 hover:bg-gray-50 active:scale-95 shadow-2xs group">
-                                <div class="preset-val text-xs font-black text-gray-900 flex items-center justify-between">
-                                    <span>0%</span>
-                                    <i class="preset-ico fas fa-minus text-[9px] text-gray-400 group-hover:text-gray-700"></i>
-                                </div>
-                                <div class="preset-lbl text-[10px] font-bold text-gray-500 mt-0.5 leading-tight truncate">Flat Line</div>
-                            </button>
-                            
-                            <button type="button" data-val="30" onclick="setWavePreset(30)" class="preset-btn p-2.5 rounded-2xl border border-gray-200 text-left transition hover:border-gray-400 hover:bg-gray-50 active:scale-95 shadow-2xs group">
-                                <div class="preset-val text-xs font-black text-gray-900 flex items-center justify-between">
-                                    <span>30%</span>
-                                    <i class="preset-ico fas fa-water text-[9px] text-gray-400 group-hover:text-gray-700"></i>
-                                </div>
-                                <div class="preset-lbl text-[10px] font-bold text-gray-500 mt-0.5 leading-tight truncate">Subtle Flow</div>
-                            </button>
-
-                            <button type="button" data-val="60" onclick="setWavePreset(60)" class="preset-btn p-2.5 rounded-2xl border border-gray-200 text-left transition hover:border-gray-400 hover:bg-gray-50 active:scale-95 shadow-2xs group">
-                                <div class="preset-val text-xs font-black text-gray-900 flex items-center justify-between">
-                                    <span>60%</span>
-                                    <i class="preset-ico fas fa-wind text-[9px] text-gray-400 group-hover:text-gray-700"></i>
-                                </div>
-                                <div class="preset-lbl text-[10px] font-bold text-gray-500 mt-0.5 leading-tight truncate">Balanced</div>
-                            </button>
-
-                            <button type="button" data-val="75" onclick="setWavePreset(75)" class="preset-btn p-2.5 rounded-2xl border border-emerald-400 bg-emerald-50 text-[#004F42] text-left transition shadow-xs active:scale-95 group ring-2 ring-emerald-500/20">
-                                <div class="preset-val text-xs font-black text-[#004F42] flex items-center justify-between">
-                                    <span>75%</span>
-                                    <i class="preset-ico fas fa-star text-[9px] text-emerald-500"></i>
-                                </div>
-                                <div class="preset-lbl text-[10px] font-black text-emerald-700 mt-0.5 leading-tight truncate">Golden ★</div>
-                            </button>
-
-                            <button type="button" data-val="100" onclick="setWavePreset(100)" class="preset-btn p-2.5 rounded-2xl border border-gray-200 text-left transition hover:border-gray-400 hover:bg-gray-50 active:scale-95 shadow-2xs group">
-                                <div class="preset-val text-xs font-black text-gray-900 flex items-center justify-between">
-                                    <span>100%</span>
-                                    <i class="preset-ico fas fa-mountain text-[9px] text-gray-400 group-hover:text-gray-700"></i>
-                                </div>
-                                <div class="preset-lbl text-[10px] font-bold text-gray-500 mt-0.5 leading-tight truncate">Deep Crests</div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column (5 cols): Live Simulated Visual Preview Window -->
-                <div class="lg:col-span-5 w-full">
-                    <div class="rounded-2xl border border-gray-200/90 bg-gray-950 overflow-hidden shadow-md relative">
-                        <!-- Preview Studio Header with Window Controls & Viewport Switcher -->
-                        <div class="px-3.5 py-2.5 border-b border-white/10 flex items-center justify-between bg-black/60 backdrop-blur-md">
-                            <div class="flex items-center gap-2">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
-                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
-                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
-                                </div>
-                                <span class="text-[10px] font-mono text-gray-400 ml-1.5 hidden sm:inline">driyum.com/hero</span>
-                            </div>
-
-                            <!-- Responsive Viewport Switcher (Desktop vs Mobile Preview) -->
-                            <div class="flex items-center gap-1 bg-white/10 p-0.5 rounded-lg">
-                                <button type="button" 
-                                        id="vp-desktop-btn" 
-                                        onclick="setPreviewViewport('desktop')" 
-                                        title="Preview widescreen desktop view"
-                                        class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white text-gray-900 shadow-2xs transition">
-                                    <i class="fas fa-desktop text-[9px] mr-1"></i> Desktop
-                                </button>
-                                <button type="button" 
-                                        id="vp-mobile-btn" 
-                                        onclick="setPreviewViewport('mobile')" 
-                                        title="Preview mobile screen view"
-                                        class="px-2 py-0.5 rounded-md text-[10px] font-bold text-gray-400 hover:text-white transition">
-                                    <i class="fas fa-mobile-alt text-[9px] mr-1"></i> Mobile
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Preview Canvas Area -->
-                        <div class="bg-gray-900/60 p-2 sm:p-3 overflow-hidden">
-                            <div id="preview-wrapper" class="preview-viewport-trans w-full mx-auto rounded-xl overflow-hidden border border-white/10 shadow-inner">
-                                <!-- Simulated Hero Slide Stage -->
-                                <div class="relative h-28 sm:h-32 md:h-36 bg-gradient-to-br from-[#004F42] via-[#043329] to-[#011a14] flex flex-col justify-center items-center overflow-hidden">
-                                    <!-- Ambient mock elements -->
-                                    <div class="absolute top-2 left-3 flex items-center gap-1.5 pointer-events-none select-none opacity-40">
-                                        <span class="text-[8px] font-black text-amber-200 uppercase tracking-widest bg-amber-400/20 px-1.5 py-0.5 rounded border border-amber-300/30">100% Organic</span>
-                                    </div>
-                                    <div class="text-center pointer-events-none select-none z-0 px-4">
-                                        <span class="text-white/40 text-[11px] sm:text-xs font-black uppercase tracking-[0.2em] block font-heading">Hero Slider Banner</span>
-                                        <span class="text-white/20 text-[9px] font-medium tracking-wider">Dynamic Organic Wave Dividing Edge</span>
-                                    </div>
-
-                                    <!-- Live Morphing SVG Waves inside Preview -->
-                                    <div class="absolute bottom-0 left-0 w-full leading-none pointer-events-none z-10 translate-y-[2px]">
-                                        <svg class="w-full h-14 sm:h-16 md:h-20 block" viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                                            <defs>
-                                                <!-- Depth Drop Shadow inside Preview -->
-                                                <filter id="previewWaveShadow" x="-5%" y="-35%" width="110%" height="170%" filterUnits="userSpaceOnUse">
-                                                    <feDropShadow dx="0" dy="-3" stdDeviation="4" flood-color="#000000" flood-opacity="0.18" />
-                                                </filter>
-                                            </defs>
-                                            <path id="preview-cream-wave" d="<?php echo htmlspecialchars($hero_wave_preview['cream_path']); ?>" fill="#FFFEDC" fill-opacity="0.95" filter="url(#previewWaveShadow)"></path>
-                                            <path id="preview-white-wave" d="<?php echo htmlspecialchars($hero_wave_preview['white_path']); ?>" fill="#FFFFFF"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <!-- Simulated Storefront Content Row Directly Underneath Wave -->
-                                <div class="bg-white py-2 px-3 flex items-center justify-between border-t border-gray-100 select-none">
-                                    <span class="text-[9px] font-black text-gray-500 uppercase tracking-wider">Now Available At</span>
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-[8px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">Nature's Basket</span>
-                                        <span class="text-[8px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded hidden xs:inline">Blinkit</span>
-                                        <span class="text-[8px] font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">Zepto</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Preview Status Bar -->
-                        <div class="bg-black/80 px-3.5 py-2 flex items-center justify-between text-[10px] text-gray-400 border-t border-white/5">
-                            <span class="flex items-center gap-1.5">
-                                <i class="fas fa-circle text-[6px] text-emerald-400 animate-pulse"></i>
-                                <span class="font-medium text-gray-300">Live Preview</span>
-                            </span>
-                            <span id="preview-indicator" class="text-emerald-400 font-bold">Synchronized</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div class="bg-amber-50/60 rounded-3xl p-6 border border-amber-200/60 shadow-sm relative overflow-hidden">
-        <div class="flex items-start gap-4">
-            <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
-                <i class="fas fa-info text-xs"></i>
-            </div>
-            <div class="space-y-2 text-xs text-amber-950/80 leading-relaxed">
-                <p class="font-bold text-amber-900">
-                    <span class="font-black text-amber-950">Required Hero Banner Image Dimensions:</span>
-                    To ensure crisp representation without distortion or layout breakage on Retina / high-resolution screens, please prepare banners to the following specifications before selecting:
-                </p>
-                <ul class="space-y-1.5 pl-4 list-disc text-amber-900/90 font-medium text-[11.5px]">
-                    <li><strong class="font-black text-gray-900">Desktop size (>= 992px):</strong> Aspect ratio ~2.18:1. Recommended size: <code class="bg-white/80 px-1.5 py-0.5 rounded font-mono font-bold text-amber-900 border border-amber-200/80">1350×620 px</code> (or 1920×880 px)</li>
-                    <li><strong class="font-black text-gray-900">Tablet size (577px – 992px):</strong> Aspect ratio 16:10. Recommended size: <code class="bg-white/80 px-1.5 py-0.5 rounded font-mono font-bold text-amber-900 border border-amber-200/80">1024×640 px</code></li>
-                    <li><strong class="font-black text-gray-900">Mobile size (<= 576px):</strong> Aspect ratio 1:1 (Square). Recommended size: <code class="bg-white/80 px-1.5 py-0.5 rounded font-mono font-bold text-amber-900 border border-amber-200/80">768×768 px</code> (or 1024×1024 px)</li>
-                </ul>
+    <!-- BANNER DIMENSIONS HELPER ALERT -->
+    <div class="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
+        <i class="fas fa-info-circle text-amber-600 mt-0.5 shrink-0 text-sm"></i>
+        <div class="flex-1 space-y-1">
+            <span class="font-bold">Recommended Banner Resolution Standards:</span>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-amber-950/80">
+                <span><strong>Desktop (>=992px):</strong> Aspect ratio ~2.18:1. Recommended size: 1350×620 px (or 1920×880 px)</span>
+                <span><strong>Tablet (577px–992px):</strong>  Aspect ratio 16:10. Recommended size: 1024×640 px</span>
+                <span><strong>Mobile (&lt;=576px):</strong> Aspect ratio 1:1 (Square). Recommended size: 768×768 px (or 1024×1024 px)</span>
             </div>
         </div>
     </div>
 
-    <!-- MAIN CAROUSEL BANNERS TABLE (SCREENSHOT 1) -->
-    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-        
-        <!-- Table Header Bar -->
-        <div class="px-6 py-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/40">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-[#24B25D]/10 text-[#24B25D] flex items-center justify-center text-sm">
-                    <i class="fas fa-layer-group"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-black text-gray-900 font-heading">Homepage Carousel Banners</h3>
-                    <p class="text-[10px] text-gray-400 font-medium">Grab the handle on any row to drag & reorder sequence in real-time</p>
-                </div>
+    <!-- MAIN CAROUSEL BANNERS TABLE -->
+    <div class="admin-card overflow-hidden">
+        <div class="px-2 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+            <div class="flex items-center gap-2">
+                <h3 class="text-sm font-bold text-slate-800">Carousel Slides Sequence</h3>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200 text-slate-700">
+                    <?php echo $total_slides; ?> Banners
+                </span>
             </div>
-            
-            <div id="bulk-action-bar" class="hidden flex items-center gap-2">
-                <span id="selected-count" class="text-xs font-bold text-gray-600">0 selected</span>
-                <button type="button" onclick="submitBulkDelete()" class="px-3.5 py-1.5 rounded-xl bg-red-50 text-red-600 border border-red-200 text-xs font-bold hover:bg-red-600 hover:text-white transition">
-                    <i class="fas fa-trash-alt mr-1"></i> Delete Selected
-                </button>
-            </div>
+            <p class="text-xs text-slate-400 font-medium hidden sm:block">
+                <i class="fas fa-grip-vertical mr-1"></i> Drag rows to reorder carousel sequence
+            </p>
         </div>
 
         <form id="bulk-form" method="POST">
             <input type="hidden" name="bulk_delete" value="1">
+            
+            <!-- FLOATING BULK DOCK (LIGHT THEMED & RESPONSIVE) -->
+            <div id="bulk-action-bar" class="hidden admin-bulk-dock">
+                <span class="bulk-counter-badge"><span id="selected-count">0</span> Selected</span>
+                <button type="button" onclick="submitBulkDelete()" class="bulk-btn bulk-btn-danger">
+                    <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+                </button>
+                <button type="button" onclick="document.querySelectorAll('.row-checkbox').forEach(cb => { cb.checked = false; }); updateBulkBar();" class="text-slate-400 hover:text-slate-700 p-1 text-xs" title="Clear selection">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="admin-table">
                     <thead>
-                        <tr class="border-b border-gray-100 text-[9.5px] font-black text-gray-400 uppercase tracking-wider bg-gray-50/20">
-                            <th class="py-4 pl-6 pr-2 w-10 text-center">
-                                <input type="checkbox" id="select-all" class="rounded border-gray-300 text-[#24B25D] focus:ring-[#24B25D]">
+                        <tr>
+                            <th class="w-10 text-center">
+                                <input type="checkbox" id="select-all" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
                             </th>
-                            <th class="py-4 px-3 w-16 text-center">Sort</th>
-                            <th class="py-4 px-4 min-w-[280px]">Responsive Banner Images</th>
-                            <th class="py-4 px-4 min-w-[180px]">Target Action Link</th>
-                            <th class="py-4 px-4 min-w-[220px]">Alt Description</th>
-                            <th class="py-4 px-3 text-center w-24">Status</th>
-                            <th class="py-4 pr-6 pl-3 text-right w-24">Actions</th>
+                            <th class="w-14 text-center">Order</th>
+                            <th class="min-w-[280px]">Responsive Media (Desk / Tab / Mob)</th>
+                            <th class="min-w-[180px]">Target Destination</th>
+                            <th class="min-w-[200px]">Alt / Description</th>
+                            <th class="w-24 text-center">Status</th>
+                            <th class="w-24 text-right pr-4">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="sortable-slides" class="divide-y divide-gray-50 text-xs">
+                    <tbody id="sortable-slides" class="divide-y divide-slate-100">
                         <?php if(empty($slides)): ?>
                             <tr>
                                 <td colspan="7" class="py-14 text-center">
-                                    <div class="w-16 h-16 rounded-full bg-gray-50 text-gray-300 mx-auto flex items-center justify-center text-2xl mb-3">
+                                    <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
                                         <i class="fas fa-images"></i>
                                     </div>
-                                    <p class="font-bold text-gray-700 text-sm">No Hero Banner Slides Found</p>
-                                    <p class="text-gray-400 text-xs mt-1">Get started by creating your first responsive banner slide.</p>
-                                    <button type="button" onclick="openAddSlideModal()" class="mt-4 px-5 py-2.5 rounded-xl bg-[#24B25D] text-white font-bold text-xs hover:bg-[#004F42] transition">
-                                        + Add Your First Slide
+                                    <h4 class="text-sm font-bold text-slate-800">No Hero Banner Slides Found</h4>
+                                    <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Get started by creating your first responsive banner slide for the storefront.</p>
+                                    <button type="button" onclick="openAddSlideModal()" class="btn-admin btn-admin-primary text-xs mt-3.5 inline-flex items-center gap-1.5">
+                                        <i class="fas fa-plus"></i> Add First Slide
                                     </button>
                                 </td>
                             </tr>
@@ -676,95 +413,106 @@ require_once 'includes/header.php';
                                 $disp_link = $s['cta_link'] ?: (!empty($s['prod_slug']) ? '/product/' . $s['prod_slug'] : '');
                                 $alt_disp = !empty($s['alt_text']) ? $s['alt_text'] : ($s['title'] ?: '—');
                             ?>
-                            <tr class="hover:bg-gray-50/70 transition-colors group cursor-default" data-id="<?php echo $s['id']; ?>">
+                            <tr class="hover:bg-slate-50/70 transition-colors cursor-default" data-id="<?php echo $s['id']; ?>">
                                 <!-- Checkbox -->
-                                <td class="py-4 pl-6 pr-2 text-center">
-                                    <input type="checkbox" name="selected_ids[]" value="<?php echo $s['id']; ?>" class="row-checkbox rounded border-gray-300 text-[#24B25D] focus:ring-[#24B25D]">
+                                <td class="text-center">
+                                    <input type="checkbox" name="selected_ids[]" value="<?php echo $s['id']; ?>" class="row-checkbox rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
                                 </td>
 
-                                <!-- Sort Handle + Number -->
-                                <td class="py-4 px-3 text-center">
-                                    <div class="drag-handle inline-flex items-center gap-1.5 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-800 transition py-1 px-1.5 rounded-lg hover:bg-gray-100">
+                                <!-- Sort Grip + Number -->
+                                <td class="text-center">
+                                    <div class="drag-handle inline-flex items-center gap-1 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-700 py-1 px-1.5 rounded-lg hover:bg-slate-100 transition">
                                         <i class="fas fa-grip-vertical text-xs"></i>
-                                        <span class="sort-number font-black text-gray-700 text-xs"><?php echo (int)$s['sort_order']; ?></span>
+                                        <span class="sort-number font-bold text-slate-700 text-xs"><?php echo (int)$s['sort_order']; ?></span>
                                     </div>
                                 </td>
 
-                                <!-- Responsive Banner Images (Desktop, Tablet, Mobile Thumbnails) -->
-                                <td class="py-4 px-4">
-                                    <div class="flex items-end gap-3">
+                                <!-- Responsive Banner Previews -->
+                                <td>
+                                    <div class="flex items-center gap-3">
                                         <!-- Desktop Preview -->
                                         <div class="flex flex-col items-center">
-                                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Desktop</span>
-                                            <div class="w-24 h-11 rounded-lg bg-gray-100 border border-gray-200/80 overflow-hidden relative shadow-sm group/img cursor-pointer" onclick="viewLargeImage('<?php echo $desk_img; ?>', 'Desktop (1350x620)')">
+                                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Desktop</span>
+                                            <div class="w-20 h-9 rounded-md bg-slate-100 border border-slate-200 overflow-hidden cursor-pointer hover:ring-2 hover:ring-emerald-500 transition" onclick="viewLargeImage('<?php echo $desk_img; ?>', 'Desktop Banner')">
                                                 <?php if($desk_img): ?>
                                                     <img src="<?php echo $desk_img; ?>" class="w-full h-full object-cover">
                                                 <?php else: ?>
-                                                    <div class="w-full h-full flex items-center justify-center text-[8px] text-gray-400 font-bold">No Image</div>
+                                                    <span class="w-full h-full flex items-center justify-center text-[9px] text-slate-300">None</span>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
 
                                         <!-- Tablet Preview -->
                                         <div class="flex flex-col items-center">
-                                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Tablet</span>
-                                            <div class="w-16 h-10 rounded-lg bg-gray-100 border border-gray-200/80 overflow-hidden relative shadow-sm group/img cursor-pointer" onclick="viewLargeImage('<?php echo $tab_img; ?>', 'Tablet (1024x640)')">
+                                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Tablet</span>
+                                            <div class="w-14 h-9 rounded-md bg-slate-100 border border-slate-200 overflow-hidden cursor-pointer hover:ring-2 hover:ring-emerald-500 transition" onclick="viewLargeImage('<?php echo $tab_img ?: $desk_img; ?>', 'Tablet Banner')">
                                                 <?php if($tab_img): ?>
                                                     <img src="<?php echo $tab_img; ?>" class="w-full h-full object-cover">
                                                 <?php else: ?>
-                                                    <div class="w-full h-full flex items-center justify-center text-[7px] text-gray-300 font-bold">—</div>
+                                                    <span class="w-full h-full flex items-center justify-center text-[8px] text-slate-300 italic">Auto</span>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
 
                                         <!-- Mobile Preview -->
                                         <div class="flex flex-col items-center">
-                                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">Mobile</span>
-                                            <div class="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200/80 overflow-hidden relative shadow-sm group/img cursor-pointer" onclick="viewLargeImage('<?php echo $mob_img; ?>', 'Mobile (768x768 / Square)')">
+                                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Mobile</span>
+                                            <div class="w-9 h-9 rounded-md bg-slate-100 border border-slate-200 overflow-hidden cursor-pointer hover:ring-2 hover:ring-emerald-500 transition" onclick="viewLargeImage('<?php echo $mob_img ?: $desk_img; ?>', 'Mobile Banner')">
                                                 <?php if($mob_img): ?>
                                                     <img src="<?php echo $mob_img; ?>" class="w-full h-full object-cover">
                                                 <?php else: ?>
-                                                    <div class="w-full h-full flex items-center justify-center text-[7px] text-gray-300 font-bold">—</div>
+                                                    <span class="w-full h-full flex items-center justify-center text-[8px] text-slate-300 italic">Auto</span>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- Target Action Link -->
-                                <td class="py-4 px-4 font-mono text-[11px]">
-                                    <?php if(!empty($disp_link)): ?>
-                                        <a href="<?php echo get_url(ltrim($disp_link, '/')); ?>" target="_blank" class="text-emerald-700 hover:text-emerald-900 hover:underline flex items-center gap-1.5 font-bold">
-                                            <span class="truncate max-w-[200px]"><?php echo htmlspecialchars($disp_link); ?></span>
-                                            <i class="fas fa-external-link-alt text-[9px] text-gray-400"></i>
+                                <!-- Target Link -->
+                                <td>
+                                    <?php if(!empty($s['prod_name'])): ?>
+                                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                                            <i class="fas fa-box text-[10px] text-emerald-600"></i>
+                                            <span class="truncate max-w-[150px]"><?php echo htmlspecialchars($s['prod_name']); ?></span>
+                                        </div>
+                                    <?php elseif(!empty($disp_link)): ?>
+                                        <a href="<?php echo htmlspecialchars($disp_link); ?>" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-emerald-700 font-mono hover:underline">
+                                            <i class="fas fa-link text-[10px] text-slate-400"></i>
+                                            <span class="truncate max-w-[150px]"><?php echo htmlspecialchars($disp_link); ?></span>
                                         </a>
                                     <?php else: ?>
-                                        <span class="text-gray-400 font-sans italic text-xs">(None - No Link)</span>
+                                        <span class="text-xs text-slate-300 italic">(No Link)</span>
                                     <?php endif; ?>
                                 </td>
 
                                 <!-- Alt Description -->
-                                <td class="py-4 px-4 text-gray-700 text-xs font-medium">
-                                    <span class="line-clamp-2 max-w-[260px]"><?php echo htmlspecialchars($alt_disp); ?></span>
+                                <td>
+                                    <div class="text-xs text-slate-700 font-medium truncate max-w-[200px]" title="<?php echo htmlspecialchars($alt_disp); ?>">
+                                        <?php echo htmlspecialchars($alt_disp); ?>
+                                    </div>
                                 </td>
 
-                                <!-- Status Badge -->
-                                <td class="py-4 px-3 text-center">
-                                    <button type="button" onclick="toggleSlideStatus(<?php echo $s['id']; ?>, this)" class="status-btn inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all <?php echo $s['is_active'] ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100' : 'bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200'; ?>">
-                                        <span class="w-1.5 h-1.5 rounded-full <?php echo $s['is_active'] ? 'bg-emerald-500' : 'bg-gray-400'; ?>"></span>
-                                        <span class="status-text"><?php echo $s['is_active'] ? 'Active' : 'Inactive'; ?></span>
+                                <!-- Status Toggle -->
+                                <td class="text-center">
+                                    <button type="button" onclick="toggleSlideStatus(<?php echo $s['id']; ?>, this)" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border transition <?php echo !empty($s['is_active']) ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'; ?>">
+                                        <span class="w-1.5 h-1.5 rounded-full <?php echo !empty($s['is_active']) ? 'bg-emerald-500' : 'bg-slate-400'; ?>"></span>
+                                        <span><?php echo !empty($s['is_active']) ? 'Active' : 'Offline'; ?></span>
                                     </button>
                                 </td>
 
                                 <!-- Actions -->
-                                <td class="py-4 pr-6 pl-3 text-right">
-                                    <div class="inline-flex items-center gap-1.5">
-                                        <button type="button" onclick='openEditSlideModal(<?php echo json_encode($s, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>)' class="w-8 h-8 rounded-xl bg-gray-50 text-gray-600 hover:bg-[#24B25D] hover:text-white transition flex items-center justify-center text-xs shadow-sm" title="Edit Slide">
-                                            <i class="fas fa-pen"></i>
+                                <td class="text-right pr-4">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <button type="button" onclick="openEditSlideModal(<?php echo htmlspecialchars(json_encode($s)); ?>)" class="btn-admin btn-admin-secondary text-xs py-1 px-2.5" title="Edit Slide">
+                                            <i class="fas fa-pen text-[10px]"></i>
                                         </button>
-                                        <button type="button" onclick="confirmDeleteSlide(<?php echo $s['id']; ?>)" class="w-8 h-8 rounded-xl bg-gray-50 text-gray-600 hover:bg-red-500 hover:text-white transition flex items-center justify-center text-xs shadow-sm" title="Delete Slide">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
+                                        <form method="POST" class="inline" onsubmit="return confirm('Delete this banner slide permanently?');">
+                                            <input type="hidden" name="delete_slide" value="1">
+                                            <input type="hidden" name="slide_id" value="<?php echo $s['id']; ?>">
+                                            <button type="submit" class="btn-admin btn-admin-danger text-xs py-1 px-2" title="Delete">
+                                                <i class="fas fa-trash-alt text-[10px]"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -776,164 +524,149 @@ require_once 'includes/header.php';
         </form>
     </div>
 
-  
-
 </div>
 
-<!-- HIDDEN SINGLE DELETE FORM -->
-<form id="single-delete-form" method="POST" class="hidden">
-    <input type="hidden" name="delete_slide" value="1">
-    <input type="hidden" name="slide_id" id="delete-slide-id" value="0">
-</form>
-
-<!-- ADD / EDIT HERO SLIDE MODAL (SCREENSHOT 2) -->
-<div id="slide-modal" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4">
+<!-- SLIDE ADD / EDIT MODAL DIALOG -->
+<div id="slide-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onclick="closeSlideModal()"></div>
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeSlideModal()"></div>
 
     <!-- Modal Box -->
-    <div class="bg-white w-full max-w-xl rounded-[2rem] shadow-2xl overflow-hidden border border-gray-100 relative z-10 max-h-[92vh] flex flex-col anim-up">
+    <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200 relative z-10 max-h-[92vh] flex flex-col anim-fade-in">
         
-        <!-- Header in Brand Forest Green (#004F42) -->
-        <div class="bg-[#004F42] px-7 py-5 flex items-center justify-between text-white shrink-0">
-            <h3 id="modal-title" class="text-lg font-black font-heading tracking-tight">Add New Hero Slide</h3>
-            <button type="button" onclick="closeSlideModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
+        <!-- Header in Brand Forest Green -->
+        <div class="bg-[#004f42] px-6 py-4 flex items-center justify-between text-white shrink-0">
+            <h3 id="modal-title" class="text-base font-bold tracking-tight">Add New Hero Banner Slide</h3>
+            <button type="button" onclick="closeSlideModal()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
         <!-- Form Body -->
-        <div class="overflow-y-auto p-7 flex-1 custom-scrollbar">
-            <form id="slide-form" method="POST" enctype="multipart/form-data" class="space-y-5">
+        <div class="overflow-y-auto p-2 flex-1 custom-scrollbar">
+            <form id="slide-form" method="POST" enctype="multipart/form-data" class="space-y-4">
                 <input type="hidden" name="save_slide" value="1">
                 <input type="hidden" name="slide_id" id="modal-slide-id" value="0">
 
-                <!-- 1. Desktop Image Path (1350x620 px) * -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-black text-gray-800">
-                        Desktop Image Path (1350x620 px) <span class="text-red-500">*</span>
+                <!-- 1. Desktop Image Path (1350x620) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        Desktop Banner (1350×620 px recommended) <span class="text-rose-500">*</span>
                     </label>
                     <div class="flex gap-2">
-                        <input type="text" name="desktop_image_path" id="desktop-image-path" placeholder="e.g. assets/images/hero/banner-desktop.png" required class="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition">
+                        <input type="text" name="desktop_image_path" id="desktop-image-path" placeholder="assets/images/hero/banner-desktop.png" required class="admin-input text-xs flex-1">
                         <input type="file" name="file_desktop" id="file-desktop" accept="image/*" class="hidden" onchange="handleFileSelected(this, 'desktop')">
-                        <button type="button" onclick="document.getElementById('file-desktop').click()" class="px-5 py-3 rounded-xl bg-[#24B25D] hover:bg-[#004F42] text-white font-black text-xs transition flex items-center gap-1.5 shrink-0 shadow-sm">
-                            <i class="fas fa-image text-xs"></i>
-                            <span>Choose</span>
+                        <button type="button" onclick="document.getElementById('file-desktop').click()" class="btn-admin btn-admin-secondary text-xs px-3.5 shrink-0">
+                            <i class="fas fa-upload mr-1 text-slate-400"></i> Browse
                         </button>
                     </div>
-                    <!-- Live Desktop Thumbnail Preview -->
-                    <div id="preview-box-desktop" class="hidden mt-2 p-2 rounded-xl bg-gray-50 border border-gray-100 flex items-center gap-3">
-                        <img id="preview-img-desktop" src="" class="w-24 h-11 object-cover rounded-lg border border-gray-200">
-                        <div class="flex-1 text-[11px] text-gray-500">
-                            <div class="font-bold text-gray-800" id="preview-name-desktop">Selected Image</div>
-                            <span class="text-[9px] text-[#24B25D] font-black uppercase">Aspect ~2.18:1 (Desktop)</span>
+                    <div id="preview-box-desktop" class="hidden mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-3">
+                        <img id="preview-img-desktop" src="" class="w-20 h-9 object-cover rounded border border-slate-200">
+                        <div class="flex-1 text-[11px] text-slate-500">
+                            <div class="font-bold text-slate-800" id="preview-name-desktop">Selected Banner</div>
+                            <span class="text-[10px] text-emerald-700 font-semibold">Desktop Resolution (~2.18:1)</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. Tablet Image Path (1024x640 px) * -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-black text-gray-800">
-                        Tablet Image Path (1024x640 px)
+                <!-- 2. Tablet Image Path (1024x640) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        Tablet Banner (1024×640 px / Optional)
                     </label>
                     <div class="flex gap-2">
-                        <input type="text" name="tablet_image_path" id="tablet-image-path" placeholder="e.g. assets/images/hero/banner-tablet.png" class="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition">
+                        <input type="text" name="tablet_image_path" id="tablet-image-path" placeholder="assets/images/hero/banner-tablet.png" class="admin-input text-xs flex-1">
                         <input type="file" name="file_tablet" id="file-tablet" accept="image/*" class="hidden" onchange="handleFileSelected(this, 'tablet')">
-                        <button type="button" onclick="document.getElementById('file-tablet').click()" class="px-5 py-3 rounded-xl bg-[#24B25D] hover:bg-[#004F42] text-white font-black text-xs transition flex items-center gap-1.5 shrink-0 shadow-sm">
-                            <i class="fas fa-image text-xs"></i>
-                            <span>Choose</span>
+                        <button type="button" onclick="document.getElementById('file-tablet').click()" class="btn-admin btn-admin-secondary text-xs px-3.5 shrink-0">
+                            <i class="fas fa-upload mr-1 text-slate-400"></i> Browse
                         </button>
                     </div>
-                    <!-- Live Tablet Thumbnail Preview -->
-                    <div id="preview-box-tablet" class="hidden mt-2 p-2 rounded-xl bg-gray-50 border border-gray-100 flex items-center gap-3">
-                        <img id="preview-img-tablet" src="" class="w-16 h-10 object-cover rounded-lg border border-gray-200">
-                        <div class="flex-1 text-[11px] text-gray-500">
-                            <div class="font-bold text-gray-800" id="preview-name-tablet">Selected Image</div>
-                            <span class="text-[9px] text-blue-600 font-black uppercase">Aspect 16:10 (Tablet)</span>
+                    <div id="preview-box-tablet" class="hidden mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-3">
+                        <img id="preview-img-tablet" src="" class="w-16 h-10 object-cover rounded border border-slate-200">
+                        <div class="flex-1 text-[11px] text-slate-500">
+                            <div class="font-bold text-slate-800" id="preview-name-tablet">Selected Banner</div>
+                            <span class="text-[10px] text-sky-700 font-semibold">Tablet Resolution (16:10)</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. Mobile Image Path (768x768 px / Square) * -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-black text-gray-800">
-                        Mobile Image Path (768x768 px / Square)
+                <!-- 3. Mobile Image Path (768x768 Square) -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        Mobile Banner (768×768 px Square / Optional)
                     </label>
                     <div class="flex gap-2">
-                        <input type="text" name="mobile_image_path" id="mobile-image-path" placeholder="e.g. assets/images/hero/banner-mobile.png" class="flex-1 rounded-xl border border-gray-200 px-4 py-3 text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition">
+                        <input type="text" name="mobile_image_path" id="mobile-image-path" placeholder="assets/images/hero/banner-mobile.png" class="admin-input text-xs flex-1">
                         <input type="file" name="file_mobile" id="file-mobile" accept="image/*" class="hidden" onchange="handleFileSelected(this, 'mobile')">
-                        <button type="button" onclick="document.getElementById('file-mobile').click()" class="px-5 py-3 rounded-xl bg-[#24B25D] hover:bg-[#004F42] text-white font-black text-xs transition flex items-center gap-1.5 shrink-0 shadow-sm">
-                            <i class="fas fa-image text-xs"></i>
-                            <span>Choose</span>
+                        <button type="button" onclick="document.getElementById('file-mobile').click()" class="btn-admin btn-admin-secondary text-xs px-3.5 shrink-0">
+                            <i class="fas fa-upload mr-1 text-slate-400"></i> Browse
                         </button>
                     </div>
-                    <!-- Live Mobile Thumbnail Preview -->
-                    <div id="preview-box-mobile" class="hidden mt-2 p-2 rounded-xl bg-gray-50 border border-gray-100 flex items-center gap-3">
-                        <img id="preview-img-mobile" src="" class="w-10 h-10 object-cover rounded-lg border border-gray-200">
-                        <div class="flex-1 text-[11px] text-gray-500">
-                            <div class="font-bold text-gray-800" id="preview-name-mobile">Selected Image</div>
-                            <span class="text-[9px] text-amber-600 font-black uppercase">Aspect 1:1 Square (Mobile)</span>
+                    <div id="preview-box-mobile" class="hidden mt-2 p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-3">
+                        <img id="preview-img-mobile" src="" class="w-10 h-10 object-cover rounded border border-slate-200">
+                        <div class="flex-1 text-[11px] text-slate-500">
+                            <div class="font-bold text-slate-800" id="preview-name-mobile">Selected Banner</div>
+                            <span class="text-[10px] text-amber-700 font-semibold">Mobile Square (1:1)</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. Action Link URL / Target Product * -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-black text-gray-800">
-                        Action Link URL / Target Product <span class="text-red-500">*</span>
+                <!-- 4. Action Link URL / Destination -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        Click Action / Link Destination
                     </label>
-                    <select name="action_target" id="action-target-select" onchange="handleTargetSelection(this)" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-xs font-medium text-gray-800 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition bg-white">
-                        <option value="">(None - No Link)</option>
+                    <select name="action_target" id="action-target-select" onchange="handleTargetSelection(this)" class="admin-select text-xs">
+                        <option value="">(None - Display Only)</option>
                         <optgroup label="Categories">
                             <?php foreach($categories_list as $cat): ?>
-                                <option value="cat:/category/<?php echo $cat['slug']; ?>">Category: <?php echo htmlspecialchars($cat['name']); ?> (/category/<?php echo $cat['slug']; ?>)</option>
+                                <option value="cat:/category/<?php echo $cat['slug']; ?>">Category: <?php echo htmlspecialchars($cat['name']); ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                         <optgroup label="Products">
                             <?php foreach($products_list as $p): ?>
-                                <option value="prod:<?php echo $p['id']; ?>:/product/<?php echo $p['slug']; ?>">Product: <?php echo htmlspecialchars($p['name']); ?> (/product/<?php echo $p['slug']; ?>)</option>
+                                <option value="prod:<?php echo $p['id']; ?>:/product/<?php echo $p['slug']; ?>">Product: <?php echo htmlspecialchars($p['name']); ?></option>
                             <?php endforeach; ?>
                         </optgroup>
-                        <option value="custom">Custom URL...</option>
+                        <option value="custom">Custom URL Link...</option>
                     </select>
 
-                    <div id="custom-link-box" class="hidden pt-1.5">
-                        <input type="text" name="custom_cta_link" id="custom-cta-link" placeholder="e.g. /shop or https://..." class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-xs font-medium text-gray-800 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition">
+                    <div id="custom-link-box" class="hidden pt-2">
+                        <input type="text" name="custom_cta_link" id="custom-cta-link" placeholder="e.g. /shop or https://..." class="admin-input text-xs">
                     </div>
                 </div>
 
-                <!-- 5. Accessibility Alt Description -->
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-black text-gray-800">
-                        Accessibility Alt Description
+                <!-- 5. Accessibility Alt Text -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        Alt Text & Image Description
                     </label>
-                    <input type="text" name="alt_text" id="alt-text-input" placeholder="Describe the image content for screen readers..." class="w-full rounded-xl border border-gray-200 px-4 py-3 text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition">
+                    <input type="text" name="alt_text" id="alt-text-input" placeholder="e.g. Kashmiri Almonds Harvest Banner" class="admin-input text-xs">
                 </div>
 
-                <!-- 6. Display Sequence Order * & Active Status * -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-black text-gray-800">
-                            Display Sequence Order <span class="text-red-500">*</span>
+                <!-- 6. Display Sequence Order & Active Status -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            Sort Sequence <span class="text-rose-500">*</span>
                         </label>
-                        <input type="number" name="sort_order" id="sort-order-input" value="0" min="0" required class="w-full rounded-xl border border-gray-200 px-4 py-3 text-xs font-black text-gray-800 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition text-center bg-gray-50/50">
+                        <input type="number" name="sort_order" id="sort-order-input" value="0" min="0" required class="admin-input text-xs font-bold text-center">
                     </div>
-
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-black text-gray-800">
-                            Active Status <span class="text-red-500">*</span>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            Status <span class="text-rose-500">*</span>
                         </label>
-                        <select name="is_active" id="is-active-select" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-xs font-bold text-gray-800 focus:outline-none focus:border-[#24B25D] focus:ring-1 focus:ring-[#24B25D] transition bg-white">
-                            <option value="1">Active (Live on frontpage)</option>
-                            <option value="0">Inactive (Draft)</option>
+                        <select name="is_active" id="is-active-select" class="admin-select text-xs font-semibold">
+                            <option value="1">Active (Live)</option>
+                            <option value="0">Draft (Offline)</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- 7. Save Banner Slide Button (Brand Green #24B25D) -->
-                <div class="pt-4">
-                    <button type="submit" class="w-full py-4 rounded-2xl bg-[#24B25D] hover:bg-[#004F42] text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-[#24B25D]/20 active:scale-95 transition-all">
-                        Save Banner Slide
+                <!-- Submit Button -->
+                <div class="pt-2">
+                    <button type="submit" class="btn-admin btn-admin-primary w-full justify-center text-xs py-2.5 font-bold shadow-xs">
+                        <i class="fas fa-save mr-1.5"></i> Save Slide Banner
                     </button>
                 </div>
             </form>
@@ -942,11 +675,11 @@ require_once 'includes/header.php';
 </div>
 
 <!-- IMAGE LIGHTBOX MODAL -->
-<div id="image-lightbox" class="fixed inset-0 z-[10000] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md cursor-pointer" onclick="this.classList.add('hidden')">
+<div id="image-lightbox" class="fixed inset-0 z-[10000] hidden flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xs cursor-pointer" onclick="this.classList.add('hidden')">
     <div class="max-w-4xl max-h-[85vh] p-2 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-100 text-xs font-bold text-gray-700">
+        <div class="flex items-center justify-between px-4 py-2 border-b border-slate-100 text-xs font-bold text-slate-700">
             <span id="lightbox-title">Image Preview</span>
-            <button onclick="document.getElementById('image-lightbox').classList.add('hidden')" class="text-gray-400 hover:text-black"><i class="fas fa-times"></i></button>
+            <button onclick="document.getElementById('image-lightbox').classList.add('hidden')" class="text-slate-400 hover:text-slate-700"><i class="fas fa-times"></i></button>
         </div>
         <div class="p-2 flex items-center justify-center overflow-auto max-h-[75vh]">
             <img id="lightbox-img" src="" class="max-w-full max-h-[70vh] object-contain rounded-lg">
@@ -954,31 +687,133 @@ require_once 'includes/header.php';
     </div>
 </div>
 
+<!-- Wave Settings -->
+
+
+<div class=" mt-10 admin-card overflow-hidden">
+        <div class="px-2 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm font-semibold">
+                    <i class="fas fa-water"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800">Organic Wavy Border Divider</h3>
+                    <p class="text-xs text-slate-500">Fine-tune the wave curvature dividing the hero banner from storefront content</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 self-end sm:self-auto">
+                <button type="button" onclick="setWavePreset(75)" class="btn-admin btn-admin-secondary text-xs py-1.5 px-3">
+                    Reset (75%)
+                </button>
+                <button type="button" id="save-wave-btn" onclick="saveWaveIntensity()" class="btn-admin btn-admin-primary text-xs py-1.5 px-3.5">
+                    <i class="fas fa-save mr-1"></i> Save Curvature
+                </button>
+            </div>
+        </div>
+
+        <form id="wave-settings-form" method="POST" onsubmit="event.preventDefault(); saveWaveIntensity();" class="p-2">
+            <input type="hidden" name="save_wave_settings" value="1">
+            <input type="hidden" id="wave_intensity_hidden" name="hero_wave_intensity" value="<?php echo $current_wave_intensity; ?>">
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <!-- Left: Slider & Presets (7 cols) -->
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label for="wave-slider" class="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            Wave Amplitude: <span id="wave-desc-badge" class="text-emerald-700 font-semibold normal-case ml-1">Optimal Flow</span>
+                        </label>
+                        <span id="wave-val-pill" class="text-xs font-bold text-slate-900 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg font-mono">
+                            <?php echo $current_wave_intensity; ?>%
+                        </span>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center gap-3">
+                        <button type="button" onclick="stepWave(-5)" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:border-slate-300 active:scale-95 flex items-center justify-center text-xs font-bold shrink-0 transition-all shadow-2xs">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="range" min="0" max="100" step="1" id="wave-slider" value="<?php echo $current_wave_intensity; ?>" oninput="onWaveSliderChange(this.value)" class="flex-1 cursor-pointer">
+                        <button type="button" onclick="stepWave(5)" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:border-slate-300 active:scale-95 flex items-center justify-center text-xs font-bold shrink-0 transition-all shadow-2xs">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <!-- Presets Chips -->
+                    <div class="grid grid-cols-4 gap-2">
+                        <button type="button" onclick="setWavePreset(0)" class="preset-btn p-2 rounded-lg border border-slate-200 text-left hover:bg-slate-50 text-xs transition <?php echo $current_wave_intensity == 0 ? 'active' : ''; ?>" data-val="0">
+                            <span class="font-bold text-slate-800 block text-[11px]">0% Flat</span>
+                            <span class="text-[10px] text-slate-400 block truncate">Straight Edge</span>
+                        </button>
+                        <button type="button" onclick="setWavePreset(45)" class="preset-btn p-2 rounded-lg border border-slate-200 text-left hover:bg-slate-50 text-xs transition <?php echo $current_wave_intensity == 45 ? 'active' : ''; ?>" data-val="45">
+                            <span class="font-bold text-slate-800 block text-[11px]">45% Subtle</span>
+                            <span class="text-[10px] text-slate-400 block truncate">Soft Ripple</span>
+                        </button>
+                        <button type="button" onclick="setWavePreset(75)" class="preset-btn p-2 rounded-lg border border-slate-200 text-left hover:bg-slate-50 text-xs transition <?php echo $current_wave_intensity == 75 ? 'active' : ''; ?>" data-val="75">
+                            <span class="font-bold text-slate-800 block text-[11px]">75% Classic</span>
+                            <span class="text-[10px] text-slate-400 block truncate">Recommended</span>
+                        </button>
+                        <button type="button" onclick="setWavePreset(95)" class="preset-btn p-2 rounded-lg border border-slate-200 text-left hover:bg-slate-50 text-xs transition <?php echo $current_wave_intensity == 95 ? 'active' : ''; ?>" data-val="95">
+                            <span class="font-bold text-slate-800 block text-[11px]">95% Deep</span>
+                            <span class="text-[10px] text-slate-400 block truncate">High Crest</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Mini Preview (5 cols) -->
+                <div class="lg:col-span-5">
+                    <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-900 shadow-xs">
+                        <div class="px-3 py-1.5 bg-slate-800/80 border-b border-slate-700/80 flex items-center justify-between text-[11px] text-slate-300 font-medium">
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Live Wave Preview
+                            </span>
+                            <span id="preview-indicator" class="text-emerald-400 font-bold">Synchronized</span>
+                        </div>
+                        <div class="h-28 relative flex items-end overflow-hidden" style="background: linear-gradient(135deg, #072a24 0%, #004f42 100%);">
+                            <svg class="w-full absolute bottom-0 left-0" viewBox="0 0 1440 320" preserveAspectRatio="none" style="height: 60px;">
+                                <path id="preview-cream-wave" d="<?php echo htmlspecialchars($hero_wave_preview['cream_path']); ?>" fill="#FFFEDC" fill-opacity="0.95"></path>
+                                <path id="preview-white-wave" d="<?php echo htmlspecialchars($hero_wave_preview['white_path']); ?>" fill="#FFFFFF"></path>
+                            </svg>
+                        </div>
+                        <div class="bg-white py-2 px-3 flex items-center justify-between text-[10px] text-slate-500 font-semibold border-t border-slate-100">
+                            <span>Storefront Content Zone</span>
+                            <span class="text-emerald-700">Dividing Boundary</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
 <script>
 // --- TOAST HELPER ---
 function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.className = `fixed top-6 right-6 z-[9999] flex items-center gap-3 px-5 py-3.5 rounded-2xl text-white font-bold text-xs shadow-2xl transition-all duration-300 ${type === 'success' ? 'bg-[#24B25D]' : 'bg-red-500'}`;
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('hidden'), 3000);
+    if (toast) {
+        toast.textContent = msg;
+        toast.className = `fixed top-6 right-6 z-[9999] flex items-center gap-3 px-2 py-3 rounded-xl text-white font-bold text-xs shadow-xl transition-all ${type === 'success' ? 'bg-[#004f42]' : 'bg-rose-600'}`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+    } else {
+        alert(msg);
+    }
 }
 
 // --- MODAL CONTROLS ---
 function openAddSlideModal() {
     document.getElementById('slide-form').reset();
     document.getElementById('modal-slide-id').value = '0';
-    document.getElementById('modal-title').textContent = 'Add New Hero Slide';
+    document.getElementById('modal-title').textContent = 'Add New Hero Banner Slide';
     document.getElementById('sort-order-input').value = '<?php echo $next_sort; ?>';
     document.getElementById('custom-link-box').classList.add('hidden');
     
-    // Clear preview boxes
     ['desktop', 'tablet', 'mobile'].forEach(type => {
         document.getElementById(`preview-box-${type}`).classList.add('hidden');
         document.getElementById(`preview-img-${type}`).src = '';
     });
     
-    document.getElementById('slide-modal').classList.remove('hidden');
+    const modal = document.getElementById('slide-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 }
 
 function openEditSlideModal(data) {
@@ -986,7 +821,6 @@ function openEditSlideModal(data) {
     document.getElementById('modal-slide-id').value = data.id || 0;
     document.getElementById('modal-title').textContent = 'Edit Hero Slide #' + data.id;
     
-    // Fill text inputs
     document.getElementById('desktop-image-path').value = data.image || '';
     document.getElementById('tablet-image-path').value = data.image_tablet || '';
     document.getElementById('mobile-image-path').value = data.image_mobile || '';
@@ -994,99 +828,51 @@ function openEditSlideModal(data) {
     document.getElementById('sort-order-input').value = data.sort_order || 0;
     document.getElementById('is-active-select').value = data.is_active !== undefined ? data.is_active : 1;
 
-    // Fill previews
-    if (data.image) {
-        showPreviewBox('desktop', data.image, 'Current Desktop Banner');
-    } else {
-        document.getElementById('preview-box-desktop').classList.add('hidden');
-    }
-    if (data.image_tablet) {
-        showPreviewBox('tablet', data.image_tablet, 'Current Tablet Banner');
-    } else {
-        document.getElementById('preview-box-tablet').classList.add('hidden');
-    }
-    if (data.image_mobile) {
-        showPreviewBox('mobile', data.image_mobile, 'Current Mobile Banner');
-    } else {
-        document.getElementById('preview-box-mobile').classList.add('hidden');
-    }
+    if (data.image) showPreviewBox('desktop', data.image, 'Current Desktop Banner');
+    if (data.image_tablet) showPreviewBox('tablet', data.image_tablet, 'Current Tablet Banner');
+    if (data.image_mobile) showPreviewBox('mobile', data.image_mobile, 'Current Mobile Banner');
 
-    // Resolve Action Target Select
-    const targetSelect = document.getElementById('action-target-select');
+    const select = document.getElementById('action-target-select');
     const customBox = document.getElementById('custom-link-box');
     const customInput = document.getElementById('custom-cta-link');
-    
+
     let matched = false;
-    const link = data.cta_link || '';
-    const pid = data.product_id;
-
-    if (pid && link) {
-        for (let opt of targetSelect.options) {
-            if (opt.value.startsWith('prod:' + pid + ':')) {
-                opt.selected = true;
+    if (data.product_id) {
+        const val = `prod:${data.product_id}:${data.cta_link}`;
+        for (let opt of select.options) {
+            if (opt.value === val) {
+                select.value = val;
                 matched = true;
                 break;
             }
         }
     }
-
-    if (!matched && link) {
-        for (let opt of targetSelect.options) {
-            if (opt.value === 'cat:' + link || opt.value === link) {
-                opt.selected = true;
+    if (!matched && data.cta_link) {
+        for (let opt of select.options) {
+            if (opt.value.endsWith(data.cta_link)) {
+                select.value = opt.value;
                 matched = true;
                 break;
             }
         }
     }
-
-    if (!matched && link) {
-        targetSelect.value = 'custom';
-        customInput.value = link;
+    if (!matched && data.cta_link) {
+        select.value = 'custom';
+        customInput.value = data.cta_link;
         customBox.classList.remove('hidden');
-    } else if (!matched) {
-        targetSelect.value = '';
-        customBox.classList.add('hidden');
     } else {
         customBox.classList.add('hidden');
     }
 
-    document.getElementById('slide-modal').classList.remove('hidden');
+    const modal = document.getElementById('slide-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
 }
 
 function closeSlideModal() {
-    document.getElementById('slide-modal').classList.add('hidden');
-}
-
-// --- FILE SELECTION & LIVE PREVIEW ---
-function handleFileSelected(input, type) {
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-        const pathInput = document.getElementById(`${type}-image-path`);
-        pathInput.value = file.name;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            showPreviewBox(type, e.target.result, file.name);
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-function showPreviewBox(type, src, name) {
-    const box = document.getElementById(`preview-box-${type}`);
-    const img = document.getElementById(`preview-img-${type}`);
-    const nameEl = document.getElementById(`preview-name-${type}`);
-    
-    // Resolve relative path if needed
-    let finalSrc = src;
-    if (!src.startsWith('data:') && !src.startsWith('http') && !src.startsWith('/')) {
-        finalSrc = '../' + src;
-    }
-
-    img.src = finalSrc;
-    if (nameEl) nameEl.textContent = name;
-    box.classList.remove('hidden');
+    const modal = document.getElementById('slide-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
 }
 
 function handleTargetSelection(sel) {
@@ -1098,64 +884,49 @@ function handleTargetSelection(sel) {
     }
 }
 
-// --- LIGHTBOX PREVIEW ---
-function viewLargeImage(url, title) {
-    if (!url) return;
-    document.getElementById('lightbox-img').src = url;
-    document.getElementById('lightbox-title').textContent = title || 'Image Preview';
-    document.getElementById('image-lightbox').classList.remove('hidden');
-}
-
-// --- DELETE CONFIRMATION ---
-async function confirmDeleteSlide(id) {
-    const ok = typeof window.showConfirm === 'function'
-        ? await window.showConfirm('Are you sure you want to delete this hero slide? This action cannot be undone.', {
-            title: 'Delete Hero Slide',
-            type: 'danger',
-            confirmText: 'Delete Slide'
-        })
-        : confirm('Are you sure you want to delete this hero slide? This action cannot be undone.');
-    if (ok) {
-        document.getElementById('delete-slide-id').value = id;
-        document.getElementById('single-delete-form').submit();
+function handleFileSelected(input, type) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            showPreviewBox(type, e.target.result, file.name);
+            document.getElementById(`${type}-image-path`).value = `assets/images/uploads/${file.name}`;
+        };
+        reader.readAsDataURL(file);
     }
 }
 
-// --- TOGGLE STATUS AJAX ---
-function toggleSlideStatus(id, btn) {
-    fetch(`hero_slides.php?action=toggle&id=${id}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const isActive = data.is_active === 1;
-                const dot = btn.querySelector('span:first-child');
-                const text = btn.querySelector('.status-text');
-                
-                if (isActive) {
-                    btn.className = 'status-btn inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100';
-                    dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
-                    text.textContent = 'Active';
-                } else {
-                    btn.className = 'status-btn inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200';
-                    dot.className = 'w-1.5 h-1.5 rounded-full bg-gray-400';
-                    text.textContent = 'Inactive';
-                }
-                showToast(`Slide #${id} status updated!`, 'success');
-            } else {
-                showToast('Failed to update status.', 'error');
-            }
-        })
-        .catch(() => showToast('Network error while toggling status.', 'error'));
+function showPreviewBox(type, url, name) {
+    const box = document.getElementById(`preview-box-${type}`);
+    const img = document.getElementById(`preview-img-${type}`);
+    const lbl = document.getElementById(`preview-name-${type}`);
+    if (box && img) {
+        img.src = url.startsWith('data:') ? url : (url.startsWith('http') ? url : '../' + url.replace(/^\.\//, ''));
+        if (lbl) lbl.textContent = name || 'Selected';
+        box.classList.remove('hidden');
+    }
+}
+
+function viewLargeImage(url, title) {
+    if (!url) return;
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox-title').textContent = title || 'Banner Preview';
+    document.getElementById('image-lightbox').classList.remove('hidden');
 }
 
 // --- DRAG & DROP SORTABLEJS ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Auto-open modal if navigated via New Slide action button
+    if (window.location.search.includes('action=new') || window.location.hash === '#new' || window.location.hash === '#add-slide') {
+        openAddSlideModal();
+    }
+
     const tbody = document.getElementById('sortable-slides');
     if (tbody && tbody.querySelectorAll('tr[data-id]').length > 1) {
         new Sortable(tbody, {
             handle: '.drag-handle',
-            animation: 200,
-            ghostClass: 'bg-emerald-50/70',
+            animation: 180,
+            ghostClass: 'bg-emerald-50',
             onEnd: function() {
                 const order = [];
                 tbody.querySelectorAll('tr[data-id]').forEach((row, index) => {
@@ -1173,7 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Slide order updated successfully!', 'success');
+                        showToast('Slide sequence updated successfully!');
                     } else {
                         showToast('Failed to save slide order.', 'error');
                     }
@@ -1183,21 +954,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- BULK SELECTION LOGIC ---
+    // Bulk selection logic
     const selectAll = document.getElementById('select-all');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
     const bulkBar = document.getElementById('bulk-action-bar');
     const selectedCount = document.getElementById('selected-count');
 
-    function updateBulkBar() {
+    window.updateBulkBar = function() {
         const checked = document.querySelectorAll('.row-checkbox:checked');
         if (checked.length > 0) {
             bulkBar.classList.remove('hidden');
-            selectedCount.textContent = `${checked.length} selected`;
+            bulkBar.classList.add('flex');
+            selectedCount.textContent = checked.length;
         } else {
             bulkBar.classList.add('hidden');
+            bulkBar.classList.remove('flex');
         }
-    }
+    };
 
     if (selectAll) {
         selectAll.addEventListener('change', () => {
@@ -1217,15 +990,20 @@ document.addEventListener('DOMContentLoaded', () => {
 async function submitBulkDelete() {
     const checked = document.querySelectorAll('.row-checkbox:checked');
     if (checked.length === 0) return;
-    const ok = typeof window.showConfirm === 'function'
-        ? await window.showConfirm(`Are you sure you want to delete ${checked.length} selected slides?`, {
-            title: 'Delete Selected Slides',
-            type: 'danger',
-            confirmText: 'Delete Slides'
-        })
-        : confirm(`Are you sure you want to delete ${checked.length} selected slides?`);
-    if (ok) {
+    if (confirm(`Are you sure you want to delete ${checked.length} selected slides?`)) {
         document.getElementById('bulk-form').submit();
+    }
+}
+
+async function toggleSlideStatus(id, btn) {
+    try {
+        const res = await fetch(`hero_slides.php?action=toggle&id=${id}`);
+        const data = await res.json();
+        if (data.success) {
+            window.location.reload();
+        }
+    } catch(e) {
+        console.error(e);
     }
 }
 
@@ -1263,87 +1041,54 @@ function generateWavePathJs(intensity, isCream) {
 
 function getWaveDescription(val) {
     val = parseInt(val) || 0;
-    if (val === 0) return '📏 Flat Divider (Straight)';
-    if (val <= 30) return '🍃 Subtle Soft Ripples';
-    if (val <= 60) return '🌊 Balanced Organic Flow';
-    if (val <= 85) return '✨ Dynamic & Curvy (Recommended)';
-    return '🏔️ Bold Crests (Maximum)';
-}
-
-function highlightMatchingPreset(val) {
-    val = parseInt(val) || 0;
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-        const pVal = parseInt(btn.getAttribute('data-val'));
-        const isMatch = (pVal === val);
-        const valElem = btn.querySelector('.preset-val') || btn.firstElementChild;
-        const descElem = btn.querySelector('.preset-lbl') || btn.lastElementChild;
-        const iconElem = btn.querySelector('.preset-ico') || btn.querySelector('i');
-        
-        if (isMatch) {
-            btn.className = 'preset-btn p-2.5 rounded-2xl border border-emerald-400 bg-emerald-50 text-[#004F42] text-left transition shadow-xs active:scale-95 group ring-2 ring-emerald-500/20';
-            if (valElem) valElem.className = 'preset-val text-xs font-black text-[#004F42] flex items-center justify-between';
-            if (descElem) descElem.className = 'preset-lbl text-[10px] font-black text-emerald-700 mt-0.5 leading-tight truncate';
-            if (iconElem) {
-                iconElem.classList.remove('text-gray-400');
-                iconElem.classList.add('text-emerald-500');
-            }
-        } else {
-            btn.className = 'preset-btn p-2.5 rounded-2xl border border-gray-200 text-left transition hover:border-gray-400 hover:bg-gray-50 active:scale-95 shadow-2xs group';
-            if (valElem) valElem.className = 'preset-val text-xs font-black text-gray-900 flex items-center justify-between';
-            if (descElem) descElem.className = 'preset-lbl text-[10px] font-bold text-gray-500 mt-0.5 leading-tight truncate';
-            if (iconElem) {
-                iconElem.classList.remove('text-emerald-500');
-                iconElem.classList.add('text-gray-400');
-            }
-        }
-    });
+    if (val === 0) return 'Flat Divider';
+    if (val <= 30) return 'Subtle Ripples';
+    if (val <= 60) return 'Balanced Flow';
+    if (val <= 85) return 'Optimal Curvature';
+    return 'Deep Crests';
 }
 
 function onWaveSliderChange(val) {
-    try {
-        val = Math.max(0, Math.min(100, parseInt(val) || 0));
-        
-        // Dynamic CSS track fill
-        const slider = document.getElementById('wave-slider');
-        if (slider) {
-            slider.style.setProperty('--fill-pct', `${val}%`);
-        }
+    val = Math.max(0, Math.min(100, parseInt(val) || 0));
+    const slider = document.getElementById('wave-slider');
+    if (slider) slider.style.setProperty('--fill-pct', `${val}%`);
 
-        // Update labels and hidden inputs
-        const hiddenInput = document.getElementById('wave_intensity_hidden');
-        const valPill = document.getElementById('wave-val-pill');
-        const descBadge = document.getElementById('wave-desc-badge');
-        const indicator = document.getElementById('preview-indicator');
-        
-        if (hiddenInput) hiddenInput.value = val;
-        if (valPill) valPill.textContent = val + '%';
-        if (descBadge) descBadge.textContent = getWaveDescription(val);
-        
-        highlightMatchingPreset(val);
+    const hiddenInput = document.getElementById('wave_intensity_hidden');
+    const valPill = document.getElementById('wave-val-pill');
+    const descBadge = document.getElementById('wave-desc-badge');
+    const indicator = document.getElementById('preview-indicator');
+    
+    if (hiddenInput) hiddenInput.value = val;
+    if (valPill) valPill.textContent = val + '%';
+    if (descBadge) descBadge.textContent = getWaveDescription(val);
 
-        if (indicator) {
-            indicator.textContent = 'Unsaved changes...';
-            indicator.className = 'text-amber-400 font-bold';
+    // Update preset chips active state
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        if (parseInt(btn.getAttribute('data-val')) === parseInt(val)) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
         }
+    });
 
-        // Live update SVG paths inside preview
-        const whitePath = generateWavePathJs(val, false);
-        const creamPath = generateWavePathJs(val, true);
-        
-        const previewWhite = document.getElementById('preview-white-wave');
-        const previewCream = document.getElementById('preview-cream-wave');
-        if (previewWhite) previewWhite.setAttribute('d', whitePath);
-        if (previewCream) {
-            if (val === 0) {
-                previewCream.setAttribute('d', '');
-                previewCream.setAttribute('visibility', 'hidden');
-            } else {
-                previewCream.setAttribute('visibility', 'visible');
-                previewCream.setAttribute('d', creamPath);
-            }
+    if (indicator) {
+        indicator.textContent = 'Unsaved...';
+        indicator.className = 'text-amber-400 font-bold';
+    }
+
+    const whitePath = generateWavePathJs(val, false);
+    const creamPath = generateWavePathJs(val, true);
+    
+    const previewWhite = document.getElementById('preview-white-wave');
+    const previewCream = document.getElementById('preview-cream-wave');
+    if (previewWhite) previewWhite.setAttribute('d', whitePath);
+    if (previewCream) {
+        if (val === 0) {
+            previewCream.setAttribute('visibility', 'hidden');
+        } else {
+            previewCream.setAttribute('visibility', 'visible');
+            previewCream.setAttribute('d', creamPath);
         }
-    } catch (err) {
-        console.error('Wave preview update error:', err);
     }
 }
 
@@ -1354,7 +1099,6 @@ function stepWave(delta) {
     val = Math.max(0, Math.min(100, val));
     slider.value = val;
     onWaveSliderChange(val);
-    saveWaveIntensity(true);
 }
 
 function setWavePreset(val) {
@@ -1366,24 +1110,6 @@ function setWavePreset(val) {
     }
 }
 
-function setPreviewViewport(mode) {
-    const wrapper = document.getElementById('preview-wrapper');
-    const desktopBtn = document.getElementById('vp-desktop-btn');
-    const mobileBtn = document.getElementById('vp-mobile-btn');
-    if (!wrapper || !desktopBtn || !mobileBtn) return;
-
-    if (mode === 'mobile') {
-        wrapper.style.maxWidth = '310px';
-        mobileBtn.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-white text-gray-900 shadow-2xs transition';
-        desktopBtn.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold text-gray-400 hover:text-white transition';
-    } else {
-        wrapper.style.maxWidth = '100%';
-        desktopBtn.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold bg-white text-gray-900 shadow-2xs transition';
-        mobileBtn.className = 'px-2 py-0.5 rounded-md text-[10px] font-bold text-gray-400 hover:text-white transition';
-    }
-}
-
-let saveDebounceTimer = null;
 function saveWaveIntensity(isAuto = false) {
     const slider = document.getElementById('wave-slider');
     if (!slider) return;
@@ -1393,7 +1119,7 @@ function saveWaveIntensity(isAuto = false) {
     
     if (btn && !isAuto) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Saving...</span>';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Saving...';
     }
 
     fetch('hero_slides.php?action=save_wave', {
@@ -1408,18 +1134,16 @@ function saveWaveIntensity(isAuto = false) {
                 indicator.textContent = 'Synchronized (' + val + '%)';
                 indicator.className = 'text-emerald-400 font-bold';
             }
-            showToast('Hero wave amplitude updated to ' + val + '%!', 'success');
+            showToast('Hero wave amplitude updated to ' + val + '%!');
         } else {
             showToast('Failed to save wave setting.', 'error');
         }
     })
-    .catch(() => {
-        showToast('Network error saving wave setting.', 'error');
-    })
+    .catch(() => showToast('Network error saving wave setting.', 'error'))
     .finally(() => {
         if (btn && !isAuto) {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-check"></i> <span>Save Waviness</span>';
+            btn.innerHTML = '<i class="fas fa-save mr-1"></i> Save Curvature';
         }
     });
 }
