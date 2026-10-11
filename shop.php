@@ -199,7 +199,8 @@ if (isset($_SESSION['user_id'])) {
                                         
                                         <!-- Product Image -->
                                         <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-6 bg-gray-50/50">
-                                            <img src="<?php echo get_url(ltrim($p['image'], './')); ?>" 
+                                            <img src="<?php echo get_product_image_url($p['image']); ?>" 
+                                                 onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>'; this.classList.add('p-6','object-contain');"
                                                  loading="lazy"
                                                  alt="<?php echo htmlspecialchars($p['name']); ?>"
                                                  class="w-full h-full object-contain group-hover/card:scale-110 transition-transform duration-1000 <?php echo $p['stock'] <= 0 ? 'grayscale opacity-75' : ''; ?>">

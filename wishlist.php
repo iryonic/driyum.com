@@ -69,7 +69,7 @@ $products = fetch_all("
                         <!-- Image Area -->
                         <div class="relative w-full aspect-square bg-[#F3F4F6] rounded-[24px] md:rounded-[32px] overflow-hidden mb-4 md:mb-6 group-hover:scale-95 transition-transform duration-500">
                             <a href="<?php echo product_url($p['slug']); ?>" aria-label="View <?php echo htmlspecialchars($p['name']); ?>">
-                                <img src="<?php echo get_url(ltrim($p['image'], './')); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" width="300" height="300" class="w-full h-full object-contain p-3 md:p-4 group-hover:scale-110 transition-transform duration-700">
+                                <img src="<?php echo get_product_image_url($p['image']); ?>" onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>'; this.classList.add('p-6','object-contain');" alt="<?php echo htmlspecialchars($p['name']); ?>" width="300" height="300" class="w-full h-full object-contain p-3 md:p-4 group-hover:scale-110 transition-transform duration-700">
                             </a>
                             <?php if ($p['discount_percentage'] > 0): ?>
                                 <div class="absolute top-4 left-4 bg-[#FF4D4D] text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg">

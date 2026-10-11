@@ -113,7 +113,7 @@ if (isset($_SESSION['coupon'])) {
                     <div class="card-chunky flex flex-col sm:flex-row items-center gap-6 p-6 anim-up hover:border-[#24B25D] transition">
                         <!-- Image -->
                         <div class="w-full sm:w-32 h-32 bg-gray-50 rounded-2xl flex-shrink-0 relative overflow-hidden">
-                            <img src="<?php echo get_url(ltrim($p['image'], './')); ?>" class="w-full h-full object-cover">
+                            <img src="<?php echo get_product_image_url($p['image']); ?>" onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>'; this.classList.add('p-4','object-contain');" class="w-full h-full object-cover" alt="<?php echo htmlspecialchars($p['name']); ?>">
                         </div>
 
                         <!-- Details -->

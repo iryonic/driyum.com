@@ -62,11 +62,17 @@ if ($total_reviews > 0) {
 $gallery = fetch_all("SELECT * FROM product_images WHERE product_id = $id ORDER BY sort_order ASC, id ASC");
 $all_images = [];
 if (!empty($product['image'])) {
-    $all_images[] = get_url(ltrim($product['image'], './'));
+    $clean_pimg = ltrim($product['image'], './');
+    if (file_exists($clean_pimg) || file_exists(__DIR__ . '/' . $clean_pimg)) {
+        $all_images[] = get_url($clean_pimg);
+    }
 }
 foreach ($gallery as $g) {
     if (!empty($g['image_path'])) {
-        $all_images[] = get_url(ltrim($g['image_path'], './'));
+        $clean_gimg = ltrim($g['image_path'], './');
+        if (file_exists($clean_gimg) || file_exists(__DIR__ . '/' . $clean_gimg)) {
+            $all_images[] = get_url($clean_gimg);
+        }
     }
 }
 if (empty($all_images)) {
@@ -242,7 +248,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <!-- Main Image Display -->
                 <div class="w-full h-full flex items-center justify-center p-2 sm:p-4">
-                    <img id="mainProductImage" src="<?php echo $all_images[0]; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-auto max-w-full object-contain filter drop-shadow-md select-none pointer-events-none group-hover:scale-105 transition-transform duration-500">
+                    <img id="mainProductImage" src="<?php echo $all_images[0]; ?>" onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>';" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-auto max-w-full object-contain filter drop-shadow-md select-none pointer-events-none group-hover:scale-105 transition-transform duration-500">
                 </div>
 
                 <!-- Dots Pagination on Mobile -->
@@ -260,7 +266,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar py-1">
                 <?php foreach ($all_images as $idx => $img): ?>
                     <button onclick="selectImage(<?php echo $idx; ?>)" class="thumb-btn flex-shrink-0 w-14 h-14 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-white rounded-xl sm:rounded-2xl p-1 sm:p-1.5 border-2 transition-all <?php echo $idx === 0 ? 'thumb-active' : 'border-gray-200 hover:border-gray-300'; ?>">
-                        <img src="<?php echo $img; ?>" alt="Thumb <?php echo $idx + 1; ?>" class="w-full h-full object-contain rounded-lg sm:rounded-xl">
+                        <img src="<?php echo $img; ?>" onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>';" alt="Thumb <?php echo $idx + 1; ?>" class="w-full h-full object-contain rounded-lg sm:rounded-xl">
                     </button>
                 <?php endforeach; ?>
             </div>
@@ -606,7 +612,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 </a>
 
                                 <a href="<?php echo product_url($rel['slug']); ?>" class="w-full h-full flex items-center justify-center">
-                                    <img src="<?php echo get_url(ltrim($rel['image'], './')); ?>" alt="<?php echo htmlspecialchars($rel['name']); ?>" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
+                                    <img src="<?php echo get_product_image_url($rel['image']); ?>" onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>'; this.classList.add('p-4','object-contain');" alt="<?php echo htmlspecialchars($rel['name']); ?>" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
                                 </a>
                             </div>
 

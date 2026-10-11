@@ -1012,6 +1012,29 @@ function get_url($path = '') {
     return $url;
 }
 
+/**
+ * Safe Product Image URL Helper
+ * Checks if the product image file exists on disk.
+ * If missing, 404, or empty, automatically falls back to safe branded placeholder.
+ */
+function get_product_image_url($image_path, $fallback = 'assets/images/placeholder.png') {
+    if (empty($image_path)) {
+        return get_url($fallback);
+    }
+    
+    $clean_path = ltrim((string)$image_path, './');
+    $doc_root = $_SERVER['DOCUMENT_ROOT'] ?? '';
+    
+    // Check multiple possible filesystem locations
+    if (file_exists($clean_path) || 
+        file_exists(__DIR__ . '/../' . $clean_path) || 
+        (!empty($doc_root) && file_exists(rtrim($doc_root, '/\\') . '/' . $clean_path))) {
+        return get_url($clean_path);
+    }
+    
+    return get_url($fallback);
+}
+
 function get_canonical_url() {
     $path = ltrim($_SERVER['REQUEST_URI'], '/');
     // If in subdirectory local, remove the prefix

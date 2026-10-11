@@ -608,7 +608,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
                         ?>
                         <div class="flex gap-4 items-center group mb-4">
                             <div class="w-16 h-16 bg-gray-50 rounded-2xl border border-gray-100 p-1 flex-shrink-0 relative overflow-hidden">
-                                <img src="<?php echo $p['image']; ?>" class="w-full h-full object-contain rounded-xl group-hover:scale-110 transition">
+                                <img src="<?php echo get_product_image_url($p['image']); ?>" onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>';" class="w-full h-full object-contain rounded-xl group-hover:scale-110 transition" alt="<?php echo htmlspecialchars($p['name']); ?>">
                             </div>
                             <div class="flex-1">
                                 <h4 class="font-bold text-sm text-gray-800 line-clamp-1 font-heading"><?php echo $p['name']; ?></h4>

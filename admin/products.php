@@ -311,14 +311,14 @@ $stat_out = fetch_one("SELECT COUNT(*) as c FROM products WHERE stock <= 0")['c'
     <!-- 1. COMPACT & BALANCED GRID VIEW -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4" id="productsGridView">
         <?php foreach ($products as $p): 
-            $img_src = !empty($p['image']) ? '../' . ltrim($p['image'], '/') : '../assets/images/placeholder.png';
+            $img_src = !empty($p['image']) && (file_exists('../' . ltrim($p['image'], '/')) || file_exists(ltrim($p['image'], '/'))) ? '../' . ltrim($p['image'], '/') : '../assets/images/placeholder.png';
             $prod_url = !empty($p['slug']) ? '../product/' . $p['slug'] : '../product.php?id=' . $p['id'];
         ?>
         <div class="product-card bg-white rounded-xl border border-slate-200/90 hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col group overflow-hidden">
             
             <!-- Fixed Proportion Image Container (No dead whitespace!) -->
             <div class="h-44 sm:h-48 relative overflow-hidden flex items-center justify-center p-3 bg-slate-50/60 border-b border-slate-100" style="<?php echo !empty($p['bg_color']) ? 'background-color:' . htmlspecialchars($p['bg_color']) . ';' : ''; ?>">
-                <img src="<?php echo htmlspecialchars($img_src); ?>" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" alt="<?php echo htmlspecialchars($p['name']); ?>" loading="lazy">
+                <img src="<?php echo htmlspecialchars($img_src); ?>" onerror="this.src='../assets/images/placeholder.png';" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" alt="<?php echo htmlspecialchars($p['name']); ?>" loading="lazy">
                 
                 <!-- Top-Left: Featured Star Button -->
                 <button type="button" onclick="toggleFeatured(<?php echo $p['id']; ?>, this)" class="featured-toggle absolute top-2.5 left-2.5 w-7 h-7 rounded-lg bg-white/90 backdrop-blur-xs border border-slate-200/80 shadow-2xs flex items-center justify-center text-xs transition-transform hover:scale-110 <?php echo $p['is_featured'] ? 'text-amber-400' : 'text-slate-300 hover:text-slate-400'; ?>" title="Toggle featured on homepage">
@@ -427,7 +427,7 @@ $stat_out = fetch_one("SELECT COUNT(*) as c FROM products WHERE stock <= 0")['c'
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     <?php foreach ($products as $p): 
-                        $img_src = !empty($p['image']) ? '../' . ltrim($p['image'], '/') : '../assets/images/placeholder.png';
+                        $img_src = !empty($p['image']) && (file_exists('../' . ltrim($p['image'], '/')) || file_exists(ltrim($p['image'], '/'))) ? '../' . ltrim($p['image'], '/') : '../assets/images/placeholder.png';
                         $prod_url = !empty($p['slug']) ? '../product/' . $p['slug'] : '../product.php?id=' . $p['id'];
                     ?>
                     <tr class="hover:bg-slate-50/70 transition-colors">
@@ -440,7 +440,7 @@ $stat_out = fetch_one("SELECT COUNT(*) as c FROM products WHERE stock <= 0")['c'
                         <td>
                             <div class="flex items-center gap-3">
                                 <div class="w-11 h-11 rounded-lg bg-slate-50 border border-slate-200 p-1 shrink-0 flex items-center justify-center">
-                                    <img src="<?php echo htmlspecialchars($img_src); ?>" class="max-w-full max-h-full object-contain" alt="">
+                                    <img src="<?php echo htmlspecialchars($img_src); ?>" onerror="this.src='../assets/images/placeholder.png';" class="max-w-full max-h-full object-contain" alt="">
                                 </div>
                                 <div class="min-w-0">
                                     <a href="product_form.php?id=<?php echo $p['id']; ?>" class="font-bold text-slate-800 hover:text-emerald-700 transition-colors text-xs truncate block max-w-xs">

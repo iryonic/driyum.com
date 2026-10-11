@@ -118,7 +118,7 @@ try {
                 'id' => (int)$p['id'],
                 'name' => html_entity_decode($p['name'], ENT_QUOTES, 'UTF-8'), // Ensure clean text
                 'price' => (float)$p['price'],
-                'image' => (string)$p['image'],
+                'image' => get_product_image_url($p['image']),
                 'weight' => (string)$p['weight'],
                 'quantity' => $qty,
                 'max_stock' => (int)$p['max_stock'] ?? 100, // Fallback
