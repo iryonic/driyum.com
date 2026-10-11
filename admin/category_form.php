@@ -27,6 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $filename = uniqid('cat_') . '.' . $ext;
             if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename)) {
                 $image_path = 'assets/images/categories/' . $filename;
+                if (function_exists('backup_image_to_db')) {
+                    backup_image_to_db($image_path);
+                }
             }
         } else {
             $err = "Invalid image file format. Allowed formats: " . implode(', ', $allowed);

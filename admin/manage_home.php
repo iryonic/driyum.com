@@ -103,6 +103,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $rel_path = "assets/images/badges/" . $filename;
                 $clean_label = '📁 ' . ucwords(str_replace(['_', '-'], ' ', $orig_name)) . ' (Custom)';
+                if (function_exists('backup_image_to_db')) {
+                    backup_image_to_db($rel_path);
+                }
 
                 $svg_content = '';
                 if ($ext === 'svg') {
@@ -281,6 +284,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $filename = "vid_thumb_" . uniqid() . "." . $ext;
                 if (move_uploaded_file($_FILES["media"]["tmp_name"], $target_dir . $filename)) {
                     $media_url = "assets/images/uploads/" . $filename;
+                    if (function_exists('backup_image_to_db')) {
+                        backup_image_to_db($media_url);
+                    }
                     if ($old_data && !empty($old_data['media_url']) && strpos($old_data['media_url'], 'assets/images/uploads/') === 0) {
                         $old_path = "../" . $old_data['media_url'];
                         if (file_exists($old_path)) @unlink($old_path);

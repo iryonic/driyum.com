@@ -161,6 +161,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $target = $upload_dir . $new_name;
                     if (move_uploaded_file($_FILES[$input_name]['tmp_name'], $target)) {
                         $cfg['var'] = 'assets/images/uploads/' . $new_name;
+                        if (function_exists('backup_image_to_db')) {
+                            backup_image_to_db($cfg['var']);
+                        }
                     }
                 }
             }

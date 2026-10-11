@@ -1015,7 +1015,8 @@ function get_url($path = '') {
 /**
  * Safe Product Image URL Helper
  * Checks if the product image file exists on disk.
- * If missing, 404, or empty, automatically falls back to safe branded placeholder.
+ * If missing (e.g. wiped by Git deploy), attempts instant recovery from the database backup.
+ * If restored, returns real URL; otherwise falls back to safe branded placeholder.
  */
 function get_product_image_url($image_path, $fallback = 'assets/images/placeholder.png') {
     if (empty($image_path)) {
@@ -1031,8 +1032,163 @@ function get_product_image_url($image_path, $fallback = 'assets/images/placehold
         (!empty($doc_root) && file_exists(rtrim($doc_root, '/\\') . '/' . $clean_path))) {
         return get_url($clean_path);
     }
+
+    // Auto-Recovery: Try restoring file from database backup
+    if (function_exists('restore_image_from_db') && restore_image_from_db($clean_path)) {
+        return get_url($clean_path);
+    }
     
     return get_url($fallback);
+}
+
+/**
+ * Gets the persistent uploads storage path (outside git deployment or inside gitignored storage)
+ */
+function get_persistent_storage_dir() {
+    $parent = dirname(__DIR__);
+    // 1. Try directory outside repo (immune to any git deployment)
+    $outside = dirname($parent) . '/driyum_persistent_uploads';
+    if (!file_exists($outside)) {
+        @mkdir($outside, 0777, true);
+    }
+    if (is_dir($outside) && is_writable($outside)) {
+        return $outside;
+    }
+
+    // 2. Fallback: inside storage/uploads_backup (storage/ is strictly in .gitignore)
+    $inside = $parent . '/storage/uploads_backup';
+    if (!file_exists($inside)) {
+        @mkdir($inside, 0777, true);
+    }
+    return $inside;
+}
+
+/**
+ * Backup an uploaded image file directly into persistent storage and MySQL database.
+ * This guarantees the image is NEVER lost, even if Git deployment wipes public_html.
+ */
+function backup_image_to_db($file_path) {
+    $clean_path = ltrim(str_replace('\\', '/', (string)$file_path), './');
+    if (empty($clean_path)) return false;
+
+    // Resolve full path on disk
+    $full_path = '';
+    if (file_exists($clean_path)) {
+        $full_path = $clean_path;
+    } elseif (file_exists(__DIR__ . '/../' . $clean_path)) {
+        $full_path = __DIR__ . '/../' . $clean_path;
+    } elseif (!empty($_SERVER['DOCUMENT_ROOT']) && file_exists(rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/' . $clean_path)) {
+        $full_path = rtrim($_SERVER['DOCUMENT_ROOT'], '/\\') . '/' . $clean_path;
+    }
+
+    if (empty($full_path) || !file_exists($full_path)) return false;
+
+    // Layer 1: Copy to persistent storage (Immune to Git wipes)
+    try {
+        $persistent_base = get_persistent_storage_dir();
+        $target_persistent = $persistent_base . '/' . $clean_path;
+        $target_dir = dirname($target_persistent);
+        if (!file_exists($target_dir)) @mkdir($target_dir, 0777, true);
+        @copy($full_path, $target_persistent);
+    } catch (\Throwable $e) {
+        // Continue to Layer 2
+    }
+
+    // Layer 2: Save to MySQL DB (for images under 3MB)
+    $size = @filesize($full_path);
+    if ($size > 0 && $size <= 3 * 1024 * 1024) {
+        try {
+            global $conn;
+            if (!$conn) $conn = get_db_connection();
+            if ($conn) {
+                $data = @file_get_contents($full_path);
+                if ($data !== false && strlen($data) > 0) {
+                    $ext = strtolower(pathinfo($full_path, PATHINFO_EXTENSION));
+                    $mimes = [
+                        'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+                        'png' => 'image/png', 'webp' => 'image/webp',
+                        'gif' => 'image/gif', 'svg' => 'image/svg+xml'
+                    ];
+                    $mime = $mimes[$ext] ?? 'application/octet-stream';
+
+                    $conn->query("CREATE TABLE IF NOT EXISTS image_backups (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        file_path VARCHAR(255) NOT NULL UNIQUE,
+                        mime_type VARCHAR(64) NOT NULL,
+                        image_data LONGBLOB NOT NULL,
+                        file_size INT NOT NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        INDEX idx_path (file_path)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+                    $stmt = $conn->prepare("INSERT INTO image_backups (file_path, mime_type, image_data, file_size) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE mime_type = VALUES(mime_type), image_data = VALUES(image_data), file_size = VALUES(file_size)");
+                    if ($stmt) {
+                        $null = NULL;
+                        $stmt->bind_param("ssbi", $clean_path, $mime, $null, $size);
+                        $stmt->send_long_data(2, $data);
+                        $stmt->execute();
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Handled gracefully if packet exceeds limit
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Restores an image file from persistent storage or database backup directly onto disk.
+ */
+function restore_image_from_db($file_path) {
+    $clean_path = ltrim(str_replace('\\', '/', (string)$file_path), './');
+    if (empty($clean_path)) return false;
+
+    $target = __DIR__ . '/../' . (strpos($clean_path, 'assets/images/') === 0 ? $clean_path : 'assets/images/' . $clean_path);
+    $dir = dirname($target);
+
+    // Layer 1: Check persistent storage
+    try {
+        $persistent_file = get_persistent_storage_dir() . '/' . $clean_path;
+        if (file_exists($persistent_file)) {
+            if (!file_exists($dir)) @mkdir($dir, 0777, true);
+            if (@copy($persistent_file, $target)) {
+                return file_exists($target);
+            }
+        }
+    } catch (\Throwable $e) {}
+
+    // Layer 2: Check MySQL DB
+    try {
+        global $conn;
+        if (!$conn) $conn = get_db_connection();
+        if ($conn) {
+            $alt_path = (strpos($clean_path, 'assets/images/') === 0) 
+                ? substr($clean_path, strlen('assets/images/')) 
+                : 'assets/images/' . $clean_path;
+
+            $stmt = $conn->prepare("SELECT image_data FROM image_backups WHERE file_path = ? OR file_path = ? LIMIT 1");
+            if ($stmt) {
+                $stmt->bind_param("ss", $clean_path, $alt_path);
+                $stmt->execute();
+                $stmt->bind_result($data);
+                if ($stmt->fetch()) {
+                    $stmt->close();
+                    if (!empty($data)) {
+                        if (!file_exists($dir)) @mkdir($dir, 0777, true);
+                        @file_put_contents($target, $data);
+                        return file_exists($target);
+                    }
+                } else {
+                    $stmt->close();
+                }
+            }
+        }
+    } catch (\Throwable $e) {}
+
+    return false;
 }
 
 function get_canonical_url() {

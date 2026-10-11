@@ -73,6 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax_action'])) {
                     $optimized = optimize_image($upload_dir . $filename, $upload_dir . $filename);
                     if ($optimized) $image_path = $optimized;
                 }
+                if (function_exists('backup_image_to_db')) {
+                    backup_image_to_db($image_path);
+                }
             }
         } else {
             $err = "Invalid file type for product image";
@@ -114,6 +117,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['ajax_action'])) {
                             if (function_exists('optimize_image')) {
                                 $optimized = optimize_image($gallery_dir . $filename, $gallery_dir . $filename);
                                 if ($optimized) $g_path = $optimized;
+                            }
+                            if (function_exists('backup_image_to_db')) {
+                                backup_image_to_db($g_path);
                             }
                             $stmt_gallery->bind_param("is", $id, $g_path);
                             $stmt_gallery->execute();

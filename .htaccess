@@ -9,6 +9,10 @@ RewriteEngine On
 # Set RewriteBase to / for live domain, or /folder/ for subdirectory
 # RewriteBase /
 
+# 0. Image Auto-Recovery (Revives images wiped by Git deployments)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^assets/images/(.+)$ restore_image.php?file=$1 [QSA,L]
+
 # 1. Clean Core Pages
 RewriteRule ^about$ about.php [L,QSA]
 RewriteRule ^contact$ contact.php [L,QSA]
