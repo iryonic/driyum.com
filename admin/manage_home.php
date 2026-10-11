@@ -43,64 +43,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirect = false;
     $submitted_tab = $_POST['active_tab'] ?? $active_tab;
 
-    // --- AJAX CUSTOM BADGE ICON UPLOAD ---
+    // --- AJAX CUSTOM BADGE ICON UPLOAD (SINGLE OR BULK MULTIPLE FILES) ---
     if (isset($_POST['action']) && $_POST['action'] === 'upload_badge_icon') {
         header('Content-Type: application/json');
-        if (isset($_FILES['badge_icon_file']) && $_FILES['badge_icon_file']['error'] === UPLOAD_ERR_OK) {
-            $allowed_exts = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
-            $file = $_FILES['badge_icon_file'];
-            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-            if (in_array($ext, $allowed_exts)) {
-                $target_dir = "../assets/images/badges/";
-                if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
-
-                $orig_name = pathinfo($file['name'], PATHINFO_FILENAME);
-                $safe_name = preg_replace('/[^a-zA-Z0-9_-]/', '_', $orig_name);
-                if (empty($safe_name)) $safe_name = "icon";
-                $filename = "custom_" . $safe_name . "_" . uniqid() . "." . $ext;
-
-                if (move_uploaded_file($file["tmp_name"], $target_dir . $filename)) {
-                    // Update manifest.json
-                    $manifest_path = $target_dir . "manifest.json";
-                    $manifest = file_exists($manifest_path) ? json_decode(file_get_contents($manifest_path), true) : [];
-                    if (!is_array($manifest)) $manifest = [];
-                    $manifest[$filename] = [
-                        'name' => $orig_name,
-                        'uploaded_at' => date('Y-m-d H:i:s'),
-                        'size' => $file['size']
+        
+        $files_to_process = [];
+        if (isset($_FILES['badge_icon_files']) && is_array($_FILES['badge_icon_files']['name'])) {
+            foreach ($_FILES['badge_icon_files']['name'] as $i => $name) {
+                if ($_FILES['badge_icon_files']['error'][$i] === UPLOAD_ERR_OK) {
+                    $files_to_process[] = [
+                        'name' => $name,
+                        'tmp_name' => $_FILES['badge_icon_files']['tmp_name'][$i],
+                        'size' => $_FILES['badge_icon_files']['size'][$i]
                     ];
-                    file_put_contents($manifest_path, json_encode($manifest, JSON_PRETTY_PRINT));
-
-                    $rel_path = "assets/images/badges/" . $filename;
-                    $clean_label = '📁 ' . ucwords(str_replace(['_', '-'], ' ', $orig_name)) . ' (Custom)';
-
-                    $svg_content = '';
-                    if ($ext === 'svg') {
-                        $raw_svg = file_get_contents($target_dir . $filename);
-                        if (preg_match('/<svg[\s\S]*<\/svg>/i', $raw_svg, $matches)) {
-                            $svg_content = $matches[0];
-                            if (!str_contains($svg_content, 'viewBox') && preg_match('/width="([0-9.]+)"\s+height="([0-9.]+)"/i', $svg_content, $wh)) {
-                                $svg_content = str_replace('<svg ', '<svg viewBox="0 0 ' . $wh[1] . ' ' . $wh[2] . '" ', $svg_content);
-                            }
-                        }
-                    }
-                    if (empty($svg_content)) {
-                        $svg_content = '<img src="../' . htmlspecialchars($rel_path) . '" alt="' . htmlspecialchars($clean_label) . '" class="w-full h-full object-contain" />';
-                    }
-
-                    echo json_encode([
-                        'success' => true,
-                        'path' => $rel_path,
-                        'label' => $clean_label,
-                        'svg' => $svg_content
-                    ]);
-                    exit;
                 }
             }
-            echo json_encode(['success' => false, 'error' => 'Allowed formats: SVG, PNG, WebP, JPG.']);
+        } elseif (isset($_FILES['badge_icon_file']) && $_FILES['badge_icon_file']['error'] === UPLOAD_ERR_OK) {
+            $files_to_process[] = [
+                'name' => $_FILES['badge_icon_file']['name'],
+                'tmp_name' => $_FILES['badge_icon_file']['tmp_name'],
+                'size' => $_FILES['badge_icon_file']['size']
+            ];
+        }
+
+        if (empty($files_to_process)) {
+            echo json_encode(['success' => false, 'error' => 'No files were uploaded or an upload error occurred.']);
             exit;
         }
-        echo json_encode(['success' => false, 'error' => 'No file uploaded or upload error occurred.']);
+
+        $allowed_exts = ['svg', 'png', 'webp', 'jpg', 'jpeg'];
+        $target_dir = "../assets/images/badges/";
+        if (!file_exists($target_dir)) mkdir($target_dir, 0777, true);
+
+        $manifest_path = $target_dir . "manifest.json";
+        $manifest = file_exists($manifest_path) ? json_decode(file_get_contents($manifest_path), true) : [];
+        if (!is_array($manifest)) $manifest = [];
+
+        $uploaded_icons = [];
+        $errors = [];
+
+        foreach ($files_to_process as $file) {
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowed_exts)) {
+                $errors[] = htmlspecialchars($file['name']) . ': Invalid file format (only SVG, PNG, WebP, JPG allowed).';
+                continue;
+            }
+
+            $orig_name = pathinfo($file['name'], PATHINFO_FILENAME);
+            $safe_name = preg_replace('/[^a-zA-Z0-9_-]/', '_', $orig_name);
+            if (empty($safe_name)) $safe_name = "icon";
+            $filename = "custom_" . $safe_name . "_" . uniqid() . "." . $ext;
+
+            if (move_uploaded_file($file["tmp_name"], $target_dir . $filename)) {
+                $manifest[$filename] = [
+                    'name' => $orig_name,
+                    'uploaded_at' => date('Y-m-d H:i:s'),
+                    'size' => $file['size']
+                ];
+
+                $rel_path = "assets/images/badges/" . $filename;
+                $clean_label = '📁 ' . ucwords(str_replace(['_', '-'], ' ', $orig_name)) . ' (Custom)';
+
+                $svg_content = '';
+                if ($ext === 'svg') {
+                    $raw_svg = file_get_contents($target_dir . $filename);
+                    if (preg_match('/<svg[\s\S]*<\/svg>/i', $raw_svg, $matches)) {
+                        $svg_content = $matches[0];
+                        if (!str_contains($svg_content, 'viewBox') && preg_match('/width="([0-9.]+)"\s+height="([0-9.]+)"/i', $svg_content, $wh)) {
+                            $svg_content = str_replace('<svg ', '<svg viewBox="0 0 ' . $wh[1] . ' ' . $wh[2] . '" ', $svg_content);
+                        }
+                    }
+                }
+                if (empty($svg_content)) {
+                    $svg_content = '<img src="../' . htmlspecialchars($rel_path) . '" alt="' . htmlspecialchars($clean_label) . '" class="w-full h-full object-contain" />';
+                }
+
+                $uploaded_icons[] = [
+                    'path' => $rel_path,
+                    'label' => $clean_label,
+                    'svg' => $svg_content
+                ];
+            } else {
+                $errors[] = htmlspecialchars($file['name']) . ': Failed to save file.';
+            }
+        }
+
+        if (!empty($uploaded_icons)) {
+            file_put_contents($manifest_path, json_encode($manifest, JSON_PRETTY_PRINT));
+
+            echo json_encode([
+                'success' => true,
+                'count' => count($uploaded_icons),
+                'icons' => $uploaded_icons,
+                'path' => $uploaded_icons[0]['path'],
+                'label' => $uploaded_icons[0]['label'],
+                'svg' => $uploaded_icons[0]['svg'],
+                'errors' => $errors
+            ]);
+            exit;
+        }
+
+        echo json_encode([
+            'success' => false, 
+            'error' => !empty($errors) ? implode(' ', $errors) : 'No files could be processed.'
+        ]);
         exit;
     }
 
@@ -909,14 +955,14 @@ $icon_lib = get_trust_badge_icon_library();
 
         <!-- TAB 2: UPLOAD CUSTOM ICON / SVG -->
         <div id="iconModalPane-upload" class="p-6 flex flex-col space-y-5 hidden flex-1 overflow-y-auto">
-            <div class="w-full max-w-lg mx-auto p-6 border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-2xl bg-slate-50/50 hover:bg-emerald-50/20 text-center transition cursor-pointer" onclick="document.getElementById('customBadgeIconFileInput').click()">
+            <div id="iconDropzoneArea" class="w-full max-w-lg mx-auto p-6 border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-2xl bg-slate-50/50 hover:bg-emerald-50/20 text-center transition cursor-pointer" onclick="document.getElementById('customBadgeIconFileInput').click()" ondragover="handleIconDragOver(event)" ondragleave="handleIconDragLeave(event)" ondrop="handleIconDrop(event)">
                 <div class="w-14 h-14 mx-auto rounded-full bg-emerald-100/80 text-emerald-600 flex items-center justify-center text-xl mb-3">
                     <i class="fas fa-cloud-upload-alt"></i>
                 </div>
-                <h4 class="text-xs font-bold text-slate-800">Click to upload custom icon or SVG</h4>
-                <p class="text-[11px] text-slate-500 mt-1">Supports vector .SVG, transparent .PNG, or .WebP</p>
+                <h4 class="text-xs font-bold text-slate-800">Click or Drag &amp; Drop to Upload Icons (Bulk Multiple SVGs / PNGs Supported)</h4>
+                <p class="text-[11px] text-slate-500 mt-1">Select one or multiple files at once &bull; Supports vector .SVG, transparent .PNG, or .WebP</p>
                 <p class="text-[10px] text-emerald-600 font-semibold mt-1.5"><i class="fas fa-check-circle mr-1"></i> Uploaded icons are permanently saved and instantly added to your library for all cards.</p>
-                <input type="file" id="customBadgeIconFileInput" accept=".svg,.png,.webp,.jpg,.jpeg" class="hidden" onchange="handleCustomIconFileUpload(this)">
+                <input type="file" id="customBadgeIconFileInput" name="badge_icon_files[]" multiple accept=".svg,.png,.webp,.jpg,.jpeg" class="hidden" onchange="handleCustomIconFileUpload(this)">
             </div>
             <div id="iconUploadStatus" class="text-xs font-semibold text-center text-slate-500"></div>
 
@@ -1451,14 +1497,49 @@ function restoreHiddenIcons() {
 }
 
 function handleCustomIconFileUpload(input) {
-    if (!input.files || !input.files[0]) return;
-    const file = input.files[0];
+    if (!input.files || input.files.length === 0) return;
+    uploadCustomBadgeFiles(input.files, () => { input.value = ''; });
+}
+
+function handleIconDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const zone = document.getElementById('iconDropzoneArea');
+    if (zone) zone.classList.add('border-emerald-500', 'bg-emerald-50/40');
+}
+
+function handleIconDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const zone = document.getElementById('iconDropzoneArea');
+    if (zone) zone.classList.remove('border-emerald-500', 'bg-emerald-50/40');
+}
+
+function handleIconDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const zone = document.getElementById('iconDropzoneArea');
+    if (zone) zone.classList.remove('border-emerald-500', 'bg-emerald-50/40');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        uploadCustomBadgeFiles(e.dataTransfer.files);
+    }
+}
+
+function uploadCustomBadgeFiles(fileList, onComplete) {
+    const files = Array.from(fileList);
+    if (files.length === 0) return;
+
     const statusEl = document.getElementById('iconUploadStatus');
-    if (statusEl) statusEl.innerHTML = `<span class="text-sky-600 font-semibold"><i class="fas fa-spinner fa-spin mr-1"></i> Saving ${file.name} to library...</span>`;
+    const countText = files.length === 1 ? `"${files[0].name}"` : `${files.length} custom icons`;
+    if (statusEl) {
+        statusEl.innerHTML = `<span class="text-sky-600 font-semibold"><i class="fas fa-spinner fa-spin mr-1.5"></i> Uploading ${countText} to library...</span>`;
+    }
 
     const formData = new FormData();
     formData.append('action', 'upload_badge_icon');
-    formData.append('badge_icon_file', file);
+    for (let i = 0; i < files.length; i++) {
+        formData.append('badge_icon_files[]', files[i]);
+    }
 
     fetch('manage_home.php', {
         method: 'POST',
@@ -1466,99 +1547,111 @@ function handleCustomIconFileUpload(input) {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.success && data.path) {
-            // Register permanently in Javascript ICON_LIBRARY
-            ICON_LIBRARY[data.path] = {
-                label: data.label,
-                svg: data.svg,
-                default_line1: data.label.replace('📁 ', '').replace(' (Custom)', '').toUpperCase().slice(0, 15),
-                default_line2: '',
-                is_custom: true
-            };
-
-            // 1. Add item to #iconPickerGrid
+        if (data.success && data.icons && data.icons.length > 0) {
             const grid = document.getElementById('iconPickerGrid');
-            if (grid) {
-                const card = document.createElement('div');
-                card.className = 'icon-picker-choice relative flex flex-col items-center justify-between p-3 rounded-xl border border-amber-300 bg-amber-50/20 hover:border-amber-500 hover:bg-amber-50/40 text-center transition group shadow-2xs hover:shadow-xs ring-2 ring-emerald-400';
-                card.setAttribute('data-key', data.path);
-                card.setAttribute('data-label', data.label.toLowerCase());
-                card.setAttribute('data-category', 'custom');
-                card.setAttribute('data-is-custom', '1');
-                card.innerHTML = `
-                    <div class="w-full flex items-center justify-between mb-1 z-10">
-                        <span class="px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">Custom</span>
-                        <button type="button" onclick="removeIconFromLibrary(event, '${data.path}', true)" title="Delete custom icon from library" class="w-6 h-6 rounded-md text-slate-300 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition cursor-pointer">
-                            <i class="fas fa-trash-alt text-[10px]"></i>
-                        </button>
-                    </div>
-                    <div class="w-12 h-12 flex items-center justify-center mb-1 text-emerald-700 group-hover:scale-110 transition-transform cursor-pointer" onclick="selectIconForCurrentCard('${data.path}')" title="Click to use icon">
-                        ${data.svg}
-                    </div>
-                    <span class="text-[10px] font-bold text-slate-700 leading-tight group-hover:text-emerald-700 transition-colors line-clamp-2 cursor-pointer mb-2 w-full" onclick="selectIconForCurrentCard('${data.path}')">
-                        ${escapeHtml(data.label)}
-                    </span>
-                    <button type="button" onclick="selectIconForCurrentCard('${data.path}')" class="w-full py-1 text-[9px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-lg transition border border-emerald-200/80 cursor-pointer">
-                        Use Icon
-                    </button>
-                `;
-                grid.insertBefore(card, grid.firstChild);
-            }
-
-            // 2. Add item to #uploadTabCustomGrid
             const uploadGrid = document.getElementById('uploadTabCustomGrid');
-            if (uploadGrid) {
-                const noMsg = document.getElementById('noCustomIconsMsg');
-                if (noMsg) noMsg.style.display = 'none';
+            const noMsg = document.getElementById('noCustomIconsMsg');
+            if (noMsg) noMsg.style.display = 'none';
 
-                const cleanTitle = data.label.replace('📁 ', '').replace(' (Custom)', '');
-                const previewItem = document.createElement('div');
-                previewItem.className = 'p-2.5 rounded-xl border border-amber-200 bg-amber-50/30 flex flex-col items-center justify-between text-center group relative hover:border-amber-400 transition ring-2 ring-emerald-400';
-                previewItem.innerHTML = `
-                    <button type="button" onclick="removeIconFromLibrary(event, '${data.path}', true)" title="Delete from library" class="absolute top-1 right-1 w-5 h-5 rounded text-slate-300 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition cursor-pointer">
-                        <i class="fas fa-trash-alt text-[8px]"></i>
-                    </button>
-                    <div class="w-10 h-10 flex items-center justify-center my-1 cursor-pointer" onclick="selectIconForCurrentCard('${data.path}')">
-                        ${data.svg}
-                    </div>
-                    <span class="text-[9px] font-bold text-slate-700 truncate w-full cursor-pointer" onclick="selectIconForCurrentCard('${data.path}')">
-                        ${escapeHtml(cleanTitle)}
-                    </span>
-                    <button type="button" onclick="selectIconForCurrentCard('${data.path}')" class="mt-1.5 text-[8px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded transition">
-                        Use Icon
-                    </button>
-                `;
-                uploadGrid.insertBefore(previewItem, uploadGrid.firstChild);
-            }
+            data.icons.forEach(item => {
+                // Register in JS ICON_LIBRARY
+                ICON_LIBRARY[item.path] = {
+                    label: item.label,
+                    svg: item.svg,
+                    default_line1: item.label.replace('📁 ', '').replace(' (Custom)', '').toUpperCase().slice(0, 15),
+                    default_line2: '',
+                    is_custom: true
+                };
 
-            // 3. Add <option> to all card selects
-            document.querySelectorAll('select[name*="[icon]"]').forEach(select => {
-                if (!select.querySelector(`option[value="${CSS.escape(data.path)}"]`)) {
-                    const opt = document.createElement('option');
-                    opt.value = data.path;
-                    opt.innerText = data.label;
-                    select.insertBefore(opt, select.firstChild);
+                // 1. Add to #iconPickerGrid
+                if (grid) {
+                    const card = document.createElement('div');
+                    card.className = 'icon-picker-choice relative flex flex-col items-center justify-between p-3 rounded-xl border border-amber-300 bg-amber-50/20 hover:border-amber-500 hover:bg-amber-50/40 text-center transition group shadow-2xs hover:shadow-xs ring-2 ring-emerald-400';
+                    card.setAttribute('data-key', item.path);
+                    card.setAttribute('data-label', item.label.toLowerCase());
+                    card.setAttribute('data-category', 'custom');
+                    card.setAttribute('data-is-custom', '1');
+                    card.innerHTML = `
+                        <div class="w-full flex items-center justify-between mb-1 z-10">
+                            <span class="px-1.5 py-0.5 rounded text-[7px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">Custom</span>
+                            <button type="button" onclick="removeIconFromLibrary(event, '${item.path}', true)" title="Delete custom icon from library" class="w-6 h-6 rounded-md text-slate-300 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition cursor-pointer">
+                                <i class="fas fa-trash-alt text-[10px]"></i>
+                            </button>
+                        </div>
+                        <div class="w-12 h-12 flex items-center justify-center mb-1 text-emerald-700 group-hover:scale-110 transition-transform cursor-pointer" onclick="selectIconForCurrentCard('${item.path}')" title="Click to use icon">
+                            ${item.svg}
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-700 leading-tight group-hover:text-emerald-700 transition-colors line-clamp-2 cursor-pointer mb-2 w-full" onclick="selectIconForCurrentCard('${item.path}')">
+                            ${escapeHtml(item.label)}
+                        </span>
+                        <button type="button" onclick="selectIconForCurrentCard('${item.path}')" class="w-full py-1 text-[9px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-lg transition border border-emerald-200/80 cursor-pointer">
+                            Use Icon
+                        </button>
+                    `;
+                    grid.insertBefore(card, grid.firstChild);
                 }
+
+                // 2. Add to #uploadTabCustomGrid
+                if (uploadGrid) {
+                    const cleanTitle = item.label.replace('📁 ', '').replace(' (Custom)', '');
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'p-2.5 rounded-xl border border-amber-200 bg-amber-50/30 flex flex-col items-center justify-between text-center group relative hover:border-amber-400 transition ring-2 ring-emerald-400';
+                    previewItem.innerHTML = `
+                        <button type="button" onclick="removeIconFromLibrary(event, '${item.path}', true)" title="Delete from library" class="absolute top-1 right-1 w-5 h-5 rounded text-slate-300 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition cursor-pointer">
+                            <i class="fas fa-trash-alt text-[8px]"></i>
+                        </button>
+                        <div class="w-10 h-10 flex items-center justify-center my-1 cursor-pointer" onclick="selectIconForCurrentCard('${item.path}')">
+                            ${item.svg}
+                        </div>
+                        <span class="text-[9px] font-bold text-slate-700 truncate w-full cursor-pointer" onclick="selectIconForCurrentCard('${item.path}')">
+                            ${escapeHtml(cleanTitle)}
+                        </span>
+                        <button type="button" onclick="selectIconForCurrentCard('${item.path}')" class="mt-1.5 text-[8px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-100 hover:bg-emerald-200 px-2 py-0.5 rounded transition">
+                            Use Icon
+                        </button>
+                    `;
+                    uploadGrid.insertBefore(previewItem, uploadGrid.firstChild);
+                }
+
+                // 3. Add <option> to all card selects
+                document.querySelectorAll('select[name*="[icon]"]').forEach(select => {
+                    if (!select.querySelector(`option[value="${CSS.escape(item.path)}"]`)) {
+                        const opt = document.createElement('option');
+                        opt.value = item.path;
+                        opt.innerText = item.label;
+                        select.insertBefore(opt, select.firstChild);
+                    }
+                });
             });
 
             updateIconCounts();
 
-            if (statusEl) statusEl.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fas fa-check-circle mr-1"></i> Saved to Icon Library!</span>`;
+            const successMsg = data.count > 1 
+                ? `${data.count} custom icons added to library!` 
+                : `Saved "${data.icons[0].label.replace('📁 ', '').replace(' (Custom)', '')}" to library!`;
+
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="text-emerald-600 font-bold"><i class="fas fa-check-circle mr-1.5"></i> ${successMsg}</span>`;
+            }
+
             setTimeout(() => {
-                if (currentTargetCard) {
-                    selectIconForCurrentCard(data.path);
+                if (currentTargetCard && data.icons.length === 1) {
+                    selectIconForCurrentCard(data.icons[0].path);
                 } else {
                     switchIconModalTab('library');
                 }
                 if (statusEl) statusEl.innerHTML = '';
-                input.value = '';
-            }, 400);
+                if (onComplete) onComplete();
+            }, 500);
+
         } else {
-            if (statusEl) statusEl.innerHTML = `<span class="text-rose-600"><i class="fas fa-exclamation-circle mr-1"></i> ${data.error || 'Upload failed.'}</span>`;
+            if (statusEl) statusEl.innerHTML = `<span class="text-rose-600 font-semibold"><i class="fas fa-exclamation-circle mr-1"></i> ${data.error || 'Upload failed.'}</span>`;
+            if (onComplete) onComplete();
         }
     })
     .catch(err => {
-        if (statusEl) statusEl.innerHTML = `<span class="text-rose-600"><i class="fas fa-exclamation-circle mr-1"></i> Upload error occurred.</span>`;
+        if (statusEl) statusEl.innerHTML = `<span class="text-rose-600 font-semibold"><i class="fas fa-exclamation-circle mr-1"></i> An error occurred while uploading.</span>`;
+        if (onComplete) onComplete();
     });
 }
 
