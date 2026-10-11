@@ -509,9 +509,7 @@ $active_meta = $page_meta[$curr_page] ?? ['title' => 'Administration', 'group' =
                         <button type="button" id="omni-clear-btn" class="hidden absolute right-8 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-xs p-1" title="Clear">
                             <i class="fas fa-times-circle"></i>
                         </button>
-                        <kbd class="hidden sm:inline-flex items-center gap-0.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-2xs pointer-events-none">
-                            <span class="text-[9px]">⌘</span>K
-                        </kbd>
+                       
                     </div>
 
                     <!-- Command Palette Dropdown -->

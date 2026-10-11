@@ -237,9 +237,7 @@ try {
 
 <!-- INFINITE MARQUEE -->
 <div class="text-white overflow-hidden py-1.5 md:py-2.5 relative z-[40] border-b border-[#19DC7E]/30 font-cute" style="background-color: <?php echo $announcement_bg; ?>;">
-    <!-- Gradient Overlay for fade effect on edges -->
-    <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black to-transparent z-10"></div>
-    <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black to-transparent z-10"></div>
+    
 
     <div class="flex whitespace-nowrap animate-[marquee_20s_linear_infinite] hover:[animation-play-state:paused] items-center">
         <?php for($i=0; $i<10; $i++): ?>
@@ -583,46 +581,62 @@ try {
 
 <!-- SIDEBAR CART -->
 <div id="cart-sidebar-overlay" onclick="closeCartSidebar()" class="fixed inset-0 bg-black/60 z-[2000] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
-<div id="cart-sidebar" class="cart-drawer-enhanced fixed top-0 right-0 h-full w-[90%] md:w-[550px] max-w-[550px] bg-[#f8fafc] z-[2001] transform translate-x-full transition-transform duration-500 flex flex-col shadow-2xl">
-    <div class="px-6 md:px-8 pt-safe-top pt-8 md:pt-12 pb-6 md:pb-8 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
+<div id="cart-sidebar" class="cart-drawer-enhanced fixed top-0 right-0 h-full w-[92%] sm:w-[440px] md:w-[460px] max-w-[460px] bg-[#f8fafc] z-[2001] transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <!-- Header -->
+    <div class="px-5 sm:px-6 py-4 sm:py-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
         <div>
-            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-[#19DC7E] mb-1 block">Your Stash</span>
-            <h2 class="text-2xl md:text-3xl font-heading font-black text-gray-900">Shopping Bag.</h2>
+            <span class="text-[10px] font-black uppercase tracking-[0.25em] text-[#00875A] block leading-tight">Your Stash</span>
+            <h2 class="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2 mt-0.5 font-heading">
+                <span>Shopping Bag</span>
+                <span id="cart-drawer-count" class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 text-[11px] font-black bg-emerald-50 text-[#00875A] rounded-full border border-emerald-100/80">0</span>
+            </h2>
         </div>
-        <button onclick="closeCartSidebar()" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-2xl bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all" aria-label="Close Shopping Bag">
-            <i class="fas fa-times text-lg md:text-xl"></i>
+        <button onclick="closeCartSidebar()" class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors" aria-label="Close Shopping Bag">
+            <i class="fas fa-times text-sm"></i>
         </button>
     </div>
     
     <!-- Free Shipping Progress Bar -->
-    <div id="free-shipping-progress-container" class="px-6 md:px-8 pt-6 hidden">
-        <div class="flex justify-between items-center mb-2">
-            <span id="free-shipping-msg" class="text-[10px] font-black uppercase tracking-widest text-gray-500"></span>
-            <span id="free-shipping-icon" class="text-lg">🚚</span>
+    <div id="free-shipping-progress-container" class="px-5 sm:px-6 py-3 bg-gradient-to-r from-emerald-50/80 via-teal-50/40 to-emerald-50/80 border-b border-emerald-100/60 hidden shrink-0 transition-all">
+        <div class="flex justify-between items-center mb-1.5 text-xs font-semibold text-gray-700">
+            <span id="free-shipping-msg" class="flex items-center gap-1.5 leading-tight"></span>
+            <span id="free-shipping-icon" class="text-base select-none shrink-0 ml-2">🚚</span>
         </div>
-        <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-            <div id="free-shipping-bar" class="h-full bg-[#19DC7E] w-0 transition-all duration-1000"></div>
+        <div class="h-2 w-full bg-emerald-100/80 rounded-full overflow-hidden p-[1px]">
+            <div id="free-shipping-bar" class="h-full bg-gradient-to-r from-emerald-500 to-[#19DC7E] rounded-full w-0 transition-all duration-700 shadow-xs"></div>
         </div>
     </div>
     
-    <div id="cart-items-container" class="flex-1 overflow-y-auto px-4 md:px-8 py-6 md:py-10 space-y-4 md:space-y-6">
+    <!-- Items Container -->
+    <div id="cart-items-container" class="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-3 cart-items-scroll">
         <!-- populated by chunky.js -->
     </div>
     
-    <div class="px-6 md:px-8 py-8 md:py-10 bg-white border-t border-gray-100 shadow-[0_-10px_40px_rgba(0,0,0,0.03)] relative z-20 shrink-0 pb-12 md:pb-8">
-        <div class="flex justify-between items-end mb-4 md:mb-6">
-            <div>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Subtotal</span>
-                <span class="text-[10px] md:text-xs text-gray-300 font-bold hidden md:block">Tax & shipping calculated at checkout</span>
+    <!-- Footer -->
+    <div class="px-5 sm:px-6 py-4 sm:py-5 bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] relative z-20 shrink-0">
+        <div class="space-y-1 mb-4">
+            <div class="flex justify-between items-baseline">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Subtotal</span>
+                <span id="cart-total" class="text-2xl sm:text-3xl font-black text-gray-900 font-heading tracking-tight">₹0</span>
             </div>
-            <span id="cart-total" class="text-3xl md:text-4xl font-heading font-black tracking-tighter text-gray-900">₹0</span>
+            <p class="text-[11px] text-gray-400 font-medium">Taxes included • Shipping calculated at checkout</p>
         </div>
-        <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-[#111827] text-white p-5 md:p-6 rounded-[24px] hover:bg-[#19DC7E] hover:text-black transition-all group shadow-2xl hover:shadow-[#19DC7E]/20 hover:-translate-y-1">
-            <span class="text-lg md:text-xl font-black">Secure Checkout</span>
-            <div class="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-black/10 group-hover:text-black transition-colors">
-                <i class="fas fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform text-sm md:text-base"></i>
+        
+        <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-gray-900 hover:bg-[#00875A] text-white px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl transition-all duration-200 group shadow-lg shadow-gray-900/10 hover:shadow-emerald-500/20 active:scale-[0.99]">
+            <span class="text-base font-black tracking-wide">Proceed to Checkout</span>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">Fast Pay</span>
+                <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-[#00875A] transition-all">
+                    <i class="fas fa-arrow-right text-xs transition-transform group-hover:translate-x-0.5"></i>
+                </div>
             </div>
         </a>
+        
+        <div class="mt-3 flex items-center justify-center gap-4 text-[11px] text-gray-400 font-medium select-none">
+            <span class="flex items-center gap-1.5"><i class="fas fa-shield-alt text-[#00875A]"></i> 256-bit Secure</span>
+            <span>•</span>
+            <span class="flex items-center gap-1.5"><i class="fas fa-bolt text-amber-500"></i> Fast Dispatch</span>
+        </div>
     </div>
 </div>
 

@@ -197,20 +197,17 @@ include 'includes/header.php';
         </div>
 
         <!-- Floating Bulk Action Dock -->
-        <div id="bulkActionBar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-700 items-center gap-4 transition-all">
-            <div class="flex items-center gap-2.5 pr-4 border-r border-slate-700">
-                <span id="selectedCount" class="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center">0</span>
-                <span class="text-xs font-medium text-slate-200">Selected</span>
-            </div>
-            <div class="flex items-center gap-2">
-                <button type="submit" name="bulk_remind" onclick="this.innerHTML='<i class=\'fas fa-spinner fa-spin mr-1\'></i> Queueing...'; this.classList.add('opacity-70', 'pointer-events-none');" class="btn-admin btn-admin-primary text-xs py-1.5 px-3">
-                    <i class="fas fa-envelope mr-1"></i> Send Reminders
-                </button>
-                <button type="submit" name="bulk_delete" onclick="return confirm('Permanently delete selected carts?')" class="btn-admin btn-admin-danger text-xs py-1.5 px-3">
-                    <i class="fas fa-trash-alt mr-1"></i> Delete Selected
-                </button>
-            </div>
-            <button type="button" onclick="unselectAll()" class="text-slate-400 hover:text-white p-1 text-xs ml-2" title="Clear Selection">
+        <div id="bulkActionBar" class="hidden admin-bulk-dock">
+            <span class="bulk-counter-badge">
+                <span id="selectedCount">0</span> Selected
+            </span>
+            <button type="submit" name="bulk_remind" onclick="this.innerHTML='<i class=\'fas fa-spinner fa-spin mr-1\'></i> Queueing...'; this.classList.add('opacity-70', 'pointer-events-none');" class="bulk-btn bulk-btn-primary">
+                <i class="fas fa-envelope mr-1"></i> Send Reminders
+            </button>
+            <button type="submit" name="bulk_delete" onclick="return confirm('Permanently delete selected carts?')" class="bulk-btn bulk-btn-danger">
+                <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+            </button>
+            <button type="button" onclick="unselectAll()" class="text-slate-400 hover:text-slate-700 p-1 text-xs ml-1" title="Clear Selection">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -232,10 +229,8 @@ function updateBulkUI() {
     
     if (selected.length > 0) {
         bulkBar.classList.remove('hidden');
-        bulkBar.classList.add('flex');
     } else {
         bulkBar.classList.add('hidden');
-        bulkBar.classList.remove('flex');
     }
 
     checkboxes.forEach(cb => {

@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set('Asia/Kolkata');
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/trust_badge_icons.php';
 
 // Polyfill for PHP < 8.0
 if (!function_exists('str_starts_with')) {

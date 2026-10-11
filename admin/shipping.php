@@ -54,6 +54,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             [$method_id, $zone_id, $min_w, $max_w, $charge]);
         $success = "Shipping rate added successfully!";
     }
+
+    if (isset($_POST['update_rate'])) {
+        $id = (int)$_POST['rate_id'];
+        $method_id = (int)$_POST['method_id'];
+        $zone_id = (int)$_POST['zone_id'];
+        $min_w = (float)$_POST['min_weight'];
+        $max_w = (float)$_POST['max_weight'];
+        $charge = (float)$_POST['charge'];
+        execute_query("UPDATE shipping_rates SET method_id=?, zone_id=?, min_weight=?, max_weight=?, charge=? WHERE id=?", 
+            [$method_id, $zone_id, $min_w, $max_w, $charge, $id]);
+        $success = "Shipping rate updated successfully!";
+    }
     
     if (isset($_POST['delete_rate'])) {
         $id = (int)$_POST['rate_id'];
@@ -371,12 +383,17 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
                                             </td>
                                             <td class="font-semibold text-slate-900 text-xs">₹<?php echo number_format($r['charge'], 2); ?></td>
                                             <td class="text-right">
-                                                <form action="?tab=rates" method="POST" onsubmit="return confirm('Delete this rate slab?')" class="inline-block">
-                                                    <input type="hidden" name="rate_id" value="<?php echo $r['id']; ?>">
-                                                    <button type="submit" name="delete_rate" class="p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors" title="Delete Rate">
-                                                        <i class="fas fa-trash-alt text-xs"></i>
+                                                <div class="flex items-center justify-end gap-1">
+                                                    <button type="button" onclick="editRate(<?php echo htmlspecialchars(json_encode($r)); ?>)" class="p-1.5 text-slate-400 hover:text-slate-800 rounded hover:bg-slate-100 transition-colors" title="Edit Rate Slab">
+                                                        <i class="fas fa-edit text-xs"></i>
                                                     </button>
-                                                </form>
+                                                    <form action="?tab=rates" method="POST" onsubmit="return confirm('Delete this rate slab?')" class="inline-block">
+                                                        <input type="hidden" name="rate_id" value="<?php echo $r['id']; ?>">
+                                                        <button type="submit" name="delete_rate" class="p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors" title="Delete Rate">
+                                                            <i class="fas fa-trash-alt text-xs"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -468,6 +485,55 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'methods';
     </div>
 </div>
 
+<!-- Edit Rate Modal -->
+<div id="rateModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-[200] p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-slate-200 overflow-hidden">
+        <div class="flex items-center justify-between p-5 border-b border-slate-100">
+            <h3 class="text-base font-bold text-slate-900">Edit Weight Rate Slab</h3>
+            <button type="button" onclick="closeModal('rateModal')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+        <form action="?tab=rates" method="POST" class="p-5 space-y-4">
+            <input type="hidden" name="rate_id" id="edit_rate_id">
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Shipping Method</label>
+                <select name="method_id" id="edit_rate_method_id" required class="admin-select text-xs">
+                    <?php foreach ($methods as $m): ?>
+                        <option value="<?php echo $m['id']; ?>"><?php echo htmlspecialchars($m['display_name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Destination Zone</label>
+                <select name="zone_id" id="edit_rate_zone_id" required class="admin-select text-xs">
+                    <?php foreach ($zones as $z): ?>
+                        <option value="<?php echo $z['id']; ?>"><?php echo htmlspecialchars($z['zone_name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Min Weight (kg)</label>
+                    <input type="number" step="0.001" name="min_weight" id="edit_rate_min_weight" required class="admin-input text-xs">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Max Weight (kg)</label>
+                    <input type="number" step="0.001" name="max_weight" id="edit_rate_max_weight" required class="admin-input text-xs">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Rate Charge (₹)</label>
+                <input type="number" step="0.01" name="charge" id="edit_rate_charge" required class="admin-input text-xs">
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeModal('rateModal')" class="btn-admin btn-admin-secondary text-xs">Cancel</button>
+                <button type="submit" name="update_rate" class="btn-admin btn-admin-primary text-xs">Update Rate Slab</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 function editMethod(data) {
     document.getElementById('edit_method_id').value = data.id;
@@ -487,6 +553,17 @@ function editZone(data) {
     document.getElementById('edit_zone_max_days').value = data.max_days;
     document.getElementById('zoneModal').classList.remove('hidden');
     document.getElementById('zoneModal').classList.add('flex');
+}
+
+function editRate(data) {
+    document.getElementById('edit_rate_id').value = data.id;
+    document.getElementById('edit_rate_method_id').value = data.method_id;
+    document.getElementById('edit_rate_zone_id').value = data.zone_id;
+    document.getElementById('edit_rate_min_weight').value = parseFloat(data.min_weight);
+    document.getElementById('edit_rate_max_weight').value = parseFloat(data.max_weight);
+    document.getElementById('edit_rate_charge').value = parseFloat(data.charge);
+    document.getElementById('rateModal').classList.remove('hidden');
+    document.getElementById('rateModal').classList.add('flex');
 }
 
 function closeModal(id) {

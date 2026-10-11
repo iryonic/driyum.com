@@ -132,7 +132,6 @@
             align-items: center;
             justify-content: center;
             border: 3.5px solid #ffffff;
-            box-shadow: 0 4px 14px rgba(21, 128, 61, 0.4);
             margin-top: -24px;
             transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
             text-decoration: none;
@@ -196,12 +195,12 @@
                 margin-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
             }
             .admin-bulk-dock {
-                bottom: calc(68px + 0.65rem + env(safe-area-inset-bottom, 0px)) !important;
-                z-index: 95;
+                bottom: calc(88px + 0.75rem + env(safe-area-inset-bottom, 0px)) !important;
+                z-index: 110 !important;
             }
             body.bulk-bar-active main.flex-1,
             body:has(.admin-bulk-dock:not(.hidden)) main.flex-1 {
-                padding-bottom: calc(145px + env(safe-area-inset-bottom, 0px)) !important;
+                padding-bottom: calc(165px + env(safe-area-inset-bottom, 0px)) !important;
             }
         }
 

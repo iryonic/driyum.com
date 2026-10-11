@@ -347,7 +347,7 @@ window.updateCartIcon = async function () {
         const response = await fetch(`${BASE_URL}api/cart.php?action=get_count`);
         const data = await response.json();
         if (data.success) {
-            document.querySelectorAll('#cart-count, #mobile-cart-count, #desktop-cart-count').forEach(el => {
+            document.querySelectorAll('#cart-count, #mobile-cart-count, #desktop-cart-count, #cart-drawer-count').forEach(el => {
                 el.textContent = data.count;
             });
         }
@@ -368,76 +368,111 @@ window.loadCartItems = async function (isUpdate = false) {
             const totalEl = document.getElementById('cart-total');
             if (totalEl) totalEl.textContent = `₹${data.subtotal}`;
 
+            // Update drawer item count badge
+            const itemCount = data.count !== undefined ? data.count : (data.items ? data.items.reduce((acc, it) => acc + (it.quantity || 1), 0) : 0);
+            document.querySelectorAll('#cart-drawer-count').forEach(el => {
+                el.textContent = itemCount;
+            });
+
             // --- FREE SHIPPING PROGRESS LOGIC ---
             const fsContainer = document.getElementById('free-shipping-progress-container');
             const fsMsg = document.getElementById('free-shipping-msg');
             const fsBar = document.getElementById('free-shipping-bar');
+            const fsIcon = document.getElementById('free-shipping-icon');
 
             if (fsContainer && fsMsg && fsBar) {
-                if (data.items.length === 0) {
+                if (!data.items || data.items.length === 0) {
                     fsContainer.classList.add('hidden');
                 } else {
                     fsContainer.classList.remove('hidden');
-                    const subtotal = data.subtotal;
+                    const subtotal = data.subtotal || 0;
                     const threshold = typeof FREE_SHIPPING_THRESHOLD !== 'undefined' ? FREE_SHIPPING_THRESHOLD : 499;
 
                     if (subtotal >= threshold) {
-                        fsMsg.innerHTML = '<span class="text-[#24B25D] font-black">Booyah! You unlocked FREE SHIPPING! 🚀</span>';
+                        fsMsg.innerHTML = '<span class="text-[#00875A] font-extrabold flex items-center gap-1.5"><i class="fas fa-check-circle text-xs"></i> You unlocked FREE SHIPPING! 🎉</span>';
                         fsBar.style.width = '100%';
                         fsBar.classList.add('progress-shimmer');
-                        document.getElementById('free-shipping-icon').textContent = '🎉';
+                        if (fsIcon) fsIcon.textContent = '🚀';
                     } else {
                         const remaining = threshold - subtotal;
-                        const percentage = (subtotal / threshold) * 100;
-                        fsMsg.innerHTML = `Add <span class="text-black font-black">₹${remaining}</span> more for <span class="text-[#24B25D]">FREE SHIPPING</span>`;
+                        const percentage = Math.min(100, Math.max(8, (subtotal / threshold) * 100));
+                        fsMsg.innerHTML = `<span class="text-gray-600 font-medium">Add <strong class="text-gray-900 font-extrabold">₹${remaining}</strong> for <strong class="text-[#00875A] font-extrabold">FREE SHIPPING</strong></span>`;
                         fsBar.style.width = `${percentage}%`;
                         fsBar.classList.remove('progress-shimmer');
-                        document.getElementById('free-shipping-icon').textContent = '🚚';
+                        if (fsIcon) fsIcon.textContent = '🚚';
                     }
                 }
             }
             // ------------------------------------
 
-            if (data.items.length === 0) {
+            if (!data.items || data.items.length === 0) {
                 container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full px-12 text-center">
-                        <div class="w-32 h-32 bg-white rounded-[40px] shadow-2xl flex items-center justify-center text-5xl mb-8">🛍️</div>
-                        <h3 class="text-3xl font-heading font-black text-gray-900 mb-4">Bag is empty!</h3>
-                        <p class="text-gray-400 font-medium mb-10 leading-relaxed">It seems your snack vault is empty.</p>
-                        <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop'" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-[#24B25D] hover:text-black transition-all shadow-xl active:scale-95">Explore Snacks</button>
+                    <div class="flex flex-col items-center justify-center h-full min-h-[320px] px-6 py-10 text-center my-auto">
+                        <div class="w-20 h-20 bg-emerald-50 text-[#00875A] rounded-2xl flex items-center justify-center text-3xl mb-4 border border-emerald-100/70 shadow-xs">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <h3 class="text-xl font-heading font-black text-gray-900 mb-1.5">Your Bag is Empty</h3>
+                        <p class="text-xs text-gray-500 max-w-xs mb-6 leading-relaxed">Looks like you haven't added any crunchy fruit snacks yet.</p>
+                        <button onclick="closeCartSidebar(); window.location.href='${BASE_URL}shop'" class="inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-[#00875A] text-white px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95">
+                            <span>Explore Snacks</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
+                        </button>
                     </div>`;
             } else {
                 container.innerHTML = data.items.map((item, index) => {
-                    const animationStyle = isUpdate ? '' : `animation: cartItemSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: ${index * 50}ms; opacity: 0; transform: translateX(20px);`;
+                    const animationStyle = isUpdate ? '' : `animation: cartItemSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: ${index * 40}ms; opacity: 0; transform: translateX(18px);`;
+                    const weightText = item.weight 
+                        ? (parseFloat(item.weight) < 10 ? (parseFloat(item.weight) * 1000) + 'g' : item.weight) 
+                        : 'Standard Pack';
+
                     return `
                     <div id="cart-item-${item.id}" 
-                         class="cart-item-card group relative flex gap-5 items-center bg-white p-4 rounded-[28px] border-2 border-transparent hover:border-gray-50 transition-all duration-300"
+                         class="cart-item-card group relative flex items-center gap-3 sm:gap-3.5 bg-white p-3 sm:p-3.5 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-gray-200 transition-all"
                          style="${animationStyle}">
-                        <!-- Image Container with Float Animation -->
-                        <div class="relative w-24 h-24 flex-shrink-0 bg-[#F3F4F6] rounded-[22px] overflow-hidden group-hover:shadow-[0_15px_30px_rgba(0,0,0,0.1)] transition-shadow">
-                             <a href="${BASE_URL}product/${item.id}"><img src="${BASE_URL}${item.image}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'"></a>
-                        </div>
+                        <!-- Product Image -->
+                        <a href="${BASE_URL}product/${item.id}" class="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 bg-[#F9FAFB] rounded-xl border border-gray-100 overflow-hidden flex items-center justify-center p-1.5 transition-transform group-hover:scale-[1.02]" title="${item.name}">
+                            <img src="${BASE_URL}${item.image}" alt="${item.name}" class="w-full h-full object-contain" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
+                        </a>
                         
-                        <div class="flex-1 min-w-0 pr-6">
-                            <a href="${BASE_URL}product/${item.id}" class="block">
-                                <h4 class="font-black text-gray-900 truncate font-heading text-lg mb-0.5 leading-tight group-hover:text-[#24B25D] transition-colors">${item.name}</h4>
-                                <p class="text-xs text-gray-400 font-bold uppercase tracking-wide mb-3">${item.weight ? (parseFloat(item.weight) < 10 ? (parseFloat(item.weight) * 1000) + 'G' : item.weight) : 'Premium Pack'}</p>
-                            </a>
+                        <!-- Content Details -->
+                        <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5 self-stretch">
+                            <!-- Top: Title & Delete -->
+                            <div class="flex items-start justify-between gap-2">
+                                <a href="${BASE_URL}product/${item.id}" class="block min-w-0 flex-1" title="${item.name}">
+                                    <h4 class="font-bold text-gray-900 text-sm sm:text-[15px] leading-snug truncate hover:text-[#00875A] transition-colors">${item.name}</h4>
+                                    <div class="mt-0.5">
+                                        <span class="inline-flex items-center text-[10px] sm:text-[11px] font-semibold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">${weightText}</span>
+                                    </div>
+                                </a>
+                                <button onclick="updateCartQty(${item.id}, 0)" 
+                                        class="text-gray-400 hover:text-red-500 hover:bg-red-50 w-7 h-7 rounded-lg transition-colors flex items-center justify-center shrink-0 -mr-1 -mt-0.5" 
+                                        title="Remove item" 
+                                        aria-label="Remove ${item.name}">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </div>
                             
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-100">
-                                    <button onclick="updateCartQty(${item.id}, ${item.quantity - 1})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-gray-400 hover:text-black shadow-sm transition-all hover:scale-110 active:scale-95"><i class="fas fa-minus text-[10px]"></i></button>
-                                    <span class="text-sm font-black w-8 text-center">${item.quantity}</span>
-                                    <button onclick="updateCartQty(${item.id}, ${item.quantity + 1})" class="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-black hover:bg-[#24B25D] shadow-sm transition-all hover:scale-110 active:scale-95"><i class="fas fa-plus text-[10px]"></i></button>
+                            <!-- Bottom: Stepper & Price -->
+                            <div class="mt-2.5 flex items-center justify-between gap-3">
+                                <!-- Stepper Pill -->
+                                <div class="inline-flex items-center bg-gray-50 border border-gray-200/80 rounded-lg p-0.5">
+                                    <button onclick="updateCartQty(${item.id}, ${item.quantity - 1})" 
+                                            class="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-white text-gray-600 hover:text-black hover:bg-gray-100 flex items-center justify-center text-xs transition active:scale-90 shadow-2xs"
+                                            aria-label="Decrease quantity">
+                                        <i class="fas fa-minus text-[9px]"></i>
+                                    </button>
+                                    <span class="w-6 sm:w-7 text-center text-xs sm:text-sm font-black text-gray-800 select-none">${item.quantity}</span>
+                                    <button onclick="updateCartQty(${item.id}, ${item.quantity + 1})" 
+                                            class="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-white text-gray-900 hover:bg-[#00875A] hover:text-white flex items-center justify-center text-xs transition active:scale-90 shadow-2xs"
+                                            aria-label="Increase quantity">
+                                        <i class="fas fa-plus text-[9px]"></i>
+                                    </button>
                                 </div>
-                                <span class="font-black text-gray-900 text-lg">₹${item.total}</span>
+                                
+                                <!-- Price -->
+                                <span class="font-black text-gray-900 text-base sm:text-lg font-heading tracking-tight">₹${item.total}</span>
                             </div>
                         </div>
-
-                        <!-- Modern Remove Button -->
-                        <button onclick="updateCartQty(${item.id}, 0)" class="absolute top-2 right-2 w-7 h-7 bg-red-50 text-red-300 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all shadow-lg scale-75 hover:scale-100">
-                            <i class="fas fa-times text-[10px]"></i>
-                        </button>
                     </div>`;
                 }).join('');
             }

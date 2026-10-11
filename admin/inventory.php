@@ -129,7 +129,7 @@ $out_of_stock_count = count(array_filter($all_products, fn($p) => $p['stock'] <=
 </div>
 
 <!-- FLOATING BULK DOCK -->
-<div id="bulk-bar" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700/80 items-center gap-3 text-xs max-w-[95vw] overflow-x-auto anim-fade-in">
+<div id="bulk-bar" class="hidden admin-bulk-dock fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-slate-700/80 items-center gap-3 text-xs max-w-[95vw] overflow-x-auto anim-fade-in">
     <div class="flex items-center gap-2 border-r border-slate-700 pr-3 shrink-0">
         <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
         <span class="font-bold text-white"><span id="selected-count">0</span> Selected</span>

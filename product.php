@@ -206,7 +206,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 </header>
 
-<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 max-w-7xl">
+<main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 sm:pt-6 sm:pb-32 lg:py-8 max-w-7xl">
     
     <!-- DESKTOP BREADCRUMBS -->
     <nav class="hidden lg:flex items-center gap-2 mb-6 text-xs font-semibold text-gray-400">
@@ -300,34 +300,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <div class="border-t border-gray-100 my-2 sm:my-4"></div>
 
-            <!-- DESKTOP BUY & PRICE CARD (Screenshot 5) -->
-            <div class="hidden lg:block bg-white rounded-2xl p-6 border border-gray-100 shadow-sm border-t-4 border-t-[#00875A] space-y-5">
-                <!-- Large Price -->
-                <div class="flex items-baseline gap-3">
-                    <span class="text-4xl font-black text-gray-900 tracking-tight">
-                        ₹<span id="desktopPriceDisplay"><?php echo $product['price']; ?></span>
-                    </span>
-                    <?php if($product['original_price'] > $product['price']): ?>
-                        <span class="text-lg text-gray-400 line-through font-semibold">₹<?php echo $product['original_price']; ?></span>
-                        <span class="text-xs font-black text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full">
-                            Save <?php echo round((($product['original_price']-$product['price'])/$product['original_price'])*100); ?>%
+            <!-- IN-PAGE BUY & PRICE CARD (Desktop & Mobile) -->
+            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm  space-y-4 sm:space-y-5">
+                <!-- Large Price & Taxes -->
+                <div class="space-y-1">
+                    <div class="flex items-baseline gap-2.5 sm:gap-3 flex-wrap">
+                        <span class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+                            ₹<span id="desktopPriceDisplay"><?php echo $product['price']; ?></span>
                         </span>
-                    <?php endif; ?>
+                        <?php if($product['original_price'] > $product['price']): ?>
+                            <span class="text-base sm:text-lg text-gray-400 line-through font-semibold">₹<?php echo $product['original_price']; ?></span>
+                            <span class="text-xs font-black text-rose-500 bg-rose-50 px-2.5 py-0.5 rounded-full">
+                                Save <?php echo round((($product['original_price']-$product['price'])/$product['original_price'])*100); ?>%
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                    
                 </div>
 
                 <!-- Actions: ADD + and BUY NOW -->
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
                     <button 
                         onclick="addToCart(<?php echo $id; ?>, this, 1)" 
                         <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-2 border-[#00875A] text-[#00875A] hover:bg-[#EBF8F2] active:scale-95'; ?> py-3.5 px-6 rounded-full font-black text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                        class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-2 border-[#00875A] text-[#00875A] hover:bg-[#EBF8F2] active:scale-95'; ?> py-3 sm:py-3.5 px-4 sm:px-6 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
                         <span>ADD +</span>
                     </button>
 
                     <button 
                         onclick="quickBuy(<?php echo $id; ?>, this, 1)" 
                         <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#F97316] hover:bg-[#EA580C] text-white shadow-md hover:shadow-lg active:scale-95'; ?> py-3.5 px-6 rounded-full font-black text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                        class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#F97316] hover:bg-[#EA580C] text-white shadow-md hover:shadow-lg active:scale-95'; ?> py-3 sm:py-3.5 px-4 sm:px-6 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
                         <span>BUY NOW</span>
                         <i class="fas fa-arrow-right text-xs"></i>
                     </button>
@@ -642,31 +645,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 </main>
 
-<!-- MOBILE FLOATING STICKY BOTTOM BAR (Screenshot 1) -->
-<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 p-3 px-4 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] flex items-center justify-between gap-3">
-    <!-- Left: Price -->
-    <div class="flex flex-col">
-        <span class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight leading-none">
-            ₹<span id="mobileBottomPrice"><?php echo $product['price']; ?></span>
-        </span>
-        <span class="text-[9px] font-bold text-emerald-600 mt-0.5">Inclusive of all taxes</span>
+<!-- MOBILE FLOATING STICKY BOTTOM BAR -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200/90 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-4" style="padding-bottom: max(0.85rem, env(safe-area-inset-bottom, 0.85rem));">
+    <!-- Left: Price & Taxes -->
+    <div class="flex flex-col min-w-0">
+        <div class="flex items-baseline gap-1.5 flex-wrap">
+            <span class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-none">
+                ₹<span id="mobileBottomPrice"><?php echo $product['price']; ?></span>
+            </span>
+            <?php if($product['original_price'] > $product['price']): ?>
+                <span class="text-xs text-gray-400 line-through font-semibold leading-none">₹<?php echo $product['original_price']; ?></span>
+            <?php endif; ?>
+        </div>
     </div>
 
     <!-- Right: ADD + and BUY NOW buttons -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
         <button 
             onclick="addToCart(<?php echo $id; ?>, this, 1)" 
             <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-            class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300' : 'border-2 border-[#00875A] text-[#00875A] hover:bg-emerald-50 active:scale-95'; ?> px-4 py-2.5 rounded-full font-black text-xs uppercase tracking-wider transition-all">
+            class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'px-2 border-2 border-[#00875A] text-[#00875A] hover:bg-emerald-50 active:scale-95'; ?> px-4.5 sm:px-6 py-2.5 sm:py-3 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all min-h-[46px] flex items-center justify-center">
             ADD +
         </button>
 
         <button 
             onclick="quickBuy(<?php echo $id; ?>, this, 1)" 
             <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-            class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400' : 'bg-[#F97316] text-white hover:bg-[#EA580C] active:scale-95 shadow-md'; ?> px-5 py-2.5 rounded-full font-black text-xs uppercase tracking-wider transition-all flex items-center gap-1">
-            <span>BUY NOW</span>
-            <i class="fas fa-arrow-right text-[10px]"></i>
+            class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#F97316] text-white hover:bg-[#EA580C] active:scale-95 shadow-md hover:shadow-lg shadow-orange-500/25'; ?> px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all min-h-[46px] flex items-center justify-center gap-1.5">
+            <span>BUY </span>
+            <i class="fas fa-arrow-right text-[11px]"></i>
         </button>
     </div>
 </div>
@@ -684,33 +691,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- SIDEBAR SHOPPING CART (Integrated for standalone product page) -->
 <div id="cart-sidebar-overlay" onclick="closeCartSidebar()" class="fixed inset-0 bg-black/60 z-[2000] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
-<div id="cart-sidebar" class="fixed top-0 right-0 h-full w-[90%] md:w-[480px] max-w-[480px] bg-[#f8fafc] z-[2001] transform translate-x-full transition-transform duration-400 flex flex-col shadow-2xl">
-    <div class="px-6 py-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
+<div id="cart-sidebar" class="cart-drawer-enhanced fixed top-0 right-0 h-full w-[92%] sm:w-[440px] md:w-[460px] max-w-[460px] bg-[#f8fafc] z-[2001] transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <!-- Header -->
+    <div class="px-5 sm:px-6 py-4 sm:py-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
         <div>
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[#00875A] block">Your Stash</span>
-            <h2 class="text-xl sm:text-2xl font-black text-gray-900">Shopping Bag</h2>
+            <span class="text-[10px] font-black uppercase tracking-[0.25em] text-[#00875A] block leading-tight">Your Stash</span>
+            <h2 class="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2 mt-0.5 font-heading">
+                <span>Shopping Bag</span>
+                <span id="cart-drawer-count" class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 text-[11px] font-black bg-emerald-50 text-[#00875A] rounded-full border border-emerald-100/80">0</span>
+            </h2>
         </div>
-        <button onclick="closeCartSidebar()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-black hover:text-white transition-all" aria-label="Close Bag">
-            <i class="fas fa-times text-base"></i>
+        <button onclick="closeCartSidebar()" class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors" aria-label="Close Shopping Bag">
+            <i class="fas fa-times text-sm"></i>
         </button>
     </div>
     
-    <div id="cart-items-container" class="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+    <!-- Free Shipping Progress Bar -->
+    <div id="free-shipping-progress-container" class="px-5 sm:px-6 py-3 bg-gradient-to-r from-emerald-50/80 via-teal-50/40 to-emerald-50/80 border-b border-emerald-100/60 hidden shrink-0 transition-all">
+        <div class="flex justify-between items-center mb-1.5 text-xs font-semibold text-gray-700">
+            <span id="free-shipping-msg" class="flex items-center gap-1.5 leading-tight"></span>
+            <span id="free-shipping-icon" class="text-base select-none shrink-0 ml-2">🚚</span>
+        </div>
+        <div class="h-2 w-full bg-emerald-100/80 rounded-full overflow-hidden p-[1px]">
+            <div id="free-shipping-bar" class="h-full bg-gradient-to-r from-emerald-500 to-[#19DC7E] rounded-full w-0 transition-all duration-700 shadow-xs"></div>
+        </div>
+    </div>
+    
+    <!-- Items Container -->
+    <div id="cart-items-container" class="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-3 cart-items-scroll">
         <!-- Rendered dynamically by chunky.js -->
     </div>
     
-    <div class="px-6 py-6 bg-white border-t border-gray-100 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] relative z-20 shrink-0">
-        <div class="flex justify-between items-end mb-4">
-            <div>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 block">Subtotal</span>
-                <span class="text-xs text-gray-400 font-medium">Shipping calculated at checkout</span>
+    <!-- Footer -->
+    <div class="px-5 sm:px-6 py-4 sm:py-5 bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] relative z-20 shrink-0">
+        <div class="space-y-1 mb-4">
+            <div class="flex justify-between items-baseline">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Subtotal</span>
+                <span id="cart-total" class="text-2xl sm:text-3xl font-black text-gray-900 font-heading tracking-tight">₹0</span>
             </div>
-            <span id="cart-total" class="text-2xl sm:text-3xl font-black text-gray-900">₹0</span>
+            <p class="text-[11px] text-gray-400 font-medium">Taxes included • Shipping calculated at checkout</p>
         </div>
-        <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-black text-white p-4 sm:p-5 rounded-2xl hover:bg-[#00875A] transition-all group shadow-xl">
-            <span class="text-base font-black">Proceed to Checkout</span>
-            <i class="fas fa-arrow-right text-sm"></i>
+        
+        <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-gray-900 hover:bg-[#00875A] text-white px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl transition-all duration-200 group shadow-lg shadow-gray-900/10 hover:shadow-emerald-500/20 active:scale-[0.99]">
+            <span class="text-base font-black tracking-wide">Proceed to Checkout</span>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">Fast Pay</span>
+                <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-[#00875A] transition-all">
+                    <i class="fas fa-arrow-right text-xs transition-transform group-hover:translate-x-0.5"></i>
+                </div>
+            </div>
         </a>
+        
+        <div class="mt-3 flex items-center justify-center gap-4 text-[11px] text-gray-400 font-medium select-none">
+            <span class="flex items-center gap-1.5"><i class="fas fa-shield-alt text-[#00875A]"></i> 256-bit Secure</span>
+            <span>•</span>
+            <span class="flex items-center gap-1.5"><i class="fas fa-bolt text-amber-500"></i> Fast Dispatch</span>
+        </div>
     </div>
 </div>
 

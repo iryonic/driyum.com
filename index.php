@@ -983,7 +983,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                 <div class="mb-5">
                                     <h3 class="text-xl font-black text-[#004F42] leading-tight mb-1 truncate-1 group-hover:text-[#24B25D] transition-colors"><?php echo $p['name']; ?></h3>
                                     <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                                        <?php echo !empty($p['tagline']) ? $p['tagline'] : 'Premium Natural Selection'; ?>
+                                        <?php echo !empty($p['tagline']) ? $p['tagline'] : ''; ?>
                                     </p>
                                 </div>
 
@@ -1139,42 +1139,86 @@ $wishlist_json = json_encode($wishlist_ids);
 
 
     <?php if(!empty($trust_badges)): ?>
-    <section class="bg-white py-10 md:py-10 overflow-hidden border-b border-gray-100 relative group/marquee">
-        <!-- Subtle Background Glow -->
-        <div class="absolute top-0 right-0 w-[100px] h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
-        <div class="absolute top-0 left-0 w-[100px] h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none"></div>
+    <section class="py-7 md:py-9 border-y border-stone-200/70 relative overflow-hidden group/pledge" style="background-color: #FAF8F5; background-image: radial-gradient(rgba(0, 135, 90, 0.12) 1.2px, transparent 1.2px); background-size: 18px 18px;">
+        <style>
+            .pledge-marquee-wrapper {
+                position: relative;
+                width: 100%;
+                overflow: hidden;
+                mask-image: linear-gradient(to right, transparent 0%, black 50px, black calc(100% - 50px), transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 50px, black calc(100% - 50px), transparent 100%);
+                user-select: none;
+            }
+            .pledge-marquee-track {
+                display: flex;
+                align-items: center;
+                gap: 3.5rem;
+                width: max-content;
+                will-change: transform;
+                animation: pledge-scroll 32s linear infinite;
+            }
+            .pledge-marquee-wrapper:hover .pledge-marquee-track,
+            .pledge-marquee-wrapper:focus-within .pledge-marquee-track {
+                animation-play-state: paused;
+            }
+            @keyframes pledge-scroll {
+                0% { transform: translate3d(0, 0, 0); }
+                100% { transform: translate3d(-50%, 0, 0); }
+            }
+            @media (max-width: 640px) {
+                .pledge-marquee-wrapper {
+                    mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
+                    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
+                }
+                .pledge-marquee-track {
+                    gap: 2rem;
+                    animation-duration: 24s;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .pledge-marquee-track {
+                    animation: none;
+                    overflow-x: auto;
+                }
+            }
+        </style>
 
-        <div class="flex whitespace-nowrap marquee-wrapper">
-            <div class="flex items-center gap-16 lg:gap-24 marquee-content px-8">
-                <?php foreach($trust_badges as $badge): 
-                    $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
-                    $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
-                ?>
-                <div class="flex items-center gap-5 group/badge cursor-default shrink-0">
-                    <div class="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] transform group-hover/badge:scale-110 group-hover/badge:rotate-3 transition-all duration-500" style="background-color: <?php echo $bg; ?>; color: <?php echo $ic; ?>;">
-                        <i class="<?php echo $badge['icon']; ?> text-2xl lg:text-3xl"></i>
+        <div class="pledge-marquee-wrapper py-1">
+            <div class="pledge-marquee-track">
+                <!-- Original Set -->
+                <?php foreach($trust_badges as $badge): ?>
+                <div class="flex flex-col items-center justify-center text-center shrink-0 w-[140px] sm:w-[170px] md:w-[190px] cursor-default group">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 flex items-center justify-center mb-2.5 sm:mb-3 group-hover:scale-108 transition-transform duration-300">
+                        <?php echo render_trust_badge_icon($badge['icon'], 'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16'); ?>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5"><?php echo $badge['subtitle']; ?></span>
-                        <span class="text-base lg:text-xl font-black text-[#002A23] uppercase tracking-tighter"><?php echo $badge['title']; ?></span>
+                    <div class="flex flex-col items-center text-center justify-center">
+                        <span class="text-[11px] sm:text-xs md:text-[13px] font-black uppercase text-[#1C1917] tracking-wider leading-tight group-hover:text-[#00875A] transition-colors">
+                            <?php echo htmlspecialchars($badge['title']); ?>
+                        </span>
+                        <?php if(!empty($badge['subtitle'])): ?>
+                        <span class="text-[11px] sm:text-xs md:text-[13px] font-black uppercase text-[#1C1917] tracking-wider leading-tight mt-0.5 group-hover:text-[#00875A] transition-colors">
+                            <?php echo htmlspecialchars($badge['subtitle']); ?>
+                        </span>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
-            </div>
 
-            <!-- Duplicate for Infinite Loop -->
-            <div class="flex items-center gap-16 lg:gap-24 marquee-content px-8" aria-hidden="true">
-                <?php foreach($trust_badges as $badge): 
-                    $bg = str_contains($badge['bg_color'], '[') ? substr($badge['bg_color'], 4, 7) : $badge['bg_color'];
-                    $ic = str_contains($badge['icon_color'], '[') ? substr($badge['icon_color'], 6, 7) : $badge['icon_color'];
-                ?>
-                <div class="flex items-center gap-5 group/badge shrink-0">
-                    <div class="w-14 h-14 lg:w-20 lg:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center shadow-sm transform group-hover/badge:scale-110 transition-all duration-500" style="background-color: <?php echo $bg; ?>; color: <?php echo $ic; ?>;">
-                        <i class="<?php echo $badge['icon']; ?> text-2xl lg:text-3xl"></i>
+                <!-- Duplicate Loop for Infinite Ticker -->
+                <?php foreach($trust_badges as $badge): ?>
+                <div class="flex flex-col items-center justify-center text-center shrink-0 w-[140px] sm:w-[170px] md:w-[190px] cursor-default group" aria-hidden="true">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 flex items-center justify-center mb-2.5 sm:mb-3 group-hover:scale-108 transition-transform duration-300">
+                        <?php echo render_trust_badge_icon($badge['icon'], 'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16'); ?>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-[10px] lg:text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5"><?php echo $badge['subtitle']; ?></span>
-                        <span class="text-base lg:text-xl font-black text-[#002A23] uppercase tracking-tighter"><?php echo $badge['title']; ?></span>
+                    <div class="flex flex-col items-center text-center justify-center">
+                        <span class="text-[11px] sm:text-xs md:text-[13px] font-black uppercase text-[#1C1917] tracking-wider leading-tight group-hover:text-[#00875A] transition-colors">
+                            <?php echo htmlspecialchars($badge['title']); ?>
+                        </span>
+                        <?php if(!empty($badge['subtitle'])): ?>
+                        <span class="text-[11px] sm:text-xs md:text-[13px] font-black uppercase text-[#1C1917] tracking-wider leading-tight mt-0.5 group-hover:text-[#00875A] transition-colors">
+                            <?php echo htmlspecialchars($badge['subtitle']); ?>
+                        </span>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
