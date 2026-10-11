@@ -1,0 +1,40 @@
+name: Deploy DRIYUM to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: Deploy to Live Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 🚀 Sync files via FTP (Preserving Live Uploads)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: public_html/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            assets/images/uploads/**
+            assets/images/products/**
+            assets/images/categories/**
+            assets/images/badges/**
+            assets/videos/**
+            node_modules/**
+            vendor/**
+            .env
+            mail_log.txt
+            storage/**
+            *.log
+            scratch/**
