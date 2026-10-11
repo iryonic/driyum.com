@@ -425,13 +425,26 @@ window.loadCartItems = async function (isUpdate = false) {
                         ? (parseFloat(item.weight) < 10 ? (parseFloat(item.weight) * 1000) + 'g' : item.weight) 
                         : 'Standard Pack';
 
+                    const cleanBase = (typeof BASE_URL !== 'undefined' ? BASE_URL : '/').replace(/\/+$/, '');
+                    let imgSrc = (item.image || '').trim();
+                    if (!imgSrc.startsWith('http://') && !imgSrc.startsWith('https://')) {
+                        if (cleanBase && imgSrc.startsWith(cleanBase + '/')) {
+                            // already prefixed
+                        } else if (imgSrc.startsWith('/')) {
+                            imgSrc = cleanBase ? (cleanBase + imgSrc) : imgSrc;
+                        } else {
+                            imgSrc = (cleanBase ? cleanBase + '/' : '/') + imgSrc;
+                        }
+                    }
+                    const fallbackImg = (cleanBase ? cleanBase : '') + '/assets/images/placeholder.png';
+
                     return `
                     <div id="cart-item-${item.id}" 
                          class="cart-item-card group relative flex items-center gap-3 sm:gap-3.5 bg-white p-3 sm:p-3.5 rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:border-gray-200 transition-all"
                          style="${animationStyle}">
                         <!-- Product Image -->
                         <a href="${BASE_URL}product/${item.id}" class="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 bg-[#F9FAFB] rounded-xl border border-gray-100 overflow-hidden flex items-center justify-center p-1.5 transition-transform group-hover:scale-[1.02]" title="${item.name}">
-                            <img src="${BASE_URL}${item.image}" alt="${item.name}" class="w-full h-full object-contain" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
+                            <img src="${imgSrc}" alt="${item.name}" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='${fallbackImg}'; this.classList.add('p-2');">
                         </a>
                         
                         <!-- Content Details -->
