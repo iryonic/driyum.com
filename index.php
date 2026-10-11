@@ -276,6 +276,23 @@ $wishlist_json = json_encode($wishlist_ids);
                 $mobile_img = $slide['image_mobile'] ?? '';
                 $fallback_img = $desktop_img ?: ($tablet_img ?: $mobile_img);
                 $alt_text = htmlspecialchars($slide['alt_text'] ?: ($slide['name'] ?: 'Driyum Special Offer Banner'));
+
+                // Reliable fallback if upload was wiped or file missing
+                $safe_default_banner = 'assets/images/uploads/slide_desk_6ac7359093fdc.png';
+                if (!file_exists($safe_default_banner) && !file_exists(__DIR__ . '/' . $safe_default_banner)) {
+                    $safe_default_banner = 'assets/images/hero.jpg';
+                }
+                if (!empty($fallback_img) && !file_exists($fallback_img) && !file_exists(__DIR__ . '/' . ltrim($fallback_img, '/'))) {
+                    $fallback_img = $safe_default_banner;
+                }
+                if (!empty($mobile_img) && !file_exists($mobile_img) && !file_exists(__DIR__ . '/' . ltrim($mobile_img, '/'))) {
+                    $safe_mob = 'assets/images/uploads/slide_mob_6ac7359094441.png';
+                    $mobile_img = (file_exists($safe_mob) || file_exists(__DIR__ . '/' . $safe_mob)) ? $safe_mob : $fallback_img;
+                }
+                if (!empty($tablet_img) && !file_exists($tablet_img) && !file_exists(__DIR__ . '/' . ltrim($tablet_img, '/'))) {
+                    $safe_tab = 'assets/images/uploads/slide_tab_6ac73590941c2.png';
+                    $tablet_img = (file_exists($safe_tab) || file_exists(__DIR__ . '/' . $safe_tab)) ? $safe_tab : $fallback_img;
+                }
             ?>
             <div class="banner-slide <?php echo $index === 0 ? 'active' : 'inactive'; ?> absolute inset-0 w-full h-full" data-index="<?php echo $index; ?>">
                 <?php if(!empty($slide_href)): ?>
@@ -293,6 +310,7 @@ $wishlist_json = json_encode($wishlist_ids);
                             <source media="(max-width: 991px)" srcset="<?php echo get_url($tablet_img); ?>">
                         <?php endif; ?>
                         <img src="<?php echo get_url($fallback_img); ?>" 
+                             onerror="this.src='<?php echo get_url($safe_default_banner); ?>';"
                              class="w-full h-full object-cover object-center" 
                              alt="<?php echo $alt_text; ?>"
                              loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
