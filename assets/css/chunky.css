@@ -478,9 +478,7 @@ input#header-search-input.search-input-premium:focus {
         margin-bottom: 0.8rem !important;
     }
 
-    h3 {
-        font-size: clamp(1.2rem, 4.8vw, 2.1rem) !important;
-    }
+  
 
     /* Buttons Scaling - Touch Friendly */
     .btn-chunky {

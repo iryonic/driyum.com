@@ -121,6 +121,11 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
             font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             color: #1F2937;
         }
+        #productShowcaseCard{
+            border-bottom-left-radius: 26px;
+            border-bottom-right-radius: 26px;
+            aspect-ratio: 1;
+        }
 
         .thumb-active {
             border-color: #00875A !important;
@@ -188,7 +193,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl h-14 sm:h-16 flex items-center justify-between">
         
         <!-- Left: Back Button -->
-        <button onclick="window.history.length > 1 ? window.history.back() : window.location.href='<?php echo get_url('shop'); ?>'" class="flex items-center gap-2 text-gray-700 hover:text-black py-1 px-2 -ml-2 rounded-xl hover:bg-gray-100/70 transition font-bold text-xs sm:text-sm">
+        <button onclick="window.history.length > 1 ? window.history.back() : window.location.href='<?php echo get_url('shop'); ?>'" class="flex items-center gap-2 text-gray-700 hover:text-black py-1 px-2 -ml-2 rounded-xl hover:bg-gray-100/70 transition font-bold text-sm sm:text-lg">
             <i class="fas fa-arrow-left text-sm sm:text-base"></i>
             <span class="hidden sm:inline">Back to Snacks</span>
         </button>
@@ -205,17 +210,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </button>
             <button onclick="openCartSidebar(); return false;" class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-gray-700 hover:text-black rounded-full hover:bg-gray-100 transition relative" title="Shopping Bag">
                 <i class="fas fa-shopping-bag text-base sm:text-lg"></i>
-                <span class="absolute top-1.5 right-1.5 bg-[#00875A] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-sm" id="header-cart-count"><?php echo $cart_count; ?></span>
+                <span class="absolute top-1.5 right-1.5 bg-[#00875A] text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-sm" id="header-cart-count"><?php echo $cart_count; ?></span>
             </button>
         </div>
 
     </div>
 </header>
 
-<main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 sm:pt-6 sm:pb-32 lg:py-8 max-w-7xl">
+<main class="container mx-auto  sm:px-6 lg:px-8 pb-28 sm:pt-2 sm:pb-32 lg:py-8 max-w-7xl">
     
     <!-- DESKTOP BREADCRUMBS -->
-    <nav class="hidden lg:flex items-center gap-2 mb-6 text-xs font-semibold text-gray-400">
+    <nav class="hidden lg:flex items-center gap-2 mb-6 text-sm font-semibold text-gray-400">
         <a href="<?php echo get_url(''); ?>" class="hover:text-[#00875A] transition">Home</a>
         <span class="text-gray-300">/</span>
         <a href="<?php echo get_url('shop'); ?>" class="hover:text-[#00875A] transition">Valley Snacks</a>
@@ -229,7 +234,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- LEFT COLUMN: PRODUCT GALLERY -->
         <div class="lg:col-span-6 space-y-3 sm:space-y-4 lg:sticky lg:top-24">
             <!-- Showcase Card with Hand Swipe / Touch Support -->
-            <div id="productShowcaseCard" style="touch-action: pan-y;" class="relative bg-[#F8F9FA] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 flex items-center justify-center border border-gray-100 overflow-hidden aspect-square sm:aspect-[4/3] lg:aspect-auto lg:min-h-[480px] group shadow-sm select-none cursor-grab active:cursor-grabbing">
+            <div id="productShowcaseCard" style="touch-action: pan-y;" class="relative bg-[#F8F9FA]  sm:rounded-3xl  flex items-center justify-center border border-gray-100 overflow-hidden aspect-square  lg:aspect-auto lg:min-h-[480px] group shadow-sm select-none cursor-grab active:cursor-grabbing">
                 
                 <!-- Expand / Fullscreen Button -->
                 <button onclick="openImageModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 sm:w-10 sm:h-10 bg-white/90 hover:bg-white text-gray-600 hover:text-black rounded-full shadow-sm border border-gray-200/60 flex items-center justify-center transition hover:scale-105 active:scale-95" title="Expand View">
@@ -247,7 +252,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <?php endif; ?>
 
                 <!-- Main Image Display -->
-                <div class="w-full h-full flex items-center justify-center p-2 sm:p-4">
+                <div class="w-full h-full flex items-center justify-center ">
                     <img id="mainProductImage" src="<?php echo $all_images[0]; ?>" onerror="this.src='<?php echo get_url('assets/images/placeholder.png'); ?>';" alt="<?php echo htmlspecialchars($product['name']); ?>" class="w-auto max-w-full object-contain filter drop-shadow-md select-none pointer-events-none group-hover:scale-105 transition-transform duration-500">
                 </div>
 
@@ -274,7 +279,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <!-- RIGHT COLUMN: PRODUCT DETAILS & PURCHASE -->
-        <div class="lg:col-span-6 space-y-5 sm:space-y-6">
+        <div class="lg:col-span-6 space-y-5 sm:space-y-6 m-4">
             
             <!-- Header Badges & Title -->
             <div class="space-y-2 sm:space-y-3">
@@ -286,12 +291,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <!-- Rating & Origin Row -->
                 <div class="flex flex-wrap items-center gap-2 sm:gap-3 pt-1">
-                    <div class="flex items-center gap-1 bg-[#00875A] text-white px-2 py-0.5 rounded-md text-xs font-black">
+                    <div class="flex items-center gap-1 bg-[#00875A] text-white px-2 py-0.5 rounded-md text-sm font-extrabold">
                         <span><?php echo number_format($avg_rating, 1); ?></span>
                         <i class="fas fa-star text-[9px]"></i>
                     </div>
 
-                    <a href="#reviews" class="text-xs font-semibold text-gray-500 hover:text-[#00875A] transition">
+                    <a href="#reviews" class="text-sm font-semibold text-gray-500 hover:text-[#00875A] transition">
                         (<?php echo $total_reviews; ?> Customer <?php echo $total_reviews === 1 ? 'Review' : 'Reviews'; ?>)
                     </a>
 
@@ -300,7 +305,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <!-- Product Description Paragraph -->
-            <div class="text-xs sm:text-sm text-gray-600 leading-relaxed font-normal">
+            <div class="text-sm sm:text-lg text-gray-600 leading-relaxed font-normal">
                 <?php echo nl2br(htmlspecialchars($product['description'])); ?>
             </div>
 
@@ -311,12 +316,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- Large Price & Taxes -->
                 <div class="space-y-1">
                     <div class="flex items-baseline gap-2.5 sm:gap-3 flex-wrap">
-                        <span class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
+                        <span class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
                             ₹<span id="desktopPriceDisplay"><?php echo $product['price']; ?></span>
                         </span>
                         <?php if($product['original_price'] > $product['price']): ?>
                             <span class="text-base sm:text-lg text-gray-400 line-through font-semibold">₹<?php echo $product['original_price']; ?></span>
-                            <span class="text-xs font-black text-rose-500 bg-rose-50 px-2.5 py-0.5 rounded-full">
+                            <span class="text-sm font-extrabold text-rose-500 bg-rose-50 px-2.5 py-0.5 rounded-full">
                                 Save <?php echo round((($product['original_price']-$product['price'])/$product['original_price'])*100); ?>%
                             </span>
                         <?php endif; ?>
@@ -329,14 +334,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <button 
                         onclick="addToCart(<?php echo $id; ?>, this, 1)" 
                         <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-2 border-[#00875A] text-[#00875A] hover:bg-[#EBF8F2] active:scale-95'; ?> py-3 sm:py-3.5 px-4 sm:px-6 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                        class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-2 border-[#00875A] text-[#00875A] hover:bg-[#EBF8F2] active:scale-95'; ?> py-3 sm:py-3.5 px-4 sm:px-6 rounded-full font-extrabold text-sm sm:text-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2">
                         <span>ADD +</span>
                     </button>
 
                     <button 
                         onclick="quickBuy(<?php echo $id; ?>, this, 1)" 
                         <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-                        class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#F97316] hover:bg-[#EA580C] text-white shadow-md hover:shadow-lg active:scale-95'; ?> py-3 sm:py-3.5 px-4 sm:px-6 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                        class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#F97316] hover:bg-[#EA580C] text-white shadow-md hover:shadow-lg active:scale-95'; ?> py-3 sm:py-3.5 px-4 sm:px-6 rounded-full font-extrabold text-sm sm:text-lg uppercase tracking-wider transition-all flex items-center justify-center gap-2">
                         <span>BUY NOW</span>
                         <i class="fas fa-arrow-right text-xs"></i>
                     </button>
@@ -357,23 +362,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- Accordion 2: Nutritional Value Profile (OPEN BY DEFAULT - Screenshot 2) -->
                 <div class="accordion-item open bg-white rounded-xl sm:rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
                     <button type="button" onclick="toggleAccordion(this)" class="w-full p-4 px-4.5 sm:px-5 flex items-center justify-between text-left hover:bg-gray-50/50 transition">
-                        <div class="flex items-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-bold text-gray-900">
-                            <i class="far fa-heart text-[#00875A] text-xs sm:text-sm font-bold"></i>
+                        <div class="flex items-center gap-2.5 sm:gap-3 text-sm sm:text-lg font-bold text-gray-900">
+                            <i class="far fa-heart text-[#00875A] text-sm sm:text-lg font-bold"></i>
                             <span>Nutritional Value </span>
                         </div>
-                        <i class="fas fa-chevron-down accordion-icon text-gray-400 text-xs transition-transform duration-300"></i>
+                        <i class="fas fa-chevron-down accordion-icon text-gray-400 text-sm transition-transform duration-300"></i>
                     </button>
                     <div class="accordion-content border-t border-gray-100 bg-white">
                         <div class="p-4 sm:p-5 space-y-3.5">
                             <!-- Green Pill Badge (Screenshot 2) -->
                             <div>
-                                <span class="inline-block bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0] text-[9.5px] sm:text-[11px] font-black uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-xs">
+                                <span class="inline-block bg-[#F0FDF4] text-[#166534] border border-[#BBF7D0] text-[9.5px] sm:text-[11px] font-extrabold uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-xs">
                                     Nutritional Values per 100g
                                 </span>
                             </div>
 
                             <!-- Nutrition Table Card with Alternating Stripes -->
-                            <div class="rounded-xl sm:rounded-2xl border border-gray-200 overflow-hidden divide-y divide-gray-200/90 text-xs sm:text-sm shadow-xs">
+                            <div class="rounded-xl sm:rounded-2xl border border-gray-200 overflow-hidden divide-y divide-gray-200/90 text-sm sm:text-lg shadow-xs">
                                 <?php
                                 $nutrition_rows = [
                                     ['Energy', '299 kcal'],
@@ -403,8 +408,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 foreach ($nutrition_rows as $idx => $nrow):
                                 ?>
                                 <div class="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3.5 <?php echo ($idx % 2 === 1) ? 'bg-[#F9FAFB]' : 'bg-white'; ?> transition-colors">
-                                    <span class="font-bold text-gray-900 text-xs sm:text-sm tracking-tight"><?php echo htmlspecialchars($nrow[0]); ?></span>
-                                    <span class="font-semibold text-gray-600 text-xs sm:text-sm text-right font-sans"><?php echo htmlspecialchars($nrow[1]); ?></span>
+                                    <span class="font-bold text-gray-900 text-sm sm:text-lg tracking-tight"><?php echo htmlspecialchars($nrow[0]); ?></span>
+                                    <span class="font-semibold text-gray-600 text-sm sm:text-lg text-right font-sans"><?php echo htmlspecialchars($nrow[1]); ?></span>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
@@ -423,14 +428,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 ?>
                 <div class="accordion-item bg-white rounded-xl sm:rounded-2xl border border-gray-200 overflow-hidden shadow-xs">
                     <button type="button" onclick="toggleAccordion(this)" class="w-full p-4 px-4.5 sm:px-5 flex items-center justify-between text-left hover:bg-gray-50/50 transition">
-                        <div class="flex items-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-bold text-gray-900">
-                            <i class="fas fa-boxes-packing text-[#00875A] text-xs sm:text-sm"></i>
+                        <div class="flex items-center gap-2.5 sm:gap-3 text-sm sm:text-lg font-bold text-gray-900">
+                            <i class="fas fa-boxes-packing text-[#00875A] text-sm sm:text-lg"></i>
                             <span><?php echo htmlspecialchars($storage_title); ?></span>
                         </div>
-                        <i class="fas fa-chevron-down accordion-icon text-gray-400 text-xs transition-transform duration-300"></i>
+                        <i class="fas fa-chevron-down accordion-icon text-gray-400 text-sm transition-transform duration-300"></i>
                     </button>
                     <div class="accordion-content border-t border-gray-100 bg-[#FAFAFA]/50">
-                        <div class="p-4 sm:p-5 text-xs text-gray-600 leading-relaxed space-y-2 font-medium">
+                        <div class="p-4 sm:p-5 text-sm text-gray-600 leading-relaxed space-y-2 font-medium">
                             <?php if (!empty($storage_paragraphs)): ?>
                                 <?php foreach ($storage_paragraphs as $sp): ?>
                                     <p><?php echo htmlspecialchars_decode(htmlspecialchars($sp, ENT_QUOTES, 'UTF-8')); ?></p>
@@ -449,7 +454,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <!-- CUSTOMER RATINGS & WRITE A REVIEW SECTION (Screenshot 3) -->
-    <section id="reviews" class="pt-6 sm:pt-10 pb-12 sm:pb-16 border-t border-gray-100 max-w-4xl mx-auto">
+    <section id="reviews" class="mx-2 pt-6 sm:pt-10 pb-12 sm:pb-16 border-t border-gray-100 max-w-6xl ">
         <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-6 sm:mb-8">
             Customer Ratings
         </h2>
@@ -458,7 +463,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <!-- Rating Score Card (Screenshot 3 top card) -->
             <div class="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
-                <span class="text-5xl sm:text-6xl lg:text-7xl font-black text-gray-900 tracking-tighter leading-none mb-3">
+                <span class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tighter leading-none mb-3">
                     <?php echo number_format($avg_rating, 1); ?>
                 </span>
                 
@@ -472,7 +477,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     ?>
                 </div>
 
-                <p class="text-xs font-bold text-gray-400">
+                <p class="text-sm font-bold text-gray-400">
                     Based on <?php echo $total_reviews; ?> customer <?php echo $total_reviews === 1 ? 'review' : 'reviews'; ?>
                 </p>
             </div>
@@ -484,7 +489,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <?php if (is_logged_in()): ?>
                 <form action="" method="POST" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1.5">Your Rating</label>
+                        <label class="block text-sm font-bold text-gray-600 mb-1.5">Your Rating</label>
                         <div class="star-rating flex items-center gap-2 text-xl sm:text-2xl text-gray-300">
                             <?php for($i=1; $i<=5; $i++): ?>
                                 <i class="far fa-star cursor-pointer star-btn" data-value="<?php echo $i; ?>" onclick="setRating(<?php echo $i; ?>)"></i>
@@ -494,18 +499,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1.5">Your Experience / Feedback</label>
-                        <textarea name="comment" rows="3" required placeholder="How did you like this Product ? Describe taste, packing, and quality..." class="w-full p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-gray-200 text-xs sm:text-sm focus:outline-none focus:border-[#00875A] focus:ring-1 focus:ring-[#00875A] transition resize-none"></textarea>
+                        <label class="block text-sm font-bold text-gray-600 mb-1.5">Your Experience / Feedback</label>
+                        <textarea name="comment" rows="3" required placeholder="How did you like this Product ? Describe taste, packing, and quality..." class="w-full p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-gray-200 text-sm sm:text-lg focus:outline-none focus:border-[#00875A] focus:ring-1 focus:ring-[#00875A] transition resize-none"></textarea>
                     </div>
 
-                    <button type="submit" class="w-full bg-[#00875A] hover:bg-[#00704A] text-white font-extrabold py-3 sm:py-3.5 px-6 rounded-xl transition shadow-md active:scale-98 text-xs sm:text-sm uppercase tracking-wider">
+                    <button type="submit" class="w-full bg-[#00875A] hover:bg-[#00704A] text-white font-extrabold py-3 sm:py-3.5 px-6 rounded-xl transition shadow-md active:scale-98 text-sm sm:text-lg uppercase tracking-wider">
                         Submit Review
                     </button>
                 </form>
                 <?php else: ?>
                 <div class="text-center py-6 space-y-3">
-                    <p class="text-xs text-gray-500 font-medium">Please sign in to share your verified review with the community.</p>
-                    <a href="<?php echo get_url('login'); ?>" class="inline-block bg-[#00875A] text-white font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider hover:bg-[#00704A] transition shadow-sm">
+                    <p class="text-sm text-gray-500 font-medium">Please sign in to share your verified review with the community.</p>
+                    <a href="<?php echo get_url('login'); ?>" class="inline-block bg-[#00875A] text-white font-extrabold px-6 py-2.5 rounded-xl text-sm uppercase tracking-wider hover:bg-[#00704A] transition shadow-sm">
                         Sign In to Review
                     </a>
                 </div>
@@ -523,10 +528,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </h4>
                 <?php if (count($reviews) > 1): ?>
                 <div class="flex items-center gap-2">
-                    <button class="rev-prev-btn w-8 h-8 rounded-full bg-gray-100 hover:bg-[#00875A] text-gray-600 hover:text-white flex items-center justify-center transition text-xs shadow-xs" aria-label="Previous Review">
+                    <button class="rev-prev-btn w-8 h-8 rounded-full bg-gray-100 hover:bg-[#00875A] text-gray-600 hover:text-white flex items-center justify-center transition text-sm shadow-xs" aria-label="Previous Review">
                         <i class="fas fa-chevron-left text-[10px]"></i>
                     </button>
-                    <button class="rev-next-btn w-8 h-8 rounded-full bg-gray-100 hover:bg-[#00875A] text-gray-600 hover:text-white flex items-center justify-center transition text-xs shadow-xs" aria-label="Next Review">
+                    <button class="rev-next-btn w-8 h-8 rounded-full bg-gray-100 hover:bg-[#00875A] text-gray-600 hover:text-white flex items-center justify-center transition text-sm shadow-xs" aria-label="Next Review">
                         <i class="fas fa-chevron-right text-[10px]"></i>
                     </button>
                 </div>
@@ -540,19 +545,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm flex flex-col justify-between h-full space-y-3">
                             <div class="flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2.5 sm:gap-3">
-                                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-emerald-100 text-[#00875A] font-black text-xs sm:text-sm flex items-center justify-center flex-shrink-0">
+                                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-emerald-100 text-[#00875A] font-extrabold text-sm sm:text-lg flex items-center justify-center flex-shrink-0">
                                         <?php echo strtoupper(substr($rev['user_name'], 0, 1)); ?>
                                     </div>
                                     <div>
-                                        <h5 class="text-xs sm:text-sm font-bold text-gray-900 leading-tight"><?php echo htmlspecialchars($rev['user_name']); ?></h5>
+                                        <h5 class="text-sm sm:text-lg font-bold text-gray-900 leading-tight"><?php echo htmlspecialchars($rev['user_name']); ?></h5>
                                         <span class="text-[9px] sm:text-[10px] text-gray-400 font-medium"><?php echo date('M d, Y', strtotime($rev['created_at'])); ?></span>
                                     </div>
                                 </div>
-                                <div class="flex text-amber-400 text-xs gap-0.5 flex-shrink-0">
+                                <div class="flex text-amber-400 text-sm gap-0.5 flex-shrink-0">
                                     <?php for($s=1; $s<=5; $s++) echo $s <= $rev['rating'] ? '<i class="fas fa-star"></i>' : '<i class="far fa-star text-gray-200"></i>'; ?>
                                 </div>
                             </div>
-                            <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-normal">
+                            <p class="text-sm sm:text-lg text-gray-600 leading-relaxed font-normal">
                                 <?php echo nl2br(htmlspecialchars($rev['comment'])); ?>
                             </p>
                         </div>
@@ -567,10 +572,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- RECOMMENDED PRODUCTS SLIDING CAROUSEL (Screenshot 4 - Enhanced Touch Slider) -->
     <?php if (!empty($related)): ?>
-    <section class="pt-8 sm:pt-10 pb-16 border-t border-gray-100">
+    <section class="pt-8 sm:pt-10 pb-16 border-t border-gray-100 mx-3">
         <div class="flex items-end justify-between mb-6 sm:mb-8">
             <div>
-                <span class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#00875A] flex items-center gap-1.5 mb-1">
+                <span class="text-[10px] text-lgfont-extrabold uppercase tracking-wider text-[#00875A] flex items-center gap-1.5 mb-1">
                     <span class="w-2 h-2 rounded-full bg-[#00875A]"></span>
                     <span>More of What You Love</span>
                 </span>
@@ -603,11 +608,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         
                         <div>
                             <!-- Product Image Container with Badges -->
-                            <div class="relative bg-[#F8F9FA] rounded-xl sm:rounded-2xl p-3 sm:p-4 aspect-square flex items-center justify-center mb-3 overflow-hidden">
+                            <div class="relative bg-[#F8F9FA] rounded-xl sm:rounded-2xl aspect-square flex items-center justify-center mb-3 overflow-hidden">
                                
 
                                 <!-- Quick Preview Eye -->
-                                <a href="<?php echo product_url($rel['slug']); ?>" class="absolute top-2.5 right-2.5 w-7 h-7 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-black shadow-sm text-xs z-10 transition hover:scale-110" title="Quick View">
+                                <a href="<?php echo product_url($rel['slug']); ?>" class="absolute top-2.5 right-2.5 w-7 h-7 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-black shadow-sm text-sm z-10 transition hover:scale-110" title="Quick View">
                                     <i class="far fa-eye"></i>
                                 </a>
 
@@ -629,10 +634,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                         <!-- Price and ADD + Button -->
                         <div class="flex items-center justify-between pt-2.5 border-t border-gray-100">
-                            <span class="text-base sm:text-lg font-black text-gray-900 font-sans">
+                            <span class="text-base sm:text-lg font-extrabold text-gray-900 font-sans">
                                 ₹<?php echo $rel['price']; ?>
                             </span>
-                            <button onclick="addToCart(<?php echo $rel['id']; ?>, this, 1)" class="border border-[#00875A] text-[#00875A] hover:bg-[#00875A] hover:text-white px-3.5 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all active:scale-95 shadow-xs">
+                            <button onclick="addToCart(<?php echo $rel['id']; ?>, this, 1)" class="border border-[#00875A] text-[#00875A] hover:bg-[#00875A] hover:text-white px-3.5 py-1.5 rounded-full font-extrabold text-sm uppercase tracking-wider transition-all active:scale-95 shadow-xs">
                                 ADD +
                             </button>
                         </div>
@@ -655,12 +660,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200/90 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-4" style="padding-bottom: max(0.85rem, env(safe-area-inset-bottom, 0.85rem));">
     <!-- Left: Price & Taxes -->
     <div class="flex flex-col min-w-0">
-        <div class="flex items-baseline gap-1.5 flex-wrap">
-            <span class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight leading-none">
+        <div class="flex items-baseline gap-1.5 flex-wrap flex-col">
+            <span class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight leading-none">
                 ₹<span id="mobileBottomPrice"><?php echo $product['price']; ?></span>
             </span>
             <?php if($product['original_price'] > $product['price']): ?>
-                <span class="text-xs text-gray-400 line-through font-semibold leading-none">₹<?php echo $product['original_price']; ?></span>
+                <span class="text-sm text-gray-400 line-through font-semibold leading-none">₹<?php echo $product['original_price']; ?></span>
             <?php endif; ?>
         </div>
     </div>
@@ -670,14 +675,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button 
             onclick="addToCart(<?php echo $id; ?>, this, 1)" 
             <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-            class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'px-2 border-2 border-[#00875A] text-[#00875A] hover:bg-emerald-50 active:scale-95'; ?> px-4.5 sm:px-6 py-2.5 sm:py-3 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all min-h-[46px] flex items-center justify-center">
+            class="<?php echo $product['stock'] <= 0 ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'px-4 border-2 border-[#00875A] text-[#00875A] hover:bg-emerald-50 active:scale-95'; ?> px-4.5 sm:px-6  sm:py-2 rounded-full font-bold text-sm sm:text-lg uppercase tracking-wider transition-all min-h-[46px] flex items-center justify-center">
             ADD +
         </button>
 
         <button 
             onclick="quickBuy(<?php echo $id; ?>, this, 1)" 
             <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
-            class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#F97316] text-white hover:bg-[#EA580C] active:scale-95 shadow-md hover:shadow-lg shadow-orange-500/25'; ?> px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-black text-xs sm:text-sm uppercase tracking-wider transition-all min-h-[46px] flex items-center justify-center gap-1.5">
+            class="<?php echo $product['stock'] <= 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-[#F97316] text-white hover:bg-[#EA580C] active:scale-95 shadow-md hover:shadow-lg shadow-orange-500/25'; ?> px-5 sm:px-7  sm:py-2 rounded-full font-bold text-sm sm:text-lg uppercase tracking-wider transition-all min-h-[46px] flex items-center justify-center gap-1.5">
             <span>BUY </span>
             <i class="fas fa-arrow-right text-[11px]"></i>
         </button>
@@ -701,10 +706,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Header -->
     <div class="px-5 sm:px-6 py-4 sm:py-5 flex justify-between items-center bg-white border-b border-gray-100 shrink-0">
         <div>
-            <span class="text-[10px] font-black uppercase tracking-[0.25em] text-[#00875A] block leading-tight">Your Stash</span>
-            <h2 class="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2 mt-0.5 font-heading">
+            <span class="text-[10px] font-extrabold uppercase tracking-[0.25em] text-[#00875A] block leading-tight">Your Stash</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 flex items-center gap-2 mt-0.5 font-heading">
                 <span>Shopping Bag</span>
-                <span id="cart-drawer-count" class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 text-[11px] font-black bg-emerald-50 text-[#00875A] rounded-full border border-emerald-100/80">0</span>
+                <span id="cart-drawer-count" class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 text-[11px] font-extrabold bg-emerald-50 text-[#00875A] rounded-full border border-emerald-100/80">0</span>
             </h2>
         </div>
         <button onclick="closeCartSidebar()" class="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-900 transition-colors" aria-label="Close Shopping Bag">
@@ -714,7 +719,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
     <!-- Free Shipping Progress Bar -->
     <div id="free-shipping-progress-container" class="px-5 sm:px-6 py-3 bg-gradient-to-r from-emerald-50/80 via-teal-50/40 to-emerald-50/80 border-b border-emerald-100/60 hidden shrink-0 transition-all">
-        <div class="flex justify-between items-center mb-1.5 text-xs font-semibold text-gray-700">
+        <div class="flex justify-between items-center mb-1.5 text-sm font-semibold text-gray-700">
             <span id="free-shipping-msg" class="flex items-center gap-1.5 leading-tight"></span>
             <span id="free-shipping-icon" class="text-base select-none shrink-0 ml-2">🚚</span>
         </div>
@@ -732,18 +737,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="px-5 sm:px-6 py-4 sm:py-5 bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] relative z-20 shrink-0">
         <div class="space-y-1 mb-4">
             <div class="flex justify-between items-baseline">
-                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Subtotal</span>
-                <span id="cart-total" class="text-2xl sm:text-3xl font-black text-gray-900 font-heading tracking-tight">₹0</span>
+                <span class="text-sm font-bold uppercase tracking-wider text-gray-400">Subtotal</span>
+                <span id="cart-total" class="text-2xl sm:text-3xl font-extrabold text-gray-900 font-heading tracking-tight">₹0</span>
             </div>
             <p class="text-[11px] text-gray-400 font-medium">Taxes included • Shipping calculated at checkout</p>
         </div>
         
         <a href="<?php echo get_url('checkout'); ?>" class="w-full flex items-center justify-between bg-gray-900 hover:bg-[#00875A] text-white px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl transition-all duration-200 group shadow-lg shadow-gray-900/10 hover:shadow-emerald-500/20 active:scale-[0.99]">
-            <span class="text-base font-black tracking-wide">Proceed to Checkout</span>
+            <span class="text-base font-extrabold tracking-wide">Proceed to Checkout</span>
             <div class="flex items-center gap-2">
-                <span class="text-xs font-bold text-gray-300 group-hover:text-white transition-colors">Fast Pay</span>
+                <span class="text-sm font-bold text-gray-300 group-hover:text-white transition-colors">Fast Pay</span>
                 <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-[#00875A] transition-all">
-                    <i class="fas fa-arrow-right text-xs transition-transform group-hover:translate-x-0.5"></i>
+                    <i class="fas fa-arrow-right text-sm transition-transform group-hover:translate-x-0.5"></i>
                 </div>
             </div>
         </a>
