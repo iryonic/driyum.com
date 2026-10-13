@@ -217,7 +217,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 </header>
 
-<main class="container mx-auto  sm:px-6 lg:px-8 pb-28 sm:pt-2 sm:pb-32 lg:py-8 max-w-7xl">
+<main class="containar mx-auto  sm:px-6 lg:px-8 pb-28 sm:pt-2 sm:pb-32 lg:py-8 max-w-7xl">
     
     <!-- DESKTOP BREADCRUMBS -->
     <nav class="hidden lg:flex items-center gap-2 mb-6 text-sm font-semibold text-gray-400">
