@@ -1364,12 +1364,12 @@ $wishlist_json = json_encode($wishlist_ids);
                             <?php if (!empty($reel['product_id']) && !empty($reel['product_name'])): 
                                 $card_prod_img = !empty($reel['product_image']) ? (strpos($reel['product_image'], 'http') === 0 ? $reel['product_image'] : get_url($reel['product_image'])) : get_url('assets/images/placeholder.png');
                             ?>
-                                <div class="mt-2.5 bg-white rounded-lg rounded-t-xl p-2 flex items-center gap-2.5 shadow-xl border border-white/40 transition-transform duration-300 group-hover:scale-[1.02]">
+                                <div class="mt-2.5 bg-white rounded-lg rounded-t-xl p-2 flex items-center gap-2.5 shadow-xl border border-white/40 transition-transform duration-300 group-hover:scale-[1.02] pointer-events-auto cursor-pointer" onclick="event.stopPropagation(); window.location.href='<?php echo get_url('product/' . ($reel['product_slug'] ?: $reel['product_id'])); ?>';">
                                     <img src="<?php echo htmlspecialchars($card_prod_img); ?>" 
                                          alt="<?php echo htmlspecialchars($reel['product_name']); ?>" 
                                          class="w-14 h-14 rounded-xl object-cover bg-gray-50 border border-gray-100 shrink-0">
                                     <div class="min-w-0 flex-1">
-                                        <span class="text-[14px] md:text-[16px] font-black uppercase text-[#004f42] block truncate leading-tight">
+                                        <span class="text-[14px] md:text-[16px] font-black uppercase text-[#004f42] block truncate leading-tight hover:text-[#24B25D] transition-colors">
                                             <?php echo htmlspecialchars($reel['product_name']); ?>
                                         </span>
                                         <div class="flex items-center gap-1.5 mt-0.5">
@@ -1379,9 +1379,21 @@ $wishlist_json = json_encode($wishlist_ids);
                                             <?php endif; ?>
                                         </div>
                                     </div>
-                                    <span class="w-10 h-10 rounded-xl bg-black text-[#24B25D] flex items-center justify-center text-[10px] shrink-0 shadow-sm group-hover:bg-[#24B25D] group-hover:text-black transition-colors">
-                                        <i class="fa-solid fa-cart-shopping text-sm text-white"></i>
-                                    </span>
+                                    <?php if (isset($reel['product_stock']) && $reel['product_stock'] <= 0): ?>
+                                        <button disabled 
+                                                class="w-10 h-10 rounded-xl bg-gray-100 text-gray-300 flex items-center justify-center text-[12px] shrink-0 cursor-not-allowed pointer-events-auto shadow-sm"
+                                                title="Out of stock">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    <?php else: ?>
+                                        <button type="button" 
+                                                onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo (int)$reel['product_id']; ?>, this)" 
+                                                aria-label="Add <?php echo htmlspecialchars($reel['product_name']); ?> to cart" 
+                                                title="Add to cart"
+                                                class="w-10 h-10 rounded-xl bg-black text-[#24B25D] hover:bg-[#24B25D] hover:text-white flex items-center justify-center text-sm shrink-0 shadow-md active:scale-90 transition-all cursor-pointer pointer-events-auto z-20">
+                                            <i class="fa-solid fa-cart-shopping text-white text-sm"></i>
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
                         </div>
