@@ -1495,11 +1495,11 @@ $wishlist_json = json_encode($wishlist_ids);
                         </div>
                     </div>
 
-                    <!-- Action: Add to Bag -->
+                    <!-- Action: Quick Buy -->
                     <div class="shrink-0 flex items-center gap-1">
-                        <button type="button" id="reel-btn-add-cart" onclick="addReelProductToCart(this)" class="bg-[#00875A] hover:bg-[#00704A] text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
-                            <i class="fa-solid fa-cart-shopping text-[11px]"></i>
-                            <span>Buy</span>
+                        <button type="button" id="reel-btn-add-cart" onclick="quickBuyReelProduct(this)" class="bg-[#24B25D] hover:bg-[#004F42] text-white text-xs font-bold py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
+                            <span> Buy Now  </span>
+                            <i class="fas fa-bolt text-[11px]"></i>
                         </button>
                     </div>
                 </div>
