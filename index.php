@@ -1533,9 +1533,83 @@ $wishlist_json = json_encode($wishlist_ids);
     function scrollReelsTrack(direction) {
         const track = document.getElementById('reels-track');
         if (!track) return;
-        const scrollAmount = direction === 'left' ? -350 : 350;
-        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        const firstCard = track.querySelector('.reel-card');
+        const scrollAmount = firstCard ? (firstCard.offsetWidth + 24) : 320;
+        track.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+
+        // Pause auto-sliding briefly after manual arrow click
+        isReelsTrackPaused = true;
+        clearTimeout(reelsManualPauseTimeout);
+        reelsManualPauseTimeout = setTimeout(() => { isReelsTrackPaused = false; }, 4000);
     }
+
+    // Automatic Slider for Reels Card Track
+    let reelsAutoSlideTimer = null;
+    let isReelsTrackPaused = false;
+    let reelsManualPauseTimeout = null;
+
+    function startReelsAutoSlider() {
+        if (reelsAutoSlideTimer) return;
+        reelsAutoSlideTimer = setInterval(() => {
+            const track = document.getElementById('reels-track');
+            const modal = document.getElementById('reel-player-modal');
+            const isModalOpen = modal && !modal.classList.contains('hidden');
+
+            // Pause if user is interacting, modal is open, or tab is hidden
+            if (!track || isReelsTrackPaused || isModalOpen || document.hidden) return;
+
+            const firstCard = track.querySelector('.reel-card');
+            const step = firstCard ? (firstCard.offsetWidth + 20) : 300;
+
+            // Loop back to start when reaching end, otherwise slide to next card
+            if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 30) {
+                track.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                track.scrollBy({ left: step, behavior: 'smooth' });
+            }
+        }, 3500);
+    }
+
+    function stopReelsAutoSlider() {
+        if (reelsAutoSlideTimer) {
+            clearInterval(reelsAutoSlideTimer);
+            reelsAutoSlideTimer = null;
+        }
+    }
+
+    // Initialize Auto-Slider with Viewport Observer and Hover/Touch Detection
+    (function initReelsAutoSlider() {
+        const track = document.getElementById('reels-track');
+        const section = document.getElementById('reels-section');
+        if (!track || !section) return;
+
+        // Pause on mouse hover (desktop)
+        track.addEventListener('mouseenter', () => { isReelsTrackPaused = true; });
+        track.addEventListener('mouseleave', () => { isReelsTrackPaused = false; });
+
+        // Pause on touch / swipe (mobile)
+        track.addEventListener('touchstart', () => { isReelsTrackPaused = true; }, { passive: true });
+        track.addEventListener('touchend', () => {
+            clearTimeout(reelsManualPauseTimeout);
+            reelsManualPauseTimeout = setTimeout(() => { isReelsTrackPaused = false; }, 2500);
+        }, { passive: true });
+
+        // Run auto-slider only when the reels section is visible in viewport
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        startReelsAutoSlider();
+                    } else {
+                        stopReelsAutoSlider();
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(section);
+        } else {
+            startReelsAutoSlider();
+        }
+    })();
 
     // Open Reel Player Modal
     function openReelPlayer(index) {
