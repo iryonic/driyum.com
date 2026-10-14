@@ -1498,7 +1498,7 @@ $wishlist_json = json_encode($wishlist_ids);
                     <!-- Action: Quick Buy -->
                     <div class="shrink-0 flex items-center gap-1">
                         <button type="button" id="reel-btn-add-cart" onclick="quickBuyReelProduct(this)" class="bg-[#24B25D] hover:bg-[#004F42] text-white text-xs font-bold py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
-                            <span> Buy Now  </span>
+                            <span>Quick Buy</span>
                             <i class="fas fa-bolt text-[11px]"></i>
                         </button>
                     </div>
@@ -1684,13 +1684,13 @@ $wishlist_json = json_encode($wishlist_ids);
                         stockBadge.textContent = '• In Stock';
                         stockBadge.className = 'text-[9px] font-bold text-emerald-700';
                         addBtn.disabled = false;
-                        addBtn.className = 'bg-[#00875A] hover:bg-[#00704A] text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all';
-                        addBtn.innerHTML = '<i class="fa-solid fa-cart-shopping text-[11px]"></i> <span>Buy</span>';
+                        addBtn.className = 'bg-[#24B25D] hover:bg-[#004F42] text-white text-xs font-bold py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all';
+                        addBtn.innerHTML = '<span>Quick Buy</span> <i class="fas fa-bolt text-[11px]"></i>';
                     } else {
                         stockBadge.textContent = '• Out of Stock';
                         stockBadge.className = 'text-[9px] font-bold text-rose-600';
                         addBtn.disabled = true;
-                        addBtn.className = 'bg-slate-300 text-slate-500 text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 cursor-not-allowed';
+                        addBtn.className = 'bg-slate-300 text-slate-500 text-xs font-bold py-2 px-3.5 rounded-xl flex items-center gap-1.5 cursor-not-allowed';
                         addBtn.innerHTML = '<span>Sold Out</span>';
                     }
                 }
@@ -1768,19 +1768,25 @@ $wishlist_json = json_encode($wishlist_ids);
         }
     }
 
-    // Shoppable Add to Cart Action from Floating Product Card
-    async function addReelProductToCart(btn) {
+    // Shoppable Quick Buy Action from Floating Product Card inside Reel Modal
+    window.quickBuyReelProduct = async function(btn) {
         const reels = window.DRIYUM_REELS;
         const idx = window.currentReelIndex;
         if (!reels || !reels[idx] || !reels[idx].product_id) return;
 
         const prodId = reels[idx].product_id;
-        if (typeof window.addToCart === 'function') {
+        if (typeof window.quickBuy === 'function') {
+            await window.quickBuy(prodId, btn, 1);
+        } else if (typeof window.addToCart === 'function') {
             await window.addToCart(prodId, btn, 1);
+            window.location.href = `${BASE_URL}checkout`;
         } else {
-            window.location.href = `${BASE_URL}product/${reels[idx].product_slug || prodId}`;
+            window.location.href = `${BASE_URL}checkout?add=${prodId}`;
         }
-    }
+    };
+    window.addReelProductToCart = window.quickBuyReelProduct;
+    function quickBuyReelProduct(btn) { return window.quickBuyReelProduct(btn); }
+    function addReelProductToCart(btn) { return window.quickBuyReelProduct(btn); }
 
     // Touch Swipe Gestures (Up = Next, Down = Prev)
     let touchStartY = 0;
