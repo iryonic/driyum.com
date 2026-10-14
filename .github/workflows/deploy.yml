@@ -26,6 +26,8 @@ jobs:
       # 1. Get the latest repository code
       - name: Get latest code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       # 2. Deploy files to Hostinger
       - name: Deploy to Hostinger via FTP
