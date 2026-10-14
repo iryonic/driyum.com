@@ -1305,7 +1305,7 @@ $wishlist_json = json_encode($wishlist_ids);
         <div class="w-full max-w-[100vw] mx-auto px-4 sm:px-6 relative overflow-hidden">
             <div id="reels-track" class=" py-8 flex flex-row flex-nowrap w-full gap-4 md:gap-6 overflow-x-auto hide-scrollbar scroll-smooth pb-8 snap-x snap-mandatory">
                 <?php foreach ($reels_list as $idx => $reel): ?>
-                    <div class="reel-card shrink-0 w-[270px] sm:w-[250px] md:w-[280px] aspect-[9/16] rounded-[12px] overflow-hidden relative shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group cursor-pointer bg-neutral-950 border border-black/5 snap-start select-none"
+                    <div class="reel-card shrink-0 w-[260px] sm:w-[250px] md:w-[280px] aspect-[9/16] rounded-[12px] overflow-hidden relative shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group cursor-pointer bg-neutral-950 border border-black/5 snap-start select-none"
                          onclick="openReelPlayer(<?php echo $idx; ?>)"
                          data-index="<?php echo $idx; ?>"
                          data-id="<?php echo $reel['id']; ?>"
