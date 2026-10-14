@@ -747,7 +747,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                             </button>
                                         <?php else: ?>
                                             <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-9 h-9 md:w-11 md:h-11 bg-black text-[#24B25D] rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:text-white transition-all shadow-md active:scale-90">
-                                                <i class="fas fa-shopping-bag text-[13px] md:text-[15px]"></i>
+                                                <i class="fa-solid fa-cart-shopping text-white text-sm md:text-[15px]"></i>
                                             </button>
                                         <?php endif; ?>
                                     </div>
@@ -963,7 +963,7 @@ $wishlist_json = json_encode($wishlist_ids);
                         <div class="rounded-[2.5rem] p-2.5 md:p-3 transition-transform duration-500 group-hover:scale-[1.02] h-full flex flex-col anim-up shadow-sm border border-[#004F42]/5" style="background-color: <?php echo $color_raw; ?>; animation-delay: <?php echo $delay; ?>ms">
                             
                             <!-- Inner White Card -->
-                            <div class="bg-white rounded-[2rem] p-4 px-6 flex flex-col flex-1 h-full shadow-sm">
+                            <div class="bg-white rounded-[2rem] p-4  flex flex-col flex-1 h-full shadow-sm">
                                 
                                 <!-- Product Image (Reference Corners) -->
                                 <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-gray-50/50">
@@ -1013,7 +1013,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                         <?php if(isset($p['original_price']) && $p['original_price'] > $p['price']): ?>
                                             <span class="text-[10px] text-gray-400 font-bold line-through">MRP <?php echo format_price($p['original_price']); ?></span>
                                         <?php endif; ?>
-                                        <span class="text-4xl font-black text-black leading-none">
+                                        <span class="text-3xl font-black text-black leading-none">
                                             <?php echo format_price($p['price']); ?>
                                         </span>
                                     </div>
@@ -1023,7 +1023,7 @@ $wishlist_json = json_encode($wishlist_ids);
                                             <i class="fas fa-ban text-sm"></i>
                                         </button>
                                     <?php else: ?>
-                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-12 h-12 bg-[#212121] text-white rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:scale-110 transition-all shadow-md active:scale-95 z-10">
+                                        <button onclick="event.preventDefault(); event.stopPropagation(); addToCart(<?php echo $p['id']; ?>, this)" class="w-11 h-11 bg-[#212121] text-white rounded-xl flex items-center justify-center hover:bg-[#24B25D] hover:scale-110 transition-all shadow-md active:scale-95 z-10">
                                             <i class="fas fa-shopping-cart text-sm"></i>
                                         </button>
                                     <?php endif; ?>
@@ -1247,58 +1247,650 @@ $wishlist_json = json_encode($wishlist_ids);
     </section>
     <?php endif; ?>
 
-    <!-- CINEMATIC BRAND VIDEO SECTION -->
+    <!-- DYNAMIC BRAND REELS & SHORTS SECTION -->
     <?php
-    $vid_sec = fetch_one("SELECT * FROM homepage_sections WHERE section_name = 'video_brand_story'");
-    // Fallback if DB fetch fails
-    if(!$vid_sec) {
-        $vid_sec = [
-            'heading' => "FROM KASHMIR \nWITH LOVE.",
-            'subheading' => "Experience the journey of our premium treats. No machines, just mountain air and traditional processing.",
-            'media_url' => "assets/images/hero.jpg",
-            'video_url' => "#"
-        ];
+    $reels_section_enabled = (get_setting('reels_section_enabled', '1') == '1');
+    $reels_autoplay_cards = (get_setting('reels_autoplay_cards', '0') == '1');
+    $reels_list = [];
+    if ($reels_section_enabled) {
+        $reels_list = fetch_all("
+            SELECT r.*, p.name as product_name, p.slug as product_slug, p.price as product_price, p.original_price as product_original_price, p.image as product_image, p.stock as product_stock
+            FROM reels r
+            LEFT JOIN products p ON r.product_id = p.id
+            WHERE r.status = 'active'
+            ORDER BY r.sort_order ASC, r.id ASC
+        ");
     }
     ?>
-    <section class="py-4 px-4 mb-20 md:mb-0" id="video_brand_story">
-        <div class="cantainer mx-auto">
-            <div class="relative w-full rounded-[40px] overflow-hidden shadow-2xl group cursor-pointer aspect-[16/10] md:aspect-video bg-black">
-                
-                <!-- Video Placeholder (Dynamic Image) -->
-                <img src="<?php echo $vid_sec['media_url']; ?>" alt="Brand Story Video Thumbnail" class="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-700 transform group-hover:scale-105">
-                
-                <!-- Play Button (Glassmorphism) -->
-                <button onclick="openVideoModal('<?php echo $vid_sec['video_url']; ?>')" class="absolute inset-0 flex items-center justify-center z-30 w-full h-full cursor-pointer focus:outline-none" aria-label="Play Brand Story Video">                    <div class="w-16 h-16 md:w-24 md:h-24 bg-white/10 backdrop-blur-md rounded-full border border-white/30 flex items-center justify-center group-hover:scale-110 transition duration-500 shadow-[0_0_50px_rgba(25,220,126,0.5)] group-hover:bg-[#24B25D] group-hover:border-transparent">
-                        <i class="fas fa-play text-2xl md:text-4xl text-white ml-2"></i>
-                    </div>
-                </button>
+    <?php if ($reels_section_enabled && !empty($reels_list)): ?>
+    <section class="py-8 md:py-14 bg-white relative overflow-hidden anim-up" id="reels-section">
+        <!-- Header: Exactly Matches Combo & Product Sections (NO container class) -->
+        <div class="w-full max-w-[1440px] mx-auto px-6 mb-8 md:mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
+            <div class="anim-reveal">
+                <span class="text-[#24B25D] font-black tracking-[0.2em] uppercase text-[10px] mb-2 md:mb-3 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#24B25D] animate-pulse"></span>
+                    Watch & Explore
+                </span>
+                <h2 class="text-4xl md:text-6xl font-heading font-black text-gray-900 leading-none tracking-tighter">
+                    Brand <span class="text-[#24B25D]">Shorts.</span>
+                </h2>
+            </div>
+            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
+                <div class="flex gap-2.5 md:gap-3">
+                    <button type="button" onclick="scrollReelsTrack('left')" aria-label="Previous reels" class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-gray-400 hover:border-black hover:text-black transition-all shadow-sm active:scale-90 cursor-pointer">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button type="button" onclick="scrollReelsTrack('right')" aria-label="Next reels" class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-black text-[#24B25D] flex items-center justify-center hover:scale-105 transition-all shadow-xl active:scale-90 cursor-pointer">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                <!-- Text Overlay -->
-                <div class="absolute bottom-0 left-0 w-full p-6 md:p-12 bg-gradient-to-t from-black via-black/60 to-transparent z-20 pointer-events-none">
-                    <div class="max-w-3xl pointer-events-auto">
-                        <div class="inline-block bg-[#24B25D] text-black text-[10px] md:text-xs font-bold px-3 py-1 rounded-full mb-3 md:mb-4 uppercase tracking-widest transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">
-                            Watch Brand Story
+        <!-- Constrained Reels Track (NO container class) -->
+        <div class="w-full max-w-[100vw] mx-auto px-4 sm:px-6 relative overflow-hidden">
+            <div id="reels-track" class=" py-8 flex flex-row flex-nowrap w-full gap-4 md:gap-6 overflow-x-auto hide-scrollbar scroll-smooth pb-8 snap-x snap-mandatory">
+                <?php foreach ($reels_list as $idx => $reel): ?>
+                    <div class="reel-card shrink-0 w-[270px] sm:w-[250px] md:w-[280px] aspect-[9/16] rounded-[12px] overflow-hidden relative shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group cursor-pointer bg-neutral-950 border border-black/5 snap-start select-none"
+                         onclick="openReelPlayer(<?php echo $idx; ?>)"
+                         data-index="<?php echo $idx; ?>"
+                         data-id="<?php echo $reel['id']; ?>"
+                         data-youtube-id="<?php echo htmlspecialchars($reel['youtube_id']); ?>">
+                        
+                        <!-- Base Poster Thumbnail (Instant Render, Zero Lag, Full HD Quality) -->
+                        <img src="<?php echo htmlspecialchars($reel['thumbnail_url']); ?>" 
+                             alt="<?php echo htmlspecialchars($reel['title']); ?>" 
+                             class="reel-poster-img absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 select-none pointer-events-none" 
+                             loading="lazy"
+                             onerror="if(!this.dataset.triedSd){this.dataset.triedSd='1';this.src='https://i.ytimg.com/vi/<?php echo $reel['youtube_id']; ?>/sddefault.jpg';}else{this.src='https://i.ytimg.com/vi/<?php echo $reel['youtube_id']; ?>/hqdefault.jpg';}">
+
+                        <!-- Dynamic Live Muted Video Container (Managed by IntersectionObserver for 60fps performance) -->
+                        <div class="reel-preview-container absolute inset-0 w-full h-full pointer-events-none overflow-hidden"></div>
+
+                        <!-- Gradient Vignette -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none"></div>
+
+                        <!-- Top Left: Views Badge (Live Dynamic Real Count) -->
+                        <div class="absolute top-3.5 left-3.5 z-10 pointer-events-none">
+                            <div class="bg-black/50 backdrop-blur-md text-white text-[10px] md:text-[11px] px-3 py-1 rounded-full font-black flex items-center gap-1.5 border border-white/15 shadow-md">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#24B25D] animate-pulse"></span>
+                                <span id="reel-views-<?php echo $reel['id']; ?>"><?php echo htmlspecialchars($reel['views_badge'] ?: '10K'); ?></span>
+                            </div>
                         </div>
-                        <h2 class="text-2xl md:text-5xl font-heading font-bold text-white mb-2 md:mb-4 leading-tight transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-200">
-                            <?php echo nl2br(htmlspecialchars($vid_sec['heading'])); ?>
-                        </h2>
-                        <p class="text-gray-200 font-sans text-sm md:text-xl max-w-xl opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition duration-500 delay-300 hidden md:block">
-                            <?php echo nl2br(htmlspecialchars($vid_sec['subheading'])); ?>
-                        </p>
+
+                        <!-- Top Right: Live Muted Indicator (Shown when preview is active) -->
+                        <div class="reel-live-badge hidden absolute top-3.5 right-3.5 z-10 pointer-events-none">
+                            <div class="bg-black/60 backdrop-blur-md text-white/90 text-[9px] font-bold px-2 py-0.5 rounded-full border border-white/20 flex items-center gap-1 shadow-sm">
+                                <i class="fas fa-volume-xmark text-[8px] text-amber-400"></i>
+                                <span>Preview</span>
+                            </div>
+                        </div>
+
+                        <!-- Center Play Button Overlay -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                            <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white text-base md:text-lg group-hover:scale-110 group-hover:bg-[#24B25D] group-hover:text-black group-hover:border-transparent transition-all duration-300 shadow-2xl">
+                                <i class="fas fa-play ml-0.5"></i>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Content & Shoppable Product -->
+                        <div class="absolute bottom-0 left-0 w-full   z-10 pointer-events-none flex flex-col justify-end">
+                            <!-- Badge Tag -->
+                            <div class="mx-3 text-[#EDB02C] font-black text-[10px] md:text-[11px] uppercase tracking-wider flex items-center gap-1.5 mb-1.5 drop-shadow">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#EDB02C]"></span>
+                                <span><?php echo htmlspecialchars($reel['badge_tag'] ?: 'DRIYUM SHORTS'); ?></span>
+                            </div>
+
+                            <!-- Title -->
+                            <h3 class="mx-3 text-white font-heading font-bold text-xs sm:text-sm leading-snug line-clamp-2 drop-shadow-md group-hover:text-[#24B25D] transition-colors">
+                                <?php echo htmlspecialchars($reel['title']); ?>
+                            </h3>
+
+                            <!-- Linked Shoppable Product Mini-Card -->
+                            <?php if (!empty($reel['product_id']) && !empty($reel['product_name'])): 
+                                $card_prod_img = !empty($reel['product_image']) ? (strpos($reel['product_image'], 'http') === 0 ? $reel['product_image'] : get_url($reel['product_image'])) : get_url('assets/images/placeholder.png');
+                            ?>
+                                <div class="mt-2.5 bg-white rounded-lg rounded-t-xl p-2 flex items-center gap-2.5 shadow-xl border border-white/40 transition-transform duration-300 group-hover:scale-[1.02]">
+                                    <img src="<?php echo htmlspecialchars($card_prod_img); ?>" 
+                                         alt="<?php echo htmlspecialchars($reel['product_name']); ?>" 
+                                         class="w-14 h-14 rounded-xl object-cover bg-gray-50 border border-gray-100 shrink-0">
+                                    <div class="min-w-0 flex-1">
+                                        <span class="text-[14px] md:text-[16px] font-black uppercase text-[#004f42] block truncate leading-tight">
+                                            <?php echo htmlspecialchars($reel['product_name']); ?>
+                                        </span>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span class="text-lg font-black text-[#24B25D]">₹<?php echo number_format($reel['product_price'], 0); ?></span>
+                                            <?php if (!empty($reel['product_original_price']) && $reel['product_original_price'] > $reel['product_price']): ?>
+                                                <span class="text-[11px] text-gray-400 line-through">₹<?php echo number_format($reel['product_original_price'], 0); ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <span class="w-10 h-10 rounded-xl bg-black text-[#24B25D] flex items-center justify-center text-[10px] shrink-0 shadow-sm group-hover:bg-[#24B25D] group-hover:text-black transition-colors">
+                                        <i class="fa-solid fa-cart-shopping text-sm text-white"></i>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                </div>
-                </div>
-
-                <!-- Scrolling Marquee inside video container -->
-                <div class="absolute top-10 right-0 bg-white/10 backdrop-blur-md border border-white/20 py-2 px-6 rounded-l-full transform translate-x-4 group-hover:translate-x-0 transition duration-500">
-                    <span class="text-white font-bold uppercase tracking-widest text-xs flex items-center gap-2">
-                        <i class="fas fa-circle text-red-500 animate-pulse text-[8px]"></i> Watch Our Story
-                    </span>
-                </div>
-
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
+
+    <!-- ========================================================
+         VERTICAL REEL PLAYER MODAL (Matches Reference 3 & 4)
+         ======================================================== -->
+    <style>
+        body.reel-player-open {
+            overflow: hidden !important;
+            touch-action: none;
+        }
+        body.reel-player-open #driyum-mobile-dock-v2 {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(120px) !important;
+        }
+    </style>
+    <div id="reel-player-modal" class="fixed inset-0 z-[100000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-0 md:p-4 hidden transition-opacity duration-300">
+        
+        <!-- Player Container (Responsive 9:16 Aspect / Full Height on Mobile) -->
+        <div id="reel-player-box" class="relative w-full h-full md:max-w-[420px] md:h-[92vh] md:max-h-[820px] md:rounded-[32px] overflow-hidden bg-black shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col justify-between border-0 md:border md:border-white/10 select-none">
+            
+            <!-- Video Iframe Layer -->
+            <div class="absolute inset-0 w-full h-full bg-black z-0">
+                <iframe id="reel-player-iframe" 
+                        class="w-full h-full object-cover" 
+                        src="" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen></iframe>
+            </div>
+
+            <!-- Touch Gestures Overlay Area (Captures vertical swipe gestures) -->
+            <div id="reel-touch-surface" class="absolute inset-0 z-10 cursor-pointer pointer-events-auto"></div>
+
+            <!-- Top Controls Overlay Bar -->
+            <div class="relative z-20 p-4 md:p-5 flex items-center justify-between gap-2 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-auto">
+                <!-- Left: Views Counter -->
+                <div class="flex items-center gap-2">
+                    <div id="player-views-badge" class="bg-black/60 backdrop-blur-md text-white text-[10px] md:text-[11px] px-3 py-1 rounded-full font-black flex items-center gap-1.5 border border-white/20 shadow-md">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#24B25D] animate-pulse"></span>
+                        <span id="player-views-text">-- views</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <!-- Sound Toggle -->
+                    <button type="button" id="player-sound-btn" onclick="toggleReelSound()" class="bg-emerald-600/90 hover:bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 backdrop-blur-md transition-all active:scale-95" aria-label="Toggle sound">
+                        <i class="fas fa-volume-up" id="player-sound-icon"></i>
+                    </button>
+
+                   
+
+                    <!-- Close Modal Button -->
+                    <button type="button" onclick="closeReelPlayer()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white text-white hover:text-black flex items-center justify-center transition-all backdrop-blur-md active:scale-95" aria-label="Close reel player">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Side Desktop Navigation Chevrons -->
+            <button type="button" onclick="prevReel()" aria-label="Previous reel" class="hidden md:flex absolute left-[-60px] top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-lg backdrop-blur-md transition-all active:scale-95">
+                <i class="fas fa-chevron-up"></i>
+            </button>
+            <button type="button" onclick="nextReel()" aria-label="Next reel" class="hidden md:flex absolute right-[-60px] top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white items-center justify-center text-lg backdrop-blur-md transition-all active:scale-95">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+
+            <!-- Bottom Area: Shoppable Product Floating Card & Reel Swipe Indicator -->
+            <div class="relative z-20 p-4 pb-8 md:p-5 bg-gradient-to-t from-black/95 via-black/70 to-transparent pointer-events-auto space-y-3 pb-[max(2rem,env(safe-area-inset-bottom))]">
+                
+                <!-- Floating Shoppable Product Card -->
+                <div id="reel-product-card" class="bg-white/95 backdrop-blur-xl rounded-2xl p-3 shadow-2xl border border-white/40 flex items-center gap-3 transition-all">
+                    <!-- Product Image -->
+                    <img id="reel-prod-img" src="" alt="Product" class="w-14 h-14 rounded-xl object-cover bg-slate-100 border border-slate-200 shrink-0">
+                    
+                    <!-- Product Details -->
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5 mb-0.5">
+                            <span class="bg-[#24B25D]/15 text-[#004f42] text-[9px] font-black uppercase px-2 py-0.5 rounded-full">
+                                FEATURED SNACK
+                            </span>
+                            <span id="reel-prod-stock-badge" class="text-[9px] font-bold text-emerald-700"></span>
+                        </div>
+                        <a id="reel-prod-link" href="#" class="font-bold text-xs text-slate-900 truncate block hover:text-[#00875A] transition-colors">
+                            <span id="reel-prod-name"></span>
+                        </a>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="reel-prod-price" class="text-sm font-black text-[#00875A]"></span>
+                            <span id="reel-prod-orig-price" class="text-[11px] text-slate-400 line-through"></span>
+                        </div>
+                    </div>
+
+                    <!-- Action: Add to Bag -->
+                    <div class="shrink-0 flex items-center gap-1">
+                        <button type="button" id="reel-btn-add-cart" onclick="addReelProductToCart(this)" class="bg-[#00875A] hover:bg-[#00704A] text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
+                            <i class="fa-solid fa-cart-shopping text-[11px]"></i>
+                            <span>Buy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls for Mobile / Quick Prev-Next -->
+                <div class="flex items-center justify-between text-white/60 text-[11px] font-semibold pt-1">
+                    <button type="button" onclick="prevReel()" class="flex items-center gap-1 hover:text-white transition-colors cursor-pointer p-1">
+                        <i class="fas fa-chevron-up text-xs"></i> Prev Reel
+                    </button>
+                    <span class="text-[10px] uppercase tracking-widest text-white/40">Swipe up/down</span>
+                    <button type="button" onclick="nextReel()" class="flex items-center gap-1 hover:text-white transition-colors cursor-pointer p-1">
+                        Next Reel <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ========================================================
+         REELS & SHORTS FRONTEND CLIENT LOGIC
+         ======================================================== -->
+    <script>
+    // Public Reels Data Cache
+    window.DRIYUM_REELS = <?php echo json_encode($reels_list, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+    window.DRIYUM_REELS_AUTOPLAY = <?php echo $reels_autoplay_cards ? 'true' : 'false'; ?>;
+    window.currentReelIndex = 0;
+    window.driyumReelMuted = false;
+
+    // Horizontal Track Scroller (Desktop Chevrons)
+    function scrollReelsTrack(direction) {
+        const track = document.getElementById('reels-track');
+        if (!track) return;
+        const scrollAmount = direction === 'left' ? -350 : 350;
+        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+
+    // Open Reel Player Modal
+    function openReelPlayer(index) {
+        if (!window.DRIYUM_REELS || window.DRIYUM_REELS.length === 0) return;
+        index = Math.max(0, Math.min(index, window.DRIYUM_REELS.length - 1));
+        window.currentReelIndex = index;
+
+        const modal = document.getElementById('reel-player-modal');
+        if (!modal) return;
+
+        // Lock background scroll & hide mobile bottom dock
+        document.body.classList.add('reel-player-open');
+        document.body.style.overflow = 'hidden';
+
+        const mobileDock = document.getElementById('driyum-mobile-dock-v2');
+        if (mobileDock) {
+            mobileDock.style.setProperty('display', 'none', 'important');
+        }
+
+        // Show Modal
+        modal.classList.remove('hidden');
+
+        // History state for mobile Android back button handling
+        try {
+            history.pushState({ driyumReelOpen: true }, '');
+            window.addEventListener('popstate', onPopStateReelClose, { once: true });
+        } catch (e) {}
+
+        // Load Reel Content
+        loadCurrentReel();
+
+        // Track Real & Dynamic View
+        if (window.DRIYUM_REELS && window.DRIYUM_REELS[index]) {
+            trackReelView(window.DRIYUM_REELS[index].id);
+        }
+    }
+
+    function onPopStateReelClose(e) {
+        closeReelPlayer(false);
+    }
+
+    // Close Reel Player Modal
+    function closeReelPlayer(handleHistory = true) {
+        const modal = document.getElementById('reel-player-modal');
+        if (!modal || modal.classList.contains('hidden')) return;
+
+        // Stop & unload video
+        const iframe = document.getElementById('reel-player-iframe');
+        if (iframe) iframe.src = '';
+
+        // Hide modal
+        modal.classList.add('hidden');
+
+        // Restore background scroll & mobile bottom dock
+        document.body.classList.remove('reel-player-open');
+        document.body.style.overflow = '';
+
+        const mobileDock = document.getElementById('driyum-mobile-dock-v2');
+        if (mobileDock) {
+            mobileDock.style.removeProperty('display');
+        }
+
+        if (handleHistory) {
+            try {
+                if (history.state && history.state.driyumReelOpen) {
+                    history.back();
+                }
+            } catch (e) {}
+        }
+    }
+
+    // Load Specific Reel into Player
+    function loadCurrentReel() {
+        const reels = window.DRIYUM_REELS;
+        const idx = window.currentReelIndex;
+        if (!reels || !reels[idx]) return;
+
+        const reel = reels[idx];
+        const total = reels.length;
+
+        // 1. Update Header Info
+        const counterEl = document.getElementById('player-counter');
+        if (counterEl) counterEl.textContent = (idx + 1) + '/' + total;
+
+        const badgeEl = document.getElementById('player-badge-tag');
+        if (badgeEl) badgeEl.textContent = reel.badge_tag || 'DRIYUM SHORTS';
+
+        const viewsEl = document.getElementById('player-views-text');
+        if (viewsEl) viewsEl.textContent = (reel.views_badge || '10K') + ' views';
+
+        const titleEl = document.getElementById('player-title');
+        if (titleEl) titleEl.textContent = reel.title || 'Driyum Short';
+
+        const ytLinkEl = document.getElementById('player-yt-link');
+        if (ytLinkEl) ytLinkEl.href = reel.youtube_url || `https://www.youtube.com/shorts/${reel.youtube_id}`;
+
+        // 2. Load YouTube Embed with Forced High Definition Quality (1080p / Highres)
+        const iframe = document.getElementById('reel-player-iframe');
+        const muteParam = window.driyumReelMuted ? 1 : 0;
+        const embedUrl = `https://www.youtube.com/embed/${reel.youtube_id}?autoplay=1&mute=${muteParam}&enablejsapi=1&playsinline=1&rel=0&loop=1&playlist=${reel.youtube_id}&vq=hd1080&hd=1`;
+        if (iframe) {
+            iframe.src = embedUrl;
+            iframe.onload = () => {
+                forceIframeMaxQuality(iframe);
+            };
+            forceIframeMaxQuality(iframe);
+        }
+
+        // 3. Update Shoppable Product Card
+        const prodCard = document.getElementById('reel-product-card');
+        if (prodCard) {
+            if (reel.product_id && reel.product_name) {
+                const nameEl = document.getElementById('reel-prod-name');
+                if (nameEl) nameEl.textContent = reel.product_name;
+
+                const linkEl = document.getElementById('reel-prod-link');
+                if (linkEl) {
+                    linkEl.href = `${BASE_URL}product/${reel.product_slug || reel.product_id}`;
+                    if (!nameEl) linkEl.textContent = reel.product_name;
+                }
+
+                const priceEl = document.getElementById('reel-prod-price');
+                if (priceEl) priceEl.textContent = '₹' + parseFloat(reel.product_price || '0').toFixed(2);
+                
+                const origEl = document.getElementById('reel-prod-orig-price');
+                if (origEl) {
+                    if (reel.product_original_price && parseFloat(reel.product_original_price) > parseFloat(reel.product_price)) {
+                        origEl.textContent = '₹' + parseFloat(reel.product_original_price).toFixed(2);
+                        origEl.classList.remove('hidden');
+                    } else {
+                        origEl.classList.add('hidden');
+                    }
+                }
+
+                const imgEl = document.getElementById('reel-prod-img');
+                if (imgEl) {
+                    imgEl.src = reel.product_image ? (reel.product_image.startsWith('http') ? reel.product_image : `${BASE_URL}${reel.product_image}`) : `${BASE_URL}assets/images/logo.svg`;
+                }
+
+                const stockBadge = document.getElementById('reel-prod-stock-badge');
+                const addBtn = document.getElementById('reel-btn-add-cart');
+                const stock = parseInt(reel.product_stock || '0');
+
+                if (stockBadge && addBtn) {
+                    if (stock > 0) {
+                        stockBadge.textContent = '• In Stock';
+                        stockBadge.className = 'text-[9px] font-bold text-emerald-700';
+                        addBtn.disabled = false;
+                        addBtn.className = 'bg-[#00875A] hover:bg-[#00704A] text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all';
+                        addBtn.innerHTML = '<i class="fa-solid fa-cart-shopping text-[11px]"></i> <span>Buy</span>';
+                    } else {
+                        stockBadge.textContent = '• Out of Stock';
+                        stockBadge.className = 'text-[9px] font-bold text-rose-600';
+                        addBtn.disabled = true;
+                        addBtn.className = 'bg-slate-300 text-slate-500 text-xs font-bold py-2 px-3 rounded-xl flex items-center gap-1.5 cursor-not-allowed';
+                        addBtn.innerHTML = '<span>Sold Out</span>';
+                    }
+                }
+
+                prodCard.classList.remove('hidden');
+            } else {
+                prodCard.classList.add('hidden');
+            }
+        }
+    }
+
+    // Dynamic On-Site View Tracking
+    function trackReelView(reelId) {
+        if (!reelId) return;
+        fetch('api/track_reel_view.php?id=' + encodeURIComponent(reelId), { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.success && data.views_badge) {
+                    const cardBadge = document.getElementById('reel-views-' + reelId);
+                    if (cardBadge) cardBadge.textContent = data.views_badge;
+
+                    const viewsEl = document.getElementById('player-views-text');
+                    if (viewsEl && window.DRIYUM_REELS && window.DRIYUM_REELS[window.currentReelIndex]?.id == reelId) {
+                        viewsEl.textContent = data.views_badge + ' views';
+                    }
+
+                    const rObj = (window.DRIYUM_REELS || []).find(x => x.id == reelId);
+                    if (rObj) {
+                        rObj.views_badge = data.views_badge;
+                        rObj.views_count = data.views_count;
+                    }
+                }
+            })
+            .catch(() => {});
+    }
+
+    // Navigate to Next Reel
+    function nextReel() {
+        if (!window.DRIYUM_REELS || window.DRIYUM_REELS.length === 0) return;
+        window.currentReelIndex = (window.currentReelIndex + 1) % window.DRIYUM_REELS.length;
+        loadCurrentReel();
+        trackReelView(window.DRIYUM_REELS[window.currentReelIndex]?.id);
+    }
+
+    // Navigate to Previous Reel
+    function prevReel() {
+        if (!window.DRIYUM_REELS || window.DRIYUM_REELS.length === 0) return;
+        window.currentReelIndex = (window.currentReelIndex - 1 + window.DRIYUM_REELS.length) % window.DRIYUM_REELS.length;
+        loadCurrentReel();
+        trackReelView(window.DRIYUM_REELS[window.currentReelIndex]?.id);
+    }
+
+    // Sound Toggle in Reel Player
+    function toggleReelSound() {
+        window.driyumReelMuted = !window.driyumReelMuted;
+        const icon = document.getElementById('player-sound-icon');
+        const text = document.getElementById('player-sound-text');
+        const btn = document.getElementById('player-sound-btn');
+
+        if (window.driyumReelMuted) {
+            if (icon) icon.className = 'fas fa-volume-mute';
+            if (text) text.textContent = 'Muted';
+            if (btn) btn.className = 'bg-slate-700 hover:bg-slate-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 backdrop-blur-md transition-all active:scale-95';
+        } else {
+            if (icon) icon.className = 'fas fa-volume-up';
+            if (text) text.textContent = 'Sound On';
+            if (btn) btn.className = 'bg-emerald-600/90 hover:bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 backdrop-blur-md transition-all active:scale-95';
+        }
+
+        // PostMessage to YouTube iframe
+        const iframe = document.getElementById('reel-player-iframe');
+        if (iframe && iframe.contentWindow) {
+            const func = window.driyumReelMuted ? 'mute' : 'unMute';
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func }), '*');
+        }
+    }
+
+    // Shoppable Add to Cart Action from Floating Product Card
+    async function addReelProductToCart(btn) {
+        const reels = window.DRIYUM_REELS;
+        const idx = window.currentReelIndex;
+        if (!reels || !reels[idx] || !reels[idx].product_id) return;
+
+        const prodId = reels[idx].product_id;
+        if (typeof window.addToCart === 'function') {
+            await window.addToCart(prodId, btn, 1);
+        } else {
+            window.location.href = `${BASE_URL}product/${reels[idx].product_slug || prodId}`;
+        }
+    }
+
+    // Touch Swipe Gestures (Up = Next, Down = Prev)
+    let touchStartY = 0;
+    let touchStartX = 0;
+    const touchSurface = document.getElementById('reel-touch-surface');
+
+    if (touchSurface) {
+        touchSurface.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        touchSurface.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const touchEndX = e.changedTouches[0].clientX;
+            const deltaY = touchStartY - touchEndY;
+            const deltaX = touchStartX - touchEndX;
+
+            if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 40) {
+                if (deltaY > 0) {
+                    nextReel();
+                } else {
+                    prevReel();
+                }
+            }
+        }, { passive: true });
+    }
+
+    // Keyboard Navigation for Reel Player
+    document.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('reel-player-modal');
+        if (!modal || modal.classList.contains('hidden')) return;
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            nextReel();
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevReel();
+        } else if (e.key === 'Escape') {
+            closeReelPlayer();
+        } else if (e.key === 'm' || e.key === 'M') {
+            toggleReelSound();
+        }
+    });
+
+    // Force YouTube Iframe Player into Highest Definition Quality (1080p / Highres)
+    function forceIframeMaxQuality(iframe) {
+        if (!iframe || !iframe.contentWindow) return;
+        const sendQuality = () => {
+            try {
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'setPlaybackQuality',
+                    args: ['hd1080']
+                }), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    event: 'command',
+                    func: 'setSuggestedQuality',
+                    args: ['hd1080']
+                }), '*');
+            } catch (e) {}
+        };
+        sendQuality();
+        setTimeout(sendQuality, 500);
+        setTimeout(sendQuality, 1500);
+    }
+
+    // ========================================================
+    // INDUSTRY-STANDARD LIVE MUTED VIDEO PLAYBACK OBSERVER
+    // Lazy loads muted looped previews only when cards are in viewport
+    // ========================================================
+    (function initReelsAutoplayObserver() {
+        if (!window.DRIYUM_REELS_AUTOPLAY) return;
+
+        function mountCardPreview(card) {
+            if (card.dataset.previewMounted === 'true') return;
+            const ytId = card.dataset.youtubeId;
+            if (!ytId) return;
+
+            const container = card.querySelector('.reel-preview-container');
+            if (!container) return;
+
+            const iframe = document.createElement('iframe');
+            iframe.className = 'absolute inset-0 w-full h-full object-cover pointer-events-none scale-105 opacity-0 transition-opacity duration-700';
+            iframe.frameBorder = '0';
+            iframe.allow = 'autoplay; encrypted-media';
+            iframe.loading = 'lazy';
+            iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${ytId}&playsinline=1&modestbranding=1&rel=0&enablejsapi=1&iv_load_policy=3&vq=hd1080&hd=1`;
+
+            iframe.onload = () => {
+                forceIframeMaxQuality(iframe);
+                iframe.classList.remove('opacity-0');
+                iframe.classList.add('opacity-100');
+                const liveBadge = card.querySelector('.reel-live-badge');
+                if (liveBadge) liveBadge.classList.remove('hidden');
+            };
+
+            container.appendChild(iframe);
+            card.dataset.previewMounted = 'true';
+        }
+
+        function unmountCardPreview(card) {
+            if (card.dataset.previewMounted !== 'true') return;
+            const container = card.querySelector('.reel-preview-container');
+            if (container) container.innerHTML = '';
+            const liveBadge = card.querySelector('.reel-live-badge');
+            if (liveBadge) liveBadge.classList.add('hidden');
+            card.dataset.previewMounted = 'false';
+        }
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                        mountCardPreview(entry.target);
+                    } else {
+                        unmountCardPreview(entry.target);
+                    }
+                });
+            }, {
+                root: null,
+                threshold: [0, 0.5, 1.0]
+            });
+
+            document.querySelectorAll('.reel-card').forEach(card => {
+                observer.observe(card);
+
+                // Hover preview on desktop
+                card.addEventListener('mouseenter', () => mountCardPreview(card));
+            });
+        }
+    })();
+    </script>
+    <?php endif; ?>
+
 
     <!-- CINEMATIC SPOTLIGHT REVIEWS -->
     <?php

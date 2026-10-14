@@ -73,7 +73,7 @@ if (isset($_SESSION['coupon'])) {
 
         <?php if (empty($products)): ?>
             <div class="max-w-md mx-auto text-center py-20 bg-white rounded-[3rem] shadow-sm border-2 border-dashed border-gray-200 anim-up">
-                <div class="text-8xl mb-6 animate-bounce">🛒</div>
+                <div class="text-8xl mb-6 animate-bounce"><i class="fa-regular fa-bag-shopping"></i></div>
                 <h2 class="text-2xl font-bold font-heading text-gray-400 mb-4">Empty Bag? Tragic.</h2>
                 <p class="text-gray-500 mb-8 px-8">Our snacks are lonely. Give them a home.</p>
                 <a href="<?php echo get_url('shop'); ?>" class="btn-chunky btn-primary shadow-lg">Stock Up Now</a>

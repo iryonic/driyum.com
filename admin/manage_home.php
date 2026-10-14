@@ -404,10 +404,11 @@ $icon_lib = get_trust_badge_icon_library();
             <span>Announcement Marquee</span>
         </button>
 
-        <button type="button" onclick="switchHomeTab('video')" id="tabBtn-video" class="home-tab-btn flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all <?php echo $active_tab === 'video' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'; ?>">
-            <i class="fas fa-video text-indigo-500"></i>
-            <span>Brand Story Video</span>
-        </button>
+        <a href="reels.php" class="home-tab-btn flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all text-slate-600 hover:text-slate-900 hover:bg-white/50">
+            <i class="fas fa-play-circle text-rose-500"></i>
+            <span>Brand Reels & Shorts</span>
+            <span class="bg-rose-50 text-rose-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-rose-200">New Manager</span>
+        </a>
     </div>
 
     <!-- ========================================== -->
@@ -777,68 +778,22 @@ $icon_lib = get_trust_badge_icon_library();
 
     <!-- ========================================== -->
     <!-- TAB 4: BRAND STORY VIDEO -->
-    <!-- ========================================== -->
-    <div id="tabContent-video" class="home-tab-pane space-y-6 <?php echo $active_tab === 'video' ? '' : 'hidden'; ?>">
-        <div class="admin-card p-5 sm:p-6">
-            <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
-                <div>
-                    <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                        <i class="fas fa-video text-indigo-500"></i> Video Brand Story Section
-                    </h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Manage your artisanal valley harvesting story, craft videos, or cinematic brand film.</p>
-                </div>
+    <!-- ================================    <div id="tabContent-video" class="home-tab-pane space-y-6 <?php echo $active_tab === 'video' ? '' : 'hidden'; ?>">
+        <div class="admin-card p-6 sm:p-8 bg-gradient-to-br from-rose-50/50 via-white to-amber-50/30 border border-rose-200/70 text-center">
+            <div class="w-16 h-16 rounded-3xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center text-3xl mx-auto mb-4 shadow-sm">
+                <i class="fas fa-play-circle"></i>
             </div>
-
-            <form method="POST" enctype="multipart/form-data" class="space-y-5">
-                <input type="hidden" name="update_video_section" value="1">
-                <input type="hidden" name="active_tab" value="video">
-                <input type="hidden" name="current_media" value="<?php echo htmlspecialchars($vid_sec['media_url'] ?? ''); ?>">
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Section Title *</label>
-                            <input type="text" name="heading" value="<?php echo htmlspecialchars($vid_sec['heading'] ?? ''); ?>" class="admin-input text-xs" placeholder="e.g. Pure Craft, Valley Freshness">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Subheading Description</label>
-                            <textarea name="subheading" rows="3" class="admin-input text-xs resize-none" placeholder="Provide a compelling story behind DRIYUM's craft..."><?php echo htmlspecialchars($vid_sec['subheading'] ?? ''); ?></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">External Video URL (YouTube / Vimeo)</label>
-                            <input type="text" name="video_url" value="<?php echo htmlspecialchars($vid_sec['video_url'] ?? ''); ?>" class="admin-input text-xs" placeholder="https://youtube.com/watch?v=...">
-                            <p class="text-[10px] text-slate-400 mt-1">Clicking play will launch the high-resolution external video player modal.</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Thumbnail Cover & Video File</label>
-                        <div class="aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-900 relative group flex items-center justify-center">
-                            <img id="vid-cover-preview" src="../<?php echo !empty($vid_sec['media_url']) ? $vid_sec['media_url'] : 'assets/images/hero.jpg'; ?>" class="w-full h-full object-cover">
-                            <video id="vid-file-preview" class="absolute inset-0 w-full h-full object-cover hidden" autoplay muted loop></video>
-                            
-                            <div class="absolute inset-0 bg-slate-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                <label class="btn-admin btn-admin-secondary text-xs cursor-pointer py-1.5 px-3">
-                                    <i class="fas fa-image mr-1"></i> Cover Photo
-                                    <input type="file" name="media" id="vid-cover-input" class="hidden" accept="image/*" onchange="previewMedia(this, 'vid-cover-preview')">
-                                </label>
-                                <label class="btn-admin btn-admin-secondary text-xs cursor-pointer py-1.5 px-3">
-                                    <i class="fas fa-film mr-1"></i> MP4 Video
-                                    <input type="file" name="video_file" id="vid-file-input" class="hidden" accept="video/*" onchange="previewMedia(this, 'vid-file-preview')">
-                                </label>
-                            </div>
-                        </div>
-                        <p class="text-[10px] text-slate-400">Hover over the preview above to change cover photo or upload an MP4 video file.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-end pt-3 border-t border-slate-100">
-                    <button type="submit" name="update_video_section" class="btn-admin btn-admin-primary text-xs py-2 px-5">
-                        <i class="fas fa-save mr-1.5"></i> Save Brand Story
-                    </button>
-                </div>
-            </form>
+            <h3 class="text-base font-bold text-slate-900">Brand Video has Upgraded to Reels & Shorts!</h3>
+            <p class="text-xs text-slate-500 max-w-lg mx-auto mt-1 leading-relaxed">
+                The single Brand Video section has been replaced with a dynamic, shoppable short-video feed with drag-and-drop sorting, automatic YouTube metadata detection, and direct Add to Cart product integration.
+            </p>
+            <div class="mt-6 flex items-center justify-center gap-3">
+                <a href="reels.php" class="btn-admin btn-admin-primary text-xs py-2.5 px-6 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold shadow-md">
+                    <i class="fas fa-arrow-right mr-1.5"></i> Open Reels & Shorts Manager
+                </a>
+            </div>
         </div>
+    </div>div>
     </div>
 </div>
 

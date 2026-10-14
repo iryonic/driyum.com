@@ -409,7 +409,7 @@ window.loadCartItems = async function (isUpdate = false) {
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-full min-h-[320px] px-6 py-10 text-center my-auto">
                         <div class="w-20 h-20 bg-emerald-50 text-[#00875A] rounded-2xl flex items-center justify-center text-3xl mb-4 border border-emerald-100/70 shadow-xs">
-                            <i class="fas fa-shopping-bag"></i>
+                            <i class="fa-solid fa-cart-shopping"></i>
                         </div>
                         <h3 class="text-xl font-heading font-black text-gray-900 mb-1.5">Your Bag is Empty</h3>
                         <p class="text-xs text-gray-500 max-w-xs mb-6 leading-relaxed">Looks like you haven't added any crunchy fruit snacks yet.</p>

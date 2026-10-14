@@ -41,6 +41,7 @@ $page_meta = [
     'reviews.php' => ['title' => 'Product Reviews', 'group' => 'Marketing', 'icon' => 'fas fa-star'],
     'manage_testimonials.php' => ['title' => 'Testimonials', 'group' => 'Marketing', 'icon' => 'fas fa-comment-dots'],
     'hero_slides.php' => ['title' => 'Hero Slides', 'group' => 'Storefront', 'icon' => 'fas fa-images'],
+    'reels.php' => ['title' => 'Reels & Shorts', 'group' => 'Storefront', 'icon' => 'fas fa-play-circle'],
     'manage_home.php' => ['title' => 'Homepage Content', 'group' => 'Storefront', 'icon' => 'fas fa-store'],
     'manage_partners.php' => ['title' => 'Retail Partners', 'group' => 'Storefront', 'icon' => 'fas fa-map-marker-alt'],
     'manage_pages.php' => ['title' => 'Pages & CMS', 'group' => 'Storefront', 'icon' => 'fas fa-file-alt'],
@@ -403,6 +404,11 @@ $active_meta = $page_meta[$curr_page] ?? ['title' => 'Administration', 'group' =
                     <a href="hero_slides.php" class="admin-nav-item group <?php echo $curr_page == 'hero_slides.php' ? 'active' : ''; ?>">
                         <span class="nav-icon-box"><i class="fas fa-images"></i></span>
                         <span class="flex-1">Hero Slides</span>
+                    </a>
+                    <a href="reels.php" class="admin-nav-item group <?php echo $curr_page == 'reels.php' ? 'active' : ''; ?>">
+                        <span class="nav-icon-box"><i class="fas fa-play-circle text-rose-500"></i></span>
+                        <span class="flex-1">Reels & Shorts</span>
+                        <span class="<?php echo $curr_page == 'reels.php' ? 'bg-white/20 text-white border-white/30' : 'bg-rose-50 text-rose-700 border-rose-200'; ?> text-[9px] font-bold px-1.5 py-0.5 rounded border">Hot</span>
                     </a>
                     <a href="manage_home.php" class="admin-nav-item group <?php echo $curr_page == 'manage_home.php' ? 'active' : ''; ?>">
                         <span class="nav-icon-box"><i class="fas fa-home"></i></span>

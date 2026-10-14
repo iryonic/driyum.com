@@ -323,7 +323,7 @@ try {
                             <?php endif; ?>
                         <?php } catch (Throwable $e) { ?>
                             <div class="col-span-4 py-8 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">
-                                <i class="fas fa-shopping-bag mb-3 text-2xl block text-[#19DC7E]/30"></i>
+                                <i class="fa-solid fa-cart-shopping mb-3 text-2xl block text-[#19DC7E]/30"></i>
                                 Ready to Browse? <br>
                                 <a href="<?php echo get_url('shop'); ?>" class="text-[#19DC7E] underline hover:text-black">Enter Driyum Shop</a>
                             </div>
@@ -374,7 +374,7 @@ try {
 
             <!-- Cart Trigger -->
             <button onclick="openCartSidebar()" class="relative w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white border-2 border-gray-100 flex items-center justify-center text-black hover:border-[#19DC7E] hover:text-[#19DC7E] transition" aria-label="Open shopping bag">
-                <i class="fas fa-shopping-bag text-sm"></i>
+                <i class="fa-solid fa-cart-shopping text-sm"></i>
                 <span id="cart-count" class="absolute -top-1 -right-1 bg-[#19DC7E] text-[#002A23] text-[9px] font-black rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center shadow-sm">0</span>
             </button>
         </div>
@@ -388,7 +388,7 @@ try {
     </div>
     <a href="<?php echo get_url(''); ?>" class="flex items-center"><img src="<?php echo get_url('assets/images/logo.svg'); ?>" alt="<?php echo $store_name; ?> - Home" class="w-24"></a>
     <button onclick="openCartSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-700 relative hover:text-black transition-colors" aria-label="Open Shopping Bag">
-        <i class="fas fa-shopping-bag"></i>
+        <i class="fa-solid fa-cart-shopping"></i>
         <span id="mobile-cart-count" class="absolute top-1 right-1 bg-[#19DC7E] text-[#002A23] text-[9px] font-black rounded-full min-w-[16px] h-4 px-1 flex items-center justify-center shadow-sm">0</span>
     </button>
 </header>
@@ -418,7 +418,7 @@ try {
                 <li>
                     <a href="<?php echo get_url('shop'); ?>" class="flex items-center gap-4 px-4 py-3 rounded-2xl hover:bg-gray-50 text-gray-600 hover:text-black transition-all group">
                         <div class="w-10 h-10 rounded-xl bg-gray-100 text-gray-400 flex items-center justify-center text-sm group-hover:bg-[#19DC7E] group-hover:text-black transition-colors">
-                            <i class="fas fa-shopping-bag"></i>
+                            <i class="fa-solid fa-cart-shopping"></i>
                         </div>
                         <span class="text-xl font-heading font-bold">Shop Packs</span>
                     </a>
@@ -600,7 +600,7 @@ try {
     <div id="free-shipping-progress-container" class="px-5 sm:px-6 py-3 bg-gradient-to-r from-emerald-50/80 via-teal-50/40 to-emerald-50/80 border-b border-emerald-100/60 hidden shrink-0 transition-all">
         <div class="flex justify-between items-center mb-1.5 text-xs font-semibold text-gray-700">
             <span id="free-shipping-msg" class="flex items-center gap-1.5 leading-tight"></span>
-            <span id="free-shipping-icon" class="text-base select-none shrink-0 ml-2">🚚</span>
+            <span id="free-shipping-icon" class="text-base select-none shrink-0 ml-2"><i class="fa-regular fa-truck text-[#00875A]"></i></span>
         </div>
         <div class="h-2 w-full bg-emerald-100/80 rounded-full overflow-hidden p-[1px]">
             <div id="free-shipping-bar" class="h-full bg-gradient-to-r from-emerald-500 to-[#19DC7E] rounded-full w-0 transition-all duration-700 shadow-xs"></div>
