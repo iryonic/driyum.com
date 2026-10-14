@@ -111,49 +111,55 @@ function close_db_connection() {
 
 // Execute query with error handling
 function execute_query($sql, $params = []) {
-    $conn = get_db_connection();
-    
-    if (!empty($params)) {
-        $stmt = mysqli_prepare($conn, $sql);
+    try {
+        $conn = get_db_connection();
+        if (!$conn) return false;
         
-        if ($stmt) {
-            $types = '';
-            $values = [];
+        if (!empty($params)) {
+            $stmt = mysqli_prepare($conn, $sql);
             
-            foreach ($params as $param) {
-                if (is_int($param)) {
-                    $types .= 'i';
-                } elseif (is_double($param)) {
-                    $types .= 'd';
-                } else {
-                    $types .= 's';
+            if ($stmt) {
+                $types = '';
+                $values = [];
+                
+                foreach ($params as $param) {
+                    if (is_int($param)) {
+                        $types .= 'i';
+                    } elseif (is_double($param)) {
+                        $types .= 'd';
+                    } else {
+                        $types .= 's';
+                    }
+                    $values[] = $param;
                 }
-                $values[] = $param;
-            }
-            
-            mysqli_stmt_bind_param($stmt, $types, ...$values);
-            $success = mysqli_stmt_execute($stmt);
-            
-            if (!$success) {
-                mysqli_stmt_close($stmt);
-                return false;
-            }
+                
+                mysqli_stmt_bind_param($stmt, $types, ...$values);
+                $success = mysqli_stmt_execute($stmt);
+                
+                if (!$success) {
+                    mysqli_stmt_close($stmt);
+                    return false;
+                }
 
-            $result = mysqli_stmt_get_result($stmt);
-            mysqli_stmt_close($stmt);
-            
-            if ($result === false) {
-                // This was a non-SELECT query, so return success status
-                return $success;
+                $result = mysqli_stmt_get_result($stmt);
+                mysqli_stmt_close($stmt);
+                
+                if ($result === false) {
+                    // This was a non-SELECT query, so return success status
+                    return $success;
+                }
+                
+                return $result;
             }
             
-            return $result;
+            return false;
         }
         
+        return mysqli_query($conn, $sql);
+    } catch (Throwable $e) {
+        error_log("Database Query Error: " . $e->getMessage() . " | SQL: " . $sql);
         return false;
     }
-    
-    return mysqli_query($conn, $sql);
 }
 
 // Fetch all rows as associative array

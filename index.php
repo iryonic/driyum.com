@@ -1249,17 +1249,31 @@ $wishlist_json = json_encode($wishlist_ids);
 
     <!-- DYNAMIC BRAND REELS & SHORTS SECTION -->
     <?php
-    $reels_section_enabled = (get_setting('reels_section_enabled', '1') == '1');
-    $reels_autoplay_cards = (get_setting('reels_autoplay_cards', '0') == '1');
+    $reels_section_enabled = false;
+    $reels_autoplay_cards = false;
     $reels_list = [];
-    if ($reels_section_enabled) {
-        $reels_list = fetch_all("
-            SELECT r.*, p.name as product_name, p.slug as product_slug, p.price as product_price, p.original_price as product_original_price, p.image as product_image, p.stock as product_stock
-            FROM reels r
-            LEFT JOIN products p ON r.product_id = p.id
-            WHERE r.status = 'active'
-            ORDER BY r.sort_order ASC, r.id ASC
-        ");
+    try {
+        if (function_exists('ensure_reels_table')) {
+            ensure_reels_table();
+        }
+        $reels_section_enabled = (get_setting('reels_section_enabled', '1') == '1');
+        $reels_autoplay_cards = (get_setting('reels_autoplay_cards', '0') == '1');
+        if ($reels_section_enabled) {
+            $fetched = fetch_all("
+                SELECT r.*, p.name as product_name, p.slug as product_slug, p.price as product_price, p.original_price as product_original_price, p.image as product_image, p.stock as product_stock
+                FROM reels r
+                LEFT JOIN products p ON r.product_id = p.id
+                WHERE r.status = 'active'
+                ORDER BY r.sort_order ASC, r.id ASC
+            ");
+            if (is_array($fetched)) {
+                $reels_list = $fetched;
+            }
+        }
+    } catch (Throwable $e) {
+        error_log("Reels section error: " . $e->getMessage());
+        $reels_list = [];
+        $reels_section_enabled = false;
     }
     ?>
     <?php if ($reels_section_enabled && !empty($reels_list)): ?>

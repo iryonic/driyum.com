@@ -15,6 +15,7 @@ $sql_reels = "CREATE TABLE IF NOT EXISTS `reels` (
   `duration` VARCHAR(50) DEFAULT '0:45',
   `badge_tag` VARCHAR(100) DEFAULT 'VERTICAL SHORT',
   `views_badge` VARCHAR(50) DEFAULT '120K',
+  `views_count` BIGINT(20) DEFAULT 0,
   `product_id` INT(11) DEFAULT NULL,
   `status` ENUM('active', 'draft', 'inactive') DEFAULT 'active',
   `sort_order` INT(11) DEFAULT 0,

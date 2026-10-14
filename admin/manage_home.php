@@ -793,7 +793,7 @@ $icon_lib = get_trust_badge_icon_library();
                 </a>
             </div>
         </div>
-    </div>div>
+    </div><div>
     </div>
 </div>
 

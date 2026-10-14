@@ -19,6 +19,9 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
 }
 
 $conn = get_db_connection();
+if (function_exists('ensure_reels_table')) {
+    ensure_reels_table();
+}
 
 // Helper: Parse YouTube Video ID from any URL format
 function extract_yt_id($url) {

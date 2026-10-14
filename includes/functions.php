@@ -2146,5 +2146,82 @@ if (function_exists('get_setting') && !defined('MAINTENANCE_CHECK_RUN')) {
     }
 }
 
+/**
+ * Ensure reels and reel_products tables exist and are properly configured.
+ * Runs once per request cycle and self-heals missing schema seamlessly.
+ */
+function ensure_reels_table() {
+    static $checked = false;
+    if ($checked) return;
+    $checked = true;
+
+    try {
+        $conn = get_db_connection();
+        if (!$conn) return;
+
+        // 1. Create reels table if not exists
+        $conn->query("CREATE TABLE IF NOT EXISTS `reels` (
+          `id` INT(11) NOT NULL AUTO_INCREMENT,
+          `youtube_id` VARCHAR(50) NOT NULL,
+          `youtube_url` VARCHAR(500) NOT NULL,
+          `title` VARCHAR(255) NOT NULL,
+          `thumbnail_url` VARCHAR(500) DEFAULT NULL,
+          `duration` VARCHAR(50) DEFAULT '0:45',
+          `badge_tag` VARCHAR(100) DEFAULT 'VERTICAL SHORT',
+          `views_badge` VARCHAR(50) DEFAULT '120K',
+          `views_count` BIGINT(20) DEFAULT 0,
+          `product_id` INT(11) DEFAULT NULL,
+          `status` ENUM('active', 'draft', 'inactive') DEFAULT 'active',
+          `sort_order` INT(11) DEFAULT 0,
+          `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          PRIMARY KEY (`id`),
+          KEY `idx_status_sort` (`status`, `sort_order`),
+          KEY `idx_youtube_id` (`youtube_id`),
+          KEY `idx_product_id` (`product_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        // Verify column views_count exists
+        $col_check = $conn->query("SHOW COLUMNS FROM `reels` LIKE 'views_count'");
+        if ($col_check && $col_check->num_rows === 0) {
+            $conn->query("ALTER TABLE `reels` ADD COLUMN `views_count` BIGINT(20) DEFAULT 0 AFTER `views_badge`");
+        }
+
+        // 2. Create reel_products table if not exists
+        $conn->query("CREATE TABLE IF NOT EXISTS `reel_products` (
+          `id` INT(11) NOT NULL AUTO_INCREMENT,
+          `reel_id` INT(11) NOT NULL,
+          `product_id` INT(11) NOT NULL,
+          `is_primary` TINYINT(1) DEFAULT 1,
+          `sort_order` INT(11) DEFAULT 0,
+          `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (`id`),
+          UNIQUE KEY `uk_reel_product` (`reel_id`, `product_id`),
+          KEY `idx_reel_id` (`reel_id`),
+          KEY `idx_product_id` (`product_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+        // 3. Seed default sample reels if table is empty
+        $check_empty = $conn->query("SELECT COUNT(*) as c FROM `reels`");
+        if ($check_empty) {
+            $row = $check_empty->fetch_assoc();
+            if (($row['c'] ?? 0) == 0) {
+                // Get sample product if available
+                $prod_res = $conn->query("SELECT id FROM products WHERE is_active = 1 LIMIT 1");
+                $sample_prod_id = ($prod_res && $p = $prod_res->fetch_assoc()) ? intval($p['id']) : "NULL";
+
+                $conn->query("INSERT INTO `reels` (`youtube_id`, `youtube_url`, `title`, `thumbnail_url`, `duration`, `badge_tag`, `views_badge`, `views_count`, `product_id`, `status`, `sort_order`) VALUES
+                ('3Z_yWf-7x1s', 'https://www.youtube.com/shorts/3Z_yWf-7x1s', 'HBO Just Went Crazy With Harry Potter 🤯', 'https://i.ytimg.com/vi/3Z_yWf-7x1s/maxresdefault.jpg', '0:45', 'VERTICAL SHORT', '42M', 42000000, $sample_prod_id, 'active', 1),
+                ('7ghhRHRP6t4', 'https://www.youtube.com/shorts/7ghhRHRP6t4', 'Turning A Tree Trunk Into A Canoe 🛶', 'https://i.ytimg.com/vi/7ghhRHRP6t4/maxresdefault.jpg', '0:45', 'VERTICAL SHORT', '9.1B', 9100000000, $sample_prod_id, 'active', 2),
+                ('kJQP7kiw5Fk', 'https://www.youtube.com/watch?v=kJQP7kiw5Fk', 'Luis Fonsi - Despacito ft. Daddy Yankee', 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg', '4:42', 'GLOBAL HIT', '8.9B', 8900000000, $sample_prod_id, 'active', 3),
+                ('9bZkp7q19f0', 'https://www.youtube.com/watch?v=9bZkp7q19f0', 'PSY - GANGNAM STYLE (강남스타일) M/V', 'https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg', '4:13', 'LEGENDARY', '5.5B', 5500000000, $sample_prod_id, 'active', 4)");
+            }
+        }
+    } catch (Throwable $e) {
+        error_log("ensure_reels_table error: " . $e->getMessage());
+    }
+}
+
+
 
 

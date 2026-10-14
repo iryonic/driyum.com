@@ -1,3 +1,4 @@
+
 name: Deploy DRIYUM to Hostinger
 
 on:
@@ -5,36 +6,57 @@ on:
     branches:
       - main
 
+  # Allow manual deployment from the GitHub Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: driyum-production-deployment
+  cancel-in-progress: false
+
 jobs:
   web-deploy:
     name: Deploy to Live Server
     runs-on: ubuntu-latest
-    steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
+    timeout-minutes: 20
 
-      - name: 🚀 Sync files via FTP (Preserving Live Uploads)
+    steps:
+      # 1. Get the latest repository code
+      - name: Get latest code
+        uses: actions/checkout@v4
+
+      # 2. Deploy files to Hostinger
+      - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+
+          # Remote directory on Hostinger
           server-dir: public_html/
+
+          # Never perform a full clean-slate deployment
           dangerous-clean-slate: false
+
+          # Preserve live uploads and exclude sensitive or unnecessary files
           exclude: |
             **/.git*
             **/.git*/**
+            **/node_modules/**
+            **/vendor/**
+            **/.env
+            **/.env.*
+            **/.DS_Store
+            **/Thumbs.db
             assets/images/uploads/**
             assets/images/products/**
             assets/images/categories/**
             assets/images/badges/**
             assets/videos/**
-            node_modules/**
-            vendor/**
-            .env
-            mail_log.txt
             storage/**
-            *.log
+            mail_log.txt
+            **/*.log
             scratch/**
